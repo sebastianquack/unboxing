@@ -61,9 +61,21 @@ export default class App extends Component<{}> {
     const newTimeString = syncTimeString.substr(0,syncTimeString.length-4) + "0000"
     const newTime = Number.parseInt(newTimeString)
 
-    if (this.lastTick + 5000 < newTime) {
-      this.lastTick = syncTime;
+    if (this.lastTick + 10000 < newTime) {
+      this.lastTick = newTime;
       this.setState((props)=>{props.counter++; return props})
+      // Play the sound with an onEnd callback
+      console.log('playing');
+      sound1.play((success) => {
+        if (success) {
+          console.log('successfully finished playing');
+        } else {
+          console.log('playback failed due to audio decoding errors');
+          // reset the player to its uninitialized state (android only)
+          // this is the only option to recover after an error occured and use the player again
+          sound1.reset();
+        }
+      });      
     }
   }
 
@@ -83,20 +95,6 @@ export default class App extends Component<{}> {
       })
 
     }, 100);
-
-    setInterval(()=> {
-      // Play the sound with an onEnd callback
-      sound1.play((success) => {
-        if (success) {
-          console.log('successfully finished playing');
-        } else {
-          console.log('playback failed due to audio decoding errors');
-          // reset the player to its uninitialized state (android only)
-          // this is the only option to recover after an error occured and use the player again
-          sound1.reset();
-        }
-      });
-    }, 5000);
 
   }
 
