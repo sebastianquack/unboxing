@@ -22,7 +22,38 @@ const instructions = Platform.select({
 });
 
 export default class App extends Component<{}> {
+
+  constructor(props) {
+    super(props);
+    this.clock = new clockSync({});
+    this.state = {
+      localTime: 0,
+      syncTime: 0,
+      drift: 0,
+    };
+    //this.componentDidMount = this.componentDidMount.bind(this)
+  }
+
+
+  componentDidMount() {
+
+    setInterval(()=> {
+      const localTime = new Date().getTime();
+      var syncTime = this.clock.getTime();
+      var drift = parseInt(localTime) - parseInt(syncTime);
+
+      //console.log('SyncTime:' + syncTime + ' vs LocalTime: ' + localTime + ' Difference: ' + drift + 'ms');
+
+      this.setState({
+        localTime, syncTime,drift
+      })
+
+    }, 1000);
+
+  }
+
   render() {
+
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
@@ -31,6 +62,9 @@ export default class App extends Component<{}> {
         <Text style={styles.instructions}>
           To get started, edit App.js
         </Text>
+        <Text>localTime: {this.state.localTime}</Text>
+        <Text>syncTime: {this.state.syncTime}</Text>
+        <Text>drift: {this.state.drift}</Text>
         <Text style={styles.instructions}>
           {instructions}
         </Text>
@@ -58,16 +92,3 @@ const styles = StyleSheet.create({
   },
 });
 
-
-var clock = new clockSync({});
-
-var syncTime = clock.getTime();
-console.log('SyncTime:' + syncTime);
-
-setInterval(function() {
-  var localTime = new Date().getTime();
-  var syncTime = clock.getTime();
-  var drift = parseInt(localTime) - parseInt(syncTime);
-
-  console.log('SyncTime:' + syncTime + ' vs LocalTime: ' + localTime + ' Difference: ' + drift + 'ms');
-}, 5000);
