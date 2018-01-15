@@ -26,16 +26,32 @@ export default class App extends Component<{}> {
   constructor(props) {
     super(props);
     this.clock = new clockSync({});
+    this.lastTick = 0,
     this.state = {
       localTime: 0,
       syncTime: 0,
       drift: 0,
+      counter: 0,
     };
-    //this.componentDidMount = this.componentDidMount.bind(this)
+    this.updateTicker = this.updateTicker.bind(this)
   }
 
+  updateTicker() {
+    const syncTime = this.clock.getTime();
+    
+    const syncTimeString = syncTime.toString();
+    const newTimeString = syncTimeString.substr(0,syncTimeString.length-4) + "0000"
+    const newTime = Number.parseInt(newTimeString)
+
+    if (this.lastTick + 5000 < newTime) {
+      this.lastTick = syncTime;
+      this.setState((props)=>{props.counter++; return props})
+    }
+  }
 
   componentDidMount() {
+
+    setInterval(this.updateTicker, 10);
 
     setInterval(()=> {
       const localTime = new Date().getTime();
@@ -64,6 +80,7 @@ export default class App extends Component<{}> {
         <Text>localTime: {this.state.localTime}</Text>
         <Text>syncTime: {this.state.syncTime}</Text>
         <Text>drift: {this.state.drift}</Text>
+        <Text>counter: {this.state.counter}</Text>
         <Text style={styles.instructions}>
           {instructions}
         </Text>
