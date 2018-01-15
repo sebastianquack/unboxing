@@ -20,7 +20,7 @@ import Sound from 'react-native-sound';
 console.log("loading sound file...");
 // Load the sound file 'sound1.mp3' from the app bundle
 // See notes below about preloading sounds within initialization code below.
-var sound1 = new Sound('ping.mp3', Sound.MAIN_BUNDLE, (error) => {
+var sound1 = new Sound('click.mp3', Sound.MAIN_BUNDLE, (error) => {
   if (error) {
     console.log('failed to load the sound', error);
     return;
@@ -64,9 +64,9 @@ export default class App extends Component<{}> {
     
     if (currentTick > this.lastTick) {
       this.lastTick = currentTick; // save currentTick to lastTick
-      this.setState((props)=>{props.counter++; return props}) // update counter on screen
+      this.setState((props)=>{props.counter++; props.lastTickTime = currentTick; return props}) // update counter on screen
       // Play the sound with an onEnd callback
-      console.log('playing');
+      console.log('started playing at ' + currentTick);
       sound1.play((success) => {
         if (success) {
           console.log('successfully finished playing');
@@ -85,7 +85,7 @@ export default class App extends Component<{}> {
 
     setInterval(this.updateTicker, 10);
 
-    setInterval(()=> {
+    /*setInterval(()=> {
       const localTime = new Date().getTime();
       const syncTime = this.clock.getTime();
       const drift = parseInt(localTime) - parseInt(syncTime);
@@ -95,7 +95,7 @@ export default class App extends Component<{}> {
         localTime, syncTime,drift
       })
 
-    }, 10);
+    }, 10);*/
 
   }
 
@@ -112,7 +112,7 @@ export default class App extends Component<{}> {
         <Text>localTime: {this.state.localTime}</Text>
         <Text>syncTime: {this.state.syncTime}</Text>
         <Text>drift: {this.state.drift}</Text>
-        <Text>counter: {this.state.counter}</Text>
+        <Text>counter: {this.state.counter} ({this.state.lastTickTime})</Text>
         <Text style={styles.instructions}>
           {instructions}
         </Text>
