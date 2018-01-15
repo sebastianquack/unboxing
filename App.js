@@ -54,16 +54,17 @@ export default class App extends Component<{}> {
     this.updateTicker = this.updateTicker.bind(this)
   }
 
+  // this is called very often - every 10ms
   updateTicker() {
-    const syncTime = this.clock.getTime();
+    const currentTime = this.clock.getTime(); // get the synchronized time
     
-    const syncTimeString = syncTime.toString();
-    const newTimeString = syncTimeString.substr(0,syncTimeString.length-4) + "0000"
-    const newTime = Number.parseInt(newTimeString)
-
-    if (this.lastTick + 10000 < newTime) {
-      this.lastTick = newTime;
-      this.setState((props)=>{props.counter++; return props})
+    const currentTimeString = currentTime.toString();
+    const currentTickTimeString = currentTimeString.substr(0, currentTimeString.length - 4) + "0000";
+    const currentTick = Number.parseInt(currentTickTimeString); // this is the current time rounded down to last 10s
+    
+    if (currentTick > this.lastTick) {
+      this.lastTick = currentTick; // save currentTick to lastTick
+      this.setState((props)=>{props.counter++; return props}) // update counter on screen
       // Play the sound with an onEnd callback
       console.log('playing');
       sound1.play((success) => {
@@ -94,7 +95,7 @@ export default class App extends Component<{}> {
         localTime, syncTime,drift
       })
 
-    }, 100);
+    }, 10);
 
   }
 
