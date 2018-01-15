@@ -43,7 +43,12 @@ export default class App extends Component<{}> {
 
   constructor(props) {
     super(props);
-    this.clock = new clockSync({});
+    this.clock = new clockSync({
+      "syncDelay" : 60,
+      "history": 10,
+      //"servers" : [{"server": "pool.ntp.org", "port": 123}]
+      "servers" : [{"server": "192.168.1.176", "port": 123}, {"server": "pool.ntp.org", "port": 123}]
+    });
     this.lastTick = 0,
     this.state = {
       localTime: 0,
