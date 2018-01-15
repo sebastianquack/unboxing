@@ -39,16 +39,15 @@ export default class App extends Component<{}> {
 
     setInterval(()=> {
       const localTime = new Date().getTime();
-      var syncTime = this.clock.getTime();
-      var drift = parseInt(localTime) - parseInt(syncTime);
-
+      const syncTime = this.clock.getTime();
+      const drift = parseInt(localTime) - parseInt(syncTime);
       //console.log('SyncTime:' + syncTime + ' vs LocalTime: ' + localTime + ' Difference: ' + drift + 'ms');
 
       this.setState({
         localTime, syncTime,drift
       })
 
-    }, 1000);
+    }, 100);
 
   }
 
