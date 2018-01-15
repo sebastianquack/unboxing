@@ -14,6 +14,24 @@ import {
 
 import clockSync from 'react-native-clock-sync'
 
+// Import the react-native-sound module
+import Sound from 'react-native-sound';
+
+console.log("loading sound file...");
+// Load the sound file 'sound1.mp3' from the app bundle
+// See notes below about preloading sounds within initialization code below.
+var sound1 = new Sound('ping.mp3', Sound.MAIN_BUNDLE, (error) => {
+  if (error) {
+    console.log('failed to load the sound', error);
+    return;
+  }
+  // loaded successfully
+  console.log('duration in seconds: ' + sound1.getDuration() + 'number of channels: ' + sound1.getNumberOfChannels());
+});
+
+// Enable playback in silence mode
+Sound.setCategory('Playback');
+
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
     'Cmd+D or shake for dev menu',
@@ -50,6 +68,7 @@ export default class App extends Component<{}> {
   }
 
   componentDidMount() {
+    console.log("componentDidMount");
 
     setInterval(this.updateTicker, 10);
 
@@ -64,6 +83,20 @@ export default class App extends Component<{}> {
       })
 
     }, 100);
+
+    setInterval(()=> {
+      // Play the sound with an onEnd callback
+      sound1.play((success) => {
+        if (success) {
+          console.log('successfully finished playing');
+        } else {
+          console.log('playback failed due to audio decoding errors');
+          // reset the player to its uninitialized state (android only)
+          // this is the only option to recover after an error occured and use the player again
+          sound1.reset();
+        }
+      });
+    }, 5000);
 
   }
 
@@ -107,4 +140,3 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 });
-
