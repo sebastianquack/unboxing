@@ -69,6 +69,7 @@ export default class App extends Component<{}> {
     }
     this.updateTicker = this.updateTicker.bind(this);
     this.calculateTickerStatistics = this.calculateTickerStatistics.bind(this);
+    this.loop = this.loop.bind(this);
   }
 
   // this is called very often - every 10ms
@@ -127,10 +128,16 @@ export default class App extends Component<{}> {
     }});
   }
 
+  loop(func,interval) {
+    setTimeout(()=>{this.loop(func,interval)}, interval)
+    func();
+  }
+
   componentDidMount() {
     console.log("componentDidMount");
 
     setInterval(this.updateTicker, this.timeSettings.interval);
+    //this.loop(this.updateTicker, this.timeSettings.interval)
 
     setInterval(this.calculateTickerStatistics, this.timeSettings.interval * this.timeSettings.sampleAmount);
 
