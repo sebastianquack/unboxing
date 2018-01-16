@@ -9,28 +9,57 @@ import {
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
+  Button
 } from 'react-native';
 
-import clockSync from 'react-native-clock-sync'
+import clockSync from 'react-native-clock-sync';
 
 // Import the react-native-sound module
 import Sound from 'react-native-sound';
 
-console.log("loading sound file...");
-// Load the sound file 'sound1.mp3' from the app bundle
-// See notes below about preloading sounds within initialization code below.
-var sound1 = new Sound('click.mp3', Sound.MAIN_BUNDLE, (error) => {
-  if (error) {
-    console.log('failed to load the sound', error);
-    return;
-  }
-  // loaded successfully
-  console.log('duration in seconds: ' + sound1.getDuration() + 'number of channels: ' + sound1.getNumberOfChannels());
-});
-
 // Enable playback in silence mode
 Sound.setCategory('Playback');
+
+// function to preload a soundfile
+function loadSound(filename) {
+  console.log("loading " + filename);
+  let s = new Sound(filename, Sound.MAIN_BUNDLE, (error) => {
+    if (error) {
+      console.log('failed to load sound ' + filename, error);
+      return;
+    }
+    // loaded successfully
+    console.log('succesfully loaded ' + filename + ' duration in seconds: ' + s.getDuration() + 'number of channels: ' + s.getNumberOfChannels());
+  });
+  return s;
+}
+
+var sounds = {};
+sounds.click = loadSound("click.mp3");
+sounds.piano = loadSound("mozart_piano.mp3");
+sounds.violin = loadSound("mozart_violin.mp3");
+sounds.cello = loadSound("mozart_cello.mp3");
+console.log(Object.keys(sounds));
+
+function playSound(soundObj) {
+  console.log("starting to play " + JSON.stringify(soundObj));
+  soundObj.play((success) => {
+    if (success) {
+      console.log('successfully finished playing');
+    } else {
+      console.log('playback failed due to audio decoding errors');
+      soundObj.reset();
+    }
+  });     
+}
+
+function stopSounds() {
+  console.log("stopping all sounds");
+  Object.keys(sounds).forEach((key)=>{
+    sounds[key].stop();
+  })
+}
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -46,8 +75,8 @@ export default class App extends Component<{}> {
     this.clock = new clockSync({
       "syncDelay" : 10,
       "history": 10,
-      "servers" : [{"server": "pool.ntp.org", "port": 123}],
-      //"servers" : [{"server": "192.168.1.176", "port": 123}]
+      //"servers" : [{"server": "pool.ntp.org", "port": 123}],
+      "servers" : [{"server": "192.168.178.150", "port": 123}]
     });
     this.lastTick = 0,
     this.state = {
@@ -55,8 +84,10 @@ export default class App extends Component<{}> {
       syncTime: 0,
       drift: 0,
       counter: 0,
+      nextSoundToStartPlaying: ""
     };
-    this.updateTicker = this.updateTicker.bind(this)
+    this.updateTicker = this.updateTicker.bind(this);
+    this.handleButtonPress = this.handleButtonPress.bind(this);
   }
 
   // this is called very often - every 10ms
@@ -64,7 +95,7 @@ export default class App extends Component<{}> {
     const currentTime = this.clock.getTime(); // get the synchronized time
     
     const currentTimeString = currentTime.toString();
-    const currentTickTimeString = currentTimeString.substr(0, currentTimeString.length - 3) + "000";
+    const currentTickTimeString = currentTimeString.substr(0, currentTimeString.length - 4) + "0000";
     const currentTick = Number.parseInt(currentTickTimeString); // this is the current time rounded down to last 10s
     
     if (currentTick > this.lastTick) {
@@ -73,23 +104,20 @@ export default class App extends Component<{}> {
       // Play the sound with an onEnd callback
       //console.log('started playing at ' + currentTick);
 
-      sound1.play((success) => {
-        if (success) {
-          //console.log('successfully finished playing');
-        } else {
-          console.log('playback failed due to audio decoding errors');
-          // reset the player to its uninitialized state (android only)
-          // this is the only option to recover after an error occured and use the player again
-          sound1.reset();
-        }
-      });      
+      if(this.state.nextSoundToStartPlaying) {
+        console.log(this.state.nextSoundToStartPlaying);
+        playSound(sounds[this.state.nextSoundToStartPlaying]);
+        this.setState({nextSoundToStartPlaying: null});
+      } else {
+        console.log("doing nothing on this tick");
+      }
     }
   }
 
   componentDidMount() {
     console.log("componentDidMount");
 
-    setInterval(this.updateTicker, 10);
+    setInterval(this.updateTicker, 5);
 
     setInterval(()=> {
       const localTime = new Date().getTime();
@@ -98,11 +126,29 @@ export default class App extends Component<{}> {
       //console.log('SyncTime:' + syncTime + ' vs LocalTime: ' + localTime + ' Difference: ' + drift + 'ms');
 
       this.setState({
-        localTime, syncTime,drift
+        localTime, syncTime, drift
       })
 
     }, 100);
 
+  }
+
+  handleButtonPress(key) {
+    console.log("button pressed: " + key);
+    stopSounds();
+    this.setState({nextSoundToStartPlaying: key});
+  }
+
+  renderButtons() {
+    let buttons = Object.keys(sounds).map((key)=>
+      <Button
+        style={styles.button}
+        key={"button" + key}
+        title={key}
+        onPress={()=>{this.handleButtonPress(key);}}
+      />
+    );
+    return buttons;
   }
 
   render() {
@@ -122,6 +168,8 @@ export default class App extends Component<{}> {
         <Text style={styles.instructions}>
           {instructions}
         </Text>
+        {this.renderButtons()}
+        <Text>next sound: {this.state.nextSoundToStartPlaying}</Text>
       </View>
     );
   }
@@ -144,4 +192,8 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+  button: {
+    margin: 10,
+  }
+
 });
