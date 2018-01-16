@@ -90,7 +90,7 @@ export default class App extends Component<{}> {
     this.timeSettings = {
       sampling: true,
       sampleAmount: 100,
-      interval: 32,
+      interval: 10,
     }
     this.timeStatsData = {
       syncTimeValues: [],
@@ -122,6 +122,9 @@ export default class App extends Component<{}> {
     const currentTick = Number.parseInt(currentTickTimeString); // this is the current time rounded down to last 10s
 
     if (currentTick > this.lastTick) {
+      console.log("currentTime: " + currentTime);
+      console.log("this.clock.getTime(): " + this.clock.getTime());
+      
       this.lastTick = currentTick; // save currentTick to lastTick
       this.setState((props)=>{props.counter++; props.lastTickTime = currentTick; return props}) // update counter on screen
       // Play the sound with an onEnd callback
@@ -129,7 +132,22 @@ export default class App extends Component<{}> {
 
       if(this.state.nextSoundToStartPlaying) {
         console.log(this.state.nextSoundToStartPlaying);
+
+        let targetStartTime = currentTick + 200;
+
+        let counter = 0;
+        let now = null;
+        do {
+          now = this.clock.getTime();
+          if(counter == 0) {
+            console.log("went into loop at " + now);    
+          }
+          counter++;
+        } while(now < targetStartTime && (now - currentTime < 400)); 
+        console.log("leaving loop after " + counter + " cycles at " + now);
+
         playSound(sounds[this.state.nextSoundToStartPlaying]);
+
         if(this.state.nextSoundToStartPlaying != "click") {
           this.setState({nextSoundToStartPlaying: null});  
         }
