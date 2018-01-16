@@ -90,7 +90,7 @@ export default class App extends Component<{}> {
     this.timeSettings = {
       sampling: true,
       sampleAmount: 100,
-      interval: 10,
+      interval: 32,
     }
     this.timeStatsData = {
       syncTimeValues: [],
@@ -130,7 +130,9 @@ export default class App extends Component<{}> {
       if(this.state.nextSoundToStartPlaying) {
         console.log(this.state.nextSoundToStartPlaying);
         playSound(sounds[this.state.nextSoundToStartPlaying]);
-        this.setState({nextSoundToStartPlaying: null});
+        if(this.state.nextSoundToStartPlaying != "click") {
+          this.setState({nextSoundToStartPlaying: null});  
+        }
       } else {
         console.log("doing nothing on this tick");
       }
