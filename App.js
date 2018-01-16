@@ -46,8 +46,8 @@ export default class App extends Component<{}> {
     this.clock = new clockSync({
       "syncDelay" : 10,
       "history": 10,
-      "servers" : [{"server": "pool.ntp.org", "port": 123}],
-      //"servers" : [{"server": "192.168.1.176", "port": 123}]
+      //"servers" : [{"server": "pool.ntp.org", "port": 123}],
+      "servers" : [{"server": "192.168.178.150", "port": 123}]
     });
     this.lastTick = 0,
     this.state = {
@@ -55,18 +55,40 @@ export default class App extends Component<{}> {
       syncTime: 0,
       drift: 0,
       counter: 0,
+      stats: {},
     };
-    this.updateTicker = this.updateTicker.bind(this)
+    this.timeSettings = {
+      sampling: true,
+      sampleAmount: 100,
+      interval: 10,
+    }
+    this.timeStatsData = {
+      syncTimeValues: [],
+      syncTimeIndex: 0,
+      syncTimeLastValue: 0,
+    }
+    this.updateTicker = this.updateTicker.bind(this);
+    this.calculateTickerStatistics = this.calculateTickerStatistics.bind(this);
   }
 
   // this is called very often - every 10ms
   updateTicker() {
     const currentTime = this.clock.getTime(); // get the synchronized time
-    
+
+    // do statistics
+    let data = this.timeStatsData;
+    data.syncTimeValues[data.syncTimeIndex] = currentTime - data.syncTimeLastValue;
+    data.syncTimeIndex++;
+    if (data.syncTimeIndex >= this.timeSettings.sampleAmount) {
+      data.syncTimeIndex = 0;
+    }
+    data.syncTimeLastValue = currentTime;
+
+    // calculate limit
     const currentTimeString = currentTime.toString();
     const currentTickTimeString = currentTimeString.substr(0, currentTimeString.length - 3) + "000";
     const currentTick = Number.parseInt(currentTickTimeString); // this is the current time rounded down to last 10s
-    
+
     if (currentTick > this.lastTick) {
       this.lastTick = currentTick; // save currentTick to lastTick
       this.setState((props)=>{props.counter++; props.lastTickTime = currentTick; return props}) // update counter on screen
@@ -82,14 +104,35 @@ export default class App extends Component<{}> {
           // this is the only option to recover after an error occured and use the player again
           sound1.reset();
         }
-      });      
+      });
     }
+  }
+
+  calculateTickerStatistics() {
+    const data = this.timeStatsData;
+    const amount = this.timeSettings.sampleAmount;
+    let sum = 0;
+    for (let x of data.syncTimeValues) {
+      sum += x;
+    }
+    const avg = sum / amount
+    let varsum = 0;
+    for (let x of data.syncTimeValues) {
+      varsum += Math.abs(avg-x);
+    }
+    const varianz = varsum / amount;
+    this.setState({stats: {
+      avg: Math.round(avg*10)/10,
+      varianz: Math.round(varianz*10)/10
+    }});
   }
 
   componentDidMount() {
     console.log("componentDidMount");
 
-    setInterval(this.updateTicker, 10);
+    setInterval(this.updateTicker, this.timeSettings.interval);
+
+    setInterval(this.calculateTickerStatistics, this.timeSettings.interval * this.timeSettings.sampleAmount);
 
     setInterval(()=> {
       const localTime = new Date().getTime();
@@ -119,6 +162,7 @@ export default class App extends Component<{}> {
         <Text>syncTime: {this.state.syncTime}</Text>
         <Text>drift: {this.state.drift}</Text>
         <Text>counter: {this.state.counter} ({this.state.lastTickTime})</Text>
+        <Text>Interval: {this.timeSettings.interval} ({this.state.stats.avg}±{this.state.stats.varianz/2})</Text>
         <Text style={styles.instructions}>
           {instructions}
         </Text>
