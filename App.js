@@ -12,7 +12,7 @@ import {
   View,
   Button
 } from 'react-native';
-
+import KeepAwake from 'react-native-keep-awake';
 import clockSync from 'react-native-clock-sync';
 
 // Import the react-native-sound module
@@ -51,7 +51,7 @@ function playSound(soundObj) {
       console.log('playback failed due to audio decoding errors');
       soundObj.reset();
     }
-  });     
+  });
 }
 
 function stopSounds() {
@@ -124,7 +124,7 @@ export default class App extends Component<{}> {
     if (currentTick > this.lastTick) {
       console.log("currentTime: " + currentTime);
       console.log("this.clock.getTime(): " + this.clock.getTime());
-      
+
       this.lastTick = currentTick; // save currentTick to lastTick
       this.setState((props)=>{props.counter++; props.lastTickTime = currentTick; return props}) // update counter on screen
       // Play the sound with an onEnd callback
@@ -140,16 +140,16 @@ export default class App extends Component<{}> {
         do {
           now = this.clock.getTime();
           if(counter == 0) {
-            console.log("went into loop at " + now);    
+            console.log("went into loop at " + now);
           }
           counter++;
-        } while(now < targetStartTime && (now - currentTime < 400)); 
+        } while(now < targetStartTime && (now - currentTime < 400));
         console.log("leaving loop after " + counter + " cycles at " + now);
 
         playSound(sounds[this.state.nextSoundToStartPlaying]);
 
         if(this.state.nextSoundToStartPlaying != "click") {
-          this.setState({nextSoundToStartPlaying: null});  
+          this.setState({nextSoundToStartPlaying: null});
         }
       } else {
         console.log("doing nothing on this tick");
@@ -225,8 +225,9 @@ export default class App extends Component<{}> {
 
     return (
       <View style={styles.container}>
+        <KeepAwake />
         <Text style={styles.welcome}>
-          Welcome to React Native!
+          Welcome to Audiosynch!
         </Text>
         <Text style={styles.instructions}>
           To get started, edit App.js
