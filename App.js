@@ -44,10 +44,10 @@ export default class App extends Component<{}> {
   constructor(props) {
     super(props);
     this.clock = new clockSync({
-      "syncDelay" : 60,
+      "syncDelay" : 10,
       "history": 10,
-      //"servers" : [{"server": "pool.ntp.org", "port": 123}]
-      "servers" : [{"server": "192.168.1.176", "port": 123}, {"server": "pool.ntp.org", "port": 123}]
+      "servers" : [{"server": "pool.ntp.org", "port": 123}],
+      //"servers" : [{"server": "192.168.1.176", "port": 123}]
     });
     this.lastTick = 0,
     this.state = {
@@ -64,17 +64,18 @@ export default class App extends Component<{}> {
     const currentTime = this.clock.getTime(); // get the synchronized time
     
     const currentTimeString = currentTime.toString();
-    const currentTickTimeString = currentTimeString.substr(0, currentTimeString.length - 4) + "0000";
+    const currentTickTimeString = currentTimeString.substr(0, currentTimeString.length - 3) + "000";
     const currentTick = Number.parseInt(currentTickTimeString); // this is the current time rounded down to last 10s
     
     if (currentTick > this.lastTick) {
       this.lastTick = currentTick; // save currentTick to lastTick
       this.setState((props)=>{props.counter++; props.lastTickTime = currentTick; return props}) // update counter on screen
       // Play the sound with an onEnd callback
-      console.log('started playing at ' + currentTick);
+      //console.log('started playing at ' + currentTick);
+
       sound1.play((success) => {
         if (success) {
-          console.log('successfully finished playing');
+          //console.log('successfully finished playing');
         } else {
           console.log('playback failed due to audio decoding errors');
           // reset the player to its uninitialized state (android only)
@@ -90,7 +91,7 @@ export default class App extends Component<{}> {
 
     setInterval(this.updateTicker, 10);
 
-    /*setInterval(()=> {
+    setInterval(()=> {
       const localTime = new Date().getTime();
       const syncTime = this.clock.getTime();
       const drift = parseInt(localTime) - parseInt(syncTime);
@@ -100,7 +101,7 @@ export default class App extends Component<{}> {
         localTime, syncTime,drift
       })
 
-    }, 10);*/
+    }, 100);
 
   }
 
