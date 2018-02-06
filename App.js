@@ -10,13 +10,16 @@ import {
   StyleSheet,
   Text,
   View,
-  Button
+  TextInput,
+  TouchableOpacity
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
-import clockSync from 'react-native-clock-sync';
 
 // Import the react-native-sound module
 import Sound from 'react-native-sound';
+
+//import NtpClient from 'react-native-ntp-client';
+var NtpClient = require('react-native-ntp-client');
 
 // Enable playback in silence mode
 Sound.setCategory('Playback');
@@ -61,31 +64,23 @@ function stopSounds() {
   })
 }
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
-
 export default class App extends Component<{}> {
 
   constructor(props) {
     super(props);
-    this.clock = new clockSync({
-      "syncDelay" : 10,
-      "history": 10,
-      //"servers" : [{"server": "pool.ntp.org", "port": 123}],
-      "servers" : [{"server": "192.168.178.150", "port": 123}]
-    });
+    console.ignoredYellowBox = [
+     'Setting a timer'
+    ];
     this.lastTick = 0,
     this.state = {
       localTime: 0,
       syncTime: 0,
-      drift: 0,
+      delta: 0,
       counter: 0,
       nextSoundToStartPlaying: "",
       stats: {},
+      currentServer: "192.168.178.150",
+      ntpInput: ""
     };
     this.timeSettings = {
       sampling: true,
@@ -99,13 +94,19 @@ export default class App extends Component<{}> {
     }
     this.updateTicker = this.updateTicker.bind(this);
     this.calculateTickerStatistics = this.calculateTickerStatistics.bind(this);
-    this.loop = this.loop.bind(this);
     this.handleButtonPress = this.handleButtonPress.bind(this);
+    this.updateNTPServer = this.updateNTPServer.bind(this);
+    this.handleSyncPress = this.handleSyncPress.bind(this);
+    this.getSyncTime = this.getSyncTime.bind(this);
+  }
+
+  getSyncTime() {
+    return new Date().getTime() + this.state.delta;
   }
 
   // this is called very often - every 10ms
   updateTicker() {
-    const currentTime = this.clock.getTime(); // get the synchronized time
+    const currentTime = this.getSyncTime(); // get the synchronized time
 
     // do statistics
     let data = this.timeStatsData;
@@ -123,7 +124,7 @@ export default class App extends Component<{}> {
 
     if (currentTick > this.lastTick) {
       console.log("currentTime: " + currentTime);
-      console.log("this.clock.getTime(): " + this.clock.getTime());
+      console.log("this.getSyncTime(): " + this.getSyncTime());
 
       this.lastTick = currentTick; // save currentTick to lastTick
       this.setState((props)=>{props.counter++; props.lastTickTime = currentTick; return props}) // update counter on screen
@@ -138,7 +139,7 @@ export default class App extends Component<{}> {
         let counter = 0;
         let now = null;
         do {
-          now = this.clock.getTime();
+          now = this.getSyncTime();
           if(counter == 0) {
             console.log("went into loop at " + now);
           }
@@ -176,31 +177,46 @@ export default class App extends Component<{}> {
     }});
   }
 
-  loop(func,interval) {
-    setTimeout(()=>{this.loop(func,interval)}, interval)
-    func();
-  }
-
   componentDidMount() {
     console.log("componentDidMount");
 
     setInterval(this.updateTicker, this.timeSettings.interval);
-    //this.loop(this.updateTicker, this.timeSettings.interval)
 
     setInterval(this.calculateTickerStatistics, this.timeSettings.interval * this.timeSettings.sampleAmount);
 
     setInterval(()=> {
       const localTime = new Date().getTime();
-      const syncTime = this.clock.getTime();
-      const drift = parseInt(localTime) - parseInt(syncTime);
-      //console.log('SyncTime:' + syncTime + ' vs LocalTime: ' + localTime + ' Difference: ' + drift + 'ms');
-
+      const syncTime = this.getSyncTime();
+      
       this.setState({
-        localTime, syncTime, drift
+        localTime, syncTime
       })
 
     }, 100);
 
+  }
+
+  handleSyncPress() {
+    console.log("sync button pressed, calling server " + this.state.currentServer);
+    
+    NtpClient.getNetworkTime(this.state.currentServer, 123, (err, date)=> {
+      if(err) {
+          alert("error retrieving time from ntp server");
+          console.log(err);
+          return;
+      }
+ 
+      var tempServerTime = date.getTime();
+      var tempLocalTime = (new Date()).getTime();
+      this.setState({delta: tempServerTime - tempLocalTime});
+
+      alert("Got back time from server " + this.state.ntpInput + ": " + tempServerTime);
+    });
+  }
+
+  updateNTPServer() {
+    console.log("updating ntp server to " + this.state.ntpInput);
+    this.state.currentServer = this.state.ntpInput;
   }
 
   handleButtonPress(key) {
@@ -211,36 +227,44 @@ export default class App extends Component<{}> {
 
   renderButtons() {
     let buttons = Object.keys(sounds).map((key)=>
-      <Button
+      <TouchableOpacity
         style={styles.button}
         key={"button" + key}
-        title={key}
         onPress={()=>{this.handleButtonPress(key);}}
-      />
+      ><Text>{key}</Text></TouchableOpacity>
     );
     return buttons;
   }
 
   render() {
-
     return (
       <View style={styles.container}>
         <KeepAwake />
         <Text style={styles.welcome}>
           Welcome to unboxing!
         </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
         <Text>localTime: {this.state.localTime}</Text>
+        <Text style={{marginTop: 20}}>NTP server: {this.state.currentServer}:123</Text>
+        <TextInput
+          underlineColorAndroid='transparent'
+          style={{width: 150, height: 40, borderColor: 'gray', borderWidth: 1}}
+          value={this.state.ntpInput}
+          onChangeText={(text) => this.setState({ntpInput: text})}
+          onSubmitEditing={this.updateNTPServer}
+        />
+
         <Text>syncTime: {this.state.syncTime}</Text>
-        <Text>drift: {this.state.drift}</Text>
+        <Text>delta to localTime: {this.state.delta}</Text>
         <Text>counter: {this.state.counter} ({this.state.lastTickTime})</Text>
         <Text>Interval: {this.timeSettings.interval} ({this.state.stats.avg}±{this.state.stats.varianz/2})</Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
-        {this.renderButtons()}
+        
+        <View style={styles.buttons}>
+          <TouchableOpacity style={styles.button} onPress={this.handleSyncPress}>
+            <Text>Sync Time</Text>
+          </TouchableOpacity>
+        </View>
+        <Text>Tap the next sound to play:</Text>
+        <View style={styles.buttons}>{this.renderButtons()}</View>
         <Text>next sound: {this.state.nextSoundToStartPlaying}</Text>
       </View>
     );
@@ -259,13 +283,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
+  buttons: {
+    flexDirection: 'row',
   },
   button: {
-    margin: 10,
+    margin: 20,
+    padding: 20,
+    backgroundColor: '#aaa',
   }
 
 });
