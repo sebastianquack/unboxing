@@ -15,6 +15,8 @@ import {
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
 
+import Gesture from './Gesture';
+
 // Import the react-native-sound module
 import Sound from 'react-native-sound';
 
@@ -266,6 +268,7 @@ export default class App extends Component<{}> {
         <Text>Tap the next sound to play:</Text>
         <View style={styles.buttons}>{this.renderButtons()}</View>
         <Text>next sound: {this.state.nextSoundToStartPlaying}</Text>
+        <Gesture />
       </View>
     );
   }

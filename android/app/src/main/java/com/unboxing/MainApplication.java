@@ -3,6 +3,9 @@ package com.unboxing;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.sensors.RNSensorsPackage;
+import com.corbt.keepawake.KCKeepAwakePackage;
+import com.zmxv.RNSound.RNSoundPackage;
 import com.tradle.react.UdpSocketsModule;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.corbt.keepawake.KCKeepAwakePackage;
@@ -26,9 +29,10 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSensorsPackage(),
+            new KCKeepAwakePackage(),
             new UdpSocketsModule(),
-            new RNSoundPackage(),
-            new KCKeepAwakePackage()
+            new RNSoundPackage()
       );
     }
 
