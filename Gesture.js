@@ -25,20 +25,28 @@ class Gesture extends React.Component {
   }
 
   receiveAccData(data) {
-    //console.log("receiving data from accelerometer", data)
+    //console.log(`sensordata acc ${data.x} ${data.y} ${data.z}` )
     data.x = Math.floor(data.x*1000)/1000
     data.y = Math.floor(data.y*1000)/1000
     data.z = Math.floor(data.z*1000)/1000
+    this.detectEinsatz(this.state.acc, data)
     this.setState({acc: data})
   }
 
-
   receiveGyrData(data) {
-    //console.log("receiving data from gyroscope", data)
+    //console.log(`sensordata gyr ${data.x} ${data.y} ${data.z}` )
     data.x = Math.floor(data.x*1000)/1000
     data.y = Math.floor(data.y*1000)/1000
     data.z = Math.floor(data.z*1000)/1000
     this.setState({gyr: data})
+  }
+
+  detectEinsatz(accPrev,acc) {
+    if (accPrev.z +15 < acc.z && accPrev.x>-1 && acc.x<5) {
+      console.log("Einsatz!")
+      const callback = this.props.onEinsatz
+      if (callback) callback()
+    }
   }
 
   componentWillUnmount() {

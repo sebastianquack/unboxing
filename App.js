@@ -205,6 +205,10 @@ export default class App extends Component<{}> {
 
   }
 
+  handleEinsatz() {
+    alert("Einsatz!")
+  }
+
   handleButtonPress(key) {
     console.log("button pressed: " + key);
     stopSounds();
@@ -244,7 +248,7 @@ export default class App extends Component<{}> {
         </Text>
         {this.renderButtons()}
         <Text>next sound: {this.state.nextSoundToStartPlaying}</Text>
-        <Gesture />
+        <Gesture onEinsatz={this.handleEinsatz}/>
       </View>
     );
   }
