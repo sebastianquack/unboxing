@@ -271,7 +271,7 @@ export default class App extends Component<{}> {
         </View>
         <Text>Tap the next sound to play:</Text>
         <View style={styles.buttons}>{this.renderButtons()}</View>
-        <Text>next sound: {this.state.nextSoundToStartPlaying}</Text>
+        <Text style={{marginBottom: 20}}>next sound: {this.state.nextSoundToStartPlaying}</Text>
         <Gesture onEinsatz={this.handleEinsatz}/>
       </View>
     );
