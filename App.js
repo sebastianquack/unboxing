@@ -229,7 +229,7 @@ export default class App extends Component<{}> {
       <View style={styles.container}>
         <KeepAwake />
         <Text style={styles.welcome}>
-          Welcome to Audiosynch!
+          Welcome to unboxing!
         </Text>
         <Text style={styles.instructions}>
           To get started, edit App.js

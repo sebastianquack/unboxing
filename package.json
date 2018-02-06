@@ -1,5 +1,5 @@
 {
-  "name": "AudioSynch",
+  "name": "unboxing",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -12,7 +12,7 @@
     "react-native-clock-sync": "^1.0.0",
     "react-native-keep-awake": "^2.0.6",
     "react-native-sensors": "^2.4.2",
-    "react-native-sound": "^0.10.4"
+    "react-native-sound": "0.10.4"
   },
   "devDependencies": {
     "babel-jest": "22.0.6",

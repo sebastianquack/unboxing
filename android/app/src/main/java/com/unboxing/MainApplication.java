@@ -1,4 +1,4 @@
-package com.audiosynch;
+package com.unboxing;
 
 import android.app.Application;
 
@@ -7,6 +7,8 @@ import com.sensors.RNSensorsPackage;
 import com.corbt.keepawake.KCKeepAwakePackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.tradle.react.UdpSocketsModule;
+import com.zmxv.RNSound.RNSoundPackage;
+import com.corbt.keepawake.KCKeepAwakePackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
@@ -29,8 +31,8 @@ public class MainApplication extends Application implements ReactApplication {
           new MainReactPackage(),
             new RNSensorsPackage(),
             new KCKeepAwakePackage(),
-            new RNSoundPackage(),
-            new UdpSocketsModule()
+            new UdpSocketsModule(),
+            new RNSoundPackage()
       );
     }
 

@@ -3908,9 +3908,9 @@ react-native-sensors@^2.4.2:
   dependencies:
     rxjs "^5.0.2"
 
-react-native-sound@^0.10.4:
-  version "0.10.5"
-  resolved "https://registry.yarnpkg.com/react-native-sound/-/react-native-sound-0.10.5.tgz#50aa0f3faf4ac7cf1e54e1dc48431d0ebcc47b26"
+react-native-sound@0.10.4:
+  version "0.10.4"
+  resolved "https://registry.yarnpkg.com/react-native-sound/-/react-native-sound-0.10.4.tgz#242286558f457e023dbed42e8c6cbe52cfd313d4"
 
 react-native-udp@2.1.0:
   version "2.1.0"
