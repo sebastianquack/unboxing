@@ -11,6 +11,7 @@
     "react-native": "0.52.0",
     "react-native-clock-sync": "^1.0.0",
     "react-native-keep-awake": "^2.0.6",
+    "react-native-sensors": "^2.4.2",
     "react-native-sound": "^0.10.4"
   },
   "devDependencies": {

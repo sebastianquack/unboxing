@@ -3,6 +3,7 @@ package com.audiosynch;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.sensors.RNSensorsPackage;
 import com.corbt.keepawake.KCKeepAwakePackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.tradle.react.UdpSocketsModule;
@@ -26,6 +27,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSensorsPackage(),
             new KCKeepAwakePackage(),
             new RNSoundPackage(),
             new UdpSocketsModule()

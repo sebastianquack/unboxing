@@ -15,6 +15,8 @@ import {
 import KeepAwake from 'react-native-keep-awake';
 import clockSync from 'react-native-clock-sync';
 
+import Gesture from './Gesture';
+
 // Import the react-native-sound module
 import Sound from 'react-native-sound';
 
@@ -242,6 +244,7 @@ export default class App extends Component<{}> {
         </Text>
         {this.renderButtons()}
         <Text>next sound: {this.state.nextSoundToStartPlaying}</Text>
+        <Gesture />
       </View>
     );
   }
