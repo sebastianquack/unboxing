@@ -3,7 +3,11 @@ import { Meteor } from 'meteor/meteor';
 import Events from '../../collections/events';
 
 Meteor.methods({
-  'action'({ }) {
-    
+  'action'(data) {
+    console.log(data);
+    Events.insert({
+    	type: "button pressed",
+    	...data
+    })
   },
 });

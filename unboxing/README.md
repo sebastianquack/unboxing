@@ -1,4 +1,4 @@
-# Unboxing Mozart
+# Unboxing Mozart Client App
 
 ## install
 ````

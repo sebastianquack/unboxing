@@ -50,6 +50,7 @@ sounds.violin = loadSound("mozart_violin.mp3");
 sounds.cello = loadSound("mozart_cello.mp3");
 console.log(Object.keys(sounds));
 
+
 function playSound(soundObj) {
   console.log("starting to play " + JSON.stringify(soundObj));
   soundObj.play((success) => {
@@ -76,16 +77,17 @@ class App extends Component<{}> {
     console.ignoredYellowBox = [
      'Setting a timer'
     ];
-    this.lastTick = 0,
+    this.lastTick = 0;
+    this.nextSoundToStartPlaying = null;
+    this.nextSoundTargetTime = null;
     this.state = {
       localTime: 0,
       syncTime: 0,
       delta: 0,
       counter: 0,
-      nextSoundToStartPlaying: "",
       stats: {},
-      currentServer: "192.168.178.150",
-      ntpInput: ""
+      currentServer: "192.168.1.77",
+      ntpInput: "192.168.1.77"
     };
     this.timeSettings = {
       sampling: true,
@@ -99,10 +101,13 @@ class App extends Component<{}> {
     }
     this.updateTicker = this.updateTicker.bind(this);
     this.calculateTickerStatistics = this.calculateTickerStatistics.bind(this);
-    this.handleButtonPress = this.handleButtonPress.bind(this);
+    this.handleSelectButtonPress = this.handleSelectButtonPress.bind(this);
     this.updateNTPServer = this.updateNTPServer.bind(this);
     this.handleSyncPress = this.handleSyncPress.bind(this);
     this.getSyncTime = this.getSyncTime.bind(this);
+    this.handlePlayNow = this.handlePlayNow.bind(this);
+    this.handleEinsatz = this.handleEinsatz.bind(this);
+
   }
 
   getSyncTime() {
@@ -122,45 +127,28 @@ class App extends Component<{}> {
     }
     data.syncTimeLastValue = currentTime;
 
-    // calculate limit
-    const currentTimeString = currentTime.toString();
-    const currentTickTimeString = currentTimeString.substr(0, currentTimeString.length - 4) + "0000";
-    const currentTick = Number.parseInt(currentTickTimeString); // this is the current time rounded down to last 10s
 
-    if (currentTick > this.lastTick) {
-      console.log("currentTime: " + currentTime);
-      console.log("this.getSyncTime(): " + this.getSyncTime());
+    if(this.nextSoundToStartPlaying && currentTime > this.nextSoundTargetTime) {
+      let nextSound = this.nextSoundToStartPlaying;
+      this.nextSoundToStartPlaying = null;
+      
+      let targetStartTime = this.nextSoundTargetTime + 200;
 
-      this.lastTick = currentTick; // save currentTick to lastTick
-      this.setState((props)=>{props.counter++; props.lastTickTime = currentTick; return props}) // update counter on screen
-      // Play the sound with an onEnd callback
-      //console.log('started playing at ' + currentTick);
-
-      if(this.state.nextSoundToStartPlaying) {
-        console.log(this.state.nextSoundToStartPlaying);
-
-        let targetStartTime = currentTick + 200;
-
-        let counter = 0;
-        let now = null;
-        do {
-          now = this.getSyncTime();
-          if(counter == 0) {
-            console.log("went into loop at " + now);
-          }
-          counter++;
-        } while(now < targetStartTime && (now - currentTime < 400));
-        console.log("leaving loop after " + counter + " cycles at " + now);
-
-        playSound(sounds[this.state.nextSoundToStartPlaying]);
-
-        if(this.state.nextSoundToStartPlaying != "click") {
-          this.setState({nextSoundToStartPlaying: null});
+      let counter = 0;
+      let now = null;
+      do {
+        now = this.getSyncTime();
+        if(counter == 0) {
+          console.log("went into loop at " + now);
         }
-      } else {
-        console.log("doing nothing on this tick");
-      }
+        counter++;
+      } while(now < targetStartTime && (now - currentTime < 400));
+      console.log("leaving loop after " + counter + " cycles at " + now);
+
+      playSound(sounds[nextSound]);
+
     }
+    
   }
 
   calculateTickerStatistics() {
@@ -199,10 +187,13 @@ class App extends Component<{}> {
 
     }, 100);
 
+    this.updateNTPServer();
+
   }
 
   handleEinsatz() {
-    alert("Einsatz!")
+    console.log("Gesture deteced!");
+    this.handlePlayNow();
   }
   
   handleSyncPress() {
@@ -224,34 +215,38 @@ class App extends Component<{}> {
   }
 
   updateNTPServer() {
-    console.log("updating ntp server to " + this.state.ntpInput);
+    console.log("updating server to " + this.state.ntpInput);
     this.state.currentServer = this.state.ntpInput;
 
     Meteor.disconnect();
     Meteor.connect('ws://'+this.state.currentServer+':3002/websocket');
   }
 
-  handleButtonPress(key) {
+  handleSelectButtonPress(key) {
     console.log("button pressed: " + key);
     stopSounds();
-    this.setState({nextSoundToStartPlaying: key});
+    this.setState({selectedSound: key});
   }
 
-  renderButtons() {
+  renderSelectButtons() {
     let buttons = Object.keys(sounds).map((key)=>
       <TouchableOpacity
         style={styles.button}
         key={"button" + key}
-        onPress={()=>{this.handleButtonPress(key);}}
+        onPress={()=>{this.handleSelectButtonPress(key);}}
       ><Text>{key}</Text></TouchableOpacity>
     );
     return buttons;
   }
 
-  renderSampleButton(sample) {
-    return (
-      <Text>{sample.name}</Text>
-    );
+  handlePlayNow() {
+    if(this.nextSoundToStartPlaying) {
+      console.log("ignoring, you can only press play now once");
+      return;
+    }
+    this.nextSoundTargetTime = this.state.syncTime + 2000; // add time for message to traverse network
+    this.nextSoundToStartPlaying = this.state.selectedSound;
+    Meteor.call("action", {sample: this.state.selectedSound, targetTime: this.nextSoundTargetTime});
   }
 
   render() {
@@ -284,14 +279,13 @@ class App extends Component<{}> {
           </TouchableOpacity>
         </View>
         <Text>Tap the next sound to play:</Text>
-
-        <MeteorListView
-            collection="samples"
-            renderRow={this.renderSampleButton}
-          />
+        <View style={styles.buttons}>{this.renderSelectButtons()}</View>
+        <Text style={{marginBottom: 20}}>next sound: {this.state.selectedSound}</Text>
         
-        <View style={styles.buttons}>{this.renderButtons()}</View>
-        <Text style={{marginBottom: 20}}>next sound: {this.state.nextSoundToStartPlaying}</Text>
+        <TouchableOpacity style={styles.button} onPress={this.handlePlayNow}>
+            <Text>Play Now!</Text>
+        </TouchableOpacity>
+
         <Gesture onEinsatz={this.handleEinsatz}/>
       
       </ScrollView>
@@ -300,7 +294,16 @@ class App extends Component<{}> {
 }
 
 export default createContainer(params=>{
-  Meteor.subscribe('samples');
+  Meteor.subscribe('events.all', () => {
+
+    console.log("setup added event");
+    Meteor.ddp.on("added", message => {
+      console.log(message);
+    });
+  
+  });
+  
+  
   return {
   
   };
