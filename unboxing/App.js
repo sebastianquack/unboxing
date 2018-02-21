@@ -87,7 +87,8 @@ class App extends Component<{}> {
       counter: 0,
       stats: {},
       currentServer: "192.168.1.77",
-      ntpInput: "192.168.1.77"
+      ntpInput: "192.168.1.77",
+      displayEinsatzIndicator: false
     };
     this.timeSettings = {
       sampling: true,
@@ -194,6 +195,10 @@ class App extends Component<{}> {
   handleEinsatz() {
     console.log("Gesture deteced!");
     this.handlePlayNow();
+    this.setState({displayEinsatzIndicator: true}, ()=>{
+      setTimeout(()=>this.setState({displayEinsatzIndicator: false}), 1000)
+    })
+    //setTimeout(()=>/*this.setState({displayEinsatzIndicator: false})*/alert(2), 1000)
   }
   
   handleSyncPress() {
@@ -239,6 +244,13 @@ class App extends Component<{}> {
     return buttons;
   }
 
+  renderEinsatzIndicator() {
+    if (!this.state.displayEinsatzIndicator) return null
+    return (<Text style={styles.einsatzIndicator}>
+      Einsatz!
+    </Text>)
+  }
+
   handlePlayNow() {
     if(this.nextSoundToStartPlaying) {
       console.log("ignoring, you can only press play now once");
@@ -265,6 +277,7 @@ class App extends Component<{}> {
       <ScrollView contentContainerStyle={styles.container}>
         
         <KeepAwake />
+        {this.renderEinsatzIndicator()}
         <Text style={styles.welcome}>
           Welcome to unboxing!
         </Text>
@@ -351,6 +364,14 @@ const styles = StyleSheet.create({
     margin: 20,
     padding: 20,
     backgroundColor: '#aaa',
+  },
+  einsatzIndicator: {
+    fontSize: 100,
+    position: 'absolute',
+    color: 'red',
+    width: '100%',
+    height: '100%',
+    backgroundColor:'rgba(255,0,0,0.5)',
   }
 
 });
