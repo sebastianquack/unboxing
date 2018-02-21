@@ -10,10 +10,13 @@ import {
   StyleSheet,
   Text,
   View,
+  ScrollView,
   TextInput,
   TouchableOpacity
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
+
+import Meteor, { createContainer, MeteorListView } from 'react-native-meteor';
 
 import Gesture from './Gesture';
 
@@ -66,7 +69,7 @@ function stopSounds() {
   })
 }
 
-export default class App extends Component<{}> {
+class App extends Component<{}> {
 
   constructor(props) {
     super(props);
@@ -223,6 +226,9 @@ export default class App extends Component<{}> {
   updateNTPServer() {
     console.log("updating ntp server to " + this.state.ntpInput);
     this.state.currentServer = this.state.ntpInput;
+
+    Meteor.disconnect();
+    Meteor.connect('ws://'+this.state.currentServer+':3002/websocket');
   }
 
   handleButtonPress(key) {
@@ -242,9 +248,17 @@ export default class App extends Component<{}> {
     return buttons;
   }
 
+  renderSampleButton(sample) {
+    return (
+      <Text>{sample.name}</Text>
+    );
+  }
+
   render() {
     return (
-      <View style={styles.container}>
+      
+      <ScrollView contentContainerStyle={styles.container}>
+        
         <KeepAwake />
         <Text style={styles.welcome}>
           Welcome to unboxing!
@@ -270,20 +284,36 @@ export default class App extends Component<{}> {
           </TouchableOpacity>
         </View>
         <Text>Tap the next sound to play:</Text>
+
+        <MeteorListView
+            collection="samples"
+            renderRow={this.renderSampleButton}
+          />
+        
         <View style={styles.buttons}>{this.renderButtons()}</View>
         <Text style={{marginBottom: 20}}>next sound: {this.state.nextSoundToStartPlaying}</Text>
         <Gesture onEinsatz={this.handleEinsatz}/>
-      </View>
+      
+      </ScrollView>
     );
   }
 }
 
+export default createContainer(params=>{
+  Meteor.subscribe('samples');
+  return {
+  
+  };
+}, App)
+
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+    padding: 20
   },
   welcome: {
     fontSize: 20,

@@ -29,7 +29,7 @@ react-native run-android
 - run `yarn install`
 - backup sound files or other assets in ios or android directories
 - remove ios and android directories
-- replace sound files or other assets in ios or android directories
 - run `react-native eject`
+- replace sound files or other assets in ios or android directories
 - run `react-native link`
 - react-clock-sync needs `react-native link react-native-udp`
