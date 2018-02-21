@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
 
-import Meteor, { createContainer, MeteorListView } from 'react-native-meteor';
+import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
 
 import Gesture from './Gesture';
 
@@ -244,12 +244,22 @@ class App extends Component<{}> {
       console.log("ignoring, you can only press play now once");
       return;
     }
-    this.nextSoundTargetTime = this.state.syncTime + 2000; // add time for message to traverse network
-    this.nextSoundToStartPlaying = this.state.selectedSound;
-    Meteor.call("action", {sample: this.state.selectedSound, targetTime: this.nextSoundTargetTime});
+    dict.set("testValue", dict.get("testValue") + 1);
+    let nextSoundTargetTime = this.state.syncTime + 2000; // add time for message to traverse network
+    this.doPlayNow(this.state.selectedSound, nextSoundTargetTime, true);
+  }
+
+  doPlayNow(sound, targetTime, broadcast) {
+    this.nextSoundToStartPlaying = sound;
+    this.nextSoundTargetTime = targetTime;
+    if(broadcast) {
+      Meteor.call("action", {sample: sound, targetTime: this.nextSoundTargetTime});  
+    }
   }
 
   render() {
+    const { testDictValue } = this.props;
+
     return (
       
       <ScrollView contentContainerStyle={styles.container}>
@@ -258,6 +268,7 @@ class App extends Component<{}> {
         <Text style={styles.welcome}>
           Welcome to unboxing!
         </Text>
+        <Text>testDictValue: {testDictValue}</Text>
         <Text>localTime: {this.state.localTime}</Text>
         <Text style={{marginTop: 20}}>NTP server: {this.state.currentServer}:123</Text>
         <TextInput
@@ -293,19 +304,29 @@ class App extends Component<{}> {
   }
 }
 
+var dict = new ReactiveDict('timeManager');
+dict.set("testValue", 0);
+
 export default createContainer(params=>{
   Meteor.subscribe('events.all', () => {
 
     console.log("setup added event");
     Meteor.ddp.on("added", message => {
       console.log(message);
+      if(message.fields.type == "button pressed") {
+        dict.set("testValue", dict.get("testValue") + 1);
+        /*if(!this.nextSoundToStartPlaying) {
+          console.log("received message to start playing from other device");
+          doPlayNow(message.fields.sample, message.fields.targetTime, false);
+        }*/
+      }
     });
   
   });
   
   
   return {
-  
+    testDictValue: dict.get("testValue")
   };
 }, App)
 
