@@ -13,7 +13,7 @@ class EventsInfo extends React.Component {
     const listItems = this.props.events.map( e => <li>{JSON.stringify(e)}</li>)
 
     return <div className="EventsInfo">
-    <h3>Events</h3>
+    <h3>Recent Events</h3>
       <ul>
       {listItems}
       </ul>
@@ -22,7 +22,7 @@ class EventsInfo extends React.Component {
 }
 
 export default withTracker(props => {
-  Meteor.subscribe('events.all')
+  Meteor.subscribe('events.all',{limit: 10})
   const events = Events.find().fetch()
 
   console.log(events)

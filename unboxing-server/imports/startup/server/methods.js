@@ -6,7 +6,8 @@ Meteor.methods({
   'action'(data) {
     console.log(data);
     Events.insert({
-    	type: "button pressed",
+      type: "button pressed",
+      received_at: Date.now(),
     	...data
     })
   },
