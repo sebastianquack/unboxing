@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, Switch } from 'react-native';
 import { Accelerometer, Gyroscope } from 'react-native-sensors';
+import {globalStyles} from '../config/globalStyles';
 
 class Gesture extends React.Component { 
   constructor(props) {
@@ -13,10 +14,13 @@ class Gesture extends React.Component {
     });        
     this.state = {
       acc:{x:0,y:0,z:0},
-      gyr:{x:0,y:0,z:0}
+      gyr:{x:0,y:0,z:0},
+      active: false,
     }
     this.receiveAccData = this.receiveAccData.bind(this)
     this.receiveGyrData = this.receiveGyrData.bind(this)
+    this.renderDebugInfo = this.renderDebugInfo.bind(this)
+    this.handleSwitch = this.handleSwitch.bind(this)
   }
 
   componentDidMount() {
@@ -42,7 +46,9 @@ class Gesture extends React.Component {
   }
 
   detectEinsatz(accPrev,acc) {
-    if (accPrev.z +15 < acc.z && accPrev.x>-1 && acc.x<5) {
+    if (!this.state.active) return;
+
+    if (accPrev.z +5 < acc.z && accPrev.x>-1 && acc.x<5) {
       console.log("Einsatz!")
       const callback = this.props.onEinsatz
       if (callback) callback()
@@ -54,7 +60,12 @@ class Gesture extends React.Component {
     this.gyroscopeObservable.stop();
   }
 
-  render() {
+  handleSwitch(value) {
+    console.log("gestures switched to: " + value);
+    this.setState({ active: value })
+  }
+
+  renderDebugInfo() {
     const acc = this.state.acc;
     const gyr = this.state.gyr;
 
@@ -66,6 +77,20 @@ class Gesture extends React.Component {
         <Text>gyr x: {gyr.x}</Text>
         <Text>gyr y: {gyr.y}</Text>
         <Text>gyr z: {gyr.z}</Text>
+      </View>
+    );    
+  }
+
+  render() {
+
+    return (
+      <View>
+        <Text style={globalStyles.titleText}>Gestures</Text>
+        <View style={{flexDirection:'row'}}>
+          <Switch value={this.state.active} onValueChange={this.handleSwitch} />
+          <Text>{this.state.active ? 'active' : 'off'}</Text>
+        </View>
+        {/*this.renderDebugInfo()*/}
       </View>
     );
   }
