@@ -11,4 +11,9 @@ Meteor.methods({
     	...data
     })
   },
+  'getTime'() {
+    const t = Date.now()
+    console.log(`sending time ${t} to client`)
+    return t;
+  }
 });
