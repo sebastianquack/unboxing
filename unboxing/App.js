@@ -24,6 +24,10 @@ import Files from './components/Files';
 import SoundManager from './helpers/SoundManager';
 var soundManager = new SoundManager();
 
+const uuidv4 = require('uuid/v4');
+const userUuid = uuidv4();
+var waitingForManualEinsatz = false;
+
 //import NtpClient from 'react-native-ntp-client';
 var NtpClient = require('react-native-ntp-client');
 
@@ -63,7 +67,6 @@ class App extends Component {
     this.getSyncTime = this.getSyncTime.bind(this);
     this.handlePlayNow = this.handlePlayNow.bind(this);
     this.handleEinsatz = this.handleEinsatz.bind(this);
-
   }
 
   getSyncTime() {
@@ -83,7 +86,7 @@ class App extends Component {
     }
     data.syncTimeLastValue = currentTime;
 
-    if(soundManager.playScheduled && currentTime > soundManager.nextSoundTargetTime) {
+    if(!waitingForManualEinsatz && soundManager.playScheduled && currentTime > soundManager.nextSoundTargetTime) {
       console.log("initiating playback loop");
       let nextSound = this.state.selectedSound; //soundManager.playScheduled;
       let targetStartTime = soundManager.nextSoundTargetTime + 200;
@@ -214,8 +217,17 @@ class App extends Component {
       return;
     }
     let nextSoundTargetTime = this.state.syncTime + 2000; // add time for message to traverse network
-    soundManager.scheduleNextSound(nextSoundTargetTime);
-    Meteor.call("action", {sample: this.state.selectedSound, targetTime: nextSoundTargetTime});
+
+    if(waitingForManualEinsatz) {
+      if(nextSoundTargetTime > soundManager.nextSoundTargetTime + 5000) {
+        alert("too late!");
+      }
+      waitingForManualEinsatz = false;
+    } else {
+      soundManager.scheduleNextSound(nextSoundTargetTime);
+      Meteor.call("action", {sample: this.state.selectedSound, targetTime: nextSoundTargetTime, userUuid: userUuid});  
+    }
+
     dict.set("testValue", dict.get("testValue") + 1);
   }
 
@@ -277,11 +289,27 @@ export default createContainer(params=>{
     console.log("setup added event");
     Meteor.ddp.on("added", message => {
       console.log(message);
+      // check if event originated from this user
+      if(message.fields.userUuid == userUuid) {
+        return;
+      }
+
+      // event originated from someone else
       if(message.fields.type == "button pressed") {
         dict.set("testValue", dict.get("testValue") + 1);
+
         if(!soundManager.playScheduled) {
           console.log("received message to start playing from other device");
           //soundManager.scheduleNextSound(message.fields.targetTime);
+
+          waitingForManualEinsatz = true;
+          setTimeout(()=>{
+            if(waitingForManualEinsatz) {
+              alert("resetting challenge");
+              waitingForManualEinsatz = false;
+            }
+          }, 10000);
+
         }
       }
     });
