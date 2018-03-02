@@ -19,6 +19,7 @@ import KeepAwake from 'react-native-keep-awake';
 import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
 
 import Gesture from './components/Gesture';
+import Files from './components/Files';
 
 import SoundManager from './helpers/SoundManager';
 var soundManager = new SoundManager();
@@ -26,7 +27,7 @@ var soundManager = new SoundManager();
 //import NtpClient from 'react-native-ntp-client';
 var NtpClient = require('react-native-ntp-client');
 
-class App extends Component<{}> {
+class App extends Component {
 
   constructor(props) {
     super(props);
@@ -40,8 +41,8 @@ class App extends Component<{}> {
       delta: 0,
       counter: 0,
       stats: {},
-      currentServer: "192.168.1.77",
-      ntpInput: "192.168.1.77",
+      currentServer: "192.168.1.131",
+      ntpInput: "192.168.1.131",
       displayEinsatzIndicator: false
     };
     this.timeSettings = {
@@ -274,6 +275,8 @@ class App extends Component<{}> {
         </TouchableOpacity>
 
         <Gesture onEinsatz={this.handleEinsatz}/>
+        <Files />
+
       
       </ScrollView>
     );

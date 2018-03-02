@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
-
 import Files from '../collections/files';
 
 class FilesInfo extends React.Component {
@@ -9,15 +8,21 @@ class FilesInfo extends React.Component {
     super(props);
   }
 
+  handleReload(event) {
+    Meteor.call('updateFiles');
+  }
+
   render() {
     const listItems = this.props.files.map( e => <li>{JSON.stringify(e)}</li>)
 
-    return <div className="FilesInfo">
-    <h3>Files</h3>
-      <ul>
-      {listItems}
-      </ul>
-    </div>;
+    return (
+      <div className="FilesInfo">
+        <h3>Files <button onClick={this.handleReload}>Reload</button></h3>
+        <ul>
+        {listItems}
+        </ul>
+      </div>
+    );
   }
 }
 

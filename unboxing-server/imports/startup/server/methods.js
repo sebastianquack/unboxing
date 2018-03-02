@@ -1,6 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import Events from '../../collections/events';
+import { updateFiles } from '../../helper/server/files';
 
 Meteor.methods({
   'action'(data) {
@@ -13,7 +14,10 @@ Meteor.methods({
   },
   'getTime'() {
     const t = Date.now()
-    console.log(`sending time ${t} to client`)
+    //console.log(`sending time ${t} to client`)
     return t;
+  },
+  'updateFiles'() {
+    updateFiles();
   }
 });

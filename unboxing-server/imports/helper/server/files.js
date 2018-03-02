@@ -9,7 +9,7 @@ function readFiles(callback=false) {
 
   recursive(global.files_dir, function (err, files) {
     // filter files
-    const validFiles = files.filter((file) => (['.mp3'].indexOf(path.extname(file)) > -1))
+    const validFiles = files.filter((file) => (['.mp3','.wav','.aiff','.m4a','.MP3'].indexOf(path.extname(file)) > -1))
 
     // init
     let output = []
@@ -28,6 +28,7 @@ function readFiles(callback=false) {
       
       output.push({
         path: fs_relative_path,
+        name: p.base,
         size
       })
     }
