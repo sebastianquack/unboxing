@@ -85,7 +85,7 @@ class App extends Component {
 
     if(soundManager.nextSoundToStartPlaying && currentTime > soundManager.nextSoundTargetTime) {
       console.log("initiating playback loop");
-      let nextSound = soundManager.nextSoundToStartPlaying;
+      let nextSound = this.state.selectedSound; //soundManager.nextSoundToStartPlaying;
       let targetStartTime = soundManager.nextSoundTargetTime + 200;
 
       soundManager.scheduleNextSound(null, null);
