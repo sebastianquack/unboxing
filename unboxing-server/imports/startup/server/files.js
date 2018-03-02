@@ -1,57 +1,37 @@
-// TODO
-
 import fs from 'fs';
 import serveStatic from 'serve-static';
 import express from 'express';
 import { Meteor } from 'meteor/meteor';
-import { convertImages } from '../../helper/uploads';
-import Rooms from '../../collections/rooms';
+import { updateFiles } from '../../helper/server/files';
 
 // configure uploads directory using environment variable
-var_dir = process.env.RISIKOSCORES_VAR_DIR || process.env.PWD + '/var';
-uploads_dir = var_dir + "/uploads";
-cache_dir = var_dir + "/cache";
-console.log("uploads directory: " + uploads_dir)
-console.log("cache directory: " + cache_dir)
+files_dir = process.env.UNBOXING_files_dir || process.env.PWD + '/files';
+console.log("files directory: " + files_dir)
 
-// make paths global
-global.uploads_dir = uploads_dir
-global.cache_dir = cache_dir
+// configure path to access the files directory through http
+files_uri_path = '/files';
 
-// create uploads directory if it doesn't exist
-if (!fs.existsSync(uploads_dir)) {
-  console.log("creating uploads directory ")
-  fs.mkdirSync(uploads_dir);
-}
-
-// create cache directory if it doesn't exist
-if (!fs.existsSync(cache_dir)) {
-  console.log("creating cache directory ")
-  fs.mkdirSync(cache_dir);
+// create files directory if it doesn't exist
+if (!fs.existsSync(files_dir)) {
+  console.log("creating files directory ")
+  fs.mkdirSync(files_dir);
 }
 
 // create express server
 var app = express()
 
 // serve static files
-app.use('/uploads', serveStatic(cache_dir, { 'index': false })) // check cache dir first
-app.use('/uploads', serveStatic(uploads_dir, { 'index': false })) // then uploads
+app.use(files_uri_path, serveStatic(files_dir, { 'index': false }))
 
 // connect express to meteor app
 WebApp.connectHandlers.use(app);
 
 /* alternatively run on different port: app.listen(3002) */
 
-// listen to saves and regenerate missing
-Rooms.find().observeChanges({
-  changed(id, fields) {
-    console.log(`Room ${id} changed.`);
-    convertImages();
-  }
-})
+// make paths global
+global.files_dir = files_dir;
+global.files_uri_path = files_uri_path;
 
-// do initial conversions
-Meteor.setTimeout(() => {
-  console.log("Initially regenerating images");
-  convertImages();
-}, 5000);
+// read files
+console.log("Initially checking files");
+updateFiles();

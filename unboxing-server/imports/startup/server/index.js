@@ -7,4 +7,5 @@ import './methods';
 
 // startup
 import './fixtures';
+import './files';
 
