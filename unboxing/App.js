@@ -16,59 +16,15 @@ import {
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
 
-import Meteor, { createContainer, MeteorListView } from 'react-native-meteor';
+import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
 
-import Gesture from './Gesture';
+import Gesture from './components/Gesture';
 
-// Import the react-native-sound module
-import Sound from 'react-native-sound';
+import SoundManager from './helpers/SoundManager';
+var soundManager = new SoundManager();
 
 //import NtpClient from 'react-native-ntp-client';
 var NtpClient = require('react-native-ntp-client');
-
-// Enable playback in silence mode
-Sound.setCategory('Playback');
-
-// function to preload a soundfile
-function loadSound(filename) {
-  console.log("loading " + filename);
-  let s = new Sound(filename, Sound.MAIN_BUNDLE, (error) => {
-    if (error) {
-      console.log('failed to load sound ' + filename, error);
-      return;
-    }
-    // loaded successfully
-    console.log('succesfully loaded ' + filename + ' duration in seconds: ' + s.getDuration() + 'number of channels: ' + s.getNumberOfChannels());
-  });
-  return s;
-}
-
-var sounds = {};
-sounds.click = loadSound("click.mp3");
-sounds.piano = loadSound("mozart_piano.mp3");
-sounds.violin = loadSound("mozart_violin.mp3");
-sounds.cello = loadSound("mozart_cello.mp3");
-console.log(Object.keys(sounds));
-
-
-function playSound(soundObj) {
-  console.log("starting to play " + JSON.stringify(soundObj));
-  soundObj.play((success) => {
-    if (success) {
-      console.log('successfully finished playing');
-    } else {
-      console.log('playback failed due to audio decoding errors');
-      soundObj.reset();
-    }
-  });
-}
-
-function stopSounds() {
-  console.log("stopping all sounds");
-  Object.keys(sounds).forEach((key)=>{
-    sounds[key].stop();
-  })
-}
 
 class App extends Component<{}> {
 
@@ -78,8 +34,6 @@ class App extends Component<{}> {
      'Setting a timer'
     ];
     this.lastTick = 0;
-    this.nextSoundToStartPlaying = null;
-    this.nextSoundTargetTime = null;
     this.state = {
       localTime: 0,
       syncTime: 0,
@@ -128,13 +82,12 @@ class App extends Component<{}> {
     }
     data.syncTimeLastValue = currentTime;
 
+    if(soundManager.nextSoundToStartPlaying && currentTime > soundManager.nextSoundTargetTime) {
+      console.log("initiating playback loop");
+      let nextSound = soundManager.nextSoundToStartPlaying;
+      let targetStartTime = soundManager.nextSoundTargetTime + 200;
 
-    if(this.nextSoundToStartPlaying && currentTime > this.nextSoundTargetTime) {
-      let nextSound = this.nextSoundToStartPlaying;
-      this.nextSoundToStartPlaying = null;
-      
-      let targetStartTime = this.nextSoundTargetTime + 200;
-
+      soundManager.scheduleNextSound(null, null);
       let counter = 0;
       let now = null;
       do {
@@ -146,8 +99,7 @@ class App extends Component<{}> {
       } while(now < targetStartTime && (now - currentTime < 400));
       console.log("leaving loop after " + counter + " cycles at " + now);
 
-      playSound(sounds[nextSound]);
-
+      soundManager.playSound(nextSound);
     }
     
   }
@@ -224,17 +176,21 @@ class App extends Component<{}> {
     this.state.currentServer = this.state.ntpInput;
 
     Meteor.disconnect();
-    Meteor.connect('ws://'+this.state.currentServer+':3002/websocket');
+    Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');
   }
 
   handleSelectButtonPress(key) {
     console.log("button pressed: " + key);
-    stopSounds();
+    soundManager.stopSounds();
     this.setState({selectedSound: key});
   }
 
   renderSelectButtons() {
-    let buttons = Object.keys(sounds).map((key)=>
+    let keys = [];
+    if(soundManager) {
+      keys = soundManager.getKeys();
+    }
+    let buttons = keys.map((key)=>
       <TouchableOpacity
         style={styles.button}
         key={"button" + key}
@@ -252,16 +208,19 @@ class App extends Component<{}> {
   }
 
   handlePlayNow() {
-    if(this.nextSoundToStartPlaying) {
+    if(soundManager.nextSoundToStartPlaying) {
       console.log("ignoring, you can only press play now once");
       return;
     }
-    this.nextSoundTargetTime = this.state.syncTime + 2000; // add time for message to traverse network
-    this.nextSoundToStartPlaying = this.state.selectedSound;
-    Meteor.call("action", {sample: this.state.selectedSound, targetTime: this.nextSoundTargetTime});
+    let nextSoundTargetTime = this.state.syncTime + 2000; // add time for message to traverse network
+    soundManager.scheduleNextSound(this.state.selectedSound, nextSoundTargetTime);
+    Meteor.call("action", {sample: this.state.selectedSound, targetTime: nextSoundTargetTime});
+    dict.set("testValue", dict.get("testValue") + 1);
   }
 
   render() {
+    const { testDictValue } = this.props;
+
     return (
       
       <ScrollView contentContainerStyle={styles.container}>
@@ -271,6 +230,7 @@ class App extends Component<{}> {
         <Text style={styles.welcome}>
           Welcome to unboxing!
         </Text>
+        <Text>testDictValue: {testDictValue}</Text>
         <Text>localTime: {this.state.localTime}</Text>
         <Text style={{marginTop: 20}}>NTP server: {this.state.currentServer}:123</Text>
         <TextInput
@@ -306,19 +266,28 @@ class App extends Component<{}> {
   }
 }
 
+var dict = new ReactiveDict('timeManager');
+dict.set("testValue", 0);
+
 export default createContainer(params=>{
   Meteor.subscribe('events.all', () => {
 
     console.log("setup added event");
     Meteor.ddp.on("added", message => {
       console.log(message);
+      if(message.fields.type == "button pressed") {
+        dict.set("testValue", dict.get("testValue") + 1);
+        if(!soundManager.nextSoundToStartPlaying) {
+          console.log("received message to start playing from other device");
+          soundManager.scheduleNextSound(message.fields.sample, message.fields.targetTime);
+        }
+      }
     });
   
   });
   
-  
   return {
-  
+    testDictValue: dict.get("testValue")
   };
 }, App)
 
