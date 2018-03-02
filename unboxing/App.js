@@ -176,7 +176,7 @@ class App extends Component<{}> {
     this.state.currentServer = this.state.ntpInput;
 
     Meteor.disconnect();
-    Meteor.connect('ws://'+this.state.currentServer+':3002/websocket');
+    Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');
   }
 
   handleSelectButtonPress(key) {
