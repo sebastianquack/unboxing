@@ -22,7 +22,6 @@ class Files extends React.Component {
 
   handleSelectButtonPress(file) {
     this.setState({selectedFile: file})
-    this.props.onSelectSound(file.path);
   }
 
   renderItem(file) {

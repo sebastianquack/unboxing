@@ -83,12 +83,12 @@ class App extends Component {
     }
     data.syncTimeLastValue = currentTime;
 
-    if(soundManager.nextSoundToStartPlaying && currentTime > soundManager.nextSoundTargetTime) {
+    if(soundManager.playScheduled && currentTime > soundManager.nextSoundTargetTime) {
       console.log("initiating playback loop");
-      let nextSound = this.state.selectedSound; //soundManager.nextSoundToStartPlaying;
+      let nextSound = this.state.selectedSound; //soundManager.playScheduled;
       let targetStartTime = soundManager.nextSoundTargetTime + 200;
 
-      soundManager.scheduleNextSound(null, null);
+      soundManager.scheduleNextSound(null);
       let counter = 0;
       let now = null;
       do {
@@ -100,7 +100,7 @@ class App extends Component {
       } while(now < targetStartTime && (now - currentTime < 400));
       console.log("leaving loop after " + counter + " cycles at " + now);
 
-      soundManager.playSound(nextSound);
+      soundManager.playSound();
     }
     
   }
@@ -194,25 +194,11 @@ class App extends Component {
     Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');
   }
 
-  handleSelectButtonPress(key) {
-    console.log("button pressed: " + key);
-    soundManager.stopSounds();
-    this.setState({selectedSound: key});
-  }
-
-  renderSelectButtons() {
-    let keys = [];
-    if(soundManager) {
-      keys = soundManager.getKeys();
-    }
-    let buttons = keys.map((key)=>
-      <TouchableOpacity
-        style={styles.button}
-        key={"button" + key}
-        onPress={()=>{this.handleSelectButtonPress(key);}}
-      ><Text>{key}</Text></TouchableOpacity>
-    );
-    return buttons;
+  handleSelectButtonPress(filename) {
+    console.log("sound selected: " + filename);
+    soundManager.stopSound();
+    soundManager.loadSound(filename);
+    this.setState({selectedSound: filename});
   }
 
   renderEinsatzIndicator() {
@@ -223,12 +209,12 @@ class App extends Component {
   }
 
   handlePlayNow() {
-    if(soundManager.nextSoundToStartPlaying) {
+    if(soundManager.playScheduled) {
       console.log("ignoring, you can only press play now once");
       return;
     }
     let nextSoundTargetTime = this.state.syncTime + 2000; // add time for message to traverse network
-    soundManager.scheduleNextSound(this.state.selectedSound, nextSoundTargetTime);
+    soundManager.scheduleNextSound(nextSoundTargetTime);
     Meteor.call("action", {sample: this.state.selectedSound, targetTime: nextSoundTargetTime});
     dict.set("testValue", dict.get("testValue") + 1);
   }
@@ -267,7 +253,6 @@ class App extends Component {
           </TouchableOpacity>
         </View>
         <Text>Tap the next sound to play:</Text>
-        <View style={styles.buttons}>{this.renderSelectButtons()}</View>
         <Text style={{marginBottom: 20}}>next sound: {this.state.selectedSound}</Text>
         
         <TouchableOpacity style={styles.button} onPress={this.handlePlayNow}>
@@ -275,7 +260,7 @@ class App extends Component {
         </TouchableOpacity>
 
         <Gesture onEinsatz={this.handleEinsatz}/>
-        <Files />
+        <Files onSelectSound={this.handleSelectButtonPress} />
 
       
       </ScrollView>
@@ -294,9 +279,9 @@ export default createContainer(params=>{
       console.log(message);
       if(message.fields.type == "button pressed") {
         dict.set("testValue", dict.get("testValue") + 1);
-        if(!soundManager.nextSoundToStartPlaying) {
+        if(!soundManager.playScheduled) {
           console.log("received message to start playing from other device");
-          soundManager.scheduleNextSound(message.fields.sample, message.fields.targetTime);
+          //soundManager.scheduleNextSound(message.fields.targetTime);
         }
       }
     });

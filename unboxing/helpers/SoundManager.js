@@ -4,23 +4,29 @@ import Sound from 'react-native-sound';
 // Enable playback in silence mode
 Sound.setCategory('Playback');
 
+const pathPrefix = '/sdcard/unboxing';
+
 export default class SoundManager {
 
   constructor() {
-    this.sounds = {};
-    this.sounds.click = this.loadSound("click.mp3");
-    this.sounds.piano = this.loadSound("mozart_piano.mp3");
-    this.sounds.violin = this.loadSound("mozart_violin.mp3");
-    this.sounds.cello = this.loadSound("mozart_cello.mp3");
-    console.log(Object.keys(this.sounds));
-
-    this._nextSoundToStartPlaying = null;
+    this.sound = null;
+    this.filename = null;
+    this._playScheduled = null;
     this._nextSoundTargetTime = null;
   }
 
   // preload a soundfile
   loadSound(filename) {
+    if (!filename) {
+      console.log("no file to load!")
+      return;
+    }
+    if (filename.substr(0,1) == "/") {
+      filename = filename.substr(1);
+    }
+    filename = pathPrefix + '/' + filename;
     console.log("loading " + filename);
+
     let s = new Sound(filename, Sound.MAIN_BUNDLE, (error) => {
       if (error) {
         console.log('failed to load sound ' + filename, error);
@@ -29,16 +35,12 @@ export default class SoundManager {
       // loaded successfully
       console.log('succesfully loaded ' + filename + ' duration in seconds: ' + s.getDuration() + 'number of channels: ' + s.getNumberOfChannels());
     });
-    return s;
+    this.filename = filename;
+    this.sound = s;
   }
 
-  getKeys() {
-    let keys = Object.keys(this.sounds);
-    return keys;  
-  }
-
-  playSound(key) {
-    let soundObj = this.sounds[key];
+  playSound() {
+    let soundObj = this.sound;
     console.log("starting to play " + JSON.stringify(soundObj));
     soundObj.play((success) => {
       if (success) {
@@ -50,25 +52,23 @@ export default class SoundManager {
     });
   }
 
-  scheduleNextSound(sound, targetTime) {
-    this._nextSoundToStartPlaying = sound;
+  scheduleNextSound(targetTime) {
+    this._playScheduled = (targetTime === null ? false : true);
     this._nextSoundTargetTime = targetTime;
-    console.log("scheduled sound " + this._nextSoundToStartPlaying + " for " + this._nextSoundTargetTime);
+    console.log("scheduled sound " + this.filename + " for " + this._nextSoundTargetTime);
   }
 
-  get nextSoundToStartPlaying() {
-    return this._nextSoundToStartPlaying;
+  get playScheduled() {
+    return this._playScheduled;
   }
 
   get nextSoundTargetTime() {
     return this._nextSoundTargetTime;
   }
 
-  stopSounds() {
+  stopSound() {
     console.log("stopping all sounds");
-    Object.keys(this.sounds).forEach((key)=>{
-      this.sounds[key].stop();
-    })
+    if (this.sound) this.sound.stop();
   }
 
 }
