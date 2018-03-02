@@ -156,7 +156,7 @@ class App extends Component<{}> {
   handleSyncPress() {
     console.log("sync button pressed, calling server " + this.state.currentServer);
     
-    NtpClient.getNetworkTime(this.state.currentServer, 123, (err, date)=> {
+    /*NtpClient.getNetworkTime(this.state.currentServer, 123, (err, date)=> {
       if(err) {
           alert("error retrieving time from ntp server");
           console.log(err);
@@ -168,7 +168,21 @@ class App extends Component<{}> {
       this.setState({delta: tempServerTime - tempLocalTime});
 
       alert("Got back time from server " + this.state.ntpInput + ": " + tempServerTime);
+    });*/
+
+    Meteor.call("getTime", (err, time) => {
+      if(err) {
+          alert("error retrieving time from ntp server");
+          console.log(err);
+          return;
+      }
+      var tempServerTime = time;
+      var tempLocalTime = (new Date()).getTime();
+      this.setState({delta: tempServerTime - tempLocalTime});
+      alert("Got back time from server " + this.state.ntpInput + ": " + tempServerTime);
     });
+
+    
   }
 
   updateNTPServer() {
