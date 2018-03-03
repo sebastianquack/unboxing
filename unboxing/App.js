@@ -17,6 +17,8 @@ import {
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
 
+import {globalStyles} from './config/globalStyles';
+
 import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
 
 import Gesture from './components/Gesture';
@@ -29,6 +31,7 @@ const uuidv4 = require('uuid/v4');
 const userUuid = uuidv4();
 
 var waitingForManualEinsatz = false;
+var autoPlayFromRemote = false;
 
 function measureDelta(callback) {
   let sendTimeStamp = (new Date()).getTime();
@@ -92,7 +95,8 @@ class App extends Component {
       currentServer: "192.168.1.131",
       serverInput: "192.168.1.131",
       displayEinsatzIndicator: false,
-      testClick: false
+      testClick: false,
+      autoPlayFromRemote: false
     };
     this.timeSettings = {
       interval: 10
@@ -106,6 +110,7 @@ class App extends Component {
     this.handlePlayNow = this.handlePlayNow.bind(this);
     this.handleEinsatz = this.handleEinsatz.bind(this);
     this.handleTestClickSwitch = this.handleTestClickSwitch.bind(this);
+    this.handleAutoPlaySwitch = this.handleAutoPlaySwitch.bind(this);
   }
 
   getSyncTime() {
@@ -158,8 +163,10 @@ class App extends Component {
       soundManager.scheduleNextSound(nextSoundTargetTime);
       Meteor.call("action", {sample: this.state.selectedSound, targetTime: nextSoundTargetTime, userUuid: userUuid});  
     }
+  }
 
-    dict.set("testValue", dict.get("testValue") + 1);
+  handlePlayStop() {
+    soundManager.stopSound();
   }
 
   componentDidMount() {
@@ -199,6 +206,11 @@ class App extends Component {
     }
   }
 
+  handleAutoPlaySwitch(value) {
+   this.setState({ autoPlayFromRemote: value });
+   autoPlayFromRemote = value;
+  }
+
   updateServer() {
     console.log("updating server to " + this.state.serverInput);
     this.state.currentServer = this.state.serverInput;
@@ -230,7 +242,7 @@ class App extends Component {
         
         <KeepAwake />
         {this.renderEinsatzIndicator()}
-        <Text style={styles.welcome}>
+        <Text style={globalStyles.titleText}>
           Unboxing
         </Text>
         <Text style={{marginTop: 20}}>Server: {this.state.currentServer}</Text>
@@ -247,32 +259,43 @@ class App extends Component {
           <TouchableOpacity style={styles.button} onPress={this.handleSyncPress}>
             <Text>Sync Time</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={()=>this.correctSync(1)}>
-            <Text>+1</Text>
+          <TouchableOpacity style={styles.button} onPress={()=>this.correctSync(5)}>
+            <Text>+5</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={()=>this.correctSync(-1)}>
-            <Text>-1</Text>
+          <TouchableOpacity style={styles.button} onPress={()=>this.correctSync(-5)}>
+            <Text>-5</Text>
           </TouchableOpacity>
-          <Text>Test Click</Text>
-          <Switch value={this.state.testClick} onValueChange={this.handleTestClickSwitch}/>
+          <View>
+            <Text>Test Click</Text>
+            <Switch value={this.state.testClick} onValueChange={this.handleTestClickSwitch}/>
+          </View>
         </View>
-        <Text>Tap the next sound to play:</Text>
-        <Text style={{marginBottom: 20}}>next sound: {this.state.selectedSound}</Text>
+        <Text style={globalStyles.titleText}>Next sound: {this.state.selectedSound}</Text>
         
-        <TouchableOpacity style={styles.button} onPress={this.handlePlayNow}>
-            <Text>Play Now!</Text>
-        </TouchableOpacity>
+        <View style={styles.buttons}>
+          <TouchableOpacity style={styles.bigButton} onPress={this.handlePlayNow}>
+              <Text>Play Now!</Text>
+          </TouchableOpacity>
 
-        <Gesture onEinsatz={this.handleEinsatz}/>
+          <TouchableOpacity style={styles.bigButton} onPress={this.handlePlayStop}>
+              <Text>Stop</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.buttons}>
+          <View style={styles.control}>
+            <Text style={globalStyles.titleText}>Auto Play</Text>
+            <Switch value={this.state.autoPlayFromRemote} onValueChange={this.handleAutoPlaySwitch}/>
+          </View>
+          <Gesture onEinsatz={this.handleEinsatz}/>
+        </View>
+
         <Files onSelectSound={this.handleSelectButtonPress} />
       
       </ScrollView>
     );
   }
 }
-
-var dict = new ReactiveDict('timeManager');
-dict.set("testValue", 0);
 
 export default createContainer(params=>{
   Meteor.subscribe('events.all', () => {
@@ -287,12 +310,15 @@ export default createContainer(params=>{
 
       // event originated from someone else
       if(message.fields.type == "button pressed") {
-        dict.set("testValue", dict.get("testValue") + 1);
-
+        
         if(!soundManager.playScheduled) {
           console.log("received message to start playing from other device");
-          //soundManager.scheduleNextSound(message.fields.targetTime);
 
+          if(autoPlayFromRemote) {
+            soundManager.scheduleNextSound(message.fields.targetTime);
+          }
+          
+          /*
           waitingForManualEinsatz = true;
           setTimeout(()=>{
             if(waitingForManualEinsatz) {
@@ -300,6 +326,7 @@ export default createContainer(params=>{
               waitingForManualEinsatz = false;
             }
           }, 10000);
+          */
 
         }
       }
@@ -308,7 +335,6 @@ export default createContainer(params=>{
   });
   
   return {
-    testDictValue: dict.get("testValue")
   };
 }, App)
 
@@ -329,9 +355,21 @@ const styles = StyleSheet.create({
   buttons: {
     flexDirection: 'row',
   },
+  control: {
+    marginRight: 20,
+    marginBottom: 20
+  },
   button: {
     margin: 20,
     padding: 20,
+    backgroundColor: '#aaa',
+  },
+  bigButton: {
+    margin: 20,
+    paddingTop: 40,
+    paddingBottom: 40,
+    paddingLeft: 80,
+    paddingRight: 80,
     backgroundColor: '#aaa',
   },
   einsatzIndicator: {
