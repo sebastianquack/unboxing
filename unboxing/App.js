@@ -26,10 +26,58 @@ var soundManager = new SoundManager();
 
 const uuidv4 = require('uuid/v4');
 const userUuid = uuidv4();
+
 var waitingForManualEinsatz = false;
 
-//import NtpClient from 'react-native-ntp-client';
-var NtpClient = require('react-native-ntp-client');
+function measureDelta(callback) {
+  let sendTimeStamp = (new Date()).getTime();
+  Meteor.call("getTime", (err, serverTime) => {
+    if(err) {
+        alert("error retrieving time from server");
+        console.log(err);
+        return;
+    }
+    let receiveTimeStamp = (new Date()).getTime();
+    let latency = (receiveTimeStamp - sendTimeStamp) / 2.0;
+    let delta = receiveTimeStamp - (serverTime + latency);
+    callback({latency: latency, delta: delta});
+  });
+}
+
+function avgTimeDeltas(callback) {
+  let deltas = [];
+  let timeout = 1000;
+  let num = 10;
+
+  // send num requests to server, save deltas
+  console.log("starting measurement of time deltas");
+  for(let i = 0; i < num; i++) {
+    
+    setTimeout(()=>{
+      measureDelta((delta)=>{
+        deltas.push(delta)
+        if(i == num - 1) {
+          console.log("measurement complete");
+          console.log(JSON.stringify(deltas));
+          console.log("sorting by latency");
+          deltas.sort(function(a, b){return a.latency - b.latency});
+          console.log(JSON.stringify(deltas));
+          console.log("calculating average delta for fastest half of reponses:");
+          let sum = 0;
+          let counter = 0;
+          for(let j = 0; j < deltas.length / 2.0; j++) {
+            sum += deltas[j].delta;
+            counter++;
+          }
+          let avg = sum / counter;
+          console.log("result: " + avg);
+          callback(avg);
+        }
+      });  
+    }, i * timeout); 
+  
+  }  
+}
 
 class App extends Component {
 
@@ -38,31 +86,18 @@ class App extends Component {
     console.ignoredYellowBox = [
      'Setting a timer'
     ];
-    this.lastTick = 0;
     this.state = {
-      localTime: 0,
-      syncTime: 0,
       delta: 0,
-      counter: 0,
-      stats: {},
       currentServer: "192.168.1.131",
-      ntpInput: "192.168.1.131",
+      serverInput: "192.168.1.131",
       displayEinsatzIndicator: false
     };
     this.timeSettings = {
-      sampling: true,
-      sampleAmount: 100,
-      interval: 10,
-    }
-    this.timeStatsData = {
-      syncTimeValues: [],
-      syncTimeIndex: 0,
-      syncTimeLastValue: 0,
-    }
+      interval: 10
+    };
     this.updateTicker = this.updateTicker.bind(this);
-    this.calculateTickerStatistics = this.calculateTickerStatistics.bind(this);
     this.handleSelectButtonPress = this.handleSelectButtonPress.bind(this);
-    this.updateNTPServer = this.updateNTPServer.bind(this);
+    this.updateServer = this.updateServer.bind(this);
     this.handleSyncPress = this.handleSyncPress.bind(this);
     this.getSyncTime = this.getSyncTime.bind(this);
     this.handlePlayNow = this.handlePlayNow.bind(this);
@@ -76,15 +111,6 @@ class App extends Component {
   // this is called very often - every 10ms
   updateTicker() {
     const currentTime = this.getSyncTime(); // get the synchronized time
-
-    // do statistics
-    let data = this.timeStatsData;
-    data.syncTimeValues[data.syncTimeIndex] = currentTime - data.syncTimeLastValue;
-    data.syncTimeIndex++;
-    if (data.syncTimeIndex >= this.timeSettings.sampleAmount) {
-      data.syncTimeIndex = 0;
-    }
-    data.syncTimeLastValue = currentTime;
 
     if(!waitingForManualEinsatz && soundManager.playScheduled && currentTime > soundManager.nextSoundTargetTime) {
       console.log("initiating playback loop");
@@ -108,44 +134,10 @@ class App extends Component {
     
   }
 
-  calculateTickerStatistics() {
-    const data = this.timeStatsData;
-    const amount = this.timeSettings.sampleAmount;
-    let sum = 0;
-    for (let x of data.syncTimeValues) {
-      sum += x;
-    }
-    const avg = sum / amount
-    let varsum = 0;
-    for (let x of data.syncTimeValues) {
-      varsum += Math.abs(avg-x);
-    }
-    const varianz = varsum / amount;
-    this.setState({stats: {
-      avg: Math.round(avg*10)/10,
-      varianz: Math.round(varianz*10)/10
-    }});
-  }
-
   componentDidMount() {
     console.log("componentDidMount");
-
     setInterval(this.updateTicker, this.timeSettings.interval);
-
-    setInterval(this.calculateTickerStatistics, this.timeSettings.interval * this.timeSettings.sampleAmount);
-
-    setInterval(()=> {
-      const localTime = new Date().getTime();
-      const syncTime = this.getSyncTime();
-      
-      this.setState({
-        localTime, syncTime
-      })
-
-    }, 100);
-
-    this.updateNTPServer();
-
+    this.updateServer();
   }
 
   handleEinsatz() {
@@ -160,38 +152,16 @@ class App extends Component {
   handleSyncPress() {
     console.log("sync button pressed, calling server " + this.state.currentServer);
     
-    /*NtpClient.getNetworkTime(this.state.currentServer, 123, (err, date)=> {
-      if(err) {
-          alert("error retrieving time from ntp server");
-          console.log(err);
-          return;
-      }
- 
-      var tempServerTime = date.getTime();
-      var tempLocalTime = (new Date()).getTime();
-      this.setState({delta: tempServerTime - tempLocalTime});
-
-      alert("Got back time from server " + this.state.ntpInput + ": " + tempServerTime);
-    });*/
-
-    Meteor.call("getTime", (err, time) => {
-      if(err) {
-          alert("error retrieving time from ntp server");
-          console.log(err);
-          return;
-      }
-      var tempServerTime = time;
-      var tempLocalTime = (new Date()).getTime();
-      this.setState({delta: tempServerTime - tempLocalTime});
-      alert("Got back time from server " + this.state.ntpInput + ": " + tempServerTime);
+    avgTimeDeltas((delta)=>{
+      this.setState({delta: delta});
+      alert("Time sync completed");
     });
 
-    
   }
 
-  updateNTPServer() {
-    console.log("updating server to " + this.state.ntpInput);
-    this.state.currentServer = this.state.ntpInput;
+  updateServer() {
+    console.log("updating server to " + this.state.serverInput);
+    this.state.currentServer = this.state.serverInput;
 
     Meteor.disconnect();
     Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');
@@ -216,7 +186,7 @@ class App extends Component {
       console.log("ignoring, you can only press play now once");
       return;
     }
-    let nextSoundTargetTime = this.state.syncTime + 2000; // add time for message to traverse network
+    let nextSoundTargetTime = this.getSyncTime() + 2000; // add time for message to traverse network
 
     if(waitingForManualEinsatz) {
       if(nextSoundTargetTime > soundManager.nextSoundTargetTime + 5000) {
@@ -241,23 +211,17 @@ class App extends Component {
         <KeepAwake />
         {this.renderEinsatzIndicator()}
         <Text style={styles.welcome}>
-          Welcome to unboxing!
+          Unboxing
         </Text>
-        <Text>testDictValue: {testDictValue}</Text>
-        <Text>localTime: {this.state.localTime}</Text>
-        <Text style={{marginTop: 20}}>NTP server: {this.state.currentServer}:123</Text>
+        <Text style={{marginTop: 20}}>Server: {this.state.currentServer}</Text>
         <TextInput
           underlineColorAndroid='transparent'
           style={{width: 150, height: 40, borderColor: 'gray', borderWidth: 1}}
-          value={this.state.ntpInput}
-          onChangeText={(text) => this.setState({ntpInput: text})}
-          onSubmitEditing={this.updateNTPServer}
+          value={this.state.serverInput}
+          onChangeText={(text) => this.setState({serverInput: text})}
+          onSubmitEditing={this.updateServer}
         />
-
-        <Text>syncTime: {this.state.syncTime}</Text>
-        <Text>delta to localTime: {this.state.delta}</Text>
-        <Text>counter: {this.state.counter} ({this.state.lastTickTime})</Text>
-        <Text>Interval: {this.timeSettings.interval} ({this.state.stats.avg}±{this.state.stats.varianz/2})</Text>
+        <Text>Time delta: {this.state.delta}</Text>
         
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.button} onPress={this.handleSyncPress}>
@@ -273,7 +237,6 @@ class App extends Component {
 
         <Gesture onEinsatz={this.handleEinsatz}/>
         <Files onSelectSound={this.handleSelectButtonPress} />
-
       
       </ScrollView>
     );
