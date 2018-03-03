@@ -114,7 +114,7 @@ class App extends Component {
   }
 
   getSyncTime() {
-    return new Date().getTime() + this.state.delta;
+    return new Date().getTime() - this.state.delta;
   }
 
   // this is called very often - every 10ms
