@@ -40,6 +40,10 @@ export default class SoundManager {
   }
 
   playSound() {
+    if(!this.sound) {
+      console.log("no sound selected");
+      return;
+    }
     let soundObj = this.sound;
     console.log("starting to play " + JSON.stringify(soundObj));
     soundObj.play((success) => {

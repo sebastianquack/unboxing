@@ -12,7 +12,8 @@ import {
   View,
   ScrollView,
   TextInput,
-  TouchableOpacity
+  TouchableOpacity,
+  Switch
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
 
@@ -90,7 +91,8 @@ class App extends Component {
       delta: 0,
       currentServer: "192.168.1.131",
       serverInput: "192.168.1.131",
-      displayEinsatzIndicator: false
+      displayEinsatzIndicator: false,
+      testClick: false
     };
     this.timeSettings = {
       interval: 10
@@ -99,9 +101,11 @@ class App extends Component {
     this.handleSelectButtonPress = this.handleSelectButtonPress.bind(this);
     this.updateServer = this.updateServer.bind(this);
     this.handleSyncPress = this.handleSyncPress.bind(this);
+    this.correctSync = this.correctSync.bind(this);
     this.getSyncTime = this.getSyncTime.bind(this);
     this.handlePlayNow = this.handlePlayNow.bind(this);
     this.handleEinsatz = this.handleEinsatz.bind(this);
+    this.handleTestClickSwitch = this.handleTestClickSwitch.bind(this);
   }
 
   getSyncTime() {
@@ -112,7 +116,7 @@ class App extends Component {
   updateTicker() {
     const currentTime = this.getSyncTime(); // get the synchronized time
 
-    if(!waitingForManualEinsatz && soundManager.playScheduled && currentTime > soundManager.nextSoundTargetTime) {
+    if(soundManager.playScheduled && currentTime > soundManager.nextSoundTargetTime) {
       console.log("initiating playback loop");
       let nextSound = this.state.selectedSound; //soundManager.playScheduled;
       let targetStartTime = soundManager.nextSoundTargetTime + 200;
@@ -130,8 +134,32 @@ class App extends Component {
       console.log("leaving loop after " + counter + " cycles at " + now);
 
       soundManager.playSound();
+      // schedule next click
+      if(this.state.testClick) {
+        soundManager.scheduleNextSound(Math.ceil(this.getSyncTime()/1000)*1000);  
+      }
     }
     
+  }
+
+  handlePlayNow() {
+    if(soundManager.playScheduled) {
+      console.log("ignoring, you can only press play now once");
+      return;
+    }
+    let nextSoundTargetTime = this.getSyncTime() + 2000; // add time for message to traverse network
+
+    if(waitingForManualEinsatz) {
+      if(nextSoundTargetTime > soundManager.nextSoundTargetTime + 5000) {
+        alert("too late!");
+      }
+      waitingForManualEinsatz = false;
+    } else {
+      soundManager.scheduleNextSound(nextSoundTargetTime);
+      Meteor.call("action", {sample: this.state.selectedSound, targetTime: nextSoundTargetTime, userUuid: userUuid});  
+    }
+
+    dict.set("testValue", dict.get("testValue") + 1);
   }
 
   componentDidMount() {
@@ -151,12 +179,24 @@ class App extends Component {
   
   handleSyncPress() {
     console.log("sync button pressed, calling server " + this.state.currentServer);
-    
     avgTimeDeltas((delta)=>{
       this.setState({delta: delta});
       alert("Time sync completed");
     });
+  }
 
+  correctSync(d) {
+    this.setState({delta: this.state.delta + d});
+  }
+
+  handleTestClickSwitch(value) {
+    this.setState({ testClick: value })
+    if(value) {
+      // schedule click to the next second
+      soundManager.scheduleNextSound(Math.ceil(this.getSyncTime()/1000)*1000);
+    } else {
+      soundManager.scheduleNextSound(null);
+    }
   }
 
   updateServer() {
@@ -179,26 +219,6 @@ class App extends Component {
     return (<Text style={styles.einsatzIndicator}>
       Einsatz!
     </Text>)
-  }
-
-  handlePlayNow() {
-    if(soundManager.playScheduled) {
-      console.log("ignoring, you can only press play now once");
-      return;
-    }
-    let nextSoundTargetTime = this.getSyncTime() + 2000; // add time for message to traverse network
-
-    if(waitingForManualEinsatz) {
-      if(nextSoundTargetTime > soundManager.nextSoundTargetTime + 5000) {
-        alert("too late!");
-      }
-      waitingForManualEinsatz = false;
-    } else {
-      soundManager.scheduleNextSound(nextSoundTargetTime);
-      Meteor.call("action", {sample: this.state.selectedSound, targetTime: nextSoundTargetTime, userUuid: userUuid});  
-    }
-
-    dict.set("testValue", dict.get("testValue") + 1);
   }
 
   render() {
@@ -227,6 +247,14 @@ class App extends Component {
           <TouchableOpacity style={styles.button} onPress={this.handleSyncPress}>
             <Text>Sync Time</Text>
           </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={()=>this.correctSync(1)}>
+            <Text>+1</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.button} onPress={()=>this.correctSync(-1)}>
+            <Text>-1</Text>
+          </TouchableOpacity>
+          <Text>Test Click</Text>
+          <Switch value={this.state.testClick} onValueChange={this.handleTestClickSwitch}/>
         </View>
         <Text>Tap the next sound to play:</Text>
         <Text style={{marginBottom: 20}}>next sound: {this.state.selectedSound}</Text>
