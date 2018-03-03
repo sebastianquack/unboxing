@@ -96,7 +96,8 @@ class App extends Component {
       serverInput: "192.168.1.131",
       displayEinsatzIndicator: false,
       testClick: false,
-      autoPlayFromRemote: false
+      autoPlayFromRemote: false,
+      challengeMode: false
     };
     this.timeSettings = {
       interval: 10
@@ -111,6 +112,7 @@ class App extends Component {
     this.handleEinsatz = this.handleEinsatz.bind(this);
     this.handleTestClickSwitch = this.handleTestClickSwitch.bind(this);
     this.handleAutoPlaySwitch = this.handleAutoPlaySwitch.bind(this);
+    this.handleChallengeModeSwitch = this.handleChallengeModeSwitch.bind(this);
   }
 
   getSyncTime() {
@@ -211,6 +213,11 @@ class App extends Component {
    autoPlayFromRemote = value;
   }
 
+  handleChallengeModeSwitch(value) {
+    this.setState({ challengeMode: value });
+    Meteor.call("registerToChallenge", userUuid, value);
+  }
+
   updateServer() {
     console.log("updating server to " + this.state.serverInput);
     this.state.currentServer = this.state.serverInput;
@@ -288,6 +295,11 @@ class App extends Component {
             <Switch value={this.state.autoPlayFromRemote} onValueChange={this.handleAutoPlaySwitch}/>
           </View>
           <Gesture onEinsatz={this.handleEinsatz}/>
+          <View style={styles.control}>
+            <Text style={globalStyles.titleText}>Challenge</Text>
+            <Switch value={this.state.challengeMode} onValueChange={this.handleChallengeModeSwitch}/>
+            <Text>active players: {this.props.challenge ? this.props.challenge.uuids.length : "undefined"}</Text>
+          </View>
         </View>
 
         <Files onSelectSound={this.handleSelectButtonPress} />
@@ -331,10 +343,15 @@ export default createContainer(params=>{
         }
       }
     });
-  
+
   });
+
+  Meteor.subscribe('challenges.latest');
+  let challenge = Meteor.collection('challenges').findOne();
+  console.log(challenge);
   
   return {
+    challenge: challenge
   };
 }, App)
 
@@ -357,6 +374,7 @@ const styles = StyleSheet.create({
   },
   control: {
     marginRight: 20,
+    marginLeft: 20,
     marginBottom: 20
   },
   button: {
