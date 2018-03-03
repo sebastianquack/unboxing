@@ -30,8 +30,8 @@ var soundManager = new SoundManager();
 const uuidv4 = require('uuid/v4');
 const userUuid = uuidv4();
 
-var waitingForManualEinsatz = false;
 var autoPlayFromRemote = false;
+var myChallengeStatus = "idle";
 
 function measureDelta(callback) {
   let sendTimeStamp = (new Date()).getTime();
@@ -123,6 +123,28 @@ class App extends Component {
   updateTicker() {
     const currentTime = this.getSyncTime(); // get the synchronized time
 
+    if(myChallengeStatus == "attempted" && !soundManager.playScheduled) {
+      if(this.props.challenge) {
+        
+        if(this.props.challenge.status == "failed") {
+          alert("challenge failed!");
+          myChallengeStatus = "idle";
+        }
+
+        // check if challenge is complete
+        if(this.props.challenge.status == "complete") {
+          if(currentTime < this.props.challenge.targetTime) {
+            // schedule sound if still time && in challenge mode
+            if(this.state.challengeMode) {
+              soundManager.scheduleNextSound(this.props.challenge.targetTime);      
+            }
+          } else {
+            myChallengeStatus == "idle";
+          }
+        }  
+      }
+    }
+
     if(soundManager.playScheduled && currentTime > soundManager.nextSoundTargetTime) {
       console.log("initiating playback loop");
       let nextSound = this.state.selectedSound; //soundManager.playScheduled;
@@ -154,17 +176,21 @@ class App extends Component {
       console.log("ignoring, you can only press play now once");
       return;
     }
-    let nextSoundTargetTime = this.getSyncTime() + 2000; // add time for message to traverse network
-
-    if(waitingForManualEinsatz) {
-      if(nextSoundTargetTime > soundManager.nextSoundTargetTime + 5000) {
-        alert("too late!");
-      }
-      waitingForManualEinsatz = false;
+    
+    // check if challenge mode is on
+    if(this.state.challengeMode) {
+      if(myChallengeStatus == "idle") {
+          Meteor.call("attemptChallenge", this.props.challenge._id, userUuid, ()=>{
+            myChallengeStatus = "attempted";
+          });
+      } 
+    // regular play mode
     } else {
+      let nextSoundTargetTime = this.getSyncTime() + 2000; // add time for message to traverse network
       soundManager.scheduleNextSound(nextSoundTargetTime);
       Meteor.call("action", {sample: this.state.selectedSound, targetTime: nextSoundTargetTime, userUuid: userUuid});  
     }
+    
   }
 
   handlePlayStop() {
@@ -215,7 +241,10 @@ class App extends Component {
 
   handleChallengeModeSwitch(value) {
     this.setState({ challengeMode: value });
-    Meteor.call("registerToChallenge", userUuid, value);
+    Meteor.call("setupChallenge", userUuid, value);
+    if(value) {
+      myChallengeStatus = "idle";
+    }
   }
 
   updateServer() {
@@ -298,9 +327,11 @@ class App extends Component {
           <View style={styles.control}>
             <Text style={globalStyles.titleText}>Challenge</Text>
             <Switch value={this.state.challengeMode} onValueChange={this.handleChallengeModeSwitch}/>
-            <Text>active players: {this.props.challenge ? this.props.challenge.uuids.length : "undefined"}</Text>
+            <Text>players: {this.props.challenge ? Object.keys(this.props.challenge.uuids).length : "undefined"}</Text>
           </View>
         </View>
+
+        <Text>{JSON.stringify(this.props.challenge)}</Text>
 
         <Files onSelectSound={this.handleSelectButtonPress} />
       
@@ -329,16 +360,6 @@ export default createContainer(params=>{
           if(autoPlayFromRemote) {
             soundManager.scheduleNextSound(message.fields.targetTime);
           }
-          
-          /*
-          waitingForManualEinsatz = true;
-          setTimeout(()=>{
-            if(waitingForManualEinsatz) {
-              alert("resetting challenge");
-              waitingForManualEinsatz = false;
-            }
-          }, 10000);
-          */
 
         }
       }

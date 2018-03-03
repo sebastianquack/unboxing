@@ -51,7 +51,9 @@ export default class SoundManager {
         console.log('successfully finished playing');
       } else {
         console.log('playback failed due to audio decoding errors');
-        soundObj.reset();
+        if(soundObj.reset) {
+          soundObj.reset();  
+        }
       }
     });
   }
