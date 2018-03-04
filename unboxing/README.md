@@ -33,3 +33,7 @@ react-native run-android
 - replace sound files or other assets in ios or android directories
 - run `react-native link`
 - react-clock-sync needs `react-native link react-native-udp`
+
+## build apk
+
+`cd android && ./gradlew assembleRelease`
