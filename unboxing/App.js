@@ -186,9 +186,15 @@ class App extends Component {
       } 
     // regular play mode
     } else {
-      let nextSoundTargetTime = this.getSyncTime() + 2000; // add time for message to traverse network
-      soundManager.scheduleNextSound(nextSoundTargetTime);
-      Meteor.call("action", {sample: this.state.selectedSound, targetTime: nextSoundTargetTime, userUuid: userUuid});  
+      if(autoPlayFromRemote) {
+        let nextSoundTargetTime = this.getSyncTime() + 2000; // add time for message to traverse network
+        soundManager.scheduleNextSound(nextSoundTargetTime);
+        Meteor.call("action", {sample: this.state.selectedSound, targetTime: nextSoundTargetTime, userUuid: userUuid});    
+      } else {
+        let nextSoundTargetTime = this.getSyncTime(); // instant playback
+        soundManager.scheduleNextSound(nextSoundTargetTime);
+      }
+      
     }
     
   }

@@ -78,7 +78,7 @@ Meteor.methods({
     }
 
     if(challenge.status == "idle") {
-      let targetTime = Date.now() + 500; // give players 0.5 seconds to react
+      let targetTime = Date.now() + 2000; // give players 0.5 seconds to react
       challenge.targetTime = targetTime;
       Challenges.update(challenge._id, {$set: {status: "active", targetTime: targetTime}});      
       console.log("set challenge targetTime to " + challenge.targetTime);
