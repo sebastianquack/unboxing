@@ -31,7 +31,8 @@ const uuidv4 = require('uuid/v4');
 const userUuid = uuidv4();
 
 var autoPlayFromRemote = false;
-var myChallengeStatus = "idle";
+var challengeMode = false;
+var failedAlertShown = false;
 
 function measureDelta(callback) {
   let sendTimeStamp = (new Date()).getTime();
@@ -123,28 +124,6 @@ class App extends Component {
   updateTicker() {
     const currentTime = this.getSyncTime(); // get the synchronized time
 
-    if(myChallengeStatus == "attempted" && !soundManager.playScheduled) {
-      if(this.props.challenge) {
-        
-        if(this.props.challenge.status == "failed") {
-          alert("challenge failed!");
-          myChallengeStatus = "idle";
-        }
-
-        // check if challenge is complete
-        if(this.props.challenge.status == "complete") {
-          if(currentTime < this.props.challenge.targetTime) {
-            // schedule sound if still time && in challenge mode
-            if(this.state.challengeMode) {
-              soundManager.scheduleNextSound(this.props.challenge.targetTime);      
-            }
-          } else {
-            myChallengeStatus == "idle";
-          }
-        }  
-      }
-    }
-
     if(soundManager.playScheduled && currentTime > soundManager.nextSoundTargetTime) {
       console.log("initiating playback loop");
       let nextSound = this.state.selectedSound; //soundManager.playScheduled;
@@ -179,11 +158,9 @@ class App extends Component {
     
     // check if challenge mode is on
     if(this.state.challengeMode) {
-      if(myChallengeStatus == "idle") {
-          Meteor.call("attemptChallenge", this.props.challenge._id, userUuid, ()=>{
-            myChallengeStatus = "attempted";
-          });
-      } 
+      failedAlertShown = false;
+      Meteor.call("attemptChallenge", this.props.challenge._id, userUuid);
+    
     // regular play mode
     } else {
       if(autoPlayFromRemote) {
@@ -247,10 +224,8 @@ class App extends Component {
 
   handleChallengeModeSwitch(value) {
     this.setState({ challengeMode: value });
+    challengeMode = value;
     Meteor.call("setupChallenge", userUuid, value);
-    if(value) {
-      myChallengeStatus = "idle";
-    }
   }
 
   updateServer() {
@@ -333,11 +308,11 @@ class App extends Component {
           <View style={styles.control}>
             <Text style={globalStyles.titleText}>Challenge</Text>
             <Switch value={this.state.challengeMode} onValueChange={this.handleChallengeModeSwitch}/>
-            <Text>players: {this.props.challenge ? Object.keys(this.props.challenge.uuids).length : "undefined"}</Text>
+            <Text>{this.props.challenge && this.state.challengeMode ? "players: " + Object.keys(this.props.challenge.uuids).length : ""}</Text>
           </View>
         </View>
 
-        <Text>{JSON.stringify(this.props.challenge)}</Text>
+        <Text>{this.state.challengeMode ? JSON.stringify(this.props.challenge) : ""}</Text>
 
         <Files onSelectSound={this.handleSelectButtonPress} />
       
@@ -347,36 +322,48 @@ class App extends Component {
 }
 
 export default createContainer(params=>{
+  
   Meteor.subscribe('events.all', () => {
-
-    console.log("setup added event");
     Meteor.ddp.on("added", message => {
       console.log(message);
       // check if event originated from this user
       if(message.fields.userUuid == userUuid) {
         return;
       }
-
       // event originated from someone else
       if(message.fields.type == "button pressed") {
-        
         if(!soundManager.playScheduled) {
           console.log("received message to start playing from other device");
-
           if(autoPlayFromRemote) {
             soundManager.scheduleNextSound(message.fields.targetTime);
           }
-
         }
       }
     });
-
   });
 
-  Meteor.subscribe('challenges.latest');
+  Meteor.subscribe('challenges.latest', () => {
+    Meteor.ddp.on("changed", message => {
+      console.log(message);
+      if(challengeMode && message.msg == "changed" && message.fields.status == "completed") {
+        let challengeCompleted = Meteor.collection('challenges').findOne(message.id);
+        soundManager.scheduleNextSound(challengeCompleted.targetTime);  
+      }
+      if(challengeMode && message.msg == "changed" && message.fields.status == "failed") {
+        if(!failedAlertShown) {
+          failedAlertShown = true;
+          alert("challenge failed");  
+          setInterval(()=>{
+            failedAlertShown = false;
+          }, 5000);
+        }
+        
+      }
+    });
+  });
+
   let challenge = Meteor.collection('challenges').findOne();
-  console.log(challenge);
-  
+
   return {
     challenge: challenge
   };

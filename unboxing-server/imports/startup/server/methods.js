@@ -26,10 +26,11 @@ Meteor.methods({
     })
   },
   'setupChallenge'(uuid, value) {
-    console.log("challenge update");
+    console.log("setupChallenge");
     let challenges = Challenges.find({}, {sort: { created_at: -1 }, limit: 1}).fetch();
     let challenge = null;
 
+    // this is the first challenge ever
     if(challenges.length == 0) {
       if(value) {
         challenge = createChallenge(uuid);
@@ -39,29 +40,26 @@ Meteor.methods({
       challenge = challenges[0];
     }
 
-    if(challenge.created_at < Date.now() - 1000 * 60 * 10) {
+    // the current challenge is failed or completed or too old
+    if(challenge.status != "idle" || challenge.created_at < Date.now() - 1000 * 60 * 5) {
       if(value) {
         challenge = createChallenge(uuid);   
       }
       return;
     }
 
-    console.log("challenge found");
     // check if uuid is in the challenge
     let uuids = challenge.uuids;
     if(uuids[uuid] && !value) {
       console.log("removing uuid from challenge");
       delete uuids[uuid]; // remove uuid from challenge
-      console.log(uuids);
     }
     if(uuids[uuid] === undefined && value) {
       console.log("adding uuid to challenge");
       uuids[uuid] = "ready"; // add uuid to challenge
     }
-    Object.keys(uuids).forEach((key)=>{
-      uuids[key] = "ready"; // reset all uuids to ready when constellation changes
-    });
-    Challenges.update(challenge._id, {$set: {uuids: uuids, status: "idle", targetTime: null}});
+    
+    Challenges.update(challenge._id, {$set: {uuids: uuids}});
   },
   'attemptChallenge'(id, uuid) {
     let challenge = Challenges.findOne(id);
@@ -71,45 +69,67 @@ Meteor.methods({
     }
     console.log("attemptChallenge");
 
-    if(challenge.status == "failed") {
-      if(Date.now() > challenge.targetTime + 10 * 1000) { // try again after 10 seconds
-        challenge.status = "idle";
-      }
-    }
+    let retryInterval = 10000;
 
-    if(challenge.status == "idle") {
-      let targetTime = Date.now() + 2000; // give players 0.5 seconds to react
+    // check if this is the first attempt for this challenge
+    let attempts = Events.find({
+      type: "challenge_attempt", 
+      challenge_id: challenge._id,
+      received_at: { $gt: Date.now() - retryInterval }
+    }).fetch();
+    console.log("found attempts: " + JSON.stringify(attempts));
+    if(!attempts.length) {
+      let targetTime = Date.now() + 3000; // scheduled playback on success
       challenge.targetTime = targetTime;
       Challenges.update(challenge._id, {$set: {status: "active", targetTime: targetTime}});      
       console.log("set challenge targetTime to " + challenge.targetTime);
-    }
-    
-    // check if challenge is still possible
-    if(Date.now() < challenge.targetTime) {
 
-      // check if user hasn't tried
-      if(challenge.uuids[uuid]) {
-        if(challenge.uuids[uuid] == "ready") {
-          challenge.uuids[uuid] = "attempted";
-          Challenges.update(challenge._id, {$set: {uuids: challenge.uuids}});      
+      // todo - set timeout to check for failure
+      Meteor.setTimeout(()=>{
+        challenge = Challenges.findOne(id);
+        if(challenge.status != "completed" && challenge.status != "failed") {
 
-          // check if all signed up users are done
-          let status = "complete";
-          Object.keys(challenge.uuids).forEach((key)=>{
-            if(challenge.uuids[key] != "attempted") {
-              status = "active";
+          // check if challenge is completed
+          let newAttempts = Events.find({
+            type: "challenge_attempt", 
+            challenge_id: challenge._id,
+            received_at: { $gt: Date.now() - retryInterval }
+          }).fetch();
+          
+          if(Object.keys(challenge.uuids).length == newAttempts.length) {
+            if(challenge.status != "completed") {
+              console.log("setting challenge status to completed");
+              Challenges.update(challenge._id, {$set: {status: "completed"}});  
             }
-          })
-
-          console.log("setting challenge status to " + status);
-          Challenges.update(challenge._id, {$set: {status: status}});      
+          } else {
+            if(challenge.status != "failed") {
+              console.log("setting challenge status to failed");
+              Challenges.update(challenge._id, {$set: {status: "failed"}});            
+            }
+          }
+          
         }
-      }
 
-    } else {
-      // too late - challege is marked as failed
-      Challenges.update(challenge._id, {$set: {status: "failed"}});  
-    }
+      }, 2000); // allowed reaction time
+    } 
+
+    let attemptCounter = attempts.length;
+
+    // record attempt if user hasn't tried yet in the last 10 seconds
+    let myAttempts = Events.find({
+      type: "challenge_attempt", 
+      challenge_id: challenge._id, 
+      player_uuid: uuid,
+      received_at: { $gt: Date.now() - retryInterval }
+    }).fetch();
+    if(!myAttempts.length) {
+      Events.insert({
+        type: "challenge_attempt",
+        received_at: Date.now(),
+        player_uuid: uuid,
+        challenge_id: id
+      });
+    }    
 
   },
   'getTime'() {

@@ -17,7 +17,7 @@ Meteor.publish('challenges.latest', function () {
   let options = {};
   options.limit = 1;
   options.sort = { created_at: -1 };
-  return Challenges.find({"created_at" : { $gt : Date.now() - 1000 * 60 * 10 }}, options)
+  return Challenges.find({"created_at" : { $gt : Date.now() - 1000 * 60 * 5 }}, options)
 });
 
 Meteor.publish('files.all', function (data) {
