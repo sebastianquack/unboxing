@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, Switch } from 'react-native';
+import { Text, View, Switch, StyleSheet, TouchableOpacity, Slider } from 'react-native';
 import { Accelerometer, Gyroscope } from 'react-native-sensors';
+import { DynamicTimeWarping } from 'dynamic-time-warping';
 import {globalStyles} from '../config/globalStyles';
 
 class Gesture extends React.Component { 
@@ -16,11 +17,25 @@ class Gesture extends React.Component {
       acc:{x:0,y:0,z:0},
       gyr:{x:0,y:0,z:0},
       active: false,
+      recording: false,
+      debugging: false,
+      dtw: 0,
+      sensitivity: 40,
+      recordingMeta: {
+        length:0
+      }
     }
+    this.records = []
+    this.recentRecords = []
     this.receiveAccData = this.receiveAccData.bind(this)
     this.receiveGyrData = this.receiveGyrData.bind(this)
     this.renderDebugInfo = this.renderDebugInfo.bind(this)
     this.handleSwitch = this.handleSwitch.bind(this)
+    this.handleRecPress = this.handleRecPress.bind(this)
+    this.handleSensitivityChange = this.handleSensitivityChange.bind(this)
+    this.startRecording = this.startRecording.bind(this)
+    this.stopRecording = this.stopRecording.bind(this)
+    this.detectDtwEinsatz = this.detectDtwEinsatz.bind(this)
   }
 
   componentDidMount() {
@@ -33,8 +48,14 @@ class Gesture extends React.Component {
     data.x = Math.floor(data.x*1000)/1000
     data.y = Math.floor(data.y*1000)/1000
     data.z = Math.floor(data.z*1000)/1000
-    this.detectEinsatz(this.state.acc, data)
-    this.setState({acc: data})
+    //this.detectEinsatz(this.state.acc, data)
+    if (this.state.recording) {
+      this.records.push(data)
+    }
+    if (this.state.active) {
+      this.detectDtwEinsatz(data)
+    }
+    if (this.state.debugging) this.setState({acc: data})
   }
 
   receiveGyrData(data) {
@@ -42,17 +63,43 @@ class Gesture extends React.Component {
     data.x = Math.floor(data.x*1000)/1000
     data.y = Math.floor(data.y*1000)/1000
     data.z = Math.floor(data.z*1000)/1000
-    this.setState({gyr: data})
+    if (this.state.debugging) this.setState({gyr: data})
   }
 
   detectEinsatz(accPrev,acc) {
-    if (!this.state.active) return;
-
     if (accPrev.z +5 < acc.z && accPrev.x>-1 && acc.x<5) {
       console.log("Einsatz!")
       const callback = this.props.onEinsatz
       if (callback) callback()
     }
+  }
+
+  dtwDistFunc = function( a, b ) {
+    return Math.abs( a.x - b.x ) + Math.abs( a.y - b.y ) + Math.abs( a.z - b.z );
+  };
+
+  detectDtwEinsatz(data) {
+    // maintain data flow
+    if (this.records.length >= this.recentRecords.length) {
+      this.recentRecords.push(data);
+      if (this.records.length < this.recentRecords.length) {
+        this.recentRecords.shift();
+      }
+    }
+    if (this.recentRecords.length != this.records.length || this.records.length < 1) {
+      return false; // array too short
+    }
+    this.dtw = new DynamicTimeWarping(this.records, this.recentRecords, this.dtwDistFunc);
+    const dist = Math.round(this.dtw.getDistance())
+    //console.log("gesture dtw: " + dist)
+    this.setState({dtw: dist})
+
+    if (dist < this.state.sensitivity && !this.state.recording) {
+      console.log("DTW Einsatz!")
+      this.recentRecords = []
+      const callback = this.props.onEinsatz
+      if (callback) callback()
+    } 
   }
 
   componentWillUnmount() {
@@ -65,35 +112,111 @@ class Gesture extends React.Component {
     this.setState({ active: value })
   }
 
+  handleRecPress() {
+    const targetState = !this.state.recording
+    if (targetState) {
+      this.startRecording()
+    } else {
+      this.stopRecording()
+    }
+  }
+
+  handleSensitivityChange(value) {
+    this.setState({sensitivity: value})
+  }
+
+  startRecording() {
+    console.log("start gesture recording")
+    this.records = []
+    this.recentRecords = []
+    this.setState({recording: true})
+  }
+
+  stopRecording() {
+    console.log("stop gesture recording")
+    this.setState({
+      recording: false,
+      recordingMeta: {
+        length: this.records.length
+      }
+    })
+  }
+
+  renderValue(text, value) {
+    return (
+      <View style={{flexDirection:'column'}}>
+        <Text>{text} {value}</Text>
+      </View>
+    )
+  }
+
   renderDebugInfo() {
     const acc = this.state.acc;
     const gyr = this.state.gyr;
 
     return (
-      <View >
-        <Text>acc x: {acc.x}</Text>
-        <Text>acc y: {acc.y}</Text>
-        <Text>acc z: {acc.z}</Text>
-        <Text>gyr x: {gyr.x}</Text>
-        <Text>gyr y: {gyr.y}</Text>
-        <Text>gyr z: {gyr.z}</Text>
+      <View style={styles.debugContainer}>
+        {this.renderValue("Acc x", acc.x)}
+        {this.renderValue("Acc y", acc.y)}
+        {this.renderValue("Acc z", acc.z)}
+        {this.renderValue("Gyr x", gyr.x)}
+        {this.renderValue("Gyr y", gyr.y)}
+        {this.renderValue("Gyr z", gyr.z)}
+        <TouchableOpacity onPress={this.handleRecPress} style={this.state.recording ? styles.recButtonRecording : styles.recButton}>
+          <Text>{this.state.recording ? 'Stop' : 'Start'} Rec</Text>
+          {this.records.length != 0 && <Text>{this.records.length}/{this.recentRecords.length} values</Text>}
+          <Text>{this.state.dtw != 0 ? 'DTW: ' + this.state.dtw+'/'+this.state.sensitivity : ''}</Text>
+        </TouchableOpacity>
+        {this.state.dtw != 0 &&
+          <Slider style={{padding:20}} step={1} value={this.state.sensitivity} onSlidingComplete={this.handleSensitivityChange} minimumValue={1} maximumValue={10*this.records.length}></Slider>
+        }
+      </View>
+    );    
+  }
+
+  renderDtwRecording() {
+    return (
+      <View style={styles.debugContainer}>
+        <TouchableOpacity onPress={this.handleRecPress} style={this.state.recording ? styles.recButtonRecording : styles.recButton}>
+          <Text>{this.state.recording ? 'Stop' : 'Start'} Rec</Text>
+          {this.records.length != 0 && <Text>{this.records.length}/{this.recentRecords.length} values</Text>}
+          <Text>{this.state.dtw != 0 ? 'DTW: ' + this.state.dtw+'/'+this.state.sensitivity : ''}</Text>
+        </TouchableOpacity>
+        {this.state.dtw != 0 &&
+          <Slider style={{padding:20}} step={1} value={this.state.sensitivity} onValueChange={this.handleSensitivityChange} minimumValue={1} maximumValue={10*this.records.length}></Slider>
+        }
       </View>
     );    
   }
 
   render() {
-
     return (
       <View>
         <Text style={globalStyles.titleText}>Gestures</Text>
         <View style={{flexDirection:'row'}}>
           <Switch value={this.state.active} onValueChange={this.handleSwitch} />
-          {/*<Text>{this.state.active ? 'active' : 'off'}</Text>*/}
         </View>
-        {/*this.renderDebugInfo()*/}
+        {this.state.debugging && this.renderDebugInfo()}
+        {this.state.active && this.renderDtwRecording()}
       </View>
     );
   }
 }
 
 export default Gesture;
+
+const styles = StyleSheet.create({
+  debugContainer: {
+    borderStyle: 'solid',
+    borderColor: 'black',
+    borderWidth: 1,
+  },
+  recButton: {
+    backgroundColor: 'green',
+    padding: 10,
+  },
+  recButtonRecording: {
+    backgroundColor: 'red',
+    padding: 10,
+  }   
+})
