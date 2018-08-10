@@ -39,6 +39,12 @@ export default class SoundManager {
     this.sound = s;
   }
 
+  setVolume(v) {
+    if(this.sound) {
+      this.sound.setVolume(v);  
+    }
+  }
+
   playSound() {
     if(!this.sound) {
       console.log("no sound selected");

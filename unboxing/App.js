@@ -13,7 +13,8 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  Switch
+  Switch,
+  Slider
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
 
@@ -98,7 +99,9 @@ class App extends Component {
       displayEinsatzIndicator: false,
       testClick: false,
       autoPlayFromRemote: false,
-      challengeMode: false
+      challengeMode: false,
+      volumeSliderPosition: 0.5,
+      volume: 0.5,
     };
     this.timeSettings = {
       interval: 10
@@ -141,6 +144,7 @@ class App extends Component {
       } while(now < targetStartTime && (now - currentTime < 400));
       console.log("leaving loop after " + counter + " cycles at " + now);
 
+      soundManager.setVolume(this.state.volume);
       soundManager.playSound();
       // schedule next click
       if(this.state.testClick) {
@@ -298,6 +302,19 @@ class App extends Component {
               <Text>Stop</Text>
           </TouchableOpacity>
         </View>
+
+        <Text>Volume: {this.state.volume}</Text>
+        <Slider
+          style={{width: 400, margin: 20}}
+          mimumValue={0}
+          maximumValue={1}
+          value={this.state.volumeSliderPosition}
+          onValueChange={value => {
+            this.setState({volume: Math.round(value * 100) / 100});
+            soundManager.setVolume(value);
+          }}
+          onSlidingComplete={value => { this.setState({volumeSliderPosition: value}); }}
+        />
 
         <View style={styles.buttons}>
           <View style={styles.control}>
