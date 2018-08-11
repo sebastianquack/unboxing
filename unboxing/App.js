@@ -327,7 +327,7 @@ class App extends Component {
           maxValue={1}
           onValueChange={value=>soundManager.setVolume(value)}
           sensorTranslate={(data, props)=>{
-            let sensorValue = data.y;
+            let sensorValue = data.x;
             if(sensorValue > 5) sensorValue = 5;
             if(sensorValue < -5) sensorValue = -5;
             let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;
@@ -342,7 +342,7 @@ class App extends Component {
           maxValue={1.2}
           onValueChange={value=>soundManager.setSpeed(value)}
           sensorTranslate={(data, props)=>{
-            let sensorValue = -data.x;
+            let sensorValue = data.y;
             if(sensorValue > 5) sensorValue = 5;
             if(sensorValue < -5) sensorValue = -5;
             let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;

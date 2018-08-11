@@ -10,6 +10,7 @@ export default class SoundManager {
 
   constructor() {
     this.sound = null;
+    this.isPlaying = false;
     this.filename = null;
     this._playScheduled = null;
     this._nextSoundTargetTime = null;
@@ -46,7 +47,7 @@ export default class SoundManager {
   }
 
   setSpeed(s) {
-    if(this.sound) {
+    if(this.sound && this.isPlaying) {
       this.sound.setSpeed(s);  
     }
   }
@@ -59,6 +60,7 @@ export default class SoundManager {
     }
     let soundObj = this.sound;
     console.log("starting to play " + JSON.stringify(soundObj));
+    this.isPlaying = true;
     soundObj.play((success) => {
       if (success) {
         console.log('successfully finished playing');
@@ -86,8 +88,9 @@ export default class SoundManager {
   }
 
   stopSound() {
+    console.log("stopping sound");
+    this.isPlaying = false;
     if (this.sound) {
-      console.log("stopping sound");
       this.sound.stop();
     }
   }
