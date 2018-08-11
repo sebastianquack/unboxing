@@ -129,9 +129,14 @@ Meteor.methods({
       start: 0,
       stop: data.records.length-1,
       sensitivity: data.sensitivity || 1,
+      date: new Date
     }
     const id = Gestures.insert(gesture)
     Meteor.call('activateGesture', id)
+  },
+  removeGesture(id) {
+    console.log("remove gesture ", id)
+    Gestures.remove(id)
   },
   'activateGesture'(id) {
     Gestures.update({active: true}, {$set: {active: false}}, () => {

@@ -8,8 +8,11 @@
     "@babel/runtime": "^7.0.0-beta.36",
     "express": "^4.16.2",
     "meteor-node-stubs": "^0.3.2",
+    "moment": "^2.22.2",
     "react": "^16.2.0",
+    "react-charts": "^1.0.10",
     "react-dom": "^16.2.0",
+    "react-moment": "^0.7.9",
     "recursive-readdir": "^2.2.2",
     "serve-static": "^1.13.2"
   }

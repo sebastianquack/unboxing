@@ -1,3 +1,10 @@
+/* TO DO (server and client)
+ * - record all dimensions (aggregate before)
+ * - choose which dimensions to use/ ignore
+ * - set start / stop (server)
+ * - set sensitivity (server)
+ */
+
 import React, { Component } from 'react';
 import Meteor, { createContainer } from 'react-native-meteor';
 import { Text, View, Switch, StyleSheet, TouchableOpacity, Slider } from 'react-native';
