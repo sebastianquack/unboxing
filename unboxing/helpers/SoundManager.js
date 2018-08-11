@@ -45,6 +45,13 @@ export default class SoundManager {
     }
   }
 
+  setSpeed(s) {
+    if(this.sound) {
+      this.sound.setSpeed(s);  
+    }
+  }
+
+
   playSound() {
     if(!this.sound) {
       console.log("no sound selected");
@@ -79,8 +86,10 @@ export default class SoundManager {
   }
 
   stopSound() {
-    console.log("stopping all sounds");
-    if (this.sound) this.sound.stop();
+    if (this.sound) {
+      console.log("stopping sound");
+      this.sound.stop();
+    }
   }
 
 }

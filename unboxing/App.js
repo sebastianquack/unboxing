@@ -24,6 +24,7 @@ import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-nat
 
 import Gesture from './components/Gesture';
 import Files from './components/Files';
+import AttributeSlider from './components/AttributeSlider';
 
 import SoundManager from './helpers/SoundManager';
 var soundManager = new SoundManager();
@@ -102,6 +103,8 @@ class App extends Component {
       challengeMode: false,
       volumeSliderPosition: 0.5,
       volume: 0.5,
+      speedSliderPosition: 1,
+      speed: 1,
     };
     this.timeSettings = {
       interval: 10
@@ -146,6 +149,7 @@ class App extends Component {
 
       soundManager.setVolume(this.state.volume);
       soundManager.playSound();
+      soundManager.setSpeed(this.state.speed);
       // schedule next click
       if(this.state.testClick) {
         soundManager.scheduleNextSound(Math.ceil(this.getSyncTime()/1000)*1000);  
@@ -303,19 +307,6 @@ class App extends Component {
           </TouchableOpacity>
         </View>
 
-        <Text>Volume: {this.state.volume}</Text>
-        <Slider
-          style={{width: 400, margin: 20}}
-          mimumValue={0}
-          maximumValue={1}
-          value={this.state.volumeSliderPosition}
-          onValueChange={value => {
-            this.setState({volume: Math.round(value * 100) / 100});
-            soundManager.setVolume(value);
-          }}
-          onSlidingComplete={value => { this.setState({volumeSliderPosition: value}); }}
-        />
-
         <View style={styles.buttons}>
           <View style={styles.control}>
             <Text style={globalStyles.titleText}>Auto Play</Text>
@@ -328,6 +319,37 @@ class App extends Component {
             <Text>{this.props.challenge && this.state.challengeMode ? "players: " + Object.keys(this.props.challenge.uuids).length : ""}</Text>
           </View>
         </View>
+
+        <AttributeSlider
+          attributeName={"Volume"}
+          initialValue={0.5}
+          minValue={0.1}
+          maxValue={1}
+          onValueChange={value=>soundManager.setVolume(value)}
+          sensorTranslate={(data, props)=>{
+            let sensorValue = data.y;
+            if(sensorValue > 5) sensorValue = 5;
+            if(sensorValue < -5) sensorValue = -5;
+            let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;
+            return Math.floor(100*result)/100;      
+          }}
+        />
+
+        {<AttributeSlider
+          attributeName={"Speed"}
+          initialValue={1.0}
+          minValue={0.8}
+          maxValue={1.2}
+          onValueChange={value=>soundManager.setSpeed(value)}
+          sensorTranslate={(data, props)=>{
+            let sensorValue = -data.x;
+            if(sensorValue > 5) sensorValue = 5;
+            if(sensorValue < -5) sensorValue = -5;
+            let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;
+            return Math.floor(100*result)/100;      
+          }}
+        />}
+
 
         <Text>{this.state.challengeMode ? JSON.stringify(this.props.challenge) : ""}</Text>
 
