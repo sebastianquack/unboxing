@@ -1,7 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
 import Events from '../../collections/events';
-import Challenges from '../../collections/challenges';
+import { Challenges, Gestures } from '../../collections/';
 import { updateFiles } from '../../helper/server/files';
 
 function createChallenge(uuid) {
@@ -119,5 +119,24 @@ Meteor.methods({
   },
   'updateFiles'() {
     updateFiles();
+  },
+  'addGesture'(data) {
+    console.log('new gesture', data)
+    const gesture = {
+      name: "new",
+      active: false,
+      records: data.records,
+      start: 0,
+      stop: data.records.length-1,
+      sensitivity: data.sensitivity || 1,
+    }
+    const id = Gestures.insert(gesture)
+    Meteor.call('activateGesture', id)
+  },
+  'activateGesture'(id) {
+    Gestures.update({active: true}, {$set: {active: false}}, () => {
+      Gestures.update({_id: id}, {$set: {active: true}})
+    })
   }
+
 });

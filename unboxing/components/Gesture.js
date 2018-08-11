@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Meteor, { createContainer } from 'react-native-meteor';
 import { Text, View, Switch, StyleSheet, TouchableOpacity, Slider } from 'react-native';
 import { Accelerometer, Gyroscope } from 'react-native-sensors';
 import { DynamicTimeWarping } from 'dynamic-time-warping';
@@ -35,7 +36,13 @@ class Gesture extends React.Component {
     this.handleSensitivityChange = this.handleSensitivityChange.bind(this)
     this.startRecording = this.startRecording.bind(this)
     this.stopRecording = this.stopRecording.bind(this)
+    this.submitRecords = this.submitRecords.bind(this)
+    this.clearRecords = this.clearRecords.bind(this)
     this.detectDtwEinsatz = this.detectDtwEinsatz.bind(this)
+  }
+
+  componentDidCatch(error, info) {
+    console.log("Exception caught in Gesture: ", error, info)
   }
 
   componentDidMount() {
@@ -80,21 +87,24 @@ class Gesture extends React.Component {
 
   detectDtwEinsatz(data) {
     // maintain data flow
-    if (this.records.length >= this.recentRecords.length) {
+    const currentRecords = this.records.length > 0 ? this.records : (this.props.gesture ? this.props.gesture.records : [])
+    const currentSensitivity = this.records.length > 0 ? this.state.sensitivity : (this.props.gesture ? this.props.gesture.sensitivity : [])
+    // console.log("detect", currentRecords, currentSensitivity)
+    if (currentRecords.length >= this.recentRecords.length) {
       this.recentRecords.push(data);
-      if (this.records.length < this.recentRecords.length) {
+      if (currentRecords.length < this.recentRecords.length) {
         this.recentRecords.shift();
       }
     }
-    if (this.recentRecords.length != this.records.length || this.records.length < 1) {
+    if (this.recentRecords.length != currentRecords.length || currentRecords.length < 1) {
       return false; // array too short
     }
-    this.dtw = new DynamicTimeWarping(this.records, this.recentRecords, this.dtwDistFunc);
+    this.dtw = new DynamicTimeWarping(currentRecords, this.recentRecords, this.dtwDistFunc);
     const dist = Math.round(this.dtw.getDistance())
     //console.log("gesture dtw: " + dist)
     this.setState({dtw: dist})
 
-    if (dist < this.state.sensitivity && !this.state.recording) {
+    if (dist < currentSensitivity && !this.state.recording) {
       console.log("DTW Einsatz!")
       this.recentRecords = []
       const callback = this.props.onEinsatz
@@ -142,6 +152,26 @@ class Gesture extends React.Component {
     })
   }
 
+  submitRecords() {
+    const gesture = {
+      records: this.records,
+      sensitivity: this.state.sensitivity
+    }
+    Meteor.call('addGesture', gesture, ()=>{
+      this.clearRecords()
+    })
+  }
+
+  clearRecords() {
+    this.setState({
+      recording: false,
+      recordingMeta: {
+        length: 0
+      }
+    })
+    this.records = []
+  }
+
   renderValue(text, value) {
     return (
       <View style={{flexDirection:'column'}}>
@@ -175,15 +205,29 @@ class Gesture extends React.Component {
   }
 
   renderDtwRecording() {
+    const currentRecords = this.records.length > 0 ? this.records : (this.props.gesture ? this.props.gesture.records : [])
+    const currentSensitivity = this.records.length > 0 ? this.state.sensitivity : (this.props.gesture ? this.props.gesture.sensitivity : [])
+    // console.log("render", currentRecords, currentSensitivity)
     return (
       <View style={styles.debugContainer}>
+        <Text style={styles.gestureInfo}>{(this.records.length > 0 ? "local gesture" : `server gesture:\n${this.props.gesture ? this.props.gesture.name : "?"}`)}</Text>
         <TouchableOpacity onPress={this.handleRecPress} style={this.state.recording ? styles.recButtonRecording : styles.recButton}>
           <Text>{this.state.recording ? 'Stop' : 'Start'} Rec</Text>
-          {this.records.length != 0 && <Text>{this.records.length}/{this.recentRecords.length} values</Text>}
-          <Text>{this.state.dtw != 0 ? 'DTW: ' + this.state.dtw+'/'+this.state.sensitivity : ''}</Text>
+          {currentRecords.length != 0 && <Text>{currentRecords.length}/{this.recentRecords.length} values</Text>}
+          <Text>{this.state.dtw != 0 ? 'DTW: ' + this.state.dtw+'/'+currentSensitivity : ''}</Text>
         </TouchableOpacity>
-        {this.state.dtw != 0 &&
+        {this.state.dtw != 0 && this.records.length > 0 &&
           <Slider style={{padding:20}} step={1} value={this.state.sensitivity} onValueChange={this.handleSensitivityChange} minimumValue={1} maximumValue={10*this.records.length}></Slider>
+        }
+        {this.records.length > 0 && !this.state.recording && 
+        <View>
+          <TouchableOpacity style={styles.submitButton} onPress={this.submitRecords} >
+            <Text>Use</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.discardButton} onPress={this.clearRecords}>
+            <Text>Discard</Text>
+          </TouchableOpacity>
+        </View>
         }
       </View>
     );    
@@ -203,7 +247,14 @@ class Gesture extends React.Component {
   }
 }
 
-export default Gesture;
+export default createContainer(params=>{
+  const handle = Meteor.subscribe('gestures.active');
+  
+  return {
+    ready: handle.ready(),
+    gesture: Meteor.collection('gestures').find()[0]
+  };
+}, Gesture)
 
 const styles = StyleSheet.create({
   debugContainer: {
@@ -218,5 +269,17 @@ const styles = StyleSheet.create({
   recButtonRecording: {
     backgroundColor: 'red',
     padding: 10,
-  }   
+  },
+  submitButton: {
+    backgroundColor: 'green',
+    padding: 10,
+  },
+  discardButton: {
+    backgroundColor: 'red',
+    padding: 10,
+  },    
+  gestureInfo: {
+    backgroundColor: '#eee',
+    padding: 10,
+  },      
 })

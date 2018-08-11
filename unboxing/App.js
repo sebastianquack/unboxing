@@ -92,8 +92,8 @@ class App extends Component {
     ];
     this.state = {
       delta: 0,
-      currentServer: "192.168.0.66",
-      serverInput: "192.168.1.131",
+      currentServer: "192.168.178.150",
+      serverInput: "192.168.178.150",
       displayEinsatzIndicator: false,
       testClick: false,
       autoPlayFromRemote: false,

@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor';
 import Challenges from '../../collections/challenges';
 import Events from '../../collections/events';
 import Files from '../../collections/files';
+import Gestures from '../../collections/gestures';
 
 Meteor.publish('events.all', function (data) {
   let options = {}
@@ -23,4 +24,14 @@ Meteor.publish('challenges.latest', function () {
 Meteor.publish('files.all', function (data) {
   let options = {}
   return Files.find({}, options)
+});
+
+Meteor.publish('gestures.all', function (data) {
+  let options = {}
+  return Gestures.find({}, options)
+});
+
+Meteor.publish('gestures.active', function (data) {
+  let options = {}
+  return Gestures.find({active: true}, options)
 });
