@@ -10,7 +10,7 @@ class EventsInfo extends React.Component {
   }
 
   render() {
-    const listItems = this.props.events.map( e => <li>{JSON.stringify(e)}</li>)
+    const listItems = this.props.events.map( e => <li key={e._id}>{JSON.stringify(e)}</li>)
 
     return <div className="EventsInfo">
     <h3>Recent Events</h3>

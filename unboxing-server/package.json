@@ -8,8 +8,13 @@
     "@babel/runtime": "^7.0.0-beta.36",
     "express": "^4.16.2",
     "meteor-node-stubs": "^0.3.2",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0",
+    "moment": "^2.22.2",
+    "pondjs": "^0.8.9",
+    "react": "^16.4.2",
+    "react-contenteditable": "^2.1.5",
+    "react-dom": "^16.4.2",
+    "react-moment": "^0.7.9",
+    "react-timeseries-charts": "^0.15.2",
     "recursive-readdir": "^2.2.2",
     "serve-static": "^1.13.2"
   }
