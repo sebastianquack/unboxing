@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
-import Moment from 'react-moment';
 
 import Gestures from '../collections/gestures';
+import {GestureDetail} from './';
 
 class GesturesInfo extends React.Component {
   constructor(props) {
@@ -12,12 +12,7 @@ class GesturesInfo extends React.Component {
   li(d) {
     return (
       <li key={d._id}>
-        <button onClick={()=>Meteor.call('removeGesture',d._id)}>
-          delete
-        </button>
-        <pre>
-        {d.name}, <Moment fromNow>{d.date}</Moment>
-        </pre>
+        <GestureDetail data={d} />
       </li>
     )
   }
@@ -27,19 +22,16 @@ class GesturesInfo extends React.Component {
 
     return <div className="GesturesInfo">
     <h3>Gestures</h3>
-    <pre>
       <ul>
       {listItems}
       </ul>
-      </pre>
     </div>;
   }
 }
 
 export default withTracker(props => {
   Meteor.subscribe('gestures.all');
-  const gestures = Gestures.find().fetch();
-  console.log(gestures)
+  const gestures = Gestures.find({},{sort: {date: -1}}).fetch();
 
   return {
     gestures

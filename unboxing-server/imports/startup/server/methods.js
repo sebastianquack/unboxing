@@ -142,6 +142,9 @@ Meteor.methods({
     Gestures.update({active: true}, {$set: {active: false}}, () => {
       Gestures.update({_id: id}, {$set: {active: true}})
     })
+  },
+  'updateGesture'(id,$set) {
+    Gestures.update({_id: id}, {$set})
   }
 
 });
