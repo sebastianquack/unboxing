@@ -1,9 +1,7 @@
 import { Meteor } from 'meteor/meteor';
 
-import Challenges from '../../collections/challenges';
-import Events from '../../collections/events';
-import Files from '../../collections/files';
-import Gestures from '../../collections/gestures';
+import { Challenges, Events, Files, Gestures, Sequences } from '../../collections/';
+
 
 Meteor.publish('events.all', function (data) {
   let options = {}
@@ -21,9 +19,9 @@ Meteor.publish('challenges.latest', function () {
   return Challenges.find({"created_at" : { $gt : Date.now() - 1000 * 60 * 5 }}, options)
 });
 
-Meteor.publish('files.all', function (data) {
+Meteor.publish('files.all', function (query={}) {
   let options = {}
-  return Files.find({}, options)
+  return Files.find(query, options)
 });
 
 Meteor.publish('gestures.all', function (data) {
@@ -35,3 +33,9 @@ Meteor.publish('gestures.active', function (data) {
   let options = {}
   return Gestures.find({active: true}, options)
 });
+
+Meteor.publish('sequences.all', function (data) {
+  let options = {}
+  return Sequences.find({}, options)
+});
+

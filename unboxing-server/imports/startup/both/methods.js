@@ -1,8 +1,13 @@
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random'
 
 import Events from '../../collections/events';
-import { Challenges, Gestures } from '../../collections/';
-import { updateFiles } from '../../helper/server/files';
+import { Challenges, Gestures, Sequences } from '../../collections/';
+
+if (Meteor.isServer) {
+  import { updateFiles } from '../../helper/server/files';
+}
+  
 
 function createChallenge(uuid) {
   console.log("creating new challenge");
@@ -154,7 +159,7 @@ Meteor.methods({
     const id = Gestures.insert(gesture)
     Meteor.call('activateGesture', id)
   },
-  removeGesture(id) {
+  'removeGesture'(id) {
     console.log("remove gesture ", id)
     Gestures.remove(id)
   },
@@ -165,6 +170,64 @@ Meteor.methods({
   },
   'updateGesture'(id,$set) {
     Gestures.update({_id: id}, {$set})
-  }
+  },
+  'addSequence'() {
+    Sequences.insert({
+      name: "new",
+      items: []
+    })
+  },
+  'removeSequence'(id) {
+    console.log("remove sequence ", id)
+    Sequences.remove(id)
+  },
+  'updateSequence'(id,$set) {
+    Sequences.update({_id: id}, {$set})
+  },
+  'addSequenceItem'(sequence_id) {
+    Sequences.update(
+      {_id: sequence_id},
+      { $push: { items: { $each: [ {
+        _id: Random.id(),
+        name: "new item",
+        startTime: 0,
+        path: "-",
+        track: "default"
+      } ], $sort: { startTime: 1 }, $slice: 1000 } } }
+    )
+  },
+  'sortSequenceItems'(sequence_id) {
+    Sequences.update(
+      {_id: sequence_id},
+      { $push: { items: { 
+        $each: [], 
+        $sort: { startTime: 1 },
+        $slice: 1000
+      } } }
+    )
+  },
+  'removeSequenceItem'(id) {
+    console.log("remove sequence item", id)
+    Sequences.update(
+      { },
+      { $pull: { items: { _id: id } } }
+    )
+  },
+  'updateSequenceItem'(id, $set) {
+    const sequence = Sequences.find(
+      { items: { $elemMatch: { _id: id } } },
+      { items: { $elemMatch: { _id: id } } } // should return only the one item, but returns all
+    ).fetch()[0]
+
+    const sequence_id = sequence._id
+    const item = sequence.items.filter( item => item._id === id )[0]
+
+    Sequences.update(
+      { 'items._id': id }, 
+      { $set: { 'items.$': { ...item, ...$set} } }
+    )
+
+    Meteor.call('sortSequenceItems', sequence_id)
+  },  
 
 });
