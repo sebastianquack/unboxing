@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
-import { Files } from '../collections'
+import { Files, Gestures } from '../collections'
 
 class SequenceDetailItem extends React.Component {
   constructor(props) {
@@ -18,18 +18,27 @@ class SequenceDetailItem extends React.Component {
   handleAttributeChange = (name, value) => {
     $set = {}
     $set[name] = value
-    console.log($set)
     Meteor.call('updateSequenceItem', this.props.item._id, $set )
   }
 
   renderInput(type, value) {
+    const emptyOption = <option key="empty" value="">&lt;none&gt;</option>
     switch(type) {
       case "path": 
         return (
           <select value={value} onChange={ e => this.handleAttributeChange(type, e.target.value) }>
+            {emptyOption}
             {this.props.ready && this.props.files.map( f => <option key={f.path} value={f.path}>{f.path}</option>)}      
           </select>
         )
+      case "gesture": 
+      case "entryGesture": 
+        return (
+          <select value={value} onChange={ e => this.handleAttributeChange(type, e.target.value) }>
+            {emptyOption}
+            {this.props.ready && this.props.gestures.map( f => <option key={f.path} value={f.name}>{f.name}</option>)}      
+          </select>
+        )        
       default:
         const inputType = typeof(value) == "number" ? "number" : "text"
         const inputTransform = (value) => {
@@ -100,10 +109,12 @@ SequenceDetailItem.propTypes = {
 
 export default withTracker(props => {
   const sub = Meteor.subscribe('files.all' /*, {type: "audio"}*/)
+  const sub2 = Meteor.subscribe('gestures.all')
 
   return {
-    ready: sub.ready(),
-    files: Files.find().fetch(/*{type: "audio"}*/)
+    ready: sub.ready() && sub2.ready(),
+    files: Files.find().fetch(/*{type: "audio"}*/),
+    gestures: Gestures.find().fetch()
   };
 })(SequenceDetailItem);
 
