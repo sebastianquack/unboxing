@@ -23,15 +23,14 @@ import {globalStyles} from './config/globalStyles';
 import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
 
 import Gesture from './components/Gesture';
-import Files from './components/Files';
+import Sequences from './components/Sequences';
 import AttributeSlider from './components/AttributeSlider';
-
-var RNFS = require('react-native-fs');
 
 import SoundManager from './helpers/SoundManager';
 var soundManager = new SoundManager();
 
-/*import Zeroconf from 'react-native-zeroconf';
+/* doesn't work - cannot resolve services for some reason
+import Zeroconf from 'react-native-zeroconf';
 const zeroconf = new Zeroconf();
 zeroconf.scan(type = 'http', protocol = 'tcp', domain = 'local.');
 zeroconf.on('start', () => console.log('The scan has started.'));
@@ -39,10 +38,12 @@ zeroconf.on('update', () => console.log("update " + JSON.stringify(zeroconf.getS
 zeroconf.on('resolved', data => console.log("resolved " + JSON.stringify(data)));
 zeroconf.on('error', data => console.log("error " + JSON.stringify(data)));*/
 
+var RNFS = require('react-native-fs');
+
 const uuidv4 = require('uuid/v4');
 const userUuid = uuidv4();
 
-var autoPlayFromRemote = false;
+var autoStartSequence = false;
 var challengeMode = false;
 var failedAlertShown = false;
 
@@ -92,7 +93,6 @@ function avgTimeDeltas(callback) {
         }
       });  
     }, i * timeout); 
-  
   }  
 }
 
@@ -110,30 +110,46 @@ class App extends Component {
       serverInput: "",
       displayEinsatzIndicator: false,
       testClick: false,
-      autoPlayFromRemote: false,
-      challengeMode: false
+      autoStartSequence: false,
+      challengeMode: false,
+      
+      currentSequence: {name: "none"},
+      currentTrack: {name: "none"},
+      currentSequencePlaying: false,
+      currentSequenceStartedAt: null,
+      currentTimeInSequence: 0,
     };
     this.timeSettings = {
-      interval: 10
+      interval: 10,
+      sequenceDisplayInterval: 1000
     };
     this.updateTicker = this.updateTicker.bind(this);
-    this.handleSelectButtonPress = this.handleSelectButtonPress.bind(this);
+    this.handleTrackSelect = this.handleTrackSelect.bind(this);
     this.updateServer = this.updateServer.bind(this);
     this.handleSyncPress = this.handleSyncPress.bind(this);
     this.correctSync = this.correctSync.bind(this);
     this.getSyncTime = this.getSyncTime.bind(this);
+    this.handleStartSequence = this.handleStartSequence.bind(this);
     this.handlePlayNow = this.handlePlayNow.bind(this);
     this.handleEinsatz = this.handleEinsatz.bind(this);
     this.handleTestClickSwitch = this.handleTestClickSwitch.bind(this);
-    this.handleAutoPlaySwitch = this.handleAutoPlaySwitch.bind(this);
+    this.handleAutoStartSequenceSwitch = this.handleAutoStartSequenceSwitch.bind(this);
+    this.handleAutoPlayItemsSwitch = this.handleAutoPlayItemsSwitch.bind(this);
     this.handleChallengeModeSwitch = this.handleChallengeModeSwitch.bind(this);
     this.loadLocalConfig = this.loadLocalConfig.bind(this);
+    this.updateSequenceDisplay = this.updateSequenceDisplay.bind(this);
+    this.handlePlayStop = this.handlePlayStop.bind(this);
 
     this.loadLocalConfig();
   }
 
+  componentDidMount() {
+    setInterval(this.updateTicker, this.timeSettings.interval);
+    setInterval(this.updateSequenceDisplay, this.timeSettings.sequenceDisplayInterval);
+  }
+
+  // read default server ip address from file on device
   loadLocalConfig() {
-    
     RNFS.readFile(RNFS.ExternalDirectoryPath + "/localConfig.json", 'utf8')
     .then((contents) => {
       // log the file contents
@@ -148,11 +164,43 @@ class App extends Component {
     .catch((err) => {
       console.log(err.message, err.code);
     });
+  }
 
+  updateServer() {
+    console.log("updating server to " + this.state.serverInput);
+    this.state.currentServer = this.state.serverInput;
+
+    Meteor.disconnect();
+    if(this.state.currentServer) {
+      Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');  
+    }    
   }
 
   getSyncTime() {
     return new Date().getTime() - this.state.delta;
+  }
+
+  // time sync controls
+  handleSyncPress() {
+    console.log("sync button pressed, calling server " + this.state.currentServer);
+    avgTimeDeltas((delta)=>{
+      this.setState({delta: delta});
+      alert("Time sync completed");
+    });
+  }
+
+  handleTestClickSwitch(value) {
+    this.setState({ testClick: value })
+    if(value) {
+      // schedule click to the next second
+      soundManager.scheduleNextSound(Math.ceil(this.getSyncTime()/1000)*1000);
+    } else {
+      soundManager.scheduleNextSound(null);
+    }
+  }
+
+  correctSync(d) {
+    this.setState({delta: this.state.delta + d});
   }
 
   // this is called very often - every 10ms
@@ -184,15 +232,44 @@ class App extends Component {
         soundManager.scheduleNextSound(Math.ceil(this.getSyncTime()/1000)*1000);  
       }
     }
-    
   }
 
+  // starts a sequence manually
+  handleStartSequence() {
+    if(this.currentSequencePlaying) {
+      console.log("ignoring, you can only press start once");
+      return;
+    }
+    
+    this.setState({
+      currentSequencePlaying: true,
+      currentSequenceStartedAt: this.getSyncTime()
+    });
+
+    if(autoStartSequence) {
+      let nextSoundTargetTime = this.getSyncTime() + 2000; // add time for message to traverse network
+      soundManager.scheduleNextSound(nextSoundTargetTime);
+      Meteor.call("action", {sequence: this.state.currentSequence, targetTime: nextSoundTargetTime, userUuid: userUuid});    
+    }
+      
+  }
+
+  // this is only called once every second or so
+  updateSequenceDisplay() {
+    const currentTime = this.getSyncTime(); // get the synchronized time
+
+    if(this.state.currentSequencePlaying) {
+      let currentTimeInSequence = currentTime - this.state.currentSequenceStartedAt;
+      this.setState({currentTimeInSequence: currentTimeInSequence});
+    }
+  }
+
+  // starts playback of a sound manually
   handlePlayNow() {
     if(soundManager.playScheduled) {
       console.log("ignoring, you can only press play now once");
       return;
     }
-    
     // check if challenge mode is on
     if(this.state.challengeMode) {
       failedAlertShown = false;
@@ -200,27 +277,19 @@ class App extends Component {
     
     // regular play mode
     } else {
-      if(autoPlayFromRemote) {
-        let nextSoundTargetTime = this.getSyncTime() + 2000; // add time for message to traverse network
-        soundManager.scheduleNextSound(nextSoundTargetTime);
-        Meteor.call("action", {sample: this.state.selectedSound, targetTime: nextSoundTargetTime, userUuid: userUuid});    
-      } else {
         let nextSoundTargetTime = this.getSyncTime(); // instant playback
         soundManager.scheduleNextSound(nextSoundTargetTime);
-      }
-      
     }
-    
   }
 
+  // handle stop button press
   handlePlayStop() {
     soundManager.stopSound();
-    console.log("zeroconf " + JSON.stringify(zeroconf.getServices()));
-  }
+    //console.log("zeroconf " + JSON.stringify(zeroconf.getServices()));
 
-  componentDidMount() {
-    console.log("componentDidMount");
-    setInterval(this.updateTicker, this.timeSettings.interval);
+    this.setState({
+      currentSequencePlaying: false
+    });
   }
 
   handleEinsatz() {
@@ -232,31 +301,14 @@ class App extends Component {
     //setTimeout(()=>/*this.setState({displayEinsatzIndicator: false})*/alert(2), 1000)
   }
   
-  handleSyncPress() {
-    console.log("sync button pressed, calling server " + this.state.currentServer);
-    avgTimeDeltas((delta)=>{
-      this.setState({delta: delta});
-      alert("Time sync completed");
-    });
+  handleAutoStartSequenceSwitch(value) {
+   this.setState({ autoStartSequence: value });
+   autoStartSequence = value;
   }
 
-  correctSync(d) {
-    this.setState({delta: this.state.delta + d});
-  }
-
-  handleTestClickSwitch(value) {
-    this.setState({ testClick: value })
-    if(value) {
-      // schedule click to the next second
-      soundManager.scheduleNextSound(Math.ceil(this.getSyncTime()/1000)*1000);
-    } else {
-      soundManager.scheduleNextSound(null);
-    }
-  }
-
-  handleAutoPlaySwitch(value) {
-   this.setState({ autoPlayFromRemote: value });
-   autoPlayFromRemote = value;
+  handleAutoPlayItemsSwitch(value) {
+   this.setState({ autoPlayItems: value });
+   autoPlayItems = value;
   }
 
   handleChallengeModeSwitch(value) {
@@ -265,22 +317,13 @@ class App extends Component {
     Meteor.call("setupChallenge", userUuid, value);
   }
 
-  updateServer() {
-    console.log("updating server to " + this.state.serverInput);
-    this.state.currentServer = this.state.serverInput;
-
-    Meteor.disconnect();
-    if(this.state.currentServer) {
-      Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');  
-    }
-    
-  }
-
-  handleSelectButtonPress(filename) {
-    console.log("sound selected: " + filename);
-    soundManager.stopSound();
-    soundManager.loadSound(filename);
-    this.setState({selectedSound: filename});
+  handleTrackSelect(sequence, track) {
+    this.setState({
+      currentSequencePlaying: false,
+      currentSequence: sequence,
+      currentTrack: track,
+      currentTimeInSequence: 0
+    });
   }
 
   renderEinsatzIndicator() {
@@ -327,11 +370,18 @@ class App extends Component {
             <Switch value={this.state.testClick} onValueChange={this.handleTestClickSwitch}/>
           </View>
         </View>
-        <Text style={globalStyles.titleText}>Next sound: {this.state.selectedSound}</Text>
+        <Text style={globalStyles.titleText}>
+          Selected sequence: {this.state.currentSequence.name} / {this.state.currentTrack.name} {"\n"}
+          Sequence position: {Math.floor(this.state.currentTimeInSequence / 1000)}
+        </Text>
         
         <View style={styles.buttons}>
+          <TouchableOpacity style={styles.bigButton} onPress={this.handleStartSequence}>
+              <Text>Start sequence</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.bigButton} onPress={this.handlePlayNow}>
-              <Text>Play Now!</Text>
+              <Text>Play item now</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.bigButton} onPress={this.handlePlayStop}>
@@ -340,11 +390,19 @@ class App extends Component {
         </View>
 
         <View style={styles.buttons}>
+          
           <View style={styles.control}>
-            <Text style={globalStyles.titleText}>Auto Play</Text>
-            <Switch value={this.state.autoPlayFromRemote} onValueChange={this.handleAutoPlaySwitch}/>
+            <Text style={globalStyles.titleText}>Sync start sequence</Text>
+            <Switch value={this.state.autoStartSequence} onValueChange={this.handleAutoStartSequenceSwitch}/>
           </View>
+          
+          <View style={styles.control}>
+            <Text style={globalStyles.titleText}>Autoplay items</Text>
+            <Switch value={this.state.autoPlayItems} onValueChange={this.handleAutoPlayItemsSwitch}/>
+          </View>
+          
           <Gesture onEinsatz={this.handleEinsatz}/>
+          
           <View style={styles.control}>
             <Text style={globalStyles.titleText}>Challenge</Text>
             <Switch value={this.state.challengeMode} onValueChange={this.handleChallengeModeSwitch}/>
@@ -384,7 +442,7 @@ class App extends Component {
 
         <Text>{this.state.challengeMode ? JSON.stringify(this.props.challenge) : ""}</Text>
 
-        <Files onSelectSound={this.handleSelectButtonPress} />
+        <Sequences onSelect={this.handleTrackSelect} />
       
       </ScrollView>
     );
@@ -404,7 +462,7 @@ export default createContainer(params=>{
       if(message.fields.type == "button pressed") {
         if(!soundManager.playScheduled) {
           console.log("received message to start playing from other device");
-          if(autoPlayFromRemote) {
+          if(autoStartSequence) {
             soundManager.scheduleNextSound(message.fields.targetTime);
           }
         }

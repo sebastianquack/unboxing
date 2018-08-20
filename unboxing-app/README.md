@@ -2,7 +2,7 @@
 
 ## install
 ````
-yarn install
+npm install
 ````
 
 ## run
@@ -26,7 +26,7 @@ react-native run-android
 
 - rename project in app.json, index.js and package.json
 - remove npm_modules directory
-- run `yarn install`
+- run `npm install`
 - backup sound files or other assets in ios or android directories
 - remove ios and android directories
 - run `react-native eject`

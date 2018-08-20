@@ -244,7 +244,7 @@ class Gesture extends React.Component {
     return (
       <View>
         <Text style={globalStyles.titleText}>Gestures</Text>
-        <View style={{flexDirection:'row'}}>
+        <View>
           <Switch value={this.state.active} onValueChange={this.handleSwitch} />
         </View>
         {this.state.debugging && this.renderDebugInfo()}
