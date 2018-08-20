@@ -9,3 +9,6 @@ import '../both/methods';
 // startup
 import './fixtures';
 import './files';
+
+// zeroconf
+import './zeroconf.js';

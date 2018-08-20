@@ -18,6 +18,7 @@
     "react-timeseries-charts": "^0.15.2",
     "recursive-readdir": "^2.2.2",
     "serve-static": "^1.13.2",
-    "string-to-color": "^2.0.0"
+    "string-to-color": "^2.0.0",
+    "zeroconf": "^0.1.4"
   }
 }

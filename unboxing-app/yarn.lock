@@ -1699,7 +1699,7 @@ eventemitter3@^1.1.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-1.2.0.tgz#1c86991d816ad1e504750e73874224ecf3bec508"
 
-events@^1.0.0, events@^1.0.2:
+events@^1.0.0, events@^1.0.2, events@^1.1.0:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/events/-/events-1.1.1.tgz#9ebdb7635ad099c70dcc4c2a1f5004288e8bd924"
 
@@ -4016,6 +4016,12 @@ react-native-udp@2.1.0:
     inherits "^2.0.1"
     ip-regex "^1.0.3"
     util "^0.10.3"
+
+react-native-zeroconf@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/react-native-zeroconf/-/react-native-zeroconf-0.9.0.tgz#833b8c49f00f138f62175fee7151a656887d9aa2"
+  dependencies:
+    events "^1.1.0"
 
 react-native@0.52.0:
   version "0.52.0"

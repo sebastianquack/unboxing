@@ -26,8 +26,18 @@ import Gesture from './components/Gesture';
 import Files from './components/Files';
 import AttributeSlider from './components/AttributeSlider';
 
+var RNFS = require('react-native-fs');
+
 import SoundManager from './helpers/SoundManager';
 var soundManager = new SoundManager();
+
+/*import Zeroconf from 'react-native-zeroconf';
+const zeroconf = new Zeroconf();
+zeroconf.scan(type = 'http', protocol = 'tcp', domain = 'local.');
+zeroconf.on('start', () => console.log('The scan has started.'));
+zeroconf.on('update', () => console.log("update " + JSON.stringify(zeroconf.getServices())));
+zeroconf.on('resolved', data => console.log("resolved " + JSON.stringify(data)));
+zeroconf.on('error', data => console.log("error " + JSON.stringify(data)));*/
 
 const uuidv4 = require('uuid/v4');
 const userUuid = uuidv4();
@@ -93,18 +103,15 @@ class App extends Component {
     console.ignoredYellowBox = [
      'Setting a timer'
     ];
+    
     this.state = {
       delta: 0,
-      currentServer: "192.168.178.150",
-      serverInput: "192.168.178.150",
+      currentServer: "",
+      serverInput: "",
       displayEinsatzIndicator: false,
       testClick: false,
       autoPlayFromRemote: false,
-      challengeMode: false,
-      volumeSliderPosition: 0.5,
-      volume: 0.5,
-      speedSliderPosition: 1,
-      speed: 1,
+      challengeMode: false
     };
     this.timeSettings = {
       interval: 10
@@ -120,6 +127,28 @@ class App extends Component {
     this.handleTestClickSwitch = this.handleTestClickSwitch.bind(this);
     this.handleAutoPlaySwitch = this.handleAutoPlaySwitch.bind(this);
     this.handleChallengeModeSwitch = this.handleChallengeModeSwitch.bind(this);
+    this.loadLocalConfig = this.loadLocalConfig.bind(this);
+
+    this.loadLocalConfig();
+  }
+
+  loadLocalConfig() {
+    
+    RNFS.readFile(RNFS.ExternalDirectoryPath + "/localConfig.json", 'utf8')
+    .then((contents) => {
+      // log the file contents
+      console.log(contents);
+      this.localConfig = JSON.parse(contents);
+      console.log(this.localConfig);
+      this.setState({
+        serverInput: this.localConfig.defaultServerIp,
+        currentServer: this.localConfig.defaultServerIp
+      }, ()=>this.updateServer());
+    })
+    .catch((err) => {
+      console.log(err.message, err.code);
+    });
+
   }
 
   getSyncTime() {
@@ -186,12 +215,12 @@ class App extends Component {
 
   handlePlayStop() {
     soundManager.stopSound();
+    console.log("zeroconf " + JSON.stringify(zeroconf.getServices()));
   }
 
   componentDidMount() {
     console.log("componentDidMount");
     setInterval(this.updateTicker, this.timeSettings.interval);
-    this.updateServer();
   }
 
   handleEinsatz() {
@@ -241,7 +270,10 @@ class App extends Component {
     this.state.currentServer = this.state.serverInput;
 
     Meteor.disconnect();
-    Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');
+    if(this.state.currentServer) {
+      Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');  
+    }
+    
   }
 
   handleSelectButtonPress(filename) {
@@ -335,7 +367,7 @@ class App extends Component {
           }}
         />
 
-        {<AttributeSlider
+        <AttributeSlider
           attributeName={"Speed"}
           initialValue={1.0}
           minValue={0.8}
@@ -348,8 +380,7 @@ class App extends Component {
             let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;
             return Math.floor(100*result)/100;      
           }}
-        />}
-
+        />
 
         <Text>{this.state.challengeMode ? JSON.stringify(this.props.challenge) : ""}</Text>
 
@@ -396,7 +427,6 @@ export default createContainer(params=>{
             failedAlertShown = false;
           }, 5000);
         }
-        
       }
     });
   });

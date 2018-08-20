@@ -34,6 +34,10 @@ react-native run-android
 - run `react-native link`
 - react-clock-sync needs `react-native link react-native-udp`
 
+## set default server ip address 
+
+- copy localConfig.json in the app's directory on the device (created automatically after new install of app) /Android/data/com.unboxing/files 
+
 ## build apk
 
 `cd android && ./gradlew assembleRelease`

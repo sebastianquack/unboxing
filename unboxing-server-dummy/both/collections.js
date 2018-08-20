@@ -1,1 +1,0 @@
-Samples = new Mongo.Collection('samples');
