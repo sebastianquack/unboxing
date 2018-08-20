@@ -1,7 +1,9 @@
 import { Meteor } from 'meteor/meteor';
+import { Random } from 'meteor/random'
 
 import Events from '../../collections/events';
-import Challenges from '../../collections/challenges';
+import { Challenges, Gestures, Sequences } from '../../collections/';
+
 import { updateFiles } from '../../helper/server/files';
 
 function createChallenge(uuid) {
@@ -139,5 +141,6 @@ Meteor.methods({
   },
   'updateFiles'() {
     updateFiles();
-  }
+  },
+
 });

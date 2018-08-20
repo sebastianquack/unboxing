@@ -13,7 +13,7 @@ class FilesInfo extends React.Component {
   }
 
   render() {
-    const listItems = this.props.files.map( e => <li>{JSON.stringify(e)}</li>)
+    const listItems = this.props.files.map( e => <li key={e._id}>{JSON.stringify(e)}</li>)
 
     return (
       <div className="FilesInfo">

@@ -47,14 +47,16 @@ class Files extends React.Component {
       <View style={styles.container}>
         <Text style={globalStyles.titleText}>Files</Text>
         {!this.props.ready && <Text>Loading...</Text>}
-        <MeteorListView
-          collection="files"
-          selector={{}}
-          options={{}}
-          renderRow={this.renderItem}
-          //...other listview props
-          enableEmptySections={true}
-        />
+        {this.props.ready && 
+          <MeteorListView
+            collection="files"
+            selector={{}}
+            options={{}}
+            renderRow={this.renderItem}
+            //...other listview props
+            enableEmptySections={true}
+          />
+        }
         <Text>Selected: {this.state.selectedFile.name}</Text>
       </View>
     );
