@@ -11,6 +11,7 @@
     "react": "^16.2.0",
     "react-dom": "^16.2.0",
     "recursive-readdir": "^2.2.2",
-    "serve-static": "^1.13.2"
+    "serve-static": "^1.13.2",
+    "zeroconf": "^0.1.4"
   }
 }
