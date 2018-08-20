@@ -11,6 +11,8 @@ class GestureDetail extends React.Component {
     super(props);
     this.handleRangeChange = this.handleRangeChange.bind(this)
     this.handleNameChange = this.handleNameChange.bind(this)
+    this.handleSensitivityChange = this.handleSensitivityChange.bind(this)
+    this.handleActivate = this.handleActivate.bind(this)
     this.colors = {
       x: "steelblue",
       y: "#F68B24",
@@ -27,6 +29,24 @@ class GestureDetail extends React.Component {
 
   handleNameChange(e) {
     Meteor.call('updateGesture', this.props.data._id, { name: e.target.value })
+  }
+
+  handleSensitivityChange(e) {
+    Meteor.call('updateGesture', this.props.data._id, { sensitivity: e.target.value })
+  }
+
+  handleActivate(e) {
+    Meteor.call('activateGesture', this.props.data._id)
+  }
+
+  renderActive = () => {
+    if (this.props.data.active) {
+      return <span style={{color: 'red'}}>ACTIVE</span>
+    } else {
+      return <button onClick={this.handleActivate}>
+        activate
+      </button>
+    }
   }
 
   render() {
@@ -62,7 +82,8 @@ class GestureDetail extends React.Component {
           <ContentEditable 
             style={{
               border: "dotted grey 1px",
-              borderWidth: "0 0 1px 0"
+              borderWidth: "0 0 1px 0",
+              fontWeight: "bold"
             }}
             onChange={this.handleNameChange} 
             html={d.name}
@@ -73,7 +94,27 @@ class GestureDetail extends React.Component {
           &nbsp;&nbsp;
           <button onClick={()=>Meteor.call('removeGesture',d._id)}>
             delete
-          </button>        
+          </button>
+          <div>
+            sensitivity
+            &nbsp;
+            <input 
+              style={{position:'relative', top: '0.5ex'}} 
+              type="range" 
+              min={0} 
+              max={10 * (this.props.data.records.length-1)}
+              onChange={this.handleSensitivityChange}
+              value={this.props.data.sensitivity}
+            />
+            &nbsp;
+            {this.props.data.sensitivity}
+            &nbsp;&nbsp;
+            <span>
+              <span>length {d.stop - d.start + 1}/{d.records.length} records</span>
+              &nbsp;&nbsp;
+              {this.renderActive()}
+          </span>            
+          </div>
         </pre>
         <pre style={{position:"absolute"}}>
           <span style={{paddingRight:5, color: this.colors.x}}>x</span>

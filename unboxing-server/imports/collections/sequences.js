@@ -18,7 +18,7 @@ export default Sequences;
  *   - startTime: integer (milliseconds)
  *   - path: string (file path)
  *   - track: string (indicates events that belong to the same track, like "violin1" or "piano")
- *   - entryGesture: string (name of the entry gesture)
+ *   - gesture_id: string (name of the entry gesture)
  * tracks[]: (auto generated)
  *   - name
  *   - color

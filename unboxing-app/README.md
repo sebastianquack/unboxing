@@ -1,6 +1,7 @@
 # Unboxing Mozart Client App
 
 ## install
+
 ````
 npm install
 ````
@@ -9,6 +10,14 @@ npm install
 
 ````
 react-native run-android
+````
+
+## contribute
+Please use npm > 5.4.0, which corresponds to node > 8.7. Because of https://github.com/npm/npm/issues/19255
+````
+npm install --global n
+n 8
+npm --version
 ````
 
 ## notes

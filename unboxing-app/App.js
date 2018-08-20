@@ -108,7 +108,7 @@ class App extends Component {
     this.state = {
       delta: 0,
       currentServer: "",
-      serverInput: "",
+      serverInput: "192.168.178.150",
       displayEinsatzIndicator: false,
       testClick: false,
       autoStartSequence: false,
@@ -438,6 +438,7 @@ class App extends Component {
           Unboxing
         </Text>
         <Text style={{marginTop: 20}}>Server: {this.state.currentServer}</Text>
+        <Text>Status: { this.props.connected ? "connected" : "disconnected"}</Text>
         <TextInput
           underlineColorAndroid='transparent'
           style={{width: 150, height: 40, borderColor: 'gray', borderWidth: 1}}
@@ -542,7 +543,7 @@ export default createContainer(params=>{
   
   Meteor.subscribe('events.all', () => {
     Meteor.ddp.on("added", message => {
-      console.log(message);
+      //console.log(message);
       // check if event originated from this user
       if(message.fields.userUuid == userUuid) {
         return;
@@ -561,7 +562,7 @@ export default createContainer(params=>{
 
   Meteor.subscribe('challenges.latest', () => {
     Meteor.ddp.on("changed", message => {
-      console.log(message);
+      //console.log(message);
       if(challengeMode && message.msg == "changed" && message.fields.status == "completed") {
         let challengeCompleted = Meteor.collection('challenges').findOne(message.id);
         soundManager.scheduleNextSound(challengeCompleted.targetTime);  
@@ -580,8 +581,11 @@ export default createContainer(params=>{
 
   let challenge = Meteor.collection('challenges').findOne();
 
+  const connected = Meteor.status().connected
+
   return {
-    challenge: challenge
+    challenge,
+    connected
   };
 }, App)
 
