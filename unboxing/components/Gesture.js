@@ -1,8 +1,6 @@
 /* TO DO (server and client)
- * - record all dimensions (aggregate before)
+ * - record other sensors (aggregate before)
  * - choose which dimensions to use/ ignore
- * - set start / stop (server)
- * - set sensitivity (server)
  */
 
 import React, { Component } from 'react';
@@ -10,6 +8,8 @@ import Meteor, { createContainer } from 'react-native-meteor';
 import { Text, View, Switch, StyleSheet, TouchableOpacity, Slider } from 'react-native';
 import { Accelerometer, Gyroscope } from 'react-native-sensors';
 import { DynamicTimeWarping } from 'dynamic-time-warping';
+import hash from 'object-hash';
+
 import {globalStyles} from '../config/globalStyles';
 
 class Gesture extends React.Component { 
@@ -56,6 +56,14 @@ class Gesture extends React.Component {
     this.accelerationObservable.subscribe(this.receiveAccData);
     this.gyroscopeObservable.subscribe(this.receiveGyrData);
   }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.gesture && prevProps.gesture) {
+      if (hash(this.props.gesture) !== hash(prevProps.gesture)) {
+        this.recentRecords = []
+      }
+    }
+  }  
 
   receiveAccData(data) {
     //console.log(`sensordata acc ${data.x} ${data.y} ${data.z}` )
@@ -104,12 +112,13 @@ class Gesture extends React.Component {
       }
     }
     if (this.recentRecords.length != currentRecords.length || currentRecords.length < 1) {
+      console.log("gesture array to short", this.recentRecords.length, currentRecords.length, this.records.length)
       return false; // array too short
     }
     this.dtw = new DynamicTimeWarping(currentRecords, this.recentRecords, this.dtwDistFunc);
     const dist = Math.round(this.dtw.getDistance())
-    //console.log("gesture dtw: " + dist)
-    this.setState({dtw: dist})
+    delete this.dtw
+    console.log("gesture dtw: " + dist)
 
     if (dist < currentSensitivity && !this.state.recording) {
       console.log("DTW Einsatz!")
@@ -117,6 +126,8 @@ class Gesture extends React.Component {
       const callback = this.props.onEinsatz
       if (callback) callback()
     } 
+
+    this.setState({dtw: dist})
   }
 
   componentWillUnmount() {
@@ -157,6 +168,7 @@ class Gesture extends React.Component {
         length: this.records.length
       }
     })
+    this.recentRecords = []
   }
 
   submitRecords() {
@@ -256,10 +268,18 @@ class Gesture extends React.Component {
 
 export default createContainer(params=>{
   const handle = Meteor.subscribe('gestures.active');
+  const gestures = Meteor.collection('gestures').find()
+
+  // crop records out of range
+  const croppedGestures = gestures.map( g => {
+    return {...g, records: g.records.slice(g.start, g.stop)}
+  })
+
+  const gesture = croppedGestures[0]
   
   return {
     ready: handle.ready(),
-    gesture: Meteor.collection('gestures').find()[0]
+    gesture
   };
 }, Gesture)
 

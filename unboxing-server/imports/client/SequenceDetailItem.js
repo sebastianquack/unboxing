@@ -31,12 +31,12 @@ class SequenceDetailItem extends React.Component {
             {this.props.ready && this.props.files.map( f => <option key={f.path} value={f.path}>{f.path}</option>)}      
           </select>
         )
-      case "gesture": 
-      case "entryGesture": 
+      case "gesture_id": 
+      case "entryGesture_id": 
         return (
           <select value={value} onChange={ e => this.handleAttributeChange(type, e.target.value) }>
             {emptyOption}
-            {this.props.ready && this.props.gestures.map( f => <option key={f.path} value={f.name}>{f.name}</option>)}      
+            {this.props.ready && this.props.gestures.map( f => <option key={f._id} value={f._id}>{f.name}</option>)}      
           </select>
         )        
       default:
