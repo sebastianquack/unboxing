@@ -19,3 +19,13 @@ export default Gestures;
  * start: integer
  * stop: integer
  */
+
+Gestures.after.remove( (userId, doc) => {
+  const activeCount = Gestures.find({active: true}).count()
+  if (activeCount == 0) {
+    const anyGesture = Gestures.findOne()
+    if (anyGesture) {
+      Meteor.call('activateGesture', anyGesture._id)
+    }
+  }
+})
