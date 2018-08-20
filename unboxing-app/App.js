@@ -44,6 +44,7 @@ const uuidv4 = require('uuid/v4');
 const userUuid = uuidv4();
 
 var autoStartSequence = false;
+var autoPlayItems = true;
 var challengeMode = false;
 var failedAlertShown = false;
 
@@ -111,17 +112,21 @@ class App extends Component {
       displayEinsatzIndicator: false,
       testClick: false,
       autoStartSequence: false,
+      autoPlayItems: true,
       challengeMode: false,
       
-      currentSequence: {name: "none"},
-      currentTrack: {name: "none"},
+      currentSequence: null,
+      currentTrack: null,
+      nextItemIndex: 0,
+      nextItem: null,
       currentSequencePlaying: false,
       currentSequenceStartedAt: null,
       currentTimeInSequence: 0,
+      timeToNextItem: null
     };
     this.timeSettings = {
       interval: 10,
-      sequenceDisplayInterval: 1000
+      sequenceDisplayInterval: 200
     };
     this.updateTicker = this.updateTicker.bind(this);
     this.handleTrackSelect = this.handleTrackSelect.bind(this);
@@ -139,6 +144,7 @@ class App extends Component {
     this.loadLocalConfig = this.loadLocalConfig.bind(this);
     this.updateSequenceDisplay = this.updateSequenceDisplay.bind(this);
     this.handlePlayStop = this.handlePlayStop.bind(this);
+    this.setupNextSequenceItem = this.setupNextSequenceItem.bind(this);
 
     this.loadLocalConfig();
   }
@@ -227,31 +233,80 @@ class App extends Component {
       soundManager.setVolume(this.state.volume);
       soundManager.playSound();
       soundManager.setSpeed(this.state.speed);
-      // schedule next click
+      
+      // schedule next click or sequence item
       if(this.state.testClick) {
         soundManager.scheduleNextSound(Math.ceil(this.getSyncTime()/1000)*1000);  
+      } else {
+        this.setupNextSequenceItem();  
       }
+      
     }
   }
 
+  // called when user selects a track in a sequence
+  handleTrackSelect(sequence, track) {
+    this.setState({
+      currentSequencePlaying: false,
+      currentSequence: sequence,
+      currentTrack: track,
+      currentTimeInSequence: 0,
+      nextItemIndex: -1
+    }, ()=>this.setupNextSequenceItem());
+  }
+
+  // called on loading a sequence and after playback of an item
+  setupNextSequenceItem() {
+    let items = this.state.currentSequence.items;
+
+    if(this.state.nextItemIndex < items.length - 1) {
+      let newIndex = this.state.nextItemIndex + 1;
+      let newItem = items[newIndex];
+      this.setState({
+        nextItemIndex: newIndex,
+        nextItem: newItem,
+        selectedSound: newItem.path
+      });
+
+      // load first item
+      soundManager.loadSound(newItem.path);
+      
+      if(this.state.currentSequencePlaying) {
+        this.scheduleNextSequenceItem();
+      }
+      
+    } else {
+       this.setState({nextItem: null})
+    }
+  }
+
+  scheduleNextSequenceItem = () => {    
+    if(this.state.autoPlayItems) {
+      soundManager.scheduleNextSound(this.state.currentSequenceStartedAt + this.state.nextItem.startTime);          
+    }
+  }
+  
   // starts a sequence manually
   handleStartSequence() {
     if(this.currentSequencePlaying) {
       console.log("ignoring, you can only press start once");
       return;
     }
+
+    let currentTime = this.getSyncTime();
     
     this.setState({
       currentSequencePlaying: true,
-      currentSequenceStartedAt: this.getSyncTime()
-    });
-
+      currentSequenceStartedAt: currentTime
+    }, ()=>this.scheduleNextSequenceItem()); // schedule first item for playback
+    
+    /*
     if(autoStartSequence) {
       let nextSoundTargetTime = this.getSyncTime() + 2000; // add time for message to traverse network
       soundManager.scheduleNextSound(nextSoundTargetTime);
       Meteor.call("action", {sequence: this.state.currentSequence, targetTime: nextSoundTargetTime, userUuid: userUuid});    
     }
-      
+    */    
   }
 
   // this is only called once every second or so
@@ -261,6 +316,13 @@ class App extends Component {
     if(this.state.currentSequencePlaying) {
       let currentTimeInSequence = currentTime - this.state.currentSequenceStartedAt;
       this.setState({currentTimeInSequence: currentTimeInSequence});
+    }
+
+    if(this.state.nextItem) {
+      let timeToNextItem = this.state.nextItem.startTime - (currentTime - this.state.currentSequenceStartedAt)
+      this.setState({timeToNextItem: timeToNextItem});   
+    } else {
+      this.setState({timeToNextItem: null});   
     }
   }
 
@@ -288,8 +350,11 @@ class App extends Component {
     //console.log("zeroconf " + JSON.stringify(zeroconf.getServices()));
 
     this.setState({
-      currentSequencePlaying: false
-    });
+      currentSequencePlaying: false,
+      currentTimeInSequence: 0,
+      nextItem: null,
+      nextItemIndex: -1
+    }, ()=>this.setupNextSequenceItem());
   }
 
   handleEinsatz() {
@@ -317,20 +382,21 @@ class App extends Component {
     Meteor.call("setupChallenge", userUuid, value);
   }
 
-  handleTrackSelect(sequence, track) {
-    this.setState({
-      currentSequencePlaying: false,
-      currentSequence: sequence,
-      currentTrack: track,
-      currentTimeInSequence: 0
-    });
-  }
-
   renderEinsatzIndicator() {
     if (!this.state.displayEinsatzIndicator) return null
     return (<Text style={styles.einsatzIndicator}>
       Einsatz!
     </Text>)
+  }
+
+  renderSequenceInfo = () => {
+    return (
+      <Text style={globalStyles.titleText}>
+          Selected sequence: {this.state.currentSequence ? this.state.currentSequence.name : "none"} / {this.state.currentTrack ? this.state.currentTrack.name : "none"} {"\n"}
+          Sequence playback position: {Math.floor(this.state.currentTimeInSequence / 1000)} {"\n"}
+          Next item: {this.state.nextItem ? this.state.nextItem.path : "none"} ({this.state.currentSequencePlaying ? Math.floor(this.state.timeToNextItem / 1000) : ""})
+      </Text>
+    );
   }
 
   render() {
@@ -370,10 +436,7 @@ class App extends Component {
             <Switch value={this.state.testClick} onValueChange={this.handleTestClickSwitch}/>
           </View>
         </View>
-        <Text style={globalStyles.titleText}>
-          Selected sequence: {this.state.currentSequence.name} / {this.state.currentTrack.name} {"\n"}
-          Sequence position: {Math.floor(this.state.currentTimeInSequence / 1000)}
-        </Text>
+        {this.renderSequenceInfo()}
         
         <View style={styles.buttons}>
           <TouchableOpacity style={styles.bigButton} onPress={this.handleStartSequence}>

@@ -41,13 +41,13 @@ export default class SoundManager {
   }
 
   setVolume(v) {
-    if(this.sound) {
+    if(this.sound && typeof(v) == "number") {
       this.sound.setVolume(v);  
     }
   }
 
   setSpeed(s) {
-    if(this.sound && this.isPlaying) {
+    if(this.sound && this.isPlaying && typeof(s) == "number") {
       this.sound.setSpeed(s);  
     }
   }
