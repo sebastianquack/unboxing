@@ -117,7 +117,7 @@ class App extends Component {
       
       currentSequence: null,
       currentTrack: null,
-      nextItemIndex: 0,
+      nextItemIndex: -1,
       nextItem: null,
       currentSequencePlaying: false,
       currentSequenceStartedAt: null,
@@ -257,13 +257,31 @@ class App extends Component {
 
   // called on loading a sequence and after playback of an item
   setupNextSequenceItem() {
-    let items = this.state.currentSequence.items;
 
-    if(this.state.nextItemIndex < items.length - 1) {
-      let newIndex = this.state.nextItemIndex + 1;
-      let newItem = items[newIndex];
+    console.log("setting up next sequence item");
+
+    let items = this.state.currentSequence.items;
+    if(!items.length) {
+      return;
+    }
+
+    let newIndex = this.state.nextItemIndex + 1; // initialized with -1
+    let newItem = null;
+    let newItemTrack = null;
+
+    while(!newItem && newIndex < items.length) { 
+      console.log("newIndex: " + newIndex);
+      if(items[newIndex].track == this.state.currentTrack.name) {
+        newItem = items[newIndex];  
+        newItemTrack = items[newIndex].track  
+      }
+      newIndex++;
+    } 
+
+    if(newItem) {
+
       this.setState({
-        nextItemIndex: newIndex,
+        nextItemIndex: newIndex - 1,
         nextItem: newItem,
         selectedSound: newItem.path
       });
@@ -274,9 +292,17 @@ class App extends Component {
       if(this.state.currentSequencePlaying) {
         this.scheduleNextSequenceItem();
       }
-      
+
     } else {
-       this.setState({nextItem: null})
+
+      console.log("no next item found");
+      console.log(items);
+
+       this.setState({
+        nextItemIndex: -1,
+        nextItem: null,
+        selectedSound: null
+      });
     }
   }
 
