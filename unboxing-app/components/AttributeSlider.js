@@ -7,7 +7,7 @@ class AttributeSlider extends React.Component {
   constructor(props) {
     super(props);
     this.gyroObservable = new Accelerometer({ // library names these wrong, we want to watch the gyro
-      updateInterval: 200, // defaults to 100ms
+      updateInterval: props.updateInterval || 200, // defaults to 100ms
     });
     this.state = {
       gyr:{x:0,y:0,z:0},
@@ -17,10 +17,27 @@ class AttributeSlider extends React.Component {
     }
     this.receiveGyrData = this.receiveGyrData.bind(this)
     this.handleSwitch = this.handleSwitch.bind(this)
+    this.buffer = []
   }
 
   componentDidMount() {
     this.gyroObservable.subscribe(this.receiveGyrData);
+  }
+
+  addBuffer = (data) => {
+    if (!this.props.dataBufferSize) return
+
+    const maxLength = this.props.dataBufferSize
+    const currentLength = this.buffer.length
+
+    // console.log("addBuffer", currentLength, maxLength)
+
+    if (currentLength <= maxLength) {
+      this.buffer.push(data)
+    }
+    if (currentLength > maxLength) {
+      this.buffer.shift()
+    }    
   }
 
   receiveGyrData(data) {
@@ -29,9 +46,10 @@ class AttributeSlider extends React.Component {
     data.y = Math.floor(data.y*1000)/1000;
     data.z = Math.floor(data.z*1000)/1000;
     this.setState({gyr: data});
+    this.addBuffer(data)
 
     if(this.state.gestureControl) {
-      let newValue = this.props.sensorTranslate(data, this.props);
+      let newValue = this.props.sensorTranslate(data, this.props, this.buffer);
       this.setState({sliderPosition: newValue, value: newValue});
       this.props.onValueChange(newValue);  
     }
