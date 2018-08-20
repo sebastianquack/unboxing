@@ -118,7 +118,7 @@ class Gesture extends React.Component {
     this.dtw = new DynamicTimeWarping(currentRecords, this.recentRecords, this.dtwDistFunc);
     const dist = Math.round(this.dtw.getDistance())
     delete this.dtw
-    console.log("gesture dtw: " + dist)
+    // console.log("gesture dtw: " + dist)
 
     if (dist < currentSensitivity && !this.state.recording) {
       console.log("DTW Einsatz!")

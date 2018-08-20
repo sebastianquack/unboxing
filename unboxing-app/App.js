@@ -215,7 +215,7 @@ class App extends Component {
 
   handlePlayStop() {
     soundManager.stopSound();
-    console.log("zeroconf " + JSON.stringify(zeroconf.getServices()));
+    //console.log("zeroconf " + JSON.stringify(zeroconf.getServices()));
   }
 
   componentDidMount() {
