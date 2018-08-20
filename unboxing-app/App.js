@@ -425,6 +425,37 @@ class App extends Component {
     );
   }
 
+  translateMovementAmount = (data, props, dataBuffer)=>{
+    if (dataBuffer.length == 0) return 0
+    const speedBufferSize = 5
+    const speedX = Math.abs(data.x-dataBuffer[0].x)
+    const speedY = Math.abs(data.y-dataBuffer[0].y)
+    const speedZ = Math.abs(data.z-dataBuffer[0].z)
+    const currentSpeed = speedX + speedY + speedZ
+    if (typeof(this.speedBuffer) == "undefined") {
+      this.speedBuffer = []
+      this.speedBuffer.fill(0,0,speedBufferSize)
+    }
+
+    //FIFO in
+    if (this.speedBuffer.length <= speedBufferSize) {
+      this.speedBuffer.push(currentSpeed)
+    }
+    //FIFO out
+    if (this.speedBuffer.length > speedBufferSize) {
+      this.speedBuffer.shift()
+    }    
+
+    const average = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
+    const avg = average(this.speedBuffer)
+
+    // console.log(currentSpeed, avg)
+
+    let result = 0.1 * ((currentSpeed + avg) / 2);
+    return Math.floor(100*result)/100;      
+
+  }
+
   render() {
     const { testDictValue } = this.props;
 
@@ -528,6 +559,17 @@ class App extends Component {
             let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;
             return Math.floor(100*result)/100;      
           }}
+        />
+
+        <AttributeSlider
+          attributeName={"Volume"}
+          initialValue={0.5}
+          minValue={0.1}
+          maxValue={1}
+          dataBufferSize={1}
+          updateInterval={200}
+          onValueChange={value=>soundManager.setVolume(value)}
+          sensorTranslate={this.translateMovementAmount}
         />
 
         <Text>{this.state.challengeMode ? JSON.stringify(this.props.challenge) : ""}</Text>
