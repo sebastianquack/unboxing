@@ -21,11 +21,11 @@ import {globalStyles} from './config/globalStyles';
 
 import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
 
-import Gesture from './components/Gesture';
-import Sequences from './components/Sequences';
-import AttributeSlider from './components/AttributeSlider';
 import ServerConnector from './components/ServerConnector';
-
+import TimeSync from './components/TimeSync';
+import Sequences from './components/Sequences';
+import Gesture from './components/Gesture';
+import AttributeSlider from './components/AttributeSlider';
 
 import SoundManager from './helpers/SoundManager';
 var soundManager = new SoundManager();
@@ -38,55 +38,6 @@ var autoPlayItems = true;
 var challengeMode = false;
 var failedAlertShown = false;
 
-function measureDelta(callback) {
-  let sendTimeStamp = (new Date()).getTime();
-  Meteor.call("getTime", (err, serverTime) => {
-    if(err) {
-        alert("error retrieving time from server");
-        console.log(err);
-        return;
-    }
-    let receiveTimeStamp = (new Date()).getTime();
-    let latency = (receiveTimeStamp - sendTimeStamp) / 2.0;
-    let delta = receiveTimeStamp - (serverTime + latency);
-    callback({latency: latency, delta: delta});
-  });
-}
-
-function avgTimeDeltas(callback) {
-  let deltas = [];
-  let timeout = 1000;
-  let num = 10;
-
-  // send num requests to server, save deltas
-  console.log("starting measurement of time deltas");
-  for(let i = 0; i < num; i++) {
-    
-    setTimeout(()=>{
-      measureDelta((delta)=>{
-        deltas.push(delta)
-        if(i == num - 1) {
-          console.log("measurement complete");
-          console.log(JSON.stringify(deltas));
-          console.log("sorting by latency");
-          deltas.sort(function(a, b){return a.latency - b.latency});
-          console.log(JSON.stringify(deltas));
-          console.log("calculating average delta for fastest half of reponses:");
-          let sum = 0;
-          let counter = 0;
-          for(let j = 0; j < deltas.length / 2.0; j++) {
-            sum += deltas[j].delta;
-            counter++;
-          }
-          let avg = sum / counter;
-          console.log("result: " + avg);
-          callback(avg);
-        }
-      });  
-    }, i * timeout); 
-  }  
-}
-
 class App extends Component {
 
   constructor(props) {
@@ -97,11 +48,13 @@ class App extends Component {
     
     this.state = {
       delta: 0,
+
       displayEinsatzIndicator: false,
-      testClick: false,
+      
       autoStartSequence: false,
       autoPlayItems: true,
       challengeMode: false,
+      testClick: false,
       
       currentSequence: null,
       currentTrack: null,
@@ -118,13 +71,12 @@ class App extends Component {
     };
     this.updateTicker = this.updateTicker.bind(this);
     this.handleTrackSelect = this.handleTrackSelect.bind(this);
-    this.handleSyncPress = this.handleSyncPress.bind(this);
-    this.correctSync = this.correctSync.bind(this);
+    
     this.getSyncTime = this.getSyncTime.bind(this);
+    
     this.handleStartSequence = this.handleStartSequence.bind(this);
     this.handlePlayNow = this.handlePlayNow.bind(this);
     this.handleEinsatz = this.handleEinsatz.bind(this);
-    this.handleTestClickSwitch = this.handleTestClickSwitch.bind(this);
     this.handleAutoStartSequenceSwitch = this.handleAutoStartSequenceSwitch.bind(this);
     this.handleAutoPlayItemsSwitch = this.handleAutoPlayItemsSwitch.bind(this);
     this.handleChallengeModeSwitch = this.handleChallengeModeSwitch.bind(this);
@@ -141,30 +93,7 @@ class App extends Component {
   getSyncTime() {
     return new Date().getTime() - this.state.delta;
   }
-
-  // time sync controls
-  handleSyncPress() {
-    console.log("sync button pressed, calling server " + this.state.currentServer);
-    avgTimeDeltas((delta)=>{
-      this.setState({delta: delta});
-      alert("Time sync completed");
-    });
-  }
-
-  handleTestClickSwitch(value) {
-    this.setState({ testClick: value })
-    if(value) {
-      // schedule click to the next second
-      soundManager.scheduleNextSound(Math.ceil(this.getSyncTime()/1000)*1000);
-    } else {
-      soundManager.scheduleNextSound(null);
-    }
-  }
-
-  correctSync(d) {
-    this.setState({delta: this.state.delta + d});
-  }
-
+  
   // this is called very often - every 10ms
   updateTicker() {
     const currentTime = this.getSyncTime(); // get the synchronized time
@@ -426,27 +355,23 @@ class App extends Component {
         </Text>
         
         <ServerConnector/>
+
+        <TimeSync
+          delta={this.state.delta}
+          setDelta={(d)=>{this.setState({delta: d});}}
+          getSyncTime={this.getSyncTime}
+          soundManager={soundManager}
+          testClick={this.state.testClick}
+          setTestClick={(value)=>this.setState({testClick: value})}
+          setClickSound={(path)=>{
+            soundManager.loadSound(path);
+            this.setState({selectedSound: path});
+          }}
+        />
         
-        <Text>Time delta: {this.state.delta}</Text>
-        
-        <View style={styles.buttons}>
-          <TouchableOpacity style={styles.button} onPress={this.handleSyncPress}>
-            <Text>Sync Time</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={()=>this.correctSync(5)}>
-            <Text>+5</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={()=>this.correctSync(-5)}>
-            <Text>-5</Text>
-          </TouchableOpacity>
-          <View>
-            <Text>Test Click</Text>
-            <Switch value={this.state.testClick} onValueChange={this.handleTestClickSwitch}/>
-          </View>
-        </View>
         {this.renderSequenceInfo()}
         
-        <View style={styles.buttons}>
+        <View style={globalStyles.buttons}>
           <TouchableOpacity style={styles.bigButton} onPress={this.handleStartSequence}>
               <Text>Start sequence</Text>
           </TouchableOpacity>
@@ -460,7 +385,7 @@ class App extends Component {
           </TouchableOpacity>
         </View>
 
-        <View style={styles.buttons}>
+        <View style={globalStyles.buttons}>
           
           <View style={styles.control}>
             <Text style={globalStyles.titleText}>Sync start sequence</Text>
@@ -592,18 +517,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
   },
-  buttons: {
-    flexDirection: 'row',
-  },
   control: {
     marginRight: 20,
     marginLeft: 20,
     marginBottom: 20
-  },
-  button: {
-    margin: 20,
-    padding: 20,
-    backgroundColor: '#aaa',
   },
   bigButton: {
     margin: 20,

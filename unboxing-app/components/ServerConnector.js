@@ -19,12 +19,14 @@ zeroconf.on('error', data => console.log("error " + JSON.stringify(data)));*/
 
 var RNFS = require('react-native-fs');
 
+var defaultServer = "192.168.1.2"; // local file on device overrides this setting
+
 class ServerConnector extends React.Component { 
   constructor(props) {
   	super(props);
   	this.state = {
-  		currentServer: "",
-      	serverInput: "192.168.1.2"
+  		currentServer: defaultServer,
+      	serverInput: defaultServer
   	}
   	this.updateServer = this.updateServer.bind(this);
   	this.loadLocalConfig = this.loadLocalConfig.bind(this);
@@ -46,6 +48,7 @@ class ServerConnector extends React.Component {
     })
     .catch((err) => {
       console.log(err.message, err.code);
+      this.updateServer();
     });
   }
 
