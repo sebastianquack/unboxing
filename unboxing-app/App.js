@@ -1,7 +1,5 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- * @flow
+ * Main App Component - Todo: move out most functionality into sub components
  */
 
 import React, { Component } from 'react';
@@ -16,6 +14,7 @@ import {
   Switch,
   Slider
 } from 'react-native';
+
 import KeepAwake from 'react-native-keep-awake';
 
 import {globalStyles} from './config/globalStyles';
@@ -25,20 +24,11 @@ import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-nat
 import Gesture from './components/Gesture';
 import Sequences from './components/Sequences';
 import AttributeSlider from './components/AttributeSlider';
+import ServerConnector from './components/ServerConnector';
+
 
 import SoundManager from './helpers/SoundManager';
 var soundManager = new SoundManager();
-
-/* doesn't work - cannot resolve services for some reason
-import Zeroconf from 'react-native-zeroconf';
-const zeroconf = new Zeroconf();
-zeroconf.scan(type = 'http', protocol = 'tcp', domain = 'local.');
-zeroconf.on('start', () => console.log('The scan has started.'));
-zeroconf.on('update', () => console.log("update " + JSON.stringify(zeroconf.getServices())));
-zeroconf.on('resolved', data => console.log("resolved " + JSON.stringify(data)));
-zeroconf.on('error', data => console.log("error " + JSON.stringify(data)));*/
-
-var RNFS = require('react-native-fs');
 
 const uuidv4 = require('uuid/v4');
 const userUuid = uuidv4();
@@ -107,8 +97,6 @@ class App extends Component {
     
     this.state = {
       delta: 0,
-      currentServer: "",
-      serverInput: "192.168.178.150",
       displayEinsatzIndicator: false,
       testClick: false,
       autoStartSequence: false,
@@ -130,7 +118,6 @@ class App extends Component {
     };
     this.updateTicker = this.updateTicker.bind(this);
     this.handleTrackSelect = this.handleTrackSelect.bind(this);
-    this.updateServer = this.updateServer.bind(this);
     this.handleSyncPress = this.handleSyncPress.bind(this);
     this.correctSync = this.correctSync.bind(this);
     this.getSyncTime = this.getSyncTime.bind(this);
@@ -141,45 +128,14 @@ class App extends Component {
     this.handleAutoStartSequenceSwitch = this.handleAutoStartSequenceSwitch.bind(this);
     this.handleAutoPlayItemsSwitch = this.handleAutoPlayItemsSwitch.bind(this);
     this.handleChallengeModeSwitch = this.handleChallengeModeSwitch.bind(this);
-    this.loadLocalConfig = this.loadLocalConfig.bind(this);
     this.updateSequenceDisplay = this.updateSequenceDisplay.bind(this);
     this.handlePlayStop = this.handlePlayStop.bind(this);
     this.setupNextSequenceItem = this.setupNextSequenceItem.bind(this);
-
-    this.loadLocalConfig();
   }
 
   componentDidMount() {
     setInterval(this.updateTicker, this.timeSettings.interval);
     setInterval(this.updateSequenceDisplay, this.timeSettings.sequenceDisplayInterval);
-  }
-
-  // read default server ip address from file on device
-  loadLocalConfig() {
-    RNFS.readFile(RNFS.ExternalDirectoryPath + "/localConfig.json", 'utf8')
-    .then((contents) => {
-      // log the file contents
-      console.log(contents);
-      this.localConfig = JSON.parse(contents);
-      console.log(this.localConfig);
-      this.setState({
-        serverInput: this.localConfig.defaultServerIp,
-        currentServer: this.localConfig.defaultServerIp
-      }, ()=>this.updateServer());
-    })
-    .catch((err) => {
-      console.log(err.message, err.code);
-    });
-  }
-
-  updateServer() {
-    console.log("updating server to " + this.state.serverInput);
-    this.state.currentServer = this.state.serverInput;
-
-    Meteor.disconnect();
-    if(this.state.currentServer) {
-      Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');  
-    }    
   }
 
   getSyncTime() {
@@ -468,15 +424,9 @@ class App extends Component {
         <Text style={globalStyles.titleText}>
           Unboxing
         </Text>
-        <Text style={{marginTop: 20}}>Server: {this.state.currentServer}</Text>
-        <Text>Status: { this.props.connected ? "connected" : "disconnected"}</Text>
-        <TextInput
-          underlineColorAndroid='transparent'
-          style={{width: 150, height: 40, borderColor: 'gray', borderWidth: 1}}
-          value={this.state.serverInput}
-          onChangeText={(text) => this.setState({serverInput: text})}
-          onSubmitEditing={this.updateServer}
-        />
+        
+        <ServerConnector/>
+        
         <Text>Time delta: {this.state.delta}</Text>
         
         <View style={styles.buttons}>
@@ -623,13 +573,10 @@ export default createContainer(params=>{
 
   let challenge = Meteor.collection('challenges').findOne();
 
-  const connected = Meteor.status().connected
-
   return {
-    challenge,
-    connected
+    challenge
   };
-}, App)
+}, App);
 
 
 const styles = StyleSheet.create({
@@ -674,5 +621,4 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor:'rgba(255,0,0,0.5)',
   }
-
 });
