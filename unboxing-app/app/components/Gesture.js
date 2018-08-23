@@ -10,7 +10,7 @@ import { Accelerometer, Gyroscope } from 'react-native-sensors';
 import { DynamicTimeWarping } from 'dynamic-time-warping';
 import hash from 'object-hash';
 
-import {globalStyles} from '../config/globalStyles';
+import {globalStyles} from '../../config/globalStyles';
 
 class Gesture extends React.Component { 
   constructor(props) {

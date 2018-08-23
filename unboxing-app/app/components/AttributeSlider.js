@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, Switch, Slider } from 'react-native';
 import { Accelerometer } from 'react-native-sensors';
-import {globalStyles} from '../config/globalStyles';
+import {globalStyles} from '../../config/globalStyles';
 
 class AttributeSlider extends React.Component { 
   constructor(props) {

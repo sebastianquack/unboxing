@@ -19,22 +19,21 @@ import KeepAwake from 'react-native-keep-awake';
 
 import {globalStyles} from './config/globalStyles';
 
-import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
+import Meteor, { createContainer, MeteorListView } from 'react-native-meteor';
 
-import ServerConnector from './components/ServerConnector';
-import TimeSync from './components/TimeSync';
-import Sequences from './components/Sequences';
-import Gesture from './components/Gesture';
-import AttributeSlider from './components/AttributeSlider';
+import ServerConnector from './app/components/ServerConnector';
+import TimeSync from './app/components/TimeSync';
+import SequenceSelector from './app/components/SequenceSelector';
+import Gesture from './app/components/Gesture';
+import AttributeSlider from './app/components/AttributeSlider';
 
-import SoundManager from './helpers/SoundManager';
+import SoundManager from './app/services/SoundManager';
 var soundManager = new SoundManager();
 
 const uuidv4 = require('uuid/v4');
 const userUuid = uuidv4();
 
 var autoStartSequence = false;
-var autoPlayItems = true;
 var challengeMode = false;
 var failedAlertShown = false;
 
@@ -48,14 +47,11 @@ class App extends Component {
     
     this.state = {
       delta: 0,
-
       displayEinsatzIndicator: false,
-      
       autoStartSequence: false,
       autoPlayItems: true,
       challengeMode: false,
       testClick: false,
-      
       currentSequence: null,
       currentTrack: null,
       nextItemIndex: -1,
@@ -69,11 +65,7 @@ class App extends Component {
       interval: 10,
       sequenceDisplayInterval: 200
     };
-    this.updateTicker = this.updateTicker.bind(this);
     this.handleTrackSelect = this.handleTrackSelect.bind(this);
-    
-    this.getSyncTime = this.getSyncTime.bind(this);
-    
     this.handleStartSequence = this.handleStartSequence.bind(this);
     this.handlePlayNow = this.handlePlayNow.bind(this);
     this.handleEinsatz = this.handleEinsatz.bind(this);
@@ -86,47 +78,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    setInterval(this.updateTicker, this.timeSettings.interval);
+    soundManager.startTicker(this.timeSettings.interval);
     setInterval(this.updateSequenceDisplay, this.timeSettings.sequenceDisplayInterval);
-  }
-
-  getSyncTime() {
-    return new Date().getTime() - this.state.delta;
-  }
-  
-  // this is called very often - every 10ms
-  updateTicker() {
-    const currentTime = this.getSyncTime(); // get the synchronized time
-
-    if(soundManager.playScheduled && currentTime > soundManager.nextSoundTargetTime) {
-      console.log("initiating playback loop");
-      let nextSound = this.state.selectedSound; //soundManager.playScheduled;
-      let targetStartTime = soundManager.nextSoundTargetTime + 200;
-
-      soundManager.scheduleNextSound(null);
-      let counter = 0;
-      let now = null;
-      do {
-        now = this.getSyncTime();
-        if(counter == 0) {
-          console.log("went into loop at " + now);
-        }
-        counter++;
-      } while(now < targetStartTime && (now - currentTime < 400));
-      console.log("leaving loop after " + counter + " cycles at " + now);
-
-      soundManager.setVolume(this.state.volume);
-      soundManager.playSound();
-      soundManager.setSpeed(this.state.speed);
-      
-      // schedule next click or sequence item
-      if(this.state.testClick) {
-        soundManager.scheduleNextSound(Math.ceil(this.getSyncTime()/1000)*1000);  
-      } else {
-        this.setupNextSequenceItem();  
-      }
-      
-    }
   }
 
   // called when user selects a track in a sequence
@@ -167,8 +120,7 @@ class App extends Component {
 
       this.setState({
         nextItemIndex: newIndex - 1,
-        nextItem: newItem,
-        selectedSound: newItem.path
+        nextItem: newItem
       });
 
       // load first item
@@ -185,8 +137,7 @@ class App extends Component {
 
        this.setState({
         nextItemIndex: -1,
-        nextItem: null,
-        selectedSound: null
+        nextItem: null
       });
     }
   }
@@ -204,7 +155,7 @@ class App extends Component {
       return;
     }
 
-    let currentTime = this.getSyncTime();
+    let currentTime = soundManager.getSyncTime();
     
     this.setState({
       currentSequencePlaying: true,
@@ -213,7 +164,7 @@ class App extends Component {
     
     /*
     if(autoStartSequence) {
-      let nextSoundTargetTime = this.getSyncTime() + 2000; // add time for message to traverse network
+      let nextSoundTargetTime = soundManager.getSyncTime() + 2000; // add time for message to traverse network
       soundManager.scheduleNextSound(nextSoundTargetTime);
       Meteor.call("action", {sequence: this.state.currentSequence, targetTime: nextSoundTargetTime, userUuid: userUuid});    
     }
@@ -222,7 +173,7 @@ class App extends Component {
 
   // this is only called once every second or so
   updateSequenceDisplay() {
-    const currentTime = this.getSyncTime(); // get the synchronized time
+    const currentTime = soundManager.getSyncTime(); // get the synchronized time
 
     if(this.state.currentSequencePlaying) {
       let currentTimeInSequence = currentTime - this.state.currentSequenceStartedAt;
@@ -250,8 +201,8 @@ class App extends Component {
     
     // regular play mode
     } else {
-        let nextSoundTargetTime = this.getSyncTime(); // instant playback
-        soundManager.scheduleNextSound(nextSoundTargetTime);
+        let nextSoundTargetTime = soundManager.getSyncTime(); // instant playback
+        soundManager.scheduleNextSound(nextSoundTargetTime, this.setupNextSequenceItem);
     }
   }
 
@@ -279,12 +230,11 @@ class App extends Component {
   
   handleAutoStartSequenceSwitch(value) {
    this.setState({ autoStartSequence: value });
-   autoStartSequence = value;
+   autoStartSequence = value; 
   }
 
   handleAutoPlayItemsSwitch(value) {
    this.setState({ autoPlayItems: value });
-   autoPlayItems = value;
   }
 
   handleChallengeModeSwitch(value) {
@@ -342,8 +292,6 @@ class App extends Component {
   }
 
   render() {
-    const { testDictValue } = this.props;
-
     return (
       
       <ScrollView contentContainerStyle={styles.container}>
@@ -357,16 +305,7 @@ class App extends Component {
         <ServerConnector/>
 
         <TimeSync
-          delta={this.state.delta}
-          setDelta={(d)=>{this.setState({delta: d});}}
-          getSyncTime={this.getSyncTime}
           soundManager={soundManager}
-          testClick={this.state.testClick}
-          setTestClick={(value)=>this.setState({testClick: value})}
-          setClickSound={(path)=>{
-            soundManager.loadSound(path);
-            this.setState({selectedSound: path});
-          }}
         />
         
         {this.renderSequenceInfo()}
@@ -449,7 +388,7 @@ class App extends Component {
 
         <Text>{this.state.challengeMode ? JSON.stringify(this.props.challenge) : ""}</Text>
 
-        <Sequences onSelect={this.handleTrackSelect} />
+        <SequenceSelector onSelect={this.handleTrackSelect} />
       
       </ScrollView>
     );

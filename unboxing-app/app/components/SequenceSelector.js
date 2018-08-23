@@ -1,22 +1,14 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
-import {globalStyles} from '../config/globalStyles';
+import {globalStyles} from '../../config/globalStyles';
 
-class Sequences extends React.Component { 
+class SequenceSelector extends React.Component { 
   constructor(props) {
     super(props);
     this.state = {};
     this.renderSequence = this.renderSequence.bind(this)
     this.renderTrack = this.renderTrack.bind(this)
-  }
-
-  componentDidMount() {
-  
-  }
-
-  componentWillUnmount() {
-
   }
 
   renderSequence(sequence) {
@@ -74,7 +66,7 @@ export default createContainer(params=>{
   return {
     ready: handle.ready(),
   };
-}, Sequences)
+}, SequenceSelector)
 
 const styles = StyleSheet.create({
   container: {

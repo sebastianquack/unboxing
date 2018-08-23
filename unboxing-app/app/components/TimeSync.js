@@ -9,7 +9,7 @@ import {
 
 import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
 
-import {globalStyles} from '../config/globalStyles';
+import {globalStyles} from '../../config/globalStyles';
 
 class TimeSync extends React.Component { 
   constructor(props) {
@@ -23,24 +23,24 @@ class TimeSync extends React.Component {
   handleSyncPress() {
     console.log("sync button pressed, calling server");
     avgTimeDeltas((delta)=>{
-      this.props.setDelta(delta);
+      this.props.soundManager.setDelta(delta);
       alert("Time sync completed");
     });
   }
 
   handleTestClickSwitch(value) {
-    this.props.setTestClick(value);
+    this.props.soundManager.setTestClick(value);
     if(value) {
       // schedule click to the next second
-      this.props.setClickSound("/misc/click.mp3");
-      this.props.soundManager.scheduleNextSound(Math.ceil(this.props.getSyncTime()/1000)*1000);
+      this.props.soundManager.loadSound("/misc/click.mp3");
+      this.props.soundManager.scheduleNextSound(Math.ceil(this.props.soundManager.getSyncTime()/1000)*1000);
     } else {
       this.props.soundManager.scheduleNextSound(null);
     }
   }
 
   correctSync(d) {
-    this.props.setDelta(this.props.delta + d);
+    this.props.soundManager.setDelta(this.props.soundManager.delta + d);
   }
 
   render() {
@@ -60,7 +60,7 @@ class TimeSync extends React.Component {
           </TouchableOpacity>
           <View>
             <Text>Test Click</Text>
-            <Switch value={this.props.testClick} onValueChange={this.handleTestClickSwitch}/>
+            <Switch value={this.props.soundManager.testClick} onValueChange={this.handleTestClickSwitch}/>
           </View>
         </View>
         
