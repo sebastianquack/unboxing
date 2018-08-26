@@ -39,7 +39,7 @@ class TrackSelector extends React.Component {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View>
         <Text style={globalStyles.titleText}>Sequences</Text>
         {!this.props.ready && <Text>Loading...</Text>}
         {this.props.ready && 

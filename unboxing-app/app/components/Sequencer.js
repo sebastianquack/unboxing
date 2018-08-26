@@ -234,7 +234,7 @@ class Sequencer extends React.Component {
       <View> 
         {this.renderEinsatzIndicator()}
 
-        <View>
+        <View style={globalStyles.buttons}>
           <TouchableOpacity style={styles.bigButton} onPress={this.handleStartSequence}>
               <Text>Start sequence</Text>
           </TouchableOpacity>
@@ -247,9 +247,8 @@ class Sequencer extends React.Component {
               <Text>Stop</Text>
           </TouchableOpacity>
         </View>
-
-        <View>
-          
+        
+        <View style={globalStyles.buttons}>
           <View style={styles.control}>
             <Text style={globalStyles.titleText}>Sequence Challenge</Text>
             <Switch value={this.state.challengeMode} onValueChange={this.handleChallengeModeSwitch}/>
@@ -265,11 +264,10 @@ class Sequencer extends React.Component {
             <Text style={globalStyles.titleText}>Autoplay items</Text>
             <Switch value={this.state.autoPlayItems} onValueChange={this.handleAutoPlayItemsSwitch}/>
           </View>
-          
+        
           <Gesture onEinsatz={this.handleEinsatz}/>
-                    
         </View>
-
+                    
         {this.renderSequenceInfo()}
 
         <Text>{this.state.challengeMode ? JSON.stringify(this.props.challenge) : ""}</Text>

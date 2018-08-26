@@ -188,13 +188,13 @@ export default class SoundManager extends React.Component {
           setVolume={this.setVolume}
           setSpeed={this.setSpeed}
         />
-        <Sequencer
+        {<Sequencer
           loadSound={this.loadSound}
           scheduleNextSound={this.scheduleNextSound}
           getSyncTime={this.getSyncTime}
           playScheduled={this.playScheduled}
           stopSound={this.stopSound}
-        />
+        />}
       </View>
     );
   }
