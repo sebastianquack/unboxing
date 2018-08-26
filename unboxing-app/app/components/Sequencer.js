@@ -301,7 +301,7 @@ export default createContainer(params=>{
           console.log("received message to start playing from other device");
           if(autoStartSequence) {
             // HOW TO ACCESS METHOD HERE?
-            this.handleStartSequence(message.fields.startTime);
+            //this.handleStartSequence(message.fields.startTime);
           }
         }
       }
