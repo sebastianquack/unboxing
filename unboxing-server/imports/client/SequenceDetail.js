@@ -52,8 +52,9 @@ class Sequence extends React.Component {
     const offset = trackTitleWidth+unit
     const left = `calc(${offset} + (${ratio} * (100% - ${offset})))`
     const active = this.state.active_item && this.state.active_item == d._id
+    const width = d.duration ? d.duration/this.props.sequence.duration+'%' : "auto"
     return (
-      <li key={d._id} style={{position: "absolute", top, left}} className={active ? "active" : ""} >
+      <li key={d._id} style={{position: "absolute", top, left, width}} className={active ? "active" : ""} >
         <SequenceDetailItem 
           item={d} 
           color={color} 

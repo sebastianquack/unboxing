@@ -27,6 +27,7 @@ function readFiles(callback=false) {
       const fs_relative_path = dirRelative+'/'+p.base
       
       output.push({
+        abs_path: file,
         path: fs_relative_path,
         name: p.base,
         size

@@ -10,6 +10,7 @@
     "color": "^3.0.0",
     "emotion": "^9.2.6",
     "express": "^4.16.2",
+    "get-mp3-duration": "^1.0.0",
     "meteor-node-stubs": "^0.3.2",
     "moment": "^2.22.2",
     "pondjs": "^0.8.9",
