@@ -144,7 +144,7 @@ margin-top: 1ex;
 .tracks_items {
   width: 100%;
   li {
-      transition: all 0.2s 0.2s;
+      transition: left 0.2s 0.3s, top 0.2s 0.3s;
       box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.4);
       margin-top:1px;
       opacity: 0.95;

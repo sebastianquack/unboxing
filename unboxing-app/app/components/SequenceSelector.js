@@ -29,7 +29,7 @@ class SequenceSelector extends React.Component {
     return (
       <TouchableOpacity
           key={index}
-          style={style}
+          style={style.concat({backgroundColor:track.color})}
           onPress={()=>{this.props.onSelect(sequence, track);}}
         >
         <Text>{track.name}</Text>
