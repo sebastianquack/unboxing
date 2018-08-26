@@ -28,7 +28,6 @@ import Gesture from './app/components/Gesture';
 import AttributeSlider from './app/components/AttributeSlider';
 
 import SoundManager from './app/services/SoundManager';
-var soundManager = new SoundManager();
 
 const uuidv4 = require('uuid/v4');
 const userUuid = uuidv4();
@@ -73,10 +72,13 @@ class App extends Component {
     this.updateSequenceDisplay = this.updateSequenceDisplay.bind(this);
     this.handlePlayStop = this.handlePlayStop.bind(this);
     this.setupNextSequenceItem = this.setupNextSequenceItem.bind(this);
+    this.soundManager = new SoundManager({
+      onDeltaChange: delta => this.setState({delta})
+    });
   }
 
   componentDidMount() {
-    soundManager.startTicker(this.timeSettings.interval);
+    this.soundManager.startTicker(this.timeSettings.interval);
     setInterval(this.updateSequenceDisplay, this.timeSettings.sequenceDisplayInterval);
   }
 
@@ -122,7 +124,7 @@ class App extends Component {
       });
 
       // load first item
-      soundManager.loadSound(newItem.path);
+      this.soundManager.loadSound(newItem.path);
       
       if(this.state.currentSequencePlaying) {
         this.scheduleNextSequenceItem();
@@ -142,7 +144,7 @@ class App extends Component {
 
   scheduleNextSequenceItem = () => {    
     if(this.state.autoPlayItems) {
-      soundManager.scheduleNextSound(this.state.currentSequenceStartedAt + this.state.nextItem.startTime);          
+      this.soundManager.scheduleNextSound(this.state.currentSequenceStartedAt + this.state.nextItem.startTime);          
     }
   }
   
@@ -153,7 +155,7 @@ class App extends Component {
       return;
     }
 
-    let currentTime = soundManager.getSyncTime();
+    let currentTime = this.soundManager.getSyncTime();
     
     this.setState({
       currentSequencePlaying: true,
@@ -171,7 +173,7 @@ class App extends Component {
 
   // this is only called once every second or so
   updateSequenceDisplay() {
-    const currentTime = soundManager.getSyncTime(); // get the synchronized time
+    const currentTime = this.soundManager.getSyncTime(); // get the synchronized time
 
     if(this.state.currentSequencePlaying) {
       let currentTimeInSequence = currentTime - this.state.currentSequenceStartedAt;
@@ -188,7 +190,7 @@ class App extends Component {
 
   // starts playback of a sound manually
   handlePlayNow() {
-    if(soundManager.playScheduled) {
+    if(this.soundManager.playScheduled) {
       console.log("ignoring, you can only press play now once");
       return;
     }
@@ -199,14 +201,14 @@ class App extends Component {
     
     // regular play mode
     } else {
-        let nextSoundTargetTime = soundManager.getSyncTime(); // instant playback
-        soundManager.scheduleNextSound(nextSoundTargetTime, this.setupNextSequenceItem);
+        let nextSoundTargetTime = this.soundManager.getSyncTime(); // instant playback
+        this.soundManager.scheduleNextSound(nextSoundTargetTime, this.setupNextSequenceItem);
     }
   }
 
   // handle stop button press
   handlePlayStop() {
-    soundManager.stopSound();
+    this.soundManager.stopSound();
     //console.log("zeroconf " + JSON.stringify(zeroconf.getServices()));
 
     this.setState({
@@ -303,7 +305,8 @@ class App extends Component {
         <ServerConnector/>
 
         <TimeSync
-          soundManager={soundManager}
+          soundManager={this.soundManager}
+          delta = {this.state.delta}
         />
         
         {this.renderSequenceInfo()}
@@ -348,7 +351,7 @@ class App extends Component {
           initialValue={0.5}
           minValue={0.1}
           maxValue={1}
-          onValueChange={value=>soundManager.setVolume(value)}
+          onValueChange={value=>this.soundManager.setVolume(value)}
           sensorTranslate={(data, props)=>{
             let sensorValue = data.x;
             if(sensorValue > 5) sensorValue = 5;
@@ -363,7 +366,7 @@ class App extends Component {
           initialValue={1.0}
           minValue={0.8}
           maxValue={1.2}
-          onValueChange={value=>soundManager.setSpeed(value)}
+          onValueChange={value=>this.soundManager.setSpeed(value)}
           sensorTranslate={(data, props)=>{
             let sensorValue = data.y;
             if(sensorValue > 5) sensorValue = 5;
@@ -380,7 +383,7 @@ class App extends Component {
           maxValue={1}
           dataBufferSize={1}
           updateInterval={200}
-          onValueChange={value=>soundManager.setVolume(value)}
+          onValueChange={value=>this.soundManager.setVolume(value)}
           sensorTranslate={this.translateMovementAmount}
         />
 
@@ -404,10 +407,10 @@ export default createContainer(params=>{
       }
       // event originated from someone else
       if(message.fields.type == "button pressed") {
-        if(!soundManager.playScheduled) {
+        if(!this.soundManager.playScheduled) {
           console.log("received message to start playing from other device");
           if(autoStartSequence) {
-            soundManager.scheduleNextSound(message.fields.targetTime);
+            this.soundManager.scheduleNextSound(message.fields.targetTime);
           }
         }
       }
@@ -419,7 +422,7 @@ export default createContainer(params=>{
       //console.log(message);
       if(challengeMode && message.msg == "changed" && message.fields.status == "completed") {
         let challengeCompleted = Meteor.collection('challenges').findOne(message.id);
-        soundManager.scheduleNextSound(challengeCompleted.targetTime);  
+        this.soundManager.scheduleNextSound(challengeCompleted.targetTime);  
       }
       if(challengeMode && message.msg == "changed" && message.fields.status == "failed") {
         if(!failedAlertShown) {

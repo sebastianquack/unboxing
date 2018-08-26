@@ -8,7 +8,7 @@ const pathPrefix = '/sdcard/unboxing';
 
 export default class SoundManager {
 
-  constructor() {
+  constructor(params) {
     this.sound = null;
     this.isPlaying = false;
     this.filename = null;
@@ -20,10 +20,12 @@ export default class SoundManager {
     this.speed = 0;
     this.testClick = false;
     this.afterPlaybackCallback = null;
+    this.params = params
   }
 
   setDelta(d) {
     this.delta = d;
+    this.params.onDeltaChange(this.delta)
   }
 
   getSyncTime() {

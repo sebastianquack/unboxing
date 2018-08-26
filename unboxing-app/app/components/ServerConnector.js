@@ -7,15 +7,7 @@ import {
 } from 'react-native';
 
 import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
-
-/* this doesn't work - cannot resolve services for some reason - could be useful in future
 import Zeroconf from 'react-native-zeroconf';
-const zeroconf = new Zeroconf();
-zeroconf.scan(type = 'http', protocol = 'tcp', domain = 'local.');
-zeroconf.on('start', () => console.log('The scan has started.'));
-zeroconf.on('update', () => console.log("update " + JSON.stringify(zeroconf.getServices())));
-zeroconf.on('resolved', data => console.log("resolved " + JSON.stringify(data)));
-zeroconf.on('error', data => console.log("error " + JSON.stringify(data)));*/
 
 var RNFS = require('react-native-fs');
 
@@ -29,9 +21,38 @@ class ServerConnector extends React.Component {
       	serverInput: defaultServer
   	}
   	this.updateServer = this.updateServer.bind(this);
-  	this.loadLocalConfig = this.loadLocalConfig.bind(this);
-  	this.loadLocalConfig();
+    this.loadLocalConfig = this.loadLocalConfig.bind(this);
+    this.initZeroconf = this.initZeroconf.bind(this);
+
   }
+
+  componentDidMount() {
+    this.initZeroconf()
+    //this.loadLocalConfig();
+  }
+
+  initZeroconf() {
+    const zeroconf = new Zeroconf();
+    zeroconf.scan(type = 'http', protocol = 'tcp', domain = 'local.');
+    zeroconf.on('start', () => console.log('The scan has started.'));
+    zeroconf.on('update', () => {
+      const zc_services = zeroconf.getServices()
+      console.log("update " + JSON.stringify(zc_services))
+      const servers = []
+      for (key in zc_services) {
+        const parts = key.split("_")
+        if (parts[0]=="unboxing") {
+          servers.push(`${parts[1]}.${parts[2]}.${parts[3]}.${parts[4]}`)
+        }
+      }
+      if (servers.length > 0) {
+        console.log(">>> found unboxing servers", servers)
+        this.updateServer(servers[0])
+      }
+    });
+    zeroconf.on('resolved', data => console.log("resolved " + JSON.stringify(data)));
+    zeroconf.on('error', data => console.log("error " + JSON.stringify(data)))
+  }  
 
   // read default server ip address from file on device
   loadLocalConfig() {
@@ -43,24 +64,29 @@ class ServerConnector extends React.Component {
       console.log(this.localConfig);
       this.setState({
         serverInput: this.localConfig.defaultServerIp,
-        currentServer: this.localConfig.defaultServerIp
-      }, ()=>this.updateServer());
+      }, ()=>this.updateServer(localConfig.defaultServerIp));
     })
     .catch((err) => {
       console.log(err.message, err.code);
-      this.updateServer();
+      // this.updateServer();
     });
   }
 
-  updateServer() {
-    console.log("updating server to " + this.state.serverInput);
-    this.state.currentServer = this.state.serverInput;
+  updateServer(host) {
+    if (!host) host = this.state.serverInput
+    console.log(host)
+    console.log("updating server to " + host);
+
+    // this.state.currentServer = this.state.serverInput;
     // todo: save back to config file
 
     Meteor.disconnect();
-    if(this.state.currentServer) {
-      Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');  
-    }    
+    this.setState({ currentServer: host }, () => {
+      if(this.state.currentServer) {
+        console.log("connecting to " + this.state.currentServer);
+        Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');  
+      }    
+    })
   }
 
   render() {
@@ -73,7 +99,7 @@ class ServerConnector extends React.Component {
 	          style={{width: 150, height: 40, borderColor: 'gray', borderWidth: 1}}
 	          value={this.state.serverInput}
 	          onChangeText={(text) => this.setState({serverInput: text})}
-	          onSubmitEditing={this.updateServer}
+	          onSubmitEditing={(e) => this.updateServer(this.state.serverInput)}
 	        />
   		</View>
   	);
