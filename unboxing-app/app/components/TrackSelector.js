@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
-class SequenceSelector extends React.Component { 
+class TrackSelector extends React.Component { 
   constructor(props) {
     super(props);
     this.state = {};
@@ -38,9 +38,6 @@ class SequenceSelector extends React.Component {
   }
 
   render() {
-    const acc = this.state.acc;
-    const gyr = this.state.gyr;
-
     return (
       <View style={styles.container}>
         <Text style={globalStyles.titleText}>Sequences</Text>
@@ -66,7 +63,7 @@ export default createContainer(params=>{
   return {
     ready: handle.ready(),
   };
-}, SequenceSelector)
+}, TrackSelector)
 
 const styles = StyleSheet.create({
   container: {
