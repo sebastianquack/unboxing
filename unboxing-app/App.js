@@ -46,12 +46,10 @@ class App extends Component {
     ];
     
     this.state = {
-      delta: 0,
       displayEinsatzIndicator: false,
       autoStartSequence: false,
       autoPlayItems: true,
       challengeMode: false,
-      testClick: false,
       currentSequence: null,
       currentTrack: null,
       nextItemIndex: -1,
