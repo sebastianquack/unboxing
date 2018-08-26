@@ -1,10 +1,13 @@
 // Import the react-native-sound module
 import Sound from 'react-native-sound';
+import RNFS from 'react-native-fs'
+
+folder = RNFS.ExternalDirectoryPath + '/downloads'
 
 // Enable playback in silence mode
 Sound.setCategory('Playback');
 
-const pathPrefix = '/sdcard/unboxing';
+const pathPrefix = folder;
 
 export default class SoundManager {
 

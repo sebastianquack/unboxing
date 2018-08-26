@@ -26,6 +26,7 @@ import TimeSync from './app/components/TimeSync';
 import SequenceSelector from './app/components/SequenceSelector';
 import Gesture from './app/components/Gesture';
 import AttributeSlider from './app/components/AttributeSlider';
+import Files from './app/components/Files'
 
 import SoundManager from './app/services/SoundManager';
 
@@ -392,6 +393,8 @@ class App extends Component {
         <Text>{this.state.challengeMode ? JSON.stringify(this.props.challenge) : ""}</Text>
 
         <SequenceSelector onSelect={this.handleTrackSelect} />
+
+        <Files />
       
       </ScrollView>
     );

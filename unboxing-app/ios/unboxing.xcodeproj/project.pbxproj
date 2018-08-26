@@ -42,6 +42,7 @@
 		C121BDAEC1134FB186286CBC /* libRNSensors.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 284428A889E740149843D79A /* libRNSensors.a */; };
 		4A4A7322846F44B89B130F18 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56E1F9197C394F1F9E1EBBB5 /* libRNFS.a */; };
 		9257C780146F471FBE393B4E /* libRNZeroconf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4710CB54870343A38C48B5FA /* libRNZeroconf.a */; };
+		3F5AAFBF9D2342049595B18C /* libRNFetchBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C82AF37A3E74BB19EC54DB2 /* libRNFetchBlob.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -303,6 +304,8 @@
 		56E1F9197C394F1F9E1EBBB5 /* libRNFS.a */ = {isa = PBXFileReference; name = "libRNFS.a"; path = "libRNFS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		E7CE6889AA254EDB8DD67F8D /* RNZeroconf.xcodeproj */ = {isa = PBXFileReference; name = "RNZeroconf.xcodeproj"; path = "../node_modules/react-native-zeroconf/ios/RNZeroconf.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		4710CB54870343A38C48B5FA /* libRNZeroconf.a */ = {isa = PBXFileReference; name = "libRNZeroconf.a"; path = "libRNZeroconf.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		48A73BC9A0084A59B62D905C /* RNFetchBlob.xcodeproj */ = {isa = PBXFileReference; name = "RNFetchBlob.xcodeproj"; path = "../node_modules/rn-fetch-blob/ios/RNFetchBlob.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		5C82AF37A3E74BB19EC54DB2 /* libRNFetchBlob.a */ = {isa = PBXFileReference; name = "libRNFetchBlob.a"; path = "libRNFetchBlob.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -337,6 +340,7 @@
 				C121BDAEC1134FB186286CBC /* libRNSensors.a in Frameworks */,
 				4A4A7322846F44B89B130F18 /* libRNFS.a in Frameworks */,
 				9257C780146F471FBE393B4E /* libRNZeroconf.a in Frameworks */,
+				3F5AAFBF9D2342049595B18C /* libRNFetchBlob.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -520,6 +524,7 @@
 				C64A8E3E450B41CC8E864390 /* RNSensors.xcodeproj */,
 				86FC96763A4E49EEB0E3581A /* RNFS.xcodeproj */,
 				E7CE6889AA254EDB8DD67F8D /* RNZeroconf.xcodeproj */,
+				48A73BC9A0084A59B62D905C /* RNFetchBlob.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1096,6 +1101,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1104,6 +1110,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 				);
 			};
 			name = Debug;
@@ -1130,6 +1137,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1138,6 +1146,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 				);
 			};
 			name = Release;
@@ -1164,6 +1173,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 				);
 			};
 			name = Debug;
@@ -1189,6 +1199,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 				);
 			};
 			name = Release;
@@ -1224,6 +1235,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1232,6 +1244,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 				);
 			};
 			name = Debug;
@@ -1267,6 +1280,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1275,6 +1289,7 @@
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
+					"$(SRCROOT)/../node_modules/rn-fetch-blob/ios/**",
 				);
 			};
 			name = Release;
@@ -1305,6 +1320,7 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1329,6 +1345,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
