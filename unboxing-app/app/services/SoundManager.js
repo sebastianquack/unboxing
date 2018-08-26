@@ -28,7 +28,7 @@ export default class SoundManager {
 
   setDelta(d) {
     this.delta = d;
-    this.params.onDeltaChange(this.delta)
+    //this.params.onDeltaChange(this.delta);
   }
 
   getSyncTime() {

@@ -46,7 +46,7 @@ class TimeSync extends React.Component {
   render() {
   	return (
   		<View>
-	  	  <Text>Time delta: {this.props.delta}</Text>
+	  	  <Text>Time delta: {this.props.soundManager.delta}</Text>
         
         <View style={globalStyles.buttons}>
           <TouchableOpacity style={globalStyles.button} onPress={this.handleSyncPress}>
