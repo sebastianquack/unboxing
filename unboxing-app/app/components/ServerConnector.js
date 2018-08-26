@@ -84,6 +84,7 @@ class ServerConnector extends React.Component {
     this.setState({ currentServer: host }, () => {
       if(this.state.currentServer) {
         console.log("connecting to " + this.state.currentServer);
+        this.props.onHostChange(this.state.currentServer)
         Meteor.connect('ws://'+this.state.currentServer+':3000/websocket');  
       }    
     })

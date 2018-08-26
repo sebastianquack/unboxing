@@ -58,7 +58,8 @@ class App extends Component {
       currentSequencePlaying: false,
       currentSequenceStartedAt: null,
       currentTimeInSequence: 0,
-      timeToNextItem: null
+      timeToNextItem: null,
+      host: "127.0.0.1"
     };
     this.timeSettings = {
       interval: 10,
@@ -79,6 +80,10 @@ class App extends Component {
   componentDidMount() {
     soundManager.startTicker(this.timeSettings.interval);
     setInterval(this.updateSequenceDisplay, this.timeSettings.sequenceDisplayInterval);
+  }
+
+  handleHostChange = (host) => {
+    setTimeout(()=>this.setState({host}), 1000)
   }
 
   // called when user selects a track in a sequence
@@ -301,7 +306,9 @@ class App extends Component {
           Unboxing
         </Text>
         
-        <ServerConnector/>
+        <ServerConnector 
+          onHostChange={this.handleHostChange}
+        />
 
         <TimeSync
           soundManager={soundManager}
@@ -389,7 +396,9 @@ class App extends Component {
 
         <SequenceSelector onSelect={this.handleTrackSelect} />
 
-        <Files />
+        <Files 
+          host={this.state.host}
+        />
       
       </ScrollView>
     );

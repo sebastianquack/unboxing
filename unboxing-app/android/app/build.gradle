@@ -148,7 +148,6 @@ android {
 }
 
 dependencies {
-    compile project(':rn-fetch-blob')
     compile project(':react-native-fs')
     compile project(':react-native-zeroconf')
     compile project(':react-native-sensors')

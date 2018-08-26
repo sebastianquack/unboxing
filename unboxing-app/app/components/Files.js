@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import Meteor, { createContainer, MeteorListView } from 'react-native-meteor';
+import Meteor, { withTracker, MeteorListView } from 'react-native-meteor';
 import RNFS from 'react-native-fs'
 import path from 'react-native-path'
 
@@ -15,10 +15,6 @@ class Files extends React.Component {
       localFiles : {}
     };
   }
-
-  UNSAFE_componentWillUpdate(nextProps, nextState) {
-    //console.log(nextProps, nextState)
-  }  
 
   updateFileInfo = file => {
     //console.log("update ", file)
@@ -64,7 +60,7 @@ class Files extends React.Component {
           if (start) {
             console.log("starting download", file.path)
             RNFS.downloadFile({
-              fromUrl: 'http://192.168.0.66:3000' + file.url_path,
+              fromUrl: 'http://'+this.props.host+':3000' + file.url_path,
               toFile: folder + file.path,
               progress: p => {this.setState((prevState) => { prevState.localFiles[file._id].size = p.bytesWritten; return prevState })}
             }).promise.then( (jobId, more) => {
@@ -164,7 +160,8 @@ class Files extends React.Component {
   }
 }
 
-export default createContainer(params=>{
+export default withTracker(props=>{
+
   const handle = Meteor.subscribe('files.all');
   const files = Meteor.collection('files').find()
   
@@ -172,7 +169,7 @@ export default createContainer(params=>{
     ready: handle.ready(),
     files
   };
-}, Files)
+})(Files)
 
 const styles = StyleSheet.create({
   container: {
