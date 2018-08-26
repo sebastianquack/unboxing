@@ -1,4 +1,4 @@
-var zeroconf = require('zeroconf')()
+var zeroconf = require('bonjour')()
 
 var os = require('os');
 var ifaces = os.networkInterfaces();
@@ -29,8 +29,8 @@ Object.keys(ifaces).forEach(function (ifname) {
 // en0 192.168.1.101
 // eth0 10.0.0.101
 
-let name = "unboxing-" + ipAddress;
+let name = "unboxing_" + ipAddress.replace(/\./g,"_");
 console.log(name);
  
 // or give it a custom name and configuration details
-zeroconf.publish({ type: 'http', protocol: 'tcp', port: 3000, name: name, txt: {foo: "bar"}});
+zeroconf.publish({ type: 'http', protocol: 'tcp', port: 3000, name, txt: {foo: "bar"}});
