@@ -39,7 +39,7 @@ class TrackSelector extends React.Component {
 
   render() {
     return (
-      <View>
+      <View style={{width: "50%"}}>
         <Text style={globalStyles.titleText}>Sequences</Text>
         {!this.props.ready && <Text>Loading...</Text>}
         {this.props.ready && 
@@ -66,9 +66,6 @@ export default createContainer(params=>{
 }, TrackSelector)
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   button: {
     margin: 20,
     padding: 20,

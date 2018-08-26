@@ -53,8 +53,6 @@ export default App;
 
 const styles = StyleSheet.create({
   container: {
-    //justifyContent: 'center',
-    //alignItems: 'center',
     backgroundColor: '#F5FCFF',
     padding: 20
   }
