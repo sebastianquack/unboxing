@@ -112,7 +112,7 @@ class Sequencer extends React.Component {
 
   scheduleNextSequenceItem = () => {    
     if(this.state.autoPlayItems) {
-      this.props.scheduleNextSound(this.state.currentSequenceStartedAt + this.state.nextItem.startTime);          
+      this.props.scheduleNextSound(this.state.currentSequenceStartedAt + this.state.nextItem.startTime, this.setupNextSequenceItem);          
     }
   }
   

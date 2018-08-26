@@ -52,10 +52,13 @@ export default class SoundManager extends React.Component {
   scheduleNextSound = (targetTime, callback) => {
     this.playScheduled = (targetTime === null ? false : true);
     this.nextSoundTargetTime = targetTime;
-    this.afterPlaybackCallback = callback;
+    if(callback) {
+      this.afterPlaybackCallback = callback;  
+    }
     
     if(this.playScheduled) {
       console.log("scheduled sound " + this.filename + " for " + this.nextSoundTargetTime);  
+      console.log("set callback to", this.afterPlaybackCallback);
     }
   }
 
@@ -137,6 +140,7 @@ export default class SoundManager extends React.Component {
         this.loadSound("/misc/click.mp3");
         this.scheduleNextSound(Math.ceil(this.getSyncTime()/1000)*1000);  
       } else {
+        console.log(this.afterPlaybackCallback);
         if(typeof(this.afterPlaybackCallback) == "function") {
           this.afterPlaybackCallback();
         }
