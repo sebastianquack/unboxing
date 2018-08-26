@@ -12,10 +12,13 @@ const userUuid = uuidv4();
 var autoStartSequence = false;
 var challengeMode = false;
 var failedAlertShown = false;
+var playScheduled = false;
 
 class Sequencer extends React.Component { 
   constructor(props) {
     super(props);
+    playScheduled = this.props.playScheduled;
+    
     this.state = {
       displayEinsatzIndicator: false,
       autoStartSequence: false,
@@ -48,6 +51,23 @@ class Sequencer extends React.Component {
 
   componentDidMount() {
     setInterval(this.updateSequenceDisplay, this.timeSettings.sequenceDisplayInterval);
+  }
+
+  // this is only called once every second or so
+  updateSequenceDisplay() {
+    const currentTime = this.props.getSyncTime(); // get the synchronized time
+
+    if(this.state.currentSequencePlaying) {
+      let currentTimeInSequence = currentTime - this.state.currentSequenceStartedAt;
+      this.setState({currentTimeInSequence: currentTimeInSequence});
+    }
+
+    if(this.state.nextItem) {
+      let timeToNextItem = this.state.nextItem.startTime - (currentTime - this.state.currentSequenceStartedAt)
+      this.setState({timeToNextItem: timeToNextItem});   
+    } else {
+      this.setState({timeToNextItem: null});   
+    }
   }
 
   // called when user selects a track in a sequence
@@ -85,24 +105,20 @@ class Sequencer extends React.Component {
     } 
 
     if(newItem) {
-
       this.setState({
         nextItemIndex: newIndex - 1,
         nextItem: newItem
+      }, ()=>{
+        // load first item
+        this.props.loadSound(newItem.path);
+        if(this.state.currentSequencePlaying) {
+          this.scheduleNextSequenceItem();
+        }
       });
 
-      // load first item
-      this.props.loadSound(newItem.path);
-      
-      if(this.state.currentSequencePlaying) {
-        this.scheduleNextSequenceItem();
-      }
-
     } else {
-
       console.log("no next item found");
       console.log(items);
-
        this.setState({
         nextItemIndex: -1,
         nextItem: null
@@ -110,49 +126,39 @@ class Sequencer extends React.Component {
     }
   }
 
-  scheduleNextSequenceItem = () => {    
-    if(this.state.autoPlayItems) {
-      this.props.scheduleNextSound(this.state.currentSequenceStartedAt + this.state.nextItem.startTime, this.setupNextSequenceItem);          
-    }
-  }
-  
   // starts a sequence manually
-  handleStartSequence() {
+  handleStartSequence(startTime) {
     if(this.currentSequencePlaying) {
       console.log("ignoring, you can only press start once");
       return;
     }
 
-    let currentTime = this.props.getSyncTime();
+    let referenceTime = this.props.getSyncTime();  
+    if(startTime) {
+      referenceTime = startTime; // set startTime to time set on remote device
+    } else {
+      Meteor.call("action", {
+        startTime: referenceTime, 
+        userUuid: userUuid
+      });
+    }
     
+    console.log("set startTime to");
+    console.log(referenceTime);
+
     this.setState({
       currentSequencePlaying: true,
-      currentSequenceStartedAt: currentTime
+      currentSequenceStartedAt: referenceTime
     }, ()=>this.scheduleNextSequenceItem()); // schedule first item for playback
-    
-    /*
-    if(autoStartSequence) {
-      let nextSoundTargetTime = this.props.getSyncTime() + 2000; // add time for message to traverse network
-      this.props.scheduleNextSound(nextSoundTargetTime);
-      Meteor.call("action", {sequence: this.state.currentSequence, targetTime: nextSoundTargetTime, userUuid: userUuid});    
-    }
-    */    
   }
 
-  // this is only called once every second or so
-  updateSequenceDisplay() {
-    const currentTime = this.props.getSyncTime(); // get the synchronized time
-
-    if(this.state.currentSequencePlaying) {
-      let currentTimeInSequence = currentTime - this.state.currentSequenceStartedAt;
-      this.setState({currentTimeInSequence: currentTimeInSequence});
-    }
-
-    if(this.state.nextItem) {
-      let timeToNextItem = this.state.nextItem.startTime - (currentTime - this.state.currentSequenceStartedAt)
-      this.setState({timeToNextItem: timeToNextItem});   
-    } else {
-      this.setState({timeToNextItem: null});   
+  scheduleNextSequenceItem = () => {    
+    if(this.state.autoPlayItems) {
+      let targetTime = this.state.currentSequenceStartedAt + this.state.nextItem.startTime;
+      console.log(JSON.stringify(this.state.currentSequenceStartedAt));
+      console.log(targetTime);
+      playScheduled = true;
+      this.props.scheduleNextSound(targetTime, this.setupNextSequenceItem);          
     }
   }
 
@@ -170,6 +176,7 @@ class Sequencer extends React.Component {
     // regular play mode
     } else {
         let nextSoundTargetTime = this.props.getSyncTime(); // instant playback
+        playScheduled = true;
         this.props.scheduleNextSound(nextSoundTargetTime, this.setupNextSequenceItem);
     }
   }
@@ -235,7 +242,7 @@ class Sequencer extends React.Component {
         {this.renderEinsatzIndicator()}
 
         <View style={globalStyles.buttons}>
-          <TouchableOpacity style={styles.bigButton} onPress={this.handleStartSequence}>
+          <TouchableOpacity style={styles.bigButton} onPress={()=>this.handleStartSequence()}>
               <Text>Start sequence</Text>
           </TouchableOpacity>
 
@@ -290,17 +297,18 @@ export default createContainer(params=>{
       }
       // event originated from someone else
       if(message.fields.type == "button pressed") {
-        if(!this.props.playScheduled) {
+        if(!playScheduled) {
           console.log("received message to start playing from other device");
           if(autoStartSequence) {
-            this.props.scheduleNextSound(message.fields.targetTime);
+            // HOW TO ACCESS METHOD HERE?
+            this.handleStartSequence(message.fields.startTime);
           }
         }
       }
     });
   });
 
-  Meteor.subscribe('challenges.latest', () => {
+  /*Meteor.subscribe('challenges.latest', () => {
     Meteor.ddp.on("changed", message => {
       //console.log(message);
       if(challengeMode && message.msg == "changed" && message.fields.status == "completed") {
@@ -317,7 +325,7 @@ export default createContainer(params=>{
         }
       }
     });
-  });
+  });*/
 
   let challenge = Meteor.collection('challenges').findOne();
 
