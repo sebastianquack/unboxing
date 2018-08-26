@@ -11,7 +11,29 @@ class SequenceDetailItem extends React.Component {
     super(props);
   }
 
+  SequenceDetailItemCss = css`
+  display: inline-block;
+  background-color: lightgrey;
+  padding: 0 1ex 1ex 1ex;
+  /*margin-top: 1ex;*/
+  transition: all 0.2s 0.2s;
+  .name {
+    margin: 0;
+    line-height: 2.5em;
+  }
+  label {
+    display: block;
+    font-family: monospace;
+    + label {margin-top: 0.5ex}
+    span {
+      min-width: 6em;
+      display: inline-block;
+    }
+  }
+`
+
   handleNameChange = (e) => {
+    console.log(e.target.value)
     Meteor.call('updateSequenceItem', this.props.item._id, { name: e.target.value })
   }
 
@@ -53,6 +75,8 @@ class SequenceDetailItem extends React.Component {
             fontWeight: "bold"
           }}
           onChange={ e => this.handleAttributeChange(type, inputTransform(e.target.value)) } 
+          onFocus={ e => {this.props.onFocusChange(true); setTimeout(()=>document.execCommand('selectAll',false,null),20)} }
+          onBlur={ e => this.props.onFocusChange(false) }
           html={value + ""}
           tagName="span"
         />)
@@ -78,26 +102,30 @@ class SequenceDetailItem extends React.Component {
 
   render() {
     return (
-      <div className={SequenceDetailItemCss} style={this.sequenceDetailItemStyle()}>
-        <pre>
+      <div className={this.SequenceDetailItemCss} style={this.sequenceDetailItemStyle()}>
+        <pre className="name">
           <ContentEditable 
             style={{
               border: "dotted grey 1px",
               borderWidth: "0 0 1px 0",
               fontWeight: "bold"
             }}
+            tabIndex="0"
+            onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
+            onFocus={ e => setTimeout(()=>document.execCommand('selectAll',false,null),20)}
             onChange={this.handleNameChange} 
             html={this.props.item.name}
             tagName="span"
           />
-          &nbsp;&nbsp;
-          <button onClick={()=>Meteor.call('removeSequenceItem',this.props.item._id)}>
-            Delete Item
-          </button>     
+          &nbsp;&nbsp;  
         </pre>
         <div>
           {Object.entries(this.props.item).map(this.renderAttribute)}
         </div>
+        <br />
+        <button onClick={()=>Meteor.call('removeSequenceItem',this.props.item._id)}>
+          Delete Item
+        </button>   
       </div>
     );
   }
@@ -117,20 +145,3 @@ export default withTracker(props => {
     gestures: Gestures.find().fetch()
   };
 })(SequenceDetailItem);
-
-const SequenceDetailItemCss = css`
-  display: inline-block;
-  background-color: lightgrey;
-  padding: 0 1ex 1ex 1ex;
-  margin-top: 1ex;
-  transition: background-color 0.2s 0.2s;
-  label {
-    display: block;
-    font-family: monospace;
-    + label {margin-top: 0.5ex}
-    span {
-      min-width: 6em;
-      display: inline-block;
-    }
-  }
-`
