@@ -39,7 +39,9 @@
 		AC0C10EA8B084033BD44E900 /* libKCKeepAwake.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FA2FBDA52D524CBE90B0BCC2 /* libKCKeepAwake.a */; };
 		E919CA1B50144C789A346DBF /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A55E5CB90367455BB1A1567E /* libRNSound.a */; };
 		D572BDE3245148578B2545FB /* libUdpSockets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AE7D9CF9CE64B478E631F65 /* libUdpSockets.a */; };
-		C121BDAEC1134FB186286CBC /* libRNSensors.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 284428A889E740149843D79A /* libRNSensors.a */; };		
+		C121BDAEC1134FB186286CBC /* libRNSensors.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 284428A889E740149843D79A /* libRNSensors.a */; };
+		4A4A7322846F44B89B130F18 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 56E1F9197C394F1F9E1EBBB5 /* libRNFS.a */; };
+		9257C780146F471FBE393B4E /* libRNZeroconf.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4710CB54870343A38C48B5FA /* libRNZeroconf.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -289,7 +291,6 @@
 		78C398B01ACF4ADC00677621 /* RCTLinking.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTLinking.xcodeproj; path = "../node_modules/react-native/Libraries/LinkingIOS/RCTLinking.xcodeproj"; sourceTree = "<group>"; };
 		832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTText.xcodeproj; path = "../node_modules/react-native/Libraries/Text/RCTText.xcodeproj"; sourceTree = "<group>"; };
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
-<<<<<<< HEAD:ios/AudioSynch.xcodeproj/project.pbxproj
 		F36B4B715B1E48F0AE01AFC3 /* UdpSockets.xcodeproj */ = {isa = PBXFileReference; name = "UdpSockets.xcodeproj"; path = "../node_modules/react-native-udp/ios/UdpSockets.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		D93B9160976242A3BC400779 /* libUdpSockets.a */ = {isa = PBXFileReference; name = "libUdpSockets.a"; path = "libUdpSockets.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		B3CB56ED5B034DC7923A2593 /* RNSound.xcodeproj */ = {isa = PBXFileReference; name = "RNSound.xcodeproj"; path = "../node_modules/react-native-sound/RNSound.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
@@ -298,14 +299,10 @@
 		16EBE01C413F4A2CA4E37926 /* libKCKeepAwake.a */ = {isa = PBXFileReference; name = "libKCKeepAwake.a"; path = "libKCKeepAwake.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		C64A8E3E450B41CC8E864390 /* RNSensors.xcodeproj */ = {isa = PBXFileReference; name = "RNSensors.xcodeproj"; path = "../node_modules/react-native-sensors/ios/RNSensors.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		284428A889E740149843D79A /* libRNSensors.a */ = {isa = PBXFileReference; name = "libRNSensors.a"; path = "libRNSensors.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-=======
-		EC7EC3F6BEEB49219F5C9A0F /* KCKeepAwake.xcodeproj */ = {isa = PBXFileReference; name = "KCKeepAwake.xcodeproj"; path = "../node_modules/react-native-keep-awake/ios/KCKeepAwake.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		FA2FBDA52D524CBE90B0BCC2 /* libKCKeepAwake.a */ = {isa = PBXFileReference; name = "libKCKeepAwake.a"; path = "libKCKeepAwake.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		B7F654A5169247EAB6282E8A /* RNSound.xcodeproj */ = {isa = PBXFileReference; name = "RNSound.xcodeproj"; path = "../node_modules/react-native-sound/RNSound.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		A55E5CB90367455BB1A1567E /* libRNSound.a */ = {isa = PBXFileReference; name = "libRNSound.a"; path = "libRNSound.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
-		CA5A48001BDC47028686C0D5 /* UdpSockets.xcodeproj */ = {isa = PBXFileReference; name = "UdpSockets.xcodeproj"; path = "../node_modules/react-native-udp/ios/UdpSockets.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		3AE7D9CF9CE64B478E631F65 /* libUdpSockets.a */ = {isa = PBXFileReference; name = "libUdpSockets.a"; path = "libUdpSockets.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
->>>>>>> 6348a11687e97beef301fddf546db55d069641a5:ios/unboxing.xcodeproj/project.pbxproj
+		86FC96763A4E49EEB0E3581A /* RNFS.xcodeproj */ = {isa = PBXFileReference; name = "RNFS.xcodeproj"; path = "../node_modules/react-native-fs/RNFS.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		56E1F9197C394F1F9E1EBBB5 /* libRNFS.a */ = {isa = PBXFileReference; name = "libRNFS.a"; path = "libRNFS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		E7CE6889AA254EDB8DD67F8D /* RNZeroconf.xcodeproj */ = {isa = PBXFileReference; name = "RNZeroconf.xcodeproj"; path = "../node_modules/react-native-zeroconf/ios/RNZeroconf.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		4710CB54870343A38C48B5FA /* libRNZeroconf.a */ = {isa = PBXFileReference; name = "libRNZeroconf.a"; path = "libRNZeroconf.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -334,16 +331,12 @@
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
 				00C302EA1ABCBA2D00DB3ED1 /* libRCTVibration.a in Frameworks */,
 				139FDEF61B0652A700C62182 /* libRCTWebSocket.a in Frameworks */,
-<<<<<<< HEAD:ios/AudioSynch.xcodeproj/project.pbxproj
 				C2614CADC5C24BF8BF93F57B /* libUdpSockets.a in Frameworks */,
 				046E90F9BDD84CB8ABE1BA72 /* libRNSound.a in Frameworks */,
 				E337259BB576488F898EABB9 /* libKCKeepAwake.a in Frameworks */,
 				C121BDAEC1134FB186286CBC /* libRNSensors.a in Frameworks */,
-=======
-				AC0C10EA8B084033BD44E900 /* libKCKeepAwake.a in Frameworks */,
-				E919CA1B50144C789A346DBF /* libRNSound.a in Frameworks */,
-				D572BDE3245148578B2545FB /* libUdpSockets.a in Frameworks */,
->>>>>>> 6348a11687e97beef301fddf546db55d069641a5:ios/unboxing.xcodeproj/project.pbxproj
+				4A4A7322846F44B89B130F18 /* libRNFS.a in Frameworks */,
+				9257C780146F471FBE393B4E /* libRNZeroconf.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -521,16 +514,12 @@
 				832341B01AAA6A8300B99B32 /* RCTText.xcodeproj */,
 				00C302DF1ABCB9EE00DB3ED1 /* RCTVibration.xcodeproj */,
 				139FDEE61B06529A00C62182 /* RCTWebSocket.xcodeproj */,
-<<<<<<< HEAD:ios/AudioSynch.xcodeproj/project.pbxproj
 				F36B4B715B1E48F0AE01AFC3 /* UdpSockets.xcodeproj */,
 				B3CB56ED5B034DC7923A2593 /* RNSound.xcodeproj */,
 				171D7E8484204502A508D09A /* KCKeepAwake.xcodeproj */,
 				C64A8E3E450B41CC8E864390 /* RNSensors.xcodeproj */,
-=======
-				EC7EC3F6BEEB49219F5C9A0F /* KCKeepAwake.xcodeproj */,
-				B7F654A5169247EAB6282E8A /* RNSound.xcodeproj */,
-				CA5A48001BDC47028686C0D5 /* UdpSockets.xcodeproj */,
->>>>>>> 6348a11687e97beef301fddf546db55d069641a5:ios/unboxing.xcodeproj/project.pbxproj
+				86FC96763A4E49EEB0E3581A /* RNFS.xcodeproj */,
+				E7CE6889AA254EDB8DD67F8D /* RNZeroconf.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1105,16 +1094,16 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
-<<<<<<< HEAD:ios/AudioSynch.xcodeproj/project.pbxproj
-					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
-=======
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
->>>>>>> 6348a11687e97beef301fddf546db55d069641a5:ios/unboxing.xcodeproj/project.pbxproj
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
 				);
 			};
 			name = Debug;
@@ -1139,16 +1128,16 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
-<<<<<<< HEAD:ios/AudioSynch.xcodeproj/project.pbxproj
-					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
-=======
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
->>>>>>> 6348a11687e97beef301fddf546db55d069641a5:ios/unboxing.xcodeproj/project.pbxproj
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
 				);
 			};
 			name = Release;
@@ -1171,12 +1160,10 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
-<<<<<<< HEAD:ios/AudioSynch.xcodeproj/project.pbxproj
-					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
-=======
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
->>>>>>> 6348a11687e97beef301fddf546db55d069641a5:ios/unboxing.xcodeproj/project.pbxproj
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
 				);
 			};
 			name = Debug;
@@ -1198,12 +1185,10 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
-<<<<<<< HEAD:ios/AudioSynch.xcodeproj/project.pbxproj
-					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
-=======
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
->>>>>>> 6348a11687e97beef301fddf546db55d069641a5:ios/unboxing.xcodeproj/project.pbxproj
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
 				);
 			};
 			name = Release;
@@ -1237,16 +1222,16 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
-<<<<<<< HEAD:ios/AudioSynch.xcodeproj/project.pbxproj
-					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
-=======
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
->>>>>>> 6348a11687e97beef301fddf546db55d069641a5:ios/unboxing.xcodeproj/project.pbxproj
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
 				);
 			};
 			name = Debug;
@@ -1280,16 +1265,16 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-keep-awake/ios",
-<<<<<<< HEAD:ios/AudioSynch.xcodeproj/project.pbxproj
-					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
-=======
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-udp/ios/**",
->>>>>>> 6348a11687e97beef301fddf546db55d069641a5:ios/unboxing.xcodeproj/project.pbxproj
+					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-zeroconf/ios/RNZeroconf",
 				);
 			};
 			name = Release;
@@ -1318,6 +1303,8 @@
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 			};
 			name = Debug;
@@ -1342,6 +1329,8 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
