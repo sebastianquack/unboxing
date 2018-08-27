@@ -14,6 +14,7 @@ import {globalStyles} from '../../config/globalStyles';
 class TimeSync extends React.Component { 
   constructor(props) {
   	super(props);
+
     this.handleTestClickSwitch = this.handleTestClickSwitch.bind(this);
     this.handleSyncPress = this.handleSyncPress.bind(this);
     this.correctSync = this.correctSync.bind(this);
@@ -23,30 +24,30 @@ class TimeSync extends React.Component {
   handleSyncPress() {
     console.log("sync button pressed, calling server");
     avgTimeDeltas((delta)=>{
-      this.props.soundManager.setDelta(delta);
+      this.props.setDelta(delta);
       alert("Time sync completed");
     });
   }
 
   handleTestClickSwitch(value) {
-    this.props.soundManager.setTestClick(value);
+    this.props.setTestClick(value);
     if(value) {
       // schedule click to the next second
-      this.props.soundManager.loadSound("/misc/click.mp3");
-      this.props.soundManager.scheduleNextSound(Math.ceil(this.props.soundManager.getSyncTime()/1000)*1000);
+      this.props.loadSound("/misc/click.mp3");
+      this.props.scheduleNextSound(Math.ceil(this.props.getSyncTime()/1000)*1000);
     } else {
-      this.props.soundManager.scheduleNextSound(null);
+      this.props.scheduleNextSound(null);
     }
   }
 
   correctSync(d) {
-    this.props.soundManager.setDelta(this.props.soundManager.delta + d);
+    this.props.setDelta(this.props.delta + d);
   }
 
   render() {
   	return (
   		<View>
-	  	  <Text>Time delta: {this.props.soundManager.delta}</Text>
+	  	  <Text>Time delta: {this.props.delta}</Text>
         
         <View style={globalStyles.buttons}>
           <TouchableOpacity style={globalStyles.button} onPress={this.handleSyncPress}>
@@ -60,7 +61,7 @@ class TimeSync extends React.Component {
           </TouchableOpacity>
           <View>
             <Text>Test Click</Text>
-            <Switch value={this.props.soundManager.testClick} onValueChange={this.handleTestClickSwitch}/>
+            <Switch value={this.props.testClick} onValueChange={this.handleTestClickSwitch}/>
           </View>
         </View>
         

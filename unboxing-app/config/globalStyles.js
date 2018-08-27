@@ -15,6 +15,11 @@ const globalStyles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#aaa',
   },
+  control: {
+    marginRight: 20,
+    marginLeft: 20,
+    marginBottom: 20
+  }
 });
 
 export {globalStyles};

@@ -51,7 +51,9 @@ class AttributeSlider extends React.Component {
     if(this.state.gestureControl) {
       let newValue = this.props.sensorTranslate(data, this.props, this.buffer);
       this.setState({sliderPosition: newValue, value: newValue});
-      this.props.onValueChange(newValue);  
+      if(this.state.gestureControl) {
+        this.props.onValueChange(newValue);    
+      }
     }
   }
 
@@ -93,7 +95,7 @@ class AttributeSlider extends React.Component {
           onSlidingComplete={value => this.setState({sliderPosition: value})}
         />
         <View style={{flexDirection: 'row'}}>
-          <Text>Gesture Control</Text>
+          <Text>Sensor Control Active</Text>
           <Switch value={this.state.gestureControl} onValueChange={this.handleSwitch} />
         </View>
         {this.renderDebugInfo()}
