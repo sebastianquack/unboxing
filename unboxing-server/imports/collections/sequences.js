@@ -1,8 +1,10 @@
 import { Mongo } from 'meteor/mongo';
 import makeColor from 'string-to-color'
 import Color from 'color';
+import Files from './files'
 
 const Sequences = new Mongo.Collection('sequences');
+
 
 Sequences.allow({
   insert: () => true,
@@ -36,10 +38,21 @@ export default Sequences;
   } )
 }
 
-updateDuration = (userId, doc) => {
+updateItemsDuration = (userId, doc,fieldNames, modifier, options) => {
+  if (modifier && modifier.$set && modifier.$set["items.$"]) {
+    const path = modifier.$set["items.$"].path
+    const duration = Files.findOne({path}).duration
+    if (duration) {
+      modifier.$set["items.$"].duration = duration
+    }
+  }
+}
+
+updateTracksDuration = (userId, doc) => {
   const duration = doc.items.reduce( 
-    (accumulator, track) => {
-      return track.startTime > accumulator ? track.startTime : accumulator // should add duration of each item, if exists
+    (accumulator, item) => {
+      const end = item.startTime + ( item.duration ? item.duration : 0 )
+      return end > accumulator ? end : accumulator // should add duration of each item, if exists
     }
     , 0 )
   //console.log("duration ", duration)
@@ -48,8 +61,10 @@ updateDuration = (userId, doc) => {
   } )
 }
 
-Sequences.after.insert(updateDuration)
-Sequences.after.update(updateDuration)
+Sequences.before.update(updateItemsDuration)
+
+Sequences.after.insert(updateTracksDuration)
+Sequences.after.update(updateTracksDuration)
 
 Sequences.after.insert(updateTracksInfo)
 Sequences.after.update(updateTracksInfo)

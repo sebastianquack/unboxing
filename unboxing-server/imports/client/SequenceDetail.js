@@ -52,7 +52,7 @@ class Sequence extends React.Component {
     const offset = trackTitleWidth+unit
     const left = `calc(${offset} + (${ratio} * (100% - ${offset})))`
     const active = this.state.active_item && this.state.active_item == d._id
-    const width = d.duration ? d.duration/this.props.sequence.duration+'%' : "auto"
+    const width = d.duration ? `calc(${d.duration/this.props.sequence.duration} * (100% - ${offset}))` : "auto"
     return (
       <li key={d._id} style={{position: "absolute", top, left, width}} className={active ? "active" : ""} >
         <SequenceDetailItem 
@@ -115,7 +115,7 @@ export default withTracker(props => {
 })(Sequence);
 
 const tracksCSS = css`
-width: 70%;
+width: 90%;
 position: relative;
 margin-top: 1ex;
 .tracks_list {
@@ -154,6 +154,7 @@ margin-top: 1ex;
       &:hover, &.active {
         height: auto;
         z-index: 10;
+        width: auto !important;
       }
     }
 
