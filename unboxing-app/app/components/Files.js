@@ -17,7 +17,7 @@ class Files extends React.Component {
   }
 
   updateFileInfo = file => {
-    //console.log("update ", file)
+    console.log(file)
 
     let info = this.state.localFiles[file._id] || {}
 
@@ -47,7 +47,6 @@ class Files extends React.Component {
         console.log("DOWN?", file.path, info, file.size, info.size)
         if (!info.downloading && info.size != file.size) {
           start = true
-          info.downloading = true
         } else if (info.size == file.size) {
           info.downloading = false
         }
@@ -58,16 +57,38 @@ class Files extends React.Component {
           return state
         }, () => {
           if (start) {
-            console.log("starting download", file.path)
-            RNFS.downloadFile({
-              fromUrl: 'http://'+this.props.host+':3000' + file.url_path,
-              toFile: folder + file.path,
-              progress: p => {this.setState((prevState) => { prevState.localFiles[file._id].size = p.bytesWritten; return prevState })}
-            }).promise.then( (jobId, more) => {
-              console.log(jobId, more)
-            }).catch((err) => {
-              console.log(err.message, err.code);
-            });         
+            console.log("Object.entries(this.state.localFiles)", Object.entries(this.state.localFiles))
+            const firstDownloadingFile = Object.entries(this.state.localFiles).find( e => e[1].downloading )
+            console.log("firstDownloadingFile", firstDownloadingFile)
+            if (!firstDownloadingFile) {
+
+              console.log("starting download", file.path)
+
+              this.setState(state => {
+                state.localFiles[file._id].downloading = true
+                return state
+              })
+
+              RNFS.downloadFile({
+                fromUrl: 'http://'+this.props.host+':3000' + file.url_path,
+                toFile: folder + file.path,
+                progress: p => {this.setState((prevState) => { 
+                  prevState.localFiles[file._id].size = p.bytesWritten; 
+                  return prevState 
+                },()=>{
+                }
+              )}
+              }).promise.then( (jobId, more) => {
+                console.log(jobId, more)
+                this.updateFilesInfo()
+                setTimeout(this.updateFilesInfo,1000)
+              }).catch((err) => {
+                console.log(err.message, err.code);
+              });       
+
+            } else {
+              console.log("not yet downloading ", file.path)
+            }
           }   
         })
         
@@ -101,16 +122,20 @@ class Files extends React.Component {
       </Text>)
   }
 
-  handleUpdate = () => {
+  updateFilesInfo = () => {
     for (let file of this.props.files) {
       this.updateFileInfo(file)
     }    
   }
 
+  handleUpdate = () => {
+    this.updateFilesInfo()
+  }
+
   handleDelete = () => {
     RNFS.unlink(folder)
     .then( () => {
-      // this.handleUpdate()
+      // this.updateFilesInfo()
     })
     .catch( error => {
       console.log("error deleting", error)
@@ -132,7 +157,7 @@ class Files extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (!prevProps.ready && this.props.ready) {
-      this.handleUpdate()
+      // this.updateFilesInfo()
     }
   }
 
