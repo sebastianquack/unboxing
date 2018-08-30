@@ -41,7 +41,7 @@ class ServerConnector extends React.Component {
       const servers = []
       for (key in zc_services) {
         const parts = key.split("_")
-        if (parts[0]=="unboxing") {
+        if (parts[0]=="unboxing" && parts[4] != undefined) {
           servers.push(`${parts[1]}.${parts[2]}.${parts[3]}.${parts[4]}`)
         }
       }
