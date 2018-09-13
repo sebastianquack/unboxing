@@ -24,6 +24,7 @@ npm --version
 
 - log: `react-native log-android`
 - open dev menu on device: `adb shell input keyevent KEYCODE_MENU`
+- clear caches: `watchman watch-del-all && rm -rf $TMPDIR/react-native-packager-cache-* && rm -rf $TMPDIR/metro-bundler-cache-* && npm start -- --reset-cache`
 
 ## set up ntp server on os x
 
