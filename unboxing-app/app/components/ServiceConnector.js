@@ -10,12 +10,15 @@ const ServiceContextConsumer = ServiceContext.Consumer;
 class ServiceConnector extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			mounted: false
+		};
 	}
 
 	// all services need to be registered here
 	componentDidMount() {
 		soundService.registerOnChange(this.handleStateUpdate);
+		this.setState({ mounted: true })
 	}
 
 	handleStateUpdate = (name, state) => {
@@ -27,29 +30,26 @@ class ServiceConnector extends React.Component {
 	}
 
 	render() {
-		return (
-			<ServiceContext.Provider value={this.state}>
-				{this.props.children}
-			</ServiceContext.Provider>
-		);
+		if (this.state.mounted) {
+			return (
+				<ServiceContext.Provider value={this.state}>
+					{this.props.children}
+				</ServiceContext.Provider>
+			);
+		}
+		else return null
 	}
 }
 
-// use this to consume reactive service state values from context
-class ServiceValue extends React.Component {
-	constructor(props) {
-		super(props);
-	}
-
-	render() {
-		return (
-			<ServiceContextConsumer>
-		        {services => {
-		          if(services[this.props.service]) return services[this.props.service][this.props.value];
-		        }}
-		    </ServiceContextConsumer>
-		);
-	}
+// higher order component
+function withServices(Component) {
+  return function ComponentWithServices(props) {
+    return (
+      <ServiceContextConsumer>
+        {services => <Component {...props} services={services} />}
+      </ServiceContextConsumer>
+    );
+  };
 }
 
-export { ServiceConnector, ServiceContextConsumer, ServiceValue };
+export { ServiceConnector, ServiceContextConsumer, withServices };
