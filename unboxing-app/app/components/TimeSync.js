@@ -7,9 +7,12 @@ import {
   Switch
 } from 'react-native';
 
-import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
+//import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 
 import {globalStyles} from '../../config/globalStyles';
+
+import {soundService} from '../services/soundService';
+import {ServiceValue} from '../components/ServiceConnector';
 
 class TimeSync extends React.Component { 
   constructor(props) {
@@ -24,7 +27,7 @@ class TimeSync extends React.Component {
   handleSyncPress() {
     console.log("sync button pressed, calling server");
     avgTimeDeltas((delta)=>{
-      this.props.setDelta(delta);
+      soundService.setDelta(delta);
       alert("Time sync completed");
     });
   }
@@ -40,14 +43,16 @@ class TimeSync extends React.Component {
     }
   }
 
+  // called when user clicks plus or minus delta correction button
   correctSync(d) {
-    this.props.setDelta(this.props.delta + d);
+    soundService.setDelta(soundService.getDelta() + d);
   }
 
   render() {
   	return (
   		<View>
-	  	  <Text>Time delta: {this.props.delta}</Text>
+        <Text>Time delta: <ServiceValue service="sound" value="delta"/>
+        </Text>
         
         <View style={globalStyles.buttons}>
           <TouchableOpacity style={globalStyles.button} onPress={this.handleSyncPress}>

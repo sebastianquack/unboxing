@@ -6,7 +6,7 @@ import {
   TextInput
 } from 'react-native';
 
-import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
+import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import Zeroconf from 'react-native-zeroconf';
 
 var RNFS = require('react-native-fs');
@@ -29,6 +29,7 @@ class ServerConnector extends React.Component {
   componentDidMount() {
     this.initZeroconf()
     //this.loadLocalConfig();
+    Meteor.connect('ws://localhost');
   }
 
   initZeroconf() {
@@ -107,9 +108,9 @@ class ServerConnector extends React.Component {
   }
 }
 
-export default createContainer(params=>{
+export default withTracker(params=>{
 	const connected = Meteor.status().connected
 	return {
     	connected
   	};
-}, ServerConnector);
+})(ServerConnector);

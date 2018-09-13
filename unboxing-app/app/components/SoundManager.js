@@ -183,10 +183,10 @@ export default class SoundManager extends React.Component {
     return( 
       <View>
         <TimeSync
-          delta={this.state.delta}
+          delta={this.state.delta} // interface relevant
           setDelta={v=>{this.setState({delta: v})}}
           getSyncTime={this.getSyncTime}
-          testClick={this.state.testClick}
+          testClick={this.state.testClick} // interface relevant
           setTestClick={v=>{this.setState({testClick: v})}}
           loadSound={this.loadSound}
           scheduleNextSound={this.scheduleNextSound}
@@ -196,11 +196,11 @@ export default class SoundManager extends React.Component {
           setSpeed={this.setSpeed}
         />
         <Sequencer
-          loadSound={this.loadSound}
-          scheduleNextSound={this.scheduleNextSound}
-          getSyncTime={this.getSyncTime}
-          playScheduled={this.playScheduled}
-          stopSound={this.stopSound}
+          loadSound={this.loadSound} // preloud sound
+          scheduleNextSound={this.scheduleNextSound} // set time to play next sound
+          getSyncTime={this.getSyncTime} // what time is it?
+          playScheduled={this.playScheduled} // is a sound scheduled? 
+          stopSound={this.stopSound} // stop everything
         />
       </View>
     );

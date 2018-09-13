@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
-import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
+import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
 import TrackSelector from './TrackSelector';
@@ -286,7 +286,9 @@ class Sequencer extends React.Component {
   }
 }
 
-export default createContainer(params=>{
+export default withTracker(params=>{
+  
+  
   
   Meteor.subscribe('events.all', () => {
     Meteor.ddp.on("added", message => {
@@ -333,7 +335,7 @@ export default createContainer(params=>{
     challenge
   };
   
-}, Sequencer);
+})(Sequencer);
 
 const styles = StyleSheet.create({
   welcome: {

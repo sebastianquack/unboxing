@@ -4,7 +4,7 @@
  */
 
 import React, { Component } from 'react';
-import Meteor, { createContainer } from 'react-native-meteor';
+import Meteor, { withTracker } from 'react-native-meteor';
 import { Text, View, Switch, StyleSheet, TouchableOpacity, Slider } from 'react-native';
 import { Accelerometer, Gyroscope } from 'react-native-sensors';
 import { DynamicTimeWarping } from 'dynamic-time-warping';
@@ -266,7 +266,7 @@ class Gesture extends React.Component {
   }
 }
 
-export default createContainer(params=>{
+export default withTracker(params=>{
   const handle = Meteor.subscribe('gestures.active');
   const gestures = Meteor.collection('gestures').find()
 
@@ -281,7 +281,7 @@ export default createContainer(params=>{
     ready: handle.ready(),
     gesture
   };
-}, Gesture)
+})(Gesture);
 
 const styles = StyleSheet.create({
   debugContainer: {

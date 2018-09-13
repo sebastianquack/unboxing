@@ -15,7 +15,13 @@ import {
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
 
+import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
+
+import {ServiceConnector, ServiceValue} from './app/components/ServiceConnector';
+import {soundService} from './app/services/soundService';
+
 import {globalStyles} from './config/globalStyles';
+
 import ServerConnector from './app/components/ServerConnector';
 import SoundManager from './app/components/SoundManager';
 import Files from './app/components/Files';
@@ -36,31 +42,34 @@ class App extends Component {
   handleHostChange = (host) => {
     setTimeout(()=>this.setState({host}), 1000)
   }
-
+  
   render() {
     return (
-      <ScrollView contentContainerStyle={styles.container}>
+      <ServiceConnector>
+        <ScrollView contentContainerStyle={styles.container}>
 
-        <ServerConnector 
-          onHostChange={this.handleHostChange}
-        />
+          <ServerConnector 
+            onHostChange={this.handleHostChange}
+          />
 
-        <KeepAwake />
+          <KeepAwake />
+          
+          <Text style={globalStyles.titleText}>Unboxing</Text>
+
+          <SoundManager/>
+
+          <Files 
+            host={this.state.host}
+          />
         
-        <Text style={globalStyles.titleText}>Unboxing</Text>
-
-        <SoundManager/>
-
-        <Files 
-          host={this.state.host}
-        />
-      
-      </ScrollView>
+        </ScrollView>
+      </ServiceConnector>
     );
   }
 }
 
 export default App;
+
 
 const styles = StyleSheet.create({
   container: {

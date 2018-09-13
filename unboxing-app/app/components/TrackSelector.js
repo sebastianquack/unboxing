@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import Meteor, { ReactiveDict, createContainer, MeteorListView } from 'react-native-meteor';
+import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
 class TrackSelector extends React.Component { 
@@ -57,13 +57,13 @@ class TrackSelector extends React.Component {
   }
 }
 
-export default createContainer(params=>{
+export default withTracker(params=>{
   const handle = Meteor.subscribe('sequences.all');
   
   return {
     ready: handle.ready(),
   };
-}, TrackSelector)
+})(TrackSelector);
 
 const styles = StyleSheet.create({
   button: {
