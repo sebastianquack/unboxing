@@ -9,8 +9,8 @@
   "dependencies": {
     "dynamic-time-warping": "^1.0.0",
     "object-hash": "^1.3.0",
-    "react": "^16.3.0",
-    "react-native": "^0.55.0",
+    "react": "^16.5.0",
+    "react-native": "^0.55.4",
     "react-native-clock-sync": "^1.0.0",
     "react-native-fs": "^2.11.15",
     "react-native-keep-awake": "^2.0.6",

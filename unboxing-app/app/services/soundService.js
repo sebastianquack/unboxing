@@ -33,6 +33,8 @@ class SoundSevice extends Service {
 	    
 		this.tickerInterval = null;
 	    this.tickerIntervalTime = 10;
+
+	    this.startTicker();
 	}
 
 	// delta and sync time
@@ -55,7 +57,7 @@ class SoundSevice extends Service {
 	// turn on or off test clicking
 	setTestClick = (value) => {
 	   	this.setReactive("testClick", value);
-	   	console.log("testClick set to", this.testClick);
+	   	console.log("testClick set to", value);
 	}
 
 	// playback scheduling
@@ -122,6 +124,7 @@ class SoundSevice extends Service {
 		  // loaded successfully
 		  console.log('succesfully loaded ' + this.filename + ' duration in seconds: ' + newSound.getDuration() + 'number of channels: ' + newSound.getNumberOfChannels());
 		  this.sound = newSound;
+		  this.sound.setVolume(this.getReactive("volume"));	
 		});
 	}
 
@@ -144,7 +147,7 @@ class SoundSevice extends Service {
 		  this.sound = null;
 
 		  // schedule next click or sequence item 
-		  if(this.state.testClick) {
+		  if(this.getReactive("testClick")) {
 		    this.loadSound("/misc/click.mp3");
 		    this.scheduleNextSound(Math.ceil(this.getSyncTime()/1000)*1000);  
 		  } else {
