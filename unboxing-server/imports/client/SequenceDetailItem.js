@@ -61,6 +61,8 @@ class SequenceDetailItem extends React.Component {
             {this.props.ready && this.props.gestures.map( f => <option key={f._id} value={f._id}>{f.name}</option>)}      
           </select>
         )        
+      case "duration":
+        return <span>{value}</span>
       default:
         const inputType = typeof(value) == "number" ? "number" : "text"
         const inputTransform = (value) => {
