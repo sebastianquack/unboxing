@@ -11,8 +11,6 @@ class AttributeSlider extends React.Component {
     });
     this.state = {
       gyr:{x:0,y:0,z:0},
-      value: this.props.initialValue,
-      sliderPosition: this.props.initialValue,
       gestureControl: false
     }
     this.receiveGyrData = this.receiveGyrData.bind(this)
@@ -87,12 +85,10 @@ class AttributeSlider extends React.Component {
           style={{width: 400, margin: 20}}
           minimumValue={this.props.minValue}
           maximumValue={this.props.maxValue}
-          value={this.state.sliderPosition}
+          value={this.props.value}
           onValueChange={value => {
-            this.setState({value: Math.round(value * 100) / 100})
-            this.props.onValueChange(value);
+            this.props.onValueChange(Math.round(value * 100) / 100);
           }}
-          onSlidingComplete={value => this.setState({sliderPosition: value})}
         />
         <View style={{flexDirection: 'row'}}>
           <Text>Sensor Control Active</Text>

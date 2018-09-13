@@ -4,6 +4,9 @@ import { Accelerometer } from 'react-native-sensors';
 
 import AttributeSlider from './AttributeSlider';
 
+import {soundService} from '../services/soundService';
+import {withServices} from '../components/ServiceConnector';
+
 class SensorControls extends React.Component { 
   constructor(props) {
     super(props);
@@ -46,10 +49,11 @@ class SensorControls extends React.Component {
         
         <AttributeSlider
           attributeName={"Volume"}
-          initialValue={0.5}
+          initialValue={this.props.services.sound.volume}
+          value={this.props.services.sound.volume}
           minValue={0.1}
           maxValue={1}
-          onValueChange={value=>this.props.setVolume(value)}
+          onValueChange={value=>soundService.setVolume(value)}
           sensorTranslate={(data, props)=>{
             let sensorValue = data.x;
             if(sensorValue > 5) sensorValue = 5;
@@ -61,10 +65,11 @@ class SensorControls extends React.Component {
 
         <AttributeSlider
           attributeName={"Speed"}
-          initialValue={1.0}
+          initialValue={this.props.services.sound.speed}
+          value={this.props.services.sound.speed}
           minValue={0.8}
           maxValue={1.2}
-          onValueChange={value=>this.props.setSpeed(value)}
+          onValueChange={value=>soundService.setSpeed(value)}
           sensorTranslate={(data, props)=>{
             let sensorValue = data.y;
             if(sensorValue > 5) sensorValue = 5;
@@ -76,12 +81,13 @@ class SensorControls extends React.Component {
 
         <AttributeSlider
           attributeName={"Volume"}
-          initialValue={0.5}
+          initialValue={this.props.services.sound.volume}
+          value={this.props.services.sound.volume}
           minValue={0.1}
           maxValue={1}
           dataBufferSize={1}
           updateInterval={200}
-          onValueChange={value=>this.props.setVolume(value)}
+          onValueChange={value=>soundService.setVolume(value)}
           sensorTranslate={this.translateMovementAmount}
         />
 
@@ -90,4 +96,4 @@ class SensorControls extends React.Component {
   }
 }
 
-export default SensorControls;
+export default withServices(SensorControls);

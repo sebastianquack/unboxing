@@ -16,12 +16,12 @@ export default class Service {
 		this.onChange(this.serviceName, this.state);
 	}
 
-	set(key, value) {
+	setReactive(key, value) {
 		this.state[key] = value;
 		this.onChange(this.serviceName, this.state);
 	}
 
-	get(key) {
+	getReactive(key) {
 		return this.state[key];
 	}
 }

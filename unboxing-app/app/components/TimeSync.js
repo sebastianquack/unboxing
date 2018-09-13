@@ -7,12 +7,12 @@ import {
   Switch
 } from 'react-native';
 
-//import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
+import Meteor from 'react-native-meteor';
 
 import {globalStyles} from '../../config/globalStyles';
 
 import {soundService} from '../services/soundService';
-import {ServiceValue} from '../components/ServiceConnector';
+import {withServices} from '../components/ServiceConnector';
 
 class TimeSync extends React.Component { 
   constructor(props) {
@@ -20,7 +20,6 @@ class TimeSync extends React.Component {
 
     this.handleTestClickSwitch = this.handleTestClickSwitch.bind(this);
     this.handleSyncPress = this.handleSyncPress.bind(this);
-    this.correctSync = this.correctSync.bind(this);
   }
 
   // time sync controls
@@ -33,40 +32,34 @@ class TimeSync extends React.Component {
   }
 
   handleTestClickSwitch(value) {
-    this.props.setTestClick(value);
+    soundService.setTestClick(value);
     if(value) {
       // schedule click to the next second
-      this.props.loadSound("/misc/click.mp3");
-      this.props.scheduleNextSound(Math.ceil(this.props.getSyncTime()/1000)*1000);
+      soundService.loadSound("/misc/click.mp3");
+      soundService.scheduleNextSound(Math.ceil(soundService.getSyncTime()/1000)*1000);
     } else {
-      this.props.scheduleNextSound(null);
+      soundService.scheduleNextSound(null);
     }
-  }
-
-  // called when user clicks plus or minus delta correction button
-  correctSync(d) {
-    soundService.setDelta(soundService.getDelta() + d);
   }
 
   render() {
   	return (
   		<View>
-        <Text>Time delta: <ServiceValue service="sound" value="delta"/>
-        </Text>
+        <Text>Time delta: {this.props.services.sound.delta}</Text>
         
         <View style={globalStyles.buttons}>
           <TouchableOpacity style={globalStyles.button} onPress={this.handleSyncPress}>
             <Text>Sync Time</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={globalStyles.button} onPress={()=>this.correctSync(5)}>
+          <TouchableOpacity style={globalStyles.button} onPress={()=>soundService.modifyDelta(5)}>
             <Text>+5</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={globalStyles.button} onPress={()=>this.correctSync(-5)}>
+          <TouchableOpacity style={globalStyles.button} onPress={()=>soundService.modifyDelta(-5)}>
             <Text>-5</Text>
           </TouchableOpacity>
           <View>
             <Text>Test Click</Text>
-            <Switch value={this.props.testClick} onValueChange={this.handleTestClickSwitch}/>
+            <Switch value={this.props.services.sound.testClick} onValueChange={this.handleTestClickSwitch}/>
           </View>
         </View>
         
@@ -124,4 +117,4 @@ function avgTimeDeltas(callback) {
   }  
 }
 
-export default TimeSync;
+export default withServices(TimeSync);

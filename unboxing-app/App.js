@@ -23,8 +23,10 @@ import {soundService} from './app/services/soundService';
 import {globalStyles} from './config/globalStyles';
 
 import ServerConnector from './app/components/ServerConnector';
-import SoundManager from './app/components/SoundManager';
 import Files from './app/components/Files';
+import TimeSync from './app/components/TimeSync';
+import SensorControls from './app/components/SensorControls';
+import Sequencer from './app/components/Sequencer';
 
 class App extends Component {
 
@@ -48,19 +50,19 @@ class App extends Component {
       <ServiceConnector>
         <ScrollView contentContainerStyle={styles.container}>
 
-          <ServerConnector 
-            onHostChange={this.handleHostChange}
-          />
+          <ServerConnector onHostChange={this.handleHostChange}/>
 
           <KeepAwake />
           
           <Text style={globalStyles.titleText}>Unboxing</Text>
 
-          <SoundManager/>
+          <TimeSync/>
+          
+          <SensorControls/>
+        
+          <Sequencer/>
 
-          <Files 
-            host={this.state.host}
-          />
+          <Files host={this.state.host}/>
         
         </ScrollView>
       </ServiceConnector>

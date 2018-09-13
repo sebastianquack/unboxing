@@ -14,6 +14,8 @@ var challengeMode = false;
 var failedAlertShown = false;
 var playScheduled = false;
 
+import {soundService} from '../services/soundService';
+
 class Sequencer extends React.Component { 
   constructor(props) {
     super(props);
@@ -55,7 +57,7 @@ class Sequencer extends React.Component {
 
   // this is only called once every second or so
   updateSequenceDisplay() {
-    const currentTime = this.props.getSyncTime(); // get the synchronized time
+    const currentTime = soundService.getSyncTime(); // get the synchronized time
 
     if(this.state.currentSequencePlaying) {
       let currentTimeInSequence = currentTime - this.state.currentSequenceStartedAt;
@@ -133,7 +135,7 @@ class Sequencer extends React.Component {
       return;
     }
 
-    let referenceTime = this.props.getSyncTime();  
+    let referenceTime = soundService.getSyncTime();  
     if(startTime) {
       referenceTime = startTime; // set startTime to time set on remote device
     } else {
