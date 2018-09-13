@@ -13,12 +13,13 @@ class ServiceConnector extends React.Component {
 		this.state = {};
 	}
 
+	// all services need to be registered here
 	componentDidMount() {
 		soundService.registerOnChange(this.handleStateUpdate);
 	}
 
 	handleStateUpdate = (name, state) => {
-		// react state
+		// react state of this component
 		this.setState( prevState => {
 			prevState[name] = state;
 			return prevState;
