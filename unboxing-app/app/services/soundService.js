@@ -30,7 +30,6 @@ class SoundSevice extends Service {
 	    this.volume = 0.5;
 	    this.speed = 1;
 	    this.afterPlaybackCallback = null;
-	    
 		this.tickerInterval = null;
 	    this.tickerIntervalTime = 10;
 
