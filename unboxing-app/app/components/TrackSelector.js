@@ -3,6 +3,8 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
+import {sequenceService} from '../services/sequenceService';
+
 class TrackSelector extends React.Component { 
   constructor(props) {
     super(props);
@@ -30,7 +32,7 @@ class TrackSelector extends React.Component {
       <TouchableOpacity
           key={index}
           style={style.concat({backgroundColor:track.color})}
-          onPress={()=>{this.props.onSelect(sequence, track);}}
+          onPress={()=>{sequenceService.trackSelect(sequence, track);}}
         >
         <Text>{track.name}</Text>
       </TouchableOpacity>

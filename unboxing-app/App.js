@@ -26,7 +26,8 @@ import ServerConnector from './app/components/ServerConnector';
 import Files from './app/components/Files';
 import TimeSync from './app/components/TimeSync';
 import SensorControls from './app/components/SensorControls';
-import Sequencer from './app/components/Sequencer';
+import Sequence from './app/components/Sequence';
+import TrackSelector from './app/components/TrackSelector';
 
 class App extends Component {
 
@@ -60,7 +61,8 @@ class App extends Component {
           
           <SensorControls/>
         
-          <Sequencer/>
+          <Sequence/>
+          <TrackSelector/>
 
           <Files host={this.state.host}/>
         
