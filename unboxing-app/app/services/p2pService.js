@@ -2,6 +2,8 @@ import p2pkit from 'react-native-p2pkit';
 
 import Service from './Service';
 
+import Credentials from '../../credentials';
+
 const p2pkitCallback = {
 
     onException: function(exceptionMessage) {
@@ -56,6 +58,8 @@ class P2pService extends Service {
 
 	constructor() {
 
+        console.log(Credentials.p2pkit);
+
 		// reactive vars
 		super("p2p", {
 		});
@@ -67,7 +71,7 @@ class P2pService extends Service {
 
 	startP2PKit() {
 		console.log("starting p2pkit")
-		p2pkit.enable('e6269223a96043cc871cd4dbfd1e1efd', p2pkitCallback)
+		p2pkit.enable(Credentials.p2pkit, p2pkitCallback)
 	}
 }
 

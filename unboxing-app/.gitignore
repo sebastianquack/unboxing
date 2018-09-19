@@ -41,6 +41,9 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
+# credentials to keep out of github
+credentials.js
+
 # BUCK
 buck-out/
 \.buckd/
