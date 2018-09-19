@@ -3,6 +3,7 @@ import { View } from 'react-native';
 
 import {soundService} from '../services/soundService';
 import {sequenceService} from '../services/sequenceService';
+import {nearbyService} from '../services/nearbyService';
 
 const ServiceContext = React.createContext({});
 const ServiceContextConsumer = ServiceContext.Consumer;
@@ -20,6 +21,7 @@ class ServiceConnector extends React.Component {
 		// all services need to be registered here
 		soundService.registerOnChange(this.handleStateUpdate);
 		sequenceService.registerOnChange(this.handleStateUpdate);
+		nearbyService.registerOnChange(this.handleStateUpdate);
 		
 		this.setState({ mounted: true })
 	}

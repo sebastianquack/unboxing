@@ -13,6 +13,8 @@ import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
+import com.butchmarshall.reactnative.google.nearby.connection.NearbyConnectionPackage;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +34,8 @@ public class MainApplication extends Application implements ReactApplication {
             new RNSoundPackage(),
             new RNSensorsPackage(),
             new KCKeepAwakePackage(),
-            new RNFSPackage()
+            new RNFSPackage(),
+            new NearbyConnectionPackage()
       );
     }
 
