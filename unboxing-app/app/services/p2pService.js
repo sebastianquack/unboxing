@@ -11,7 +11,7 @@ const p2pkitCallback = {
     onEnabled: function() {
         console.log('p2pkit is enabled')
 		p2pkit.enableProximityRanging()
-        p2pkit.startDiscovery("hi", {discoveryPowerMode:p2pkit.HIGH_PERFORMANCE}) //base64 encoded Data (bytes)
+        p2pkit.startDiscovery('hi', {discoveryPowerMode:p2pkit.HIGH_PERFORMANCE}) //base64 encoded Data (bytes)
     },
 
     onDisabled: function() {
