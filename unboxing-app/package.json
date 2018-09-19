@@ -15,7 +15,7 @@
     "react-native-fs": "^2.11.15",
     "react-native-keep-awake": "^3.1.0",
     "react-native-meteor": "^1.4.0",
-    "react-native-p2pkit": "git://github.com/Uepaa-AG/react-native-p2pkit.git",
+    "react-native-p2pkit": "file:custom_node_modules/react-native-p2pkit",
     "react-native-path": "0.0.5",
     "react-native-sensors": "^2.4.2",
     "react-native-sound": "0.10.4",

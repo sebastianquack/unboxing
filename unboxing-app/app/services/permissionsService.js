@@ -30,7 +30,7 @@ class PermissionsService extends Service {
 				console.log(`permission denied: ${permission}`, granted)
 			}
 		} catch (err) {
-			console.warn(err)
+			console.log("permission error: ", err);
 		}
 	}		
 

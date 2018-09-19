@@ -30,7 +30,11 @@ const p2pkitCallback = {
     },
 
     onPeerDiscovered: function(peer) {
+        console.log(peer);
         console.log('peer discovered ' + peer.peerID)
+
+        p2pkit.sendMessageToNearbyPeer("hello", peer.peerID);
+        
     },
 
     onPeerLost: function(peer) {
