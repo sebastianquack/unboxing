@@ -15,14 +15,20 @@ class ServiceConnector extends React.Component {
 		this.state = {
 			mounted: false
 		};
+
+		this.services = [ // all services need to be imported above and registered here
+			soundService,
+			sequenceService,
+			nearbyService,
+		]
+
 	}
 
 	componentDidMount() {
-		// all services need to be registered here
-		soundService.registerOnChange(this.handleStateUpdate);
-		sequenceService.registerOnChange(this.handleStateUpdate);
-		nearbyService.registerOnChange(this.handleStateUpdate);
-		
+		for (let service of this.services) {
+			service.registerOnChange(this.handleStateUpdate);
+		}
+
 		this.setState({ mounted: true })
 	}
 
