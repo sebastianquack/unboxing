@@ -4,6 +4,7 @@ import { View } from 'react-native';
 import {soundService} from '../services/soundService';
 import {sequenceService} from '../services/sequenceService';
 import {nearbyService} from '../services/nearbyService';
+import {sensorService} from '../services/sensorService';
 
 const ServiceContext = React.createContext({});
 const ServiceContextConsumer = ServiceContext.Consumer;
@@ -20,6 +21,7 @@ class ServiceConnector extends React.Component {
 			soundService,
 			sequenceService,
 			nearbyService,
+			sensorService
 		]
 
 	}
