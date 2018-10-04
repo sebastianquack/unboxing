@@ -7,7 +7,7 @@ import Sound from 'react-native-sound';
 Sound.setCategory('Playback');
 
 import RNFS from 'react-native-fs';
-const pathPrefix = RNFS.ExternalDirectoryPath + '/downloads';
+const pathPrefix = RNFS.ExternalStorageDirectoryPath + '/unboxing/files';
 
 class SoundSevice extends Service {
 

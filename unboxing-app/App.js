@@ -26,6 +26,7 @@ import ServerConnector from './app/components/ServerConnector';
 import Files from './app/components/Files';
 import TimeSync from './app/components/TimeSync';
 import SensorControls from './app/components/SensorControls';
+import SensorInfo from './app/components/SensorInfo';
 import Sequence from './app/components/Sequence';
 import TrackSelector from './app/components/TrackSelector';
 

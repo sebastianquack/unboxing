@@ -10,17 +10,12 @@ import { Accelerometer, Gyroscope } from 'react-native-sensors';
 import { DynamicTimeWarping } from 'dynamic-time-warping';
 import hash from 'object-hash';
 
+import {sensorService} from '../services'
 import {globalStyles} from '../../config/globalStyles';
 
 class Gesture extends React.Component { 
   constructor(props) {
     super(props);
-    this.accelerationObservable = new Accelerometer({
-      updateInterval: 100, // defaults to 100ms
-    });
-    this.gyroscopeObservable = new Gyroscope({
-      updateInterval: 100, // defaults to 100ms
-    });        
     this.state = {
       acc:{x:0,y:0,z:0},
       gyr:{x:0,y:0,z:0},
@@ -35,8 +30,8 @@ class Gesture extends React.Component {
     }
     this.records = []
     this.recentRecords = []
-    this.receiveAccData = this.receiveAccData.bind(this)
-    this.receiveGyrData = this.receiveGyrData.bind(this)
+    this.receiveData = this.receiveData.bind(this)
+    this.receiverHandle = null
     this.renderDebugInfo = this.renderDebugInfo.bind(this)
     this.handleSwitch = this.handleSwitch.bind(this)
     this.handleRecPress = this.handleRecPress.bind(this)
@@ -53,8 +48,7 @@ class Gesture extends React.Component {
   }
 
   componentDidMount() {
-    this.accelerationObservable.subscribe(this.receiveAccData);
-    this.gyroscopeObservable.subscribe(this.receiveGyrData);
+    this.receiverHandle = sensorService.registerReceiver(this.receiveData);
   }
 
   componentDidUpdate(prevProps) {
@@ -65,11 +59,7 @@ class Gesture extends React.Component {
     }
   }  
 
-  receiveAccData(data) {
-    //console.log(`sensordata acc ${data.x} ${data.y} ${data.z}` )
-    data.x = Math.floor(data.x*1000)/1000
-    data.y = Math.floor(data.y*1000)/1000
-    data.z = Math.floor(data.z*1000)/1000
+  receiveData(data) {
     //this.detectEinsatz(this.state.acc, data)
     if (this.state.recording) {
       this.records.push(data)
@@ -77,15 +67,7 @@ class Gesture extends React.Component {
     if (this.state.active) {
       this.detectDtwEinsatz(data)
     }
-    if (this.state.debugging) this.setState({acc: data})
-  }
-
-  receiveGyrData(data) {
-    //console.log(`sensordata gyr ${data.x} ${data.y} ${data.z}` )
-    data.x = Math.floor(data.x*1000)/1000
-    data.y = Math.floor(data.y*1000)/1000
-    data.z = Math.floor(data.z*1000)/1000
-    if (this.state.debugging) this.setState({gyr: data})
+    if (this.state.debugging) this.setState({acc: data.acc, gyr: data.gyr})
   }
 
   detectEinsatz(accPrev,acc) {
@@ -131,8 +113,7 @@ class Gesture extends React.Component {
   }
 
   componentWillUnmount() {
-    this.accelerationObservable.stop();
-    this.gyroscopeObservable.stop();
+    sensorService.unRegisterReceiver(this.receiverHandle);
   }
 
   handleSwitch(value) {
