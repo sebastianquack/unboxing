@@ -27,7 +27,7 @@ Meteor.methods({
     	...data
     })
   },
-  'setupChallenge'(uuid, value) {
+  /*'setupChallenge'(uuid, value) {
     console.log("setupChallenge");
     let challenges = Challenges.find({}, {sort: { created_at: -1 }, limit: 1}).fetch();
     let challenge = null;
@@ -133,7 +133,7 @@ Meteor.methods({
       });
     }    
 
-  },
+  },*/
   'getTime'() {
     const t = Date.now()
     //console.log(`sending time ${t} to client`)

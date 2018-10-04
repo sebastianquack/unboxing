@@ -12,12 +12,17 @@ Meteor.publish('events.all', function (data) {
   return Events.find({}, options)
 });
 
-Meteor.publish('challenges.latest', function () {
+Meteor.publish('challenges.all', function () {
+  let options = {}
+  return Challenges.find({}, options)
+});
+
+/*Meteor.publish('challenges.latest', function () {
   let options = {};
   options.limit = 1;
   options.sort = { created_at: -1 };
   return Challenges.find({"created_at" : { $gt : Date.now() - 1000 * 60 * 5 }}, options)
-});
+});*/
 
 Meteor.publish('files.all', function (query={}) {
   let options = {}

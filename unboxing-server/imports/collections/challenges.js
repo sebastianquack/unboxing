@@ -9,3 +9,12 @@ Challenges.allow({
 });
 
 export default Challenges;
+
+/* SCHEMA 
+	- name: string
+	- instructions: string
+	- sequence_id: string
+	- sequence_loop: bool
+	- sequence_autoplay: bool
+ */
+

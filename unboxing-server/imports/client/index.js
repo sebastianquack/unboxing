@@ -1,6 +1,6 @@
 import FilesInfo from './FilesInfo';
 import EventsInfo from './EventsInfo';
-import ChallengeInfo from './ChallengeInfo';
+import ChallengesInfo from './ChallengesInfo';
 import GesturesInfo from './GesturesInfo';
 import GestureDetail from './GestureDetail';
 import SequencesInfo from './SequencesInfo';
@@ -10,7 +10,7 @@ import SequenceDetailItem from './SequenceDetailItem';
 export {
   FilesInfo,
   EventsInfo,
-  ChallengeInfo,
+  ChallengesInfo,
   GesturesInfo,
   GestureDetail,
   SequencesInfo,

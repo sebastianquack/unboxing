@@ -89,6 +89,22 @@ Meteor.methods({
     )
 
     Meteor.call('sortSequenceItems', sequence_id)
-  },  
-
+  },
+  'addChallenge'() {
+    Challenges.insert({
+      name: "new",
+      instructions: "how it works",
+      sequence_id: "",
+      sequence_loop: false,
+      sequence_autoplay: true
+    });
+  },
+  'removeChallenge'(id) {
+    console.log("remove challenge", id);
+    Challenges.remove(id);
+  },
+  'updateChallenge'(id,$set) {
+    Challenges.update({_id: id}, {$set})
+  },
+  
 });
