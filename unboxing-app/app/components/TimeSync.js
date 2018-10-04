@@ -14,9 +14,15 @@ import {globalStyles} from '../../config/globalStyles';
 import {soundService} from '../services/soundService';
 import {withServices} from '../components/ServiceConnector';
 
+const clickFilename = '/misc/click.mp3';
+
 class TimeSync extends React.Component { 
   constructor(props) {
   	super(props);
+
+    this.state = {
+      testClick: false
+    };
 
     this.handleTestClickSwitch = this.handleTestClickSwitch.bind(this);
     this.handleSyncPress = this.handleSyncPress.bind(this);
@@ -32,14 +38,37 @@ class TimeSync extends React.Component {
   }
 
   handleTestClickSwitch(value) {
-    soundService.setTestClick(value);
-    if(value) {
-      // schedule click to the next second
-      soundService.loadSound("/misc/click.mp3");
-      soundService.scheduleNextSound(Math.ceil(soundService.getSyncTime()/1000)*1000);
+    this.setState({testClick: value});
+    if(value == true) {
+      
+      // check if soundService already knows about click sound
+      let status = soundService.getSoundStatus(clickFilename);
+      
+      if(!status) {
+        // sound hasn't been loaded
+        soundService.preloadSoundfile(clickFilename, ()=>{
+          // callback called after sound is loaded
+          this.initClickLoop();
+        });  
+      } else {
+        // sound is preloaded but currently not scheduled for play
+        if(status == "ready") {
+          this.initClickLoop();
+        }
+      }
     } else {
-      soundService.scheduleNextSound(null);
+      soundService.stopSound(clickFilename);
     }
+  }
+
+  initClickLoop() {
+    // schedule first playback for next second
+    soundService.scheduleSound(clickFilename, Math.ceil(soundService.getSyncTime()/1000)*1000, {
+      onPlayEnd: ()=>{
+        // callback called after end of playback, schedule new playback for next second
+        this.initClickLoop();
+      }
+    });    
   }
 
   render() {
@@ -59,7 +88,7 @@ class TimeSync extends React.Component {
           </TouchableOpacity>
           <View>
             <Text>Test Click</Text>
-            <Switch value={this.props.services.sound.testClick} onValueChange={this.handleTestClickSwitch}/>
+            <Switch value={this.state.testClick} onValueChange={this.handleTestClickSwitch}/>
           </View>
         </View>
         
