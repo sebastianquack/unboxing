@@ -16,12 +16,12 @@ class SensorInfo extends React.Component {
   render() {
     return (
       <View style={styles.info}>
-        <Text>acc x { this.props.services.sensors.acc.x }</Text>
-        <Text>acc y { this.props.services.sensors.acc.y }</Text>
-        <Text>acc z { this.props.services.sensors.acc.z }</Text>
-        <Text>gyr x { this.props.services.sensors.gyr.x }</Text>
-        <Text>gyr y { this.props.services.sensors.gyr.y }</Text>
-        <Text>gyr z { this.props.services.sensors.gyr.z }</Text>
+        <Text>acc x { this.props.services.sensors.data.acc.x }</Text>
+        <Text>acc y { this.props.services.sensors.data.acc.y }</Text>
+        <Text>acc z { this.props.services.sensors.data.acc.z }</Text>
+        <Text>gyr x { this.props.services.sensors.data.gyr.x }</Text>
+        <Text>gyr y { this.props.services.sensors.data.gyr.y }</Text>
+        <Text>gyr z { this.props.services.sensors.data.gyr.z }</Text>
       </View>
     );
   }

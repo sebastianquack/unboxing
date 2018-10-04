@@ -1,26 +1,28 @@
 import React, { Component } from 'react';
 import { Text, View, Switch, Slider } from 'react-native';
-import { Accelerometer } from 'react-native-sensors';
+
+import {sensorService} from '../services'
 import {globalStyles} from '../../config/globalStyles';
 
 class AttributeSlider extends React.Component { 
   constructor(props) {
     super(props);
-    this.gyroObservable = new Accelerometer({ // library names these wrong, we want to watch the gyro
-      updateInterval: props.updateInterval || 200, // defaults to 100ms
-    });
     this.state = {
-      gyr:{x:0,y:0,z:0},
       gestureControl: false
     }
-    this.receiveGyrData = this.receiveGyrData.bind(this)
+    this.receiveData = this.receiveData.bind(this)
     this.handleSwitch = this.handleSwitch.bind(this)
     this.buffer = []
+    this.receiverHandle = null
   }
 
   componentDidMount() {
-    this.gyroObservable.subscribe(this.receiveGyrData);
+    this.receiverHandle = sensorService.registerReceiver(this.receiveData);
   }
+
+  componentWillUnmount() {
+    sensorService.unRegisterReceiver(this.receiverHandle);
+  }  
 
   addBuffer = (data) => {
     if (!this.props.dataBufferSize) return
@@ -38,11 +40,8 @@ class AttributeSlider extends React.Component {
     }    
   }
 
-  receiveGyrData(data) {
-    //console.log(`sensordata gyr ${data.x} ${data.y} ${data.z}` )
-    data.x = Math.floor(data.x*1000)/1000;
-    data.y = Math.floor(data.y*1000)/1000;
-    data.z = Math.floor(data.z*1000)/1000;
+  receiveData(data) {
+    data = data.gyr
     this.setState({gyr: data});
     this.addBuffer(data)
 
@@ -69,9 +68,7 @@ class AttributeSlider extends React.Component {
 
     return (
       <View >
-        <Text>gyr x: {gyr.x}</Text>
-        <Text>gyr y: {gyr.y}</Text>
-        <Text>gyr z: {gyr.z}</Text>
+        <Text>{/*JSON.stringify(this.state)*/}</Text>
       </View>
     );    
   }

@@ -61,7 +61,7 @@ class App extends Component {
           <TimeSync/>
           
           <SensorInfo />
-          <SensorControls/>
+          {<SensorControls/>}
         
           <Sequence/>
           <TrackSelector/>

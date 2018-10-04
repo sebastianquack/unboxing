@@ -80,7 +80,7 @@ class SensorControls extends React.Component {
         />
 
         <AttributeSlider
-          attributeName={"Volume"}
+          attributeName={"Volume by amount of movement"}
           initialValue={this.props.services.sound.volume}
           value={this.props.services.sound.volume}
           minValue={0.1}

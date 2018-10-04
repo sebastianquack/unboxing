@@ -1,5 +1,7 @@
 import Service from './Service';
 import { Accelerometer, Gyroscope } from 'react-native-sensors';
+import { zip } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 class SensorService extends Service {
 
@@ -7,64 +9,87 @@ class SensorService extends Service {
 
 		// reactive vars
 		super("sensors", {
-			acc:{x:0,y:0,z:0},
-      gyr:{x:0,y:0,z:0},
+			data: {
+				acc:{x:0,y:0,z:0},
+				gyr:{x:0,y:0,z:0},
+			}
 		});
 
-		this.sampleIntervalMillis = 50 /* sampling rate = ( 1000 / sampleIntervalMillis ). 50 = every 3 frames at 60fps */
+		/* 
+		 * sampling rate = ( 1000 / sampleIntervalMillis ). 
+		 * 50 = every 3 frames at 60fps 
+		 * Sensor seems to have a hard limit of max 10 per second
+		 * */
+		this.sampleIntervalMillis = 50 
 
 		this.accelerationObservable = null;
 		this.gyroscopeObservable = null;
-		this.sampleIntervalMillis
+		this.combinedObservable = null;
+
 		this.gyrEnabled = false;
 		this.accEnabled = false
 
-		this.receiveAccData = this.receiveAccData.bind(this)
-		this.receiveGyrData = this.receiveGyrData.bind(this)
+		this.receiveCombinedData = this.receiveCombinedData.bind(this)
 		this.reactiveDataEnabled = false
 
+		this.receivers = {}
+		this.receiversCounter = 0
+
 		this.init();
+		this.enable();
 	}
 
 	init = () => {
-		this.accelerationObservable = new Accelerometer({
+		this.gyroscopeObservable = new Accelerometer({ // swap gyro and acc
 			updateInterval: this.sampleIntervalMillis
 		})
-		this.gyroscopeObservable = new Gyroscope({
+		this.accelerationObservable = new Gyroscope({	// swap gyro and acc
 			updateInterval: this.sampleIntervalMillis
 		})
+		this.combinedObservable = zip(
+			this.gyroscopeObservable,
+			this.accelerationObservable,
+			(gyr, acc) => ({ gyr, acc })
+		).pipe(map(({ gyr, acc }) => ({ gyr: this.roundData(gyr), acc: this.roundData(acc)})))
+	}
+
+	enable = () => {
+		this.combinedObservable.subscribe(this.receiveCombinedData);
 	}
 
 	enableReactiveData = () => {
 		this.reactiveDataEnabled = true;
-		this.accelerationObservable.subscribe(this.receiveAccData);
-		this.gyroscopeObservable.subscribe(this.receiveGyrData);
 	}
 
 	roundData(data) { 
 		return {
-			x: Math.floor(data.x*1000)/1000,
-			y: Math.floor(data.y*1000)/1000,
-			z: Math.floor(data.z*1000)/1000			
+			x: Math.floor(data.x*100)/100,
+			y: Math.floor(data.y*100)/100,
+			z: Math.floor(data.z*100)/100
 		}
 	}
 
-	receiveAccData(data) {
-		this.setStateReactive({ acc: this.roundData(data)})
-	}
-
-	receiveGyrData(data) {
-		this.setStateReactive({ gyr: this.roundData(data)})
+	receiveCombinedData(data) {
+		//console.log("combined sensor data")
+		if (this.reactiveDataEnabled) {
+			this.setStateReactive({ data })
+		}
+		for (let handle in this.receivers) {
+			this.receivers[handle](data)
+		}
 	}	
 
-	getAccelerationObservable = () => {
-		return this.accelerationObservable
+	registerReceiver = (func) => {
+		const handle = this.receiversCounter++
+		this.receivers[handle] = func
+		console.log(this.receivers)
+		return handle
 	}
 
-	getGyroscopeObservable = () => {
-		return this.gyroscopeObservable
+	unRegisterReceiver = (handle) => {
+		delete this.receivers[handle]
 	}	
-	
+
 }
 
 const sensorService = new SensorService();
