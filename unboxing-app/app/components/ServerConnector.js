@@ -3,11 +3,13 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  TextInput
+	TextInput,
+	TouchableOpacity
 } from 'react-native';
 
+import {globalStyles} from '../../config/globalStyles';
 import { withServices } from './ServiceConnector';
-import { networkService } from '../services';
+import { networkService, storageService } from '../services';
 
 class ServerConnector extends React.Component { 
   constructor(props) {
@@ -19,7 +21,11 @@ class ServerConnector extends React.Component {
 
   componentDidMount() {
 		console.log(networkService)
-  }
+	}
+	
+	handleGetPress = () => {
+		storageService.updateEverything()
+	}
 
   render() {
   	return (
@@ -32,6 +38,9 @@ class ServerConnector extends React.Component {
 	          onChangeText={(text) => this.setState({serverInput: text})}
 	          onSubmitEditing={(e) => networkService.setServer(this.state.serverInput)}
 	        />
+          <TouchableOpacity style={globalStyles.button} onPress={this.handleGetPress}>
+            <Text>Get Everything</Text>
+          </TouchableOpacity>					
   		</View>
   	);
   }

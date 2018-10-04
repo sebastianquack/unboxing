@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import Meteor, { withTracker, MeteorListView } from 'react-native-meteor';
 import RNFS from 'react-native-fs'
 import path from 'react-native-path'
 
 import {globalStyles} from '../../config/globalStyles';
+import {withServices} from './ServiceConnector';
 
 folder = RNFS.ExternalStorageDirectoryPath + '/unboxing/files'
 
@@ -102,7 +102,9 @@ class Files extends React.Component {
  }
 
   renderFiles = () => {
-    return this.props.files.map( this.renderFile )
+    if (this.props.services.storage.collections.files) {
+      return this.props.services.storage.collections.files.map( this.renderFile )
+    }
   }
 
   renderFile = (file) => {
@@ -180,23 +182,13 @@ class Files extends React.Component {
           >
           <Text>Delete local files</Text>
         </TouchableOpacity>*/}            
-        {!this.props.ready && <Text>Loading...</Text>}
-        {this.props.ready && this.renderFiles()}
+        {this.renderFiles()}
       </View>
     );
   }
 }
 
-export default withTracker(props=>{
-
-  const handle = Meteor.subscribe('files.all');
-  const files = Meteor.collection('files').find()
-  
-  return {
-    ready: handle.ready(),
-    files
-  };
-})(Files)
+export default withServices(Files)
 
 const styles = StyleSheet.create({
   container: {
