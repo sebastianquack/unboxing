@@ -8,19 +8,14 @@ export default class Service {
 
 	registerOnChange(func) {
 		this.onChange = func;
-		this.setStateReactive(this.initialState);
+		this.setReactive(this.initialState);
 	}
 
-	setStateReactive = (newState) => {
+	setReactive(newState) {
 		// iterate over keys in object, update values
 		Object.keys(newState).forEach((key) => {
 			this.state[key] = newState[key];
 		});
-		this.onChange(this.serviceName, this.state);
-	}
-
-	setReactive(key, value) {
-		this.state[key] = value;
 		this.onChange(this.serviceName, this.state);
 	}
 

@@ -53,7 +53,7 @@ class SoundSevice extends Service {
 	}
 
 	setDelta(d) {
-		this.setReactive("delta", d);
+		this.setReactive({delta: d});
 	}
 
 	modifyDelta(d) {
@@ -271,7 +271,7 @@ class SoundSevice extends Service {
 		  	}
 		    
 		    console.log("setting reactive volume to" + v);          
-		    this.setReactive("volume", v);
+		    this.setReactive({volume: v});
 		  }
 		}
 	}
@@ -282,7 +282,7 @@ class SoundSevice extends Service {
 		  	if(this.sound && this.isPlaying) {
 		  		this.sound.setSpeed(s);    	
 		  	}
-		    this.setReactive("speed", s);
+		    this.setReactive({speed: s});
 		  }
 		}
 	}	
