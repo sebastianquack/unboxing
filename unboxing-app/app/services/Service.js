@@ -1,6 +1,8 @@
 export default class Service {
 
 	constructor(name, initialState) {
+		console.log(`instantiating ${name} service`)
+
 		this.serviceName = name;
 		this.state = {};
 		this.initialState = initialState;

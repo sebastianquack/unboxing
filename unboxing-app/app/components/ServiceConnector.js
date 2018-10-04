@@ -6,7 +6,9 @@ import {
 		sequenceService, 
 		nearbyService,
 		sensorService,
-		permissionsService
+		permissionsService,
+		storageService,
+		networkService
 	} from '../services/';
 
 const ServiceContext = React.createContext({});
@@ -25,13 +27,16 @@ class ServiceConnector extends React.Component {
 			sequenceService,
 			nearbyService,
 			sensorService,
-			permissionsService
+			permissionsService,
+			networkService,
+			storageService
 		]
 
 	}
 
 	componentDidMount() {
 		for (let service of this.services) {
+			console.log(`connecting ${service.serviceName} service`)
 			service.registerOnChange(this.handleStateUpdate);
 		}
 

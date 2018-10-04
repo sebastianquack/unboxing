@@ -19,7 +19,7 @@ var app = express()
 app.use(global.files_uri_path, serveStatic(files_dir, { 'index': false }))
 
 // serve REST api requests
-app.get('/api/getEverything', getEverything);
+app.get('/api/getEverything.json', getEverything);
 
 // connect express to meteor app
 WebApp.connectHandlers.use(app);

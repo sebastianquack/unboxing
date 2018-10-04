@@ -82,7 +82,6 @@ class SensorService extends Service {
 	registerReceiver = (func) => {
 		const handle = this.receiversCounter++
 		this.receivers[handle] = func
-		console.log(this.receivers)
 		return handle
 	}
 

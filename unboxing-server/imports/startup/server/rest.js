@@ -6,17 +6,17 @@ async function getEverything(req, res) {
   const sequences = await Sequences.find().fetch();
   const gestures = await Gestures.find().fetch();
 
-  const data = {
+  const collections = {
     challenges,
     sequences,
     gestures
   }
 
-  const version = hash(data)
+  const version = hash(collections)
 
   res.status(200).json({ 
     version,
-    data
+    collections
   });
 }
 

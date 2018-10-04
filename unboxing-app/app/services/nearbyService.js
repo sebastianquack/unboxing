@@ -11,7 +11,7 @@ class NearbyService extends Service {
 			
 		});
 
-		// not reative
+		// not reactive
 		
 	}
 
