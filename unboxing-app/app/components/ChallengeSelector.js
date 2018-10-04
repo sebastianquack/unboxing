@@ -23,12 +23,11 @@ class ChallengeSelector extends React.Component {
   }
 
   render() {
-    //const challenges = this.props.services.storage.collections.challenges.map(this.renderChallenge);
-    const challenges = [{_id: "1", name: "test challenge"}].map(this.renderChallenge);
+    const challenges = this.props.services.storage.collections.challenges ? this.props.services.storage.collections.challenges : [];
     return (
       <View style={{width: "50%"}}>
         <Text style={globalStyles.titleText}>Challenges</Text>
-        {challenges}
+        {challenges.map(this.renderChallenge)}
       </View>
     );
   }

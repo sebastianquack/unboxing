@@ -7,8 +7,8 @@ import {
 		nearbyService,
 		sensorService,
 		permissionsService,
-		storageService,
-		networkService
+		networkService,
+		storageService
 	} from '../services/';
 
 const ServiceContext = React.createContext({});
