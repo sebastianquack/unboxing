@@ -39,10 +39,10 @@ class SequenceService extends Service {
 				soundfilesToLoad.push(item.path);
 			}
 		});
-		this.setReactive("controlStatus", "loading");
+		this.setReactive({controlStatus: "loading"});
 		soundService.preloadSoundfiles(soundfilesToLoad, ()=>{
 			console.log("finished loading sound files for this track");
-			this.setReactive("controlStatus", "ready");
+			this.setReactive({controlStatus: "ready"});
 		});
   	}
 
@@ -82,7 +82,7 @@ class SequenceService extends Service {
 	    } 
 
 	    if(nextItem) {
-	    	this.setReactive("nextItem", nextItem); // show next item to interface
+	    	this.setReactive({nextItem: nextItem}); // show next item to interface
 	    	
 	     	// schedule sound for item
 			if(this.state.controlStatus == "playing" && this.state.autoPlayItems) {
@@ -97,7 +97,7 @@ class SequenceService extends Service {
 	    } else {
 			console.log("no next item found");
 			this.sequenceCursor = 0;
-			this.setReactive("nextItem", null);
+			this.setReactive({nextItem: null});
 	    }
 	}
 	
@@ -116,11 +116,13 @@ class SequenceService extends Service {
 	scheduleSoundForNextItem(targetTime) {
 		soundService.scheduleSound(this.state.nextItem.path, targetTime, {
 			onPlayStart: () => {
-				this.setReactive("currentItem", this.state.nextItem);
-				this.setReactive("nextItem", null);
+				this.setReactive({
+					currentItem: this.state.nextItem,
+					nextItem: null
+				});
 			},
 			onPlayEnd: () => {
-				this.setReactive("currentItem", null);
+				this.setReactive({currentItem: null});
 				this.setupNextSequenceItem();
 			}
 		});
@@ -129,15 +131,17 @@ class SequenceService extends Service {
 	// stops sequence playback and sound
 	stopSequence() {
 	    soundService.stopAllSounds();
-	    this.setReactive("controlStatus", "ready");
-	    this.setReactive("currentItem", null);
-	    this.setReactive("nextItem", null);
-	    this.setReactive("startedAt", null);
+	    this.setReactive({
+	    	controlStatus: "ready",
+	    	currentItem: null,
+	    	nextItem: null,
+	    	startedAt: null
+	    });
 	    this.sequenceCursor = 0;
   	}
 
 	setAutoPlayItems(value) {
-		this.setReactive("autoPlayItems", value);
+		this.setReactive({autoPlayItems: value});
 	}
 
 }
