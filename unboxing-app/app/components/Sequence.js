@@ -25,31 +25,16 @@ class Sequence extends React.Component {
     this.state = {
       displayEinsatzIndicator: false,
       currentTimeInSequence: 0,
-      timeToNextItem: null
+      timeToNextItem: null,
+      timeInCurrentItem: null
     };
     
-    this.updateSequenceDisplay = this.updateSequenceDisplay.bind(this);
+    this.updateSequenceInfo = this.updateSequenceInfo.bind(this);
     this.handleEinsatz = this.handleEinsatz.bind(this);
   }
 
   componentDidMount() {
-    setInterval(this.updateSequenceDisplay, 200);
-  }
-
-  updateSequenceDisplay() {
-    const currentTime = soundService.getSyncTime(); // get the synchronized time
-
-    if(this.props.services.sequence.playing) {
-      let currentTimeInSequence = currentTime - this.props.services.sequence.startedAt;
-      this.setState({currentTimeInSequence: currentTimeInSequence});
-    }
-
-    if(this.props.services.sequence.nextItem) {
-      let timeToNextItem = this.props.services.sequence.nextItem.startTime - (currentTime - this.props.services.sequence.startedAt)
-      this.setState({timeToNextItem: timeToNextItem});   
-    } else {
-      this.setState({timeToNextItem: null});   
-    }
+    setInterval(this.updateSequenceInfo, 200);
   }
 
   // starts a sequence manually
@@ -108,15 +93,47 @@ class Sequence extends React.Component {
     </Text>)
   }
 
+  // called every second to calculate sequence info
+  updateSequenceInfo() {
+    const currentTime = soundService.getSyncTime(); // get the synchronized time
+    const currentTimeInSequence = currentTime - this.props.services.sequence.startedAt;
+
+    if(this.props.services.sequence.controlStatus == "playing") {
+      this.setState({currentTimeInSequence: currentTimeInSequence});
+    } else {
+      this.setState({currentTimeInSequence: 0});
+    }
+
+    if(this.props.services.sequence.nextItem) {
+      let timeToNextItem = this.props.services.sequence.nextItem.startTime - currentTimeInSequence
+      this.setState({timeToNextItem: timeToNextItem});   
+    } else {
+      this.setState({timeToNextItem: null});   
+    }
+
+    if(this.props.services.sequence.currentItem) {
+      let timeInCurrentItem = currentTimeInSequence - this.props.services.sequence.currentItem.startTime
+      this.setState({timeInCurrentItem: timeInCurrentItem});   
+    } else {
+      this.setState({timeInCurrentItem: null});   
+    }
+  }
+
+  // renders current sequence display, called when info changes
   renderSequenceInfo() {
     const currentSequence = this.props.services.sequence.currentSequence;
     const currentTrack = this.props.services.sequence.currentTrack;
+    const currentItem = this.props.services.sequence.currentItem;
     const nextItem = this.props.services.sequence.nextItem;
+    const controlStatus = this.props.services.sequence.controlStatus;
+    
     return(
       <Text style={globalStyles.titleText}>
         Selected sequence / track: {currentSequence ? currentSequence.name : "none"} / {currentTrack ? currentTrack.name : "none"} {"\n"}
+        controlStatus: { controlStatus } {"\n"}
         Sequence playback position: {Math.floor(this.state.currentTimeInSequence / 1000)} {"\n"}
-        Next item: {nextItem ? nextItem.path : "none"} ({this.props.services.sequence.playing ? Math.floor(this.state.timeToNextItem / 1000) : ""})
+        Current item: {currentItem ? currentItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}
+        Next item: {nextItem ? nextItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""})
       </Text>
     )
   }

@@ -8,16 +8,17 @@ class SequenceService extends Service {
 
 		// reactive vars - used in interface component
 		super("sequence", {
-			playing: false, // playback status
+			controlStatus: "idle", // idle -> loading -> ready -> playing
 			currentSequence: null, // sequence object
       		currentTrack: null, // track object
 			startedAt: null, // start time of current sequence
 			nextItem: null, // next item to play, if available
+			currentItem: null, // current item playing, if available
 			autoPlayItems: true, // automatically play all items after sequence was started
 		});
 
 		// not reative - used for internal calculations
-		this.nextItemIndex = -1;
+		this.sequenceCursor = 0; // runs through the items in the sequence during playback
 	}
 
 	// invoked from track selector component - sets up new sequence
@@ -27,90 +28,112 @@ class SequenceService extends Service {
 	      currentSequence: sequence,
 	      currentTrack: track,
     	});
+
+    	console.log("track selected, analysing sequence");
+    	//console.log(sequence);
+
+		// preload all sounds from this track in sequence
+		let soundfilesToLoad = [];
+		sequence.items.forEach((item)=>{
+			if(item.track == track.name) {
+				soundfilesToLoad.push(item.path);
+			}
+		});
+		this.setReactive("controlStatus", "loading");
+		soundService.preloadSoundfiles(soundfilesToLoad, ()=>{
+			console.log("finished loading sound files for this track");
+			this.setReactive("controlStatus", "ready");
+		});
   	}
 
   	// start sequence playback
 	startSequence() {
-		if(this.state.currentSequencePlaying) {
-			console.log("cannot start - sequence already playing");
-			return;
-		}
-
-		if(!this.state.currentSequence || !this.state.currentTrack) {
-			console.log("no sequence or track selected");
+		if(this.state.controlStatus != "ready") {
+			console.log("cannot start - sequence not ready to play");
 			return;
 		}
 
 		this.setStateReactive({
-	      playing: true,
+		  controlStatus: "playing",
 	      startedAt: soundService.getSyncTime()
     	});
 
 		this.setupNextSequenceItem();
 	}
 
+	// identifies next item and schedules for playback if autoplay is activated
 	setupNextSequenceItem() {
 	    console.log("setting up next sequence item");
-	    console.log(this.state);
-
+	    
 	    let items = this.state.currentSequence.items;
 	    if(!items.length) {
 	      return;
 	    }
 
-	    let newIndex = this.nextItemIndex + 1; // initialized with -1
-	    let newItem = null;
-	    let newItemTrack = null;
-
-	    while(!newItem && newIndex < items.length) { 
-	      console.log("newIndex: " + newIndex);
-	      if(items[newIndex].track == this.state.currentTrack.name) {
-	        newItem = items[newIndex];  
-	        newItemTrack = items[newIndex].track  
+	    // go through sequence to finde the next item
+	    let nextItemIndex = this.sequenceCursor;
+	    let nextItem = null;
+	    
+	    while(!nextItem && nextItemIndex < items.length) { 
+	      if(items[nextItemIndex].track == this.state.currentTrack.name) {
+	        nextItem = items[nextItemIndex];  
 	      }
-	      newIndex++;
+	      nextItemIndex++;
 	    } 
 
-	    if(newItem) {
-	    	this.nextItemIndex = newIndex - 1;
-	     	this.setReactive("nextItem", newItem);
-
-	     	// preload sound file
-			soundService.loadSound(newItem.path);
-			
-			// schedule sound for next item
-			if(this.state.playing && this.state.autoPlayItems) {
+	    if(nextItem) {
+	    	this.setReactive("nextItem", nextItem); // show next item to interface
+	    	
+	     	// schedule sound for item
+			if(this.state.controlStatus == "playing" && this.state.autoPlayItems) {
+				console.log("scheduling next track item in sequence");
+				console.log(this.state.nextItem);
+				console.log(this.state.targetTime);
 				let targetTime = this.state.startedAt + this.state.nextItem.startTime;
-				this.scheduleNextSound(targetTime);
+				this.scheduleSoundForNextItem(targetTime);
 			}
-			
+
+			this.sequenceCursor = nextItemIndex; // save index for later
 	    } else {
 			console.log("no next item found");
-			this.nextItemIndex = -1;
+			this.sequenceCursor = 0;
 			this.setReactive("nextItem", null);
 	    }
 	}
 	
-	// call sound service with callback 
-	scheduleNextSound(targetTime) {
-		soundService.scheduleNextSound(targetTime, () => {this.setupNextSequenceItem();});
-	}
-
-	// manually start playback of next sound now
+	// manually start playback of next item if autoplay is deactivated
 	playNextItem() {
 		if(!this.state.autoPlayItems) {
-			this.scheduleNextSound(soundService.getSyncTime()); 	
+			this.scheduleSoundForNextItem(soundService.getSyncTime()); 	
 		} else {
 			console.log("manual playback deactivated when item autoplay is on");
 		}
 	}
 
+	// call sound service to schedule sound for next item, set callback to setup next item after playback
+	// needs to wait because currently soundService can only save one targetTime per sound
+	// also useful if we want to be able to turn autoplay on and off
+	scheduleSoundForNextItem(targetTime) {
+		soundService.scheduleSound(this.state.nextItem.path, targetTime, {
+			onPlayStart: () => {
+				this.setReactive("currentItem", this.state.nextItem);
+				this.setReactive("nextItem", null);
+			},
+			onPlayEnd: () => {
+				this.setReactive("currentItem", null);
+				this.setupNextSequenceItem();
+			}
+		});
+	}
+	
 	// stops sequence playback and sound
 	stopSequence() {
-	    soundService.stopSound();
-	    this.setReactive("playing", false);
-	    this.setReactive("nextItem", false);
-	    this.nextItemIndex = -1;
+	    soundService.stopAllSounds();
+	    this.setReactive("controlStatus", "ready");
+	    this.setReactive("currentItem", null);
+	    this.setReactive("nextItem", null);
+	    this.setReactive("startedAt", null);
+	    this.sequenceCursor = 0;
   	}
 
 	setAutoPlayItems(value) {
