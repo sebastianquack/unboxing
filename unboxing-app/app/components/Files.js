@@ -6,7 +6,9 @@ import path from 'react-native-path'
 
 import {globalStyles} from '../../config/globalStyles';
 
-folder = RNFS.ExternalDirectoryPath + '/downloads'
+folder = RNFS.ExternalStorageDirectoryPath + '/unboxing/files'
+
+console.log("files folder: ", folder)
 
 class Files extends React.Component { 
   constructor(props) {

@@ -5,7 +5,8 @@ import {
 		soundService, 
 		sequenceService, 
 		nearbyService,
-		sensorService
+		sensorService,
+		permissionsService
 	} from '../services/';
 
 const ServiceContext = React.createContext({});
@@ -23,7 +24,8 @@ class ServiceConnector extends React.Component {
 			soundService,
 			sequenceService,
 			nearbyService,
-			sensorService
+			sensorService,
+			permissionsService
 		]
 
 	}
