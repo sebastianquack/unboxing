@@ -30,6 +30,8 @@ import SensorInfo from './app/components/SensorInfo';
 import Sequence from './app/components/Sequence';
 import TrackSelector from './app/components/TrackSelector';
 
+import ChallengeSelector from './app/components/ChallengeSelector';
+
 class App extends Component {
 
   constructor(props) {
@@ -39,35 +41,45 @@ class App extends Component {
     ];
     
     this.state = {
-      host: "127.0.0.1"
+      host: "127.0.0.1",
+      adminMenu: false
     };
   }
 
   handleHostChange = (host) => {
     setTimeout(()=>this.setState({host}), 1000)
   }
+
+  renderAdminButton = ()=>{
+    return (
+      <TouchableOpacity 
+        style={styles.adminButton}
+        onPress={()=>{
+          this.setState({adminMenu: !this.state.adminMenu})}
+        }
+      >
+        <Text>toggle admin</Text>
+      </TouchableOpacity>
+    );
+  }
   
   render() {
     return (
       <ServiceConnector>
+        <KeepAwake />
         <ScrollView contentContainerStyle={styles.container}>
-
-          <ServerConnector onHostChange={this.handleHostChange}/>
-
-          <KeepAwake />
-          
-          <Text style={globalStyles.titleText}>Unboxing</Text>
-
-          <TimeSync/>
-          
-          {/*<SensorInfo />*/}
-          {<SensorControls/>}
-        
-          <Sequence/>
-          <TrackSelector/>
-
-          <Files host={this.state.host}/>
-        
+          {this.renderAdminButton()}
+          {this.state.adminMenu ?
+            <View>
+              <Text style={globalStyles.titleText}>Admin</Text>
+              <ServerConnector onHostChange={this.handleHostChange}/>
+              <TimeSync/>
+              <Files host={this.state.host}/>
+            </View>
+          :
+            <ChallengeSelector/>
+          }
+              
         </ScrollView>
       </ServiceConnector>
     );
@@ -81,5 +93,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#F5FCFF',
     padding: 20
+  },
+  adminButton: {
+    marginBottom: 10
   }
 });
