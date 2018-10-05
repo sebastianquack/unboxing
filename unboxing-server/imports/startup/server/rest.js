@@ -1,15 +1,17 @@
-import { Challenges, Gestures, Sequences } from '../../collections/';
+import { Challenges, Gestures, Sequences, Files } from '../../collections/';
 import hash from 'object-hash'
 
 async function getEverything(req, res) {  
   const challenges = await Challenges.find().fetch();
   const sequences = await Sequences.find().fetch();
   const gestures = await Gestures.find().fetch();
+  const files = await Files.find().fetch();
 
   const collections = {
     challenges,
     sequences,
-    gestures
+    gestures,
+    files
   }
 
   const version = hash(collections)

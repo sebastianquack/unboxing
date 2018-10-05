@@ -17,7 +17,6 @@ class StorageService extends Service {
 
 	updateEverything = async () => {
 		const result = await networkService.apiRequest('getEverything')
-		console.log(result)
 		if (result) {
 			this.setReactive(result)
 		}

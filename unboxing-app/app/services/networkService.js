@@ -1,3 +1,4 @@
+import { NetInfo } from 'react-native';
 import Zeroconf from 'react-native-zeroconf';
 
 import Service from './Service';
@@ -13,7 +14,8 @@ class NetworkService extends Service {
 			server: defaultServer
 		});
 
-		this.initZeroconf()
+    this.initZeroconf()
+    this.initNetInfo()
 	}
 
   initZeroconf() {
@@ -43,6 +45,19 @@ class NetworkService extends Service {
 		this.setReactive({ server })
   }	
 
+  initNetInfo = () => {
+    const self = this
+    NetInfo.getConnectionInfo().then((connectionInfo) => {
+      self.setReactive({connectionInfo})
+    });
+    function handleConnectivityChange(connectionInfo) {
+      self.setReactive({connectionInfo})
+    }
+    NetInfo.addEventListener(
+      'connectionChange',
+      handleConnectivityChange
+    );
+  }
 
 	apiRequest = async (method) => {
 		try {

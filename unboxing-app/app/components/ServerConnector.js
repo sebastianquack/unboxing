@@ -20,7 +20,6 @@ class ServerConnector extends React.Component {
   }
 
   componentDidMount() {
-		console.log(networkService)
 	}
 	
 	handleGetPress = () => {
@@ -30,17 +29,22 @@ class ServerConnector extends React.Component {
   render() {
   	return (
   		<View>
-	  		<Text style={{marginTop: 20}}>Server: {this.props.services.network.server}</Text>
-	        <TextInput
-	          underlineColorAndroid='transparent'
-	          style={{width: 150, height: 40, borderColor: 'gray', borderWidth: 1}}
-	          value={this.state.serverInput}
-	          onChangeText={(text) => this.setState({serverInput: text})}
-	          onSubmitEditing={(e) => networkService.setServer(this.state.serverInput)}
-	        />
-          <TouchableOpacity style={globalStyles.button} onPress={this.handleGetPress}>
-            <Text>Get Everything</Text>
-          </TouchableOpacity>					
+				<Text>
+					Connection Type: {this.props.services.network.connectionInfo.type}, effective: {this.props.services.network.connectionInfo.effectiveType}
+				</Text>
+				<Text style={{marginTop: 20}}>
+					Server: {this.props.services.network.server}
+				</Text>
+				<TextInput
+					underlineColorAndroid='transparent'
+					style={{width: 150, height: 40, borderColor: 'gray', borderWidth: 1}}
+					value={this.state.serverInput}
+					onChangeText={(text) => this.setState({serverInput: text})}
+					onSubmitEditing={(e) => networkService.setServer(this.state.serverInput)}
+				/>
+				<TouchableOpacity style={globalStyles.button} onPress={this.handleGetPress}>
+					<Text>Get Everything</Text>
+				</TouchableOpacity>					
   		</View>
   	);
   }

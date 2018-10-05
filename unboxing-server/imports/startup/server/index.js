@@ -12,4 +12,4 @@ import './files';
 import './api';
 
 // zeroconf
-// import './zeroconf.js';
+import './zeroconf.js';
