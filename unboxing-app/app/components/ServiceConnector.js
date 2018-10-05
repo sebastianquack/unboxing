@@ -8,7 +8,8 @@ import {
 		sensorService,
 		permissionsService,
 		networkService,
-		storageService
+		storageService,
+		gameService
 	} from '../services/';
 
 const ServiceContext = React.createContext({});
@@ -29,7 +30,8 @@ class ServiceConnector extends React.Component {
 			sensorService,
 			permissionsService,
 			networkService,
-			storageService
+			storageService,
+			gameService
 		]
 
 	}

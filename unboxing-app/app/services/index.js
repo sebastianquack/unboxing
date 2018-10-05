@@ -5,6 +5,7 @@ import {soundService} from './soundService'
 import {permissionsService} from './permissionsService'
 import {storageService} from './storageService'
 import {networkService} from './networkService'
+import {gameService} from './gameService'
 
 export {
   sensorService,
@@ -13,5 +14,6 @@ export {
   soundService,
   permissionsService,
   storageService,
-  networkService
+  networkService,
+  gameService
 }

@@ -3,75 +3,48 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
-import {sequenceService} from '../services/sequenceService';
+import {sequenceService, storageService} from '../services';
+import {withServices} from './ServiceConnector';
 
 class TrackSelector extends React.Component { 
   constructor(props) {
     super(props);
     this.state = {};
-    this.renderSequence = this.renderSequence.bind(this)
-    this.renderTrack = this.renderTrack.bind(this)
   }
 
-  renderSequence(sequence) {
-    style = [styles.button]
-    tracks = sequence.tracks.map((t, index)=>this.renderTrack(sequence, t, index));
-    return (
-      <View
-        key={sequence._id}
-      >
-        <Text>Name: {sequence.name}</Text>
-        <Text>Tracks:</Text>
-        {tracks}
-      </View>
-    )
-  }
-
-  renderTrack(sequence, track, index) {
+  renderTrack = (sequence, track, index)=> {
+    const trackStyle = Object.assign({backgroundColor: track.color}, styles.button);
     return (
       <TouchableOpacity
           key={index}
-          style={style.concat({backgroundColor:track.color})}
-          onPress={()=>{sequenceService.trackSelect(sequence, track);}}
+          style={trackStyle}
+          onPress={()=>{sequenceService.trackSelect(sequence, track)}}
         >
         <Text>{track.name}</Text>
       </TouchableOpacity>
-      )
+    )
   }
 
   render() {
+    const sequence = storageService.findSequence(this.props.sequence_id);
+    if(!sequence) return <View><Text>sequence not found</Text></View>;
+    const tracks = sequence.tracks.map((t, index)=>this.renderTrack(sequence, t, index));
     return (
       <View style={{width: "50%"}}>
-        <Text style={globalStyles.titleText}>Sequences</Text>
-        {!this.props.ready && <Text>Loading...</Text>}
-        {this.props.ready && 
-          <MeteorListView
-            collection="sequences"
-            selector={{}}
-            options={{}}
-            renderRow={this.renderSequence}
-            //...other listview props
-            enableEmptySections={true}
-          />
-        }
+        <Text>Sequence name: {sequence.name}</Text>
+        <Text>Tracks:</Text>
+        {tracks}
       </View>
     );
   }
 }
 
-export default withTracker(params=>{
-  const handle = Meteor.subscribe('sequences.all');
-  
-  return {
-    ready: handle.ready(),
-  };
-})(TrackSelector);
+export default withServices(TrackSelector);
 
 const styles = StyleSheet.create({
   button: {
     margin: 20,
-    padding: 20,
-    backgroundColor: '#aaa',
+    padding: 20
   },  
   buttonSelected: {
     color: 'green'

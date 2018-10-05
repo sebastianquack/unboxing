@@ -19,9 +19,6 @@ class ServerConnector extends React.Component {
   	}
   }
 
-  componentDidMount() {
-	}
-	
 	handleGetPress = () => {
 		storageService.updateEverything()
 	}

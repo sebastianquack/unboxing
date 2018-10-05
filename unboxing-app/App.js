@@ -17,20 +17,15 @@ import KeepAwake from 'react-native-keep-awake';
 
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 
-import {ServiceConnector, ServiceValue} from './app/components/ServiceConnector';
-import {soundService} from './app/services/soundService';
+import {ServiceConnector} from './app/components/ServiceConnector';
+import {withServices} from './app/components/ServiceConnector';
 
 import {globalStyles} from './config/globalStyles';
 
 import ServerConnector from './app/components/ServerConnector';
 import Files from './app/components/Files';
 import TimeSync from './app/components/TimeSync';
-import SensorControls from './app/components/SensorControls';
-import SensorInfo from './app/components/SensorInfo';
-import Sequence from './app/components/Sequence';
-import TrackSelector from './app/components/TrackSelector';
-
-import ChallengeSelector from './app/components/ChallengeSelector';
+import GameContainer from './app/components/GameContainer';
 
 class App extends Component {
 
@@ -41,13 +36,8 @@ class App extends Component {
     ];
     
     this.state = {
-      host: "127.0.0.1",
       adminMenu: false
-    };
-  }
-
-  handleHostChange = (host) => {
-    setTimeout(()=>this.setState({host}), 1000)
+    };    
   }
 
   renderAdminButton = ()=>{
@@ -62,24 +52,29 @@ class App extends Component {
       </TouchableOpacity>
     );
   }
+
+  renderAdminMenu() {
+    return (
+      <View>
+        <Text style={globalStyles.titleText}>Admin</Text>
+        <ServerConnector/>
+        <TimeSync/>
+        <Files/>
+      </View>
+    );
+  }
   
   render() {
     return (
       <ServiceConnector>
-        <KeepAwake />
+        <KeepAwake/>
         <ScrollView contentContainerStyle={styles.container}>
           {this.renderAdminButton()}
           {this.state.adminMenu ?
-            <View>
-              <Text style={globalStyles.titleText}>Admin</Text>
-              <ServerConnector onHostChange={this.handleHostChange}/>
-              <TimeSync/>
-              <Files host={this.state.host}/>
-            </View>
+            this.renderAdminMenu() 
           :
-            <ChallengeSelector/>
+            <GameContainer/> 
           }
-              
         </ScrollView>
       </ServiceConnector>
     );

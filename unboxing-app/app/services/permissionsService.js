@@ -25,7 +25,6 @@ class PermissionsService extends Service {
 			)
 			if (granted === PermissionsAndroid.RESULTS.GRANTED) {
 				console.log(`permission granted: ${permission}`)
-				this.setState()
 			} else {
 				console.log(`permission denied: ${permission}`, granted)
 			}

@@ -22,6 +22,16 @@ class StorageService extends Service {
 		}
 	}
 
+	// finds a sequence give its id
+	findSequence(sequence_id) {
+		for(let i = 0; i < this.state.collections.sequences.length; i++) {
+			if(this.state.collections.sequences[i]._id == sequence_id) {
+				return this.state.collections.sequences[i];
+			}
+		}
+		return null;
+	}
+
 }
 
 const storageService = new StorageService();

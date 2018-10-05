@@ -24,7 +24,7 @@ class SequenceService extends Service {
 	// invoked from track selector component - sets up new sequence
 	trackSelect(sequence, track) {
 		this.stopSequence();
-    	this.setStateReactive({
+    	this.setReactive({
 	      currentSequence: sequence,
 	      currentTrack: track,
     	});
@@ -53,7 +53,7 @@ class SequenceService extends Service {
 			return;
 		}
 
-		this.setStateReactive({
+		this.setReactive({
 		  controlStatus: "playing",
 	      startedAt: soundService.getSyncTime()
     	});

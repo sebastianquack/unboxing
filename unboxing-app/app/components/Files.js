@@ -72,7 +72,7 @@ class Files extends React.Component {
               })
 
               RNFS.downloadFile({
-                fromUrl: 'http://'+this.props.host+':3000' + file.url_path,
+                fromUrl: 'http://'+this.props.services.network.server+':3000' + file.url_path,
                 toFile: folder + file.path,
                 progress: p => {this.setState((prevState) => { 
                   prevState.localFiles[file._id].size = p.bytesWritten; 
