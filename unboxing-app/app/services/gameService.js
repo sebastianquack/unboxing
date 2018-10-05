@@ -1,5 +1,7 @@
 import Service from './Service';
 
+import {sequenceService} from './sequenceService';
+
 class GameService extends Service {
 
 	constructor() {
@@ -20,6 +22,7 @@ class GameService extends Service {
 	}
 
 	leaveChallenge() {
+		sequenceService.stopSequence();
 		this.setReactive({
 			challengeStatus: "list",
 			activeChallenge: null
