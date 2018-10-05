@@ -21,8 +21,62 @@ class Sequence extends React.Component {
     }
   }
 
-  handleNameChange = (e) => {
-    Meteor.call('updateSequence', this.props.sequence._id, { name: e.target.value })
+ SequenceDetailCss = css`
+    display: inline-block;
+    background-color: lightgrey;
+    padding: 0 1ex 1ex 1ex;
+    margin-bottom: 1ex;
+    label {
+      display: block;
+      font-family: monospace;
+      + label {margin-top: 0.5ex}
+      span {
+        min-width: 6em;
+        display: inline-block;
+      }
+      select, span {
+        margin-left: 1ex;
+      }
+    }
+  `
+  handleAttributeChange = (attributeName, value) => {
+    $set = {}
+    $set[attributeName] = value
+    Meteor.call('updateSequence', this.props.sequence._id, $set )
+  }
+
+  renderInput(attributeName, value) {
+    const emptyOption = <option key="empty" value="">&lt;none&gt;</option>;
+    switch(attributeName) {
+      default:
+        const inputType = typeof(value) == "number" ? "number" : "text"
+        const inputTransform = (value) => {
+          let transformed = inputType == "number" ? parseInt(value) : value
+          if (transformed === NaN) transformed = value
+          return transformed
+        }
+        return (<ContentEditable 
+          style={{
+            border: "dotted grey 1px",
+            borderWidth: "0 0 1px 0",
+            fontWeight: "bold"
+          }}
+          onChange={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.value)) } 
+          html={value + ""}
+          tagName="span"
+        />)
+    }
+  }
+
+  renderAttribute = (d) => {
+    blacklist = ['_id', 'items', 'tracks'];
+    if (blacklist.indexOf(d[0]) > -1) return
+
+    return ([
+      <label key={`dt_${d[0]}`}>
+        <span>{d[0]}</span>{this.renderInput(d[0],d[1])}
+      </label>
+    ])
   }
 
   handleAdd = () => {
@@ -69,22 +123,12 @@ class Sequence extends React.Component {
     return (
       <div className="SequenceDetail">
         <pre>
-          <ContentEditable 
-            style={{
-              border: "dotted grey 1px",
-              borderWidth: "0 0 1px 0",
-              fontWeight: "bold"
-            }}
-            onChange={this.handleNameChange} 
-            onFocus={ e => setTimeout(()=>document.execCommand('selectAll',false,null),20)}
-            html={this.props.sequence.name}
-            tagName="span"
-            onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
-          />
-          &nbsp;&nbsp;
-          <button onClick={()=>Meteor.call('removeSequence',this.props.sequence._id)}>
-            Delete Sequence
-          </button>     
+          <div className={this.SequenceDetailCss}>
+            {Object.entries(this.props.sequence).map(this.renderAttribute)}              
+            <button onClick={()=>Meteor.call('removeSequence',this.props.sequence._id)}>
+              Delete Sequence
+            </button>     
+          </div>
         </pre>
         <button onClick={this.handleAdd}>
           Add Item

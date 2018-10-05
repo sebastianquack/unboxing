@@ -34,6 +34,7 @@ Meteor.methods({
   'addSequence'() {
     Sequences.insert({
       name: "new",
+      custom_duration: 0,
       items: []
     })
   },
@@ -96,7 +97,7 @@ Meteor.methods({
       instructions: "how it works",
       sequence_id: "",
       sequence_loop: false,
-      sequence_autoplay: true
+      sequence_item_autoplay: "all"
     });
   },
   'removeChallenge'(id) {

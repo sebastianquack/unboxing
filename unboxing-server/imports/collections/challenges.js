@@ -15,6 +15,6 @@ export default Challenges;
 	- instructions: string
 	- sequence_id: string
 	- sequence_loop: bool
-	- sequence_autoplay: bool
+	- sequence_item_autoplay: string // "all", "first", "none"
  */
 

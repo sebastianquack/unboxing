@@ -19,10 +19,15 @@ class ChallengeView extends React.Component {
     return (
       <View>
         <TouchableOpacity style={styles.button} onPress={()=>{gameService.leaveChallenge()}}>
-          <Text>leave challenge</Text>
+          <Text>back</Text>
         </TouchableOpacity>
-        <Text style={globalStyles.titleText}>Challenge {challenge.name}</Text>
+        <Text style={globalStyles.titleText}>{challenge.name}</Text>
         <Text>{challenge.instructions}</Text>
+        <Text>
+          sequence_item_autoplay: { challenge.sequence_item_autoplay } {"\n"}
+          sequence_loop: { challenge.sequence_loop.toString() }
+        </Text>
+        
 
         <TrackSelector sequence_id={challenge.sequence_id}/>
         <Sequence/>

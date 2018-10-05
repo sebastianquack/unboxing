@@ -31,8 +31,6 @@ class TrackSelector extends React.Component {
     const tracks = sequence.tracks.map((t, index)=>this.renderTrack(sequence, t, index));
     return (
       <View style={{width: "50%"}}>
-        <Text>Sequence name: {sequence.name}</Text>
-        <Text>Tracks:</Text>
         {tracks}
       </View>
     );

@@ -64,10 +64,6 @@ class Sequence extends React.Component {
     sequenceService.stopSequence();
   }
 
-  handleAutoPlayItemsSwitch(value) {
-    sequenceService.setAutoPlayItems(value);
-  }
-
   /*
   TODO: move to challenge service
   handleAutoStartSequenceSwitch(value) {
@@ -133,11 +129,13 @@ class Sequence extends React.Component {
     
     return(
       <Text>
-        Selected sequence / track: {currentSequence ? currentSequence.name : "none"} / {currentTrack ? currentTrack.name : "none"} {"\n"}
+        currentSequence: {currentSequence ? currentSequence.name : "none"} {"\n"}
         controlStatus: { controlStatus } {"\n"}
+        currentTrack: {currentTrack ? currentTrack.name : "none"} {"\n"}
         Sequence playback position: {Math.floor(this.state.currentTimeInSequence / 1000)} {"\n"}
+        custom_duration: { currentSequence ? currentSequence.custom_duration : "?" } {"\n"}
         Current item: {currentItem ? currentItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}
-        Next item: {nextItem ? nextItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""})
+        Next item: {nextItem ? nextItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""}) {"\n"}
       </Text>
     )
   }
@@ -153,7 +151,7 @@ class Sequence extends React.Component {
               <Text>Start sequence</Text>
           </TouchableOpacity>
 
-          {!this.props.services.sequence.autoPlayItems &&
+          {this.props.services.sequence.showPlayItemButton &&
             <TouchableOpacity style={styles.bigButton} onPress={this.handlePlayNow}>
                 <Text>Play item now</Text>
             </TouchableOpacity>
@@ -184,11 +182,6 @@ class Sequence extends React.Component {
           <Text>{this.state.challengeMode ? JSON.stringify(this.props.challenge) : ""}</Text>
           */}
 
-          <View style={styles.control}>
-            <Text style={globalStyles.titleText}>Autoplay items</Text>
-            <Switch value={this.props.services.sequence.autoPlayItems} onValueChange={this.handleAutoPlayItemsSwitch}/>
-          </View>
-        
           <Gesture onEinsatz={this.handleEinsatz}/>
         </View>
                     

@@ -21,6 +21,10 @@ class GameService extends Service {
 		});
 	}
 
+	getActiveChallenge() {
+		return this.state.activeChallenge;
+	}
+
 	leaveChallenge() {
 		sequenceService.stopSequence();
 		this.setReactive({
