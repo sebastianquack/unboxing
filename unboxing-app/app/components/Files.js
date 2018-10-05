@@ -127,7 +127,7 @@ class Files extends React.Component {
   }
 
   updateFilesInfo = () => {
-    for (let file of this.props.files) {
+    for (let file of this.props.services.storage.collections.files) {
       this.updateFileInfo(file)
     }    
   }

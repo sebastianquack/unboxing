@@ -6,6 +6,7 @@ import {withServices} from './ServiceConnector';
 
 import Sequence from './Sequence';
 import TrackSelector from './TrackSelector';
+import {gameService} from '../services';
 
 class ChallengeView extends React.Component { 
   constructor(props) {
@@ -17,6 +18,9 @@ class ChallengeView extends React.Component {
     const challenge = this.props.services.game.activeChallenge;
     return (
       <View>
+        <TouchableOpacity style={styles.button} onPress={()=>{gameService.leaveChallenge()}}>
+          <Text>leave challenge</Text>
+        </TouchableOpacity>
         <Text style={globalStyles.titleText}>Challenge {challenge.name}</Text>
         <Text>{challenge.instructions}</Text>
 
@@ -35,6 +39,7 @@ const styles = StyleSheet.create({
     margin: 20,
     padding: 20,
     backgroundColor: '#aaa',
+    width: "25%"
   },  
   buttonSelected: {
     color: 'green'
