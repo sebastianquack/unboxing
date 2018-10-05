@@ -34,7 +34,11 @@ class Sequence extends React.Component {
   }
 
   componentDidMount() {
-    setInterval(this.updateSequenceInfo, 200);
+    this.updateInterval = setInterval(this.updateSequenceInfo, 200);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.updateInterval);
   }
 
   // starts a sequence manually
@@ -128,7 +132,7 @@ class Sequence extends React.Component {
     const controlStatus = this.props.services.sequence.controlStatus;
     
     return(
-      <Text style={globalStyles.titleText}>
+      <Text>
         Selected sequence / track: {currentSequence ? currentSequence.name : "none"} / {currentTrack ? currentTrack.name : "none"} {"\n"}
         controlStatus: { controlStatus } {"\n"}
         Sequence playback position: {Math.floor(this.state.currentTimeInSequence / 1000)} {"\n"}
