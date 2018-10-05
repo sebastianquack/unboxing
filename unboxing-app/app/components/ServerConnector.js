@@ -40,7 +40,7 @@ class ServerConnector extends React.Component {
 					onSubmitEditing={(e) => networkService.setServer(this.state.serverInput)}
 				/>
 				<TouchableOpacity style={globalStyles.button} onPress={this.handleGetPress}>
-					<Text>Get Everything</Text>
+					<Text>Get Everything ({this.props.services.storage.version && this.props.services.storage.version.substr(0,5) })</Text>
 				</TouchableOpacity>					
   		</View>
   	);
