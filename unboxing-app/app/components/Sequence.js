@@ -153,12 +153,12 @@ class Sequence extends React.Component {
 
           {this.props.services.sequence.showPlayItemButton &&
             <TouchableOpacity style={styles.bigButton} onPress={this.handlePlayNow}>
-                <Text>Play item now</Text>
+                <Text>Play next item now</Text>
             </TouchableOpacity>
           }
 
           <TouchableOpacity style={styles.bigButton} onPress={this.handleStop}>
-              <Text>Stop</Text>
+              <Text>Stop sequence</Text>
           </TouchableOpacity>
         </View>
 

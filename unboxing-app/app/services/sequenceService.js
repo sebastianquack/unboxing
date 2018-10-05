@@ -181,9 +181,11 @@ class SequenceService extends Service {
 	    	controlStatus: "ready",
 	    	currentItem: null,
 	    	nextItem: null,
-	    	startedAt: null
+	    	startedAt: null,
+			showPlayItemButton: false
 	    });
 	    this.sequenceCursor = 0;
+	    this.loopCounter = 0;
   	}
 
 }
