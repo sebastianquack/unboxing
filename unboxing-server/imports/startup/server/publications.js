@@ -3,13 +3,15 @@ import { Meteor } from 'meteor/meteor';
 import { Challenges, Events, Files, Gestures, Sequences } from '../../collections/';
 
 
-Meteor.publish('events.all', function (data) {
+Meteor.publish('events.all', function (data={}) {
   let options = {}
-  if (data && data.limit) {
+  if (data.limit) {
     options.limit = data.limit,
-    options.sort = { issued_at: -1, received_at: -1 }
+    options.sort = { issued_at: -1 }
   }
-  return Events.find({}, options)
+  let query = data.query || {}
+  console.log(data, query)
+  return Events.find(query, options)
 });
 
 Meteor.publish('challenges.all', function () {

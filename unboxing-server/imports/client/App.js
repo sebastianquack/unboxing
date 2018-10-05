@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import {EventsInfo, ChallengesInfo, FilesInfo, GesturesInfo, SequencesInfo} from './';
+import {EventsInfo, ChallengesInfo, NetworkInfo, FilesInfo, GesturesInfo, SequencesInfo} from './';
  
 // App component - represents the whole app
 export default class App extends Component {
@@ -11,6 +11,8 @@ export default class App extends Component {
         <header>
           <h1>Unboxing Server</h1>
         </header>
+
+        {/*<NetworkInfo />*/}
 
         <ChallengesInfo />
         
