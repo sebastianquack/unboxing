@@ -18,6 +18,13 @@ class GameService extends Service {
 			activeChallenge: challenge
 		});
 	}
+
+	leaveChallenge() {
+		this.setReactive({
+			challengeStatus: "list",
+			activeChallenge: null
+		});	
+	}
 }
 
 const gameService = new GameService();
