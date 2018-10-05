@@ -4,6 +4,8 @@ import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-
 import {globalStyles} from '../../config/globalStyles';
 import {withServices} from './ServiceConnector';
 
+import {gameService} from '../services';
+
 class ChallengeSelector extends React.Component { 
   constructor(props) {
     super(props);
@@ -14,8 +16,12 @@ class ChallengeSelector extends React.Component {
   renderChallenge(challenge) {
     return (
       <TouchableOpacity
+          style={styles.button}
           key={challenge._id}
-          onPress={(challenge)=>{console.log("challenge selected: " + challenge.name)}}
+          onPress={()=>{
+            console.log("challenge selected", challenge);
+            gameService.setActiveChallenge(challenge);
+          }}
         >
         <Text>{challenge.name}</Text>
       </TouchableOpacity>
@@ -26,7 +32,7 @@ class ChallengeSelector extends React.Component {
     const challenges = this.props.services.storage.collections.challenges ? this.props.services.storage.collections.challenges : [];
     return (
       <View style={{width: "50%"}}>
-        <Text style={globalStyles.titleText}>Challenges</Text>
+        <Text style={globalStyles.titleText}>Challenge List</Text>
         {challenges.map(this.renderChallenge)}
       </View>
     );
