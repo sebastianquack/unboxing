@@ -1,5 +1,7 @@
+import { Meteor } from 'meteor/meteor'
+
 import { Challenges, Gestures, Sequences, Files } from '../../collections/';
-import hash from 'object-hash'
+import objectHash from 'object-hash'
 
 async function getEverything(req, res) {  
   const challenges = await Challenges.find().fetch();
@@ -14,12 +16,17 @@ async function getEverything(req, res) {
     files
   }
 
-  const version = hash(collections)
+  const hash = objectHash(collections)
+  const version = hash.substr(0,5)
+
+  Meteor.call('logEvent', 'get everything', { version, client: req.header('x-forwarded-for') || req.connection.remoteAddress})
 
   res.status(200).json({ 
     version,
+    hash,
     collections
   });
+
 }
 
 export {

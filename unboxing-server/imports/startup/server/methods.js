@@ -23,10 +23,18 @@ Meteor.methods({
     console.log(data);
     Events.insert({
       type: "button pressed",
-      received_at: Date.now(),
+      issued_at: Date.now(),
     	...data
     })
   },
+  'logEvent'(type, data = {}) {
+    console.log(data)
+    Events.insert({
+      type,
+      issued_at: Date.now(),
+    	data
+    })
+  },  
   /*'setupChallenge'(uuid, value) {
     console.log("setupChallenge");
     let challenges = Challenges.find({}, {sort: { created_at: -1 }, limit: 1}).fetch();

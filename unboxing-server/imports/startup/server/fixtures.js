@@ -10,10 +10,7 @@ import Events from '../../collections/events';
 
 Meteor.startup(() => {
 
-  Events.insert({
-    type: "server restart",
-    issued_at: Date.now()
-  })
+  Meteor.call('logEvent', 'server restart')
 
   console.log('running fixures');
 /*
