@@ -1,6 +1,6 @@
 import Service from './Service';
 
-import {sequenceService} from './sequenceService';
+import {sequenceService, nearbyService} from './';
 
 class GameService extends Service {
 
@@ -12,6 +12,7 @@ class GameService extends Service {
 		});
 
 		// not reactive vars
+		this.discoveryTimeout;
 	}
 
 	setActiveChallenge(challenge) {
@@ -19,6 +20,15 @@ class GameService extends Service {
 			challengeStatus: "active",
 			activeChallenge: challenge
 		});
+
+		/*nearbyService.startDiscovering();
+		this.discoveryTimeout = setTimeout(()=>{
+			// no endpoints found, start advertising
+			if(nearbyService.getNumEndpoints() == 0) {
+				nearbyService.stopDiscovering();
+				nearbyService.startAdvertising();	
+			}
+		}, 10000);*/
 	}
 
 	getActiveChallenge() {
@@ -31,6 +41,10 @@ class GameService extends Service {
 			challengeStatus: "list",
 			activeChallenge: null
 		});	
+
+		//clearTimeout(this.discoveryTimeout);
+		nearbyService.stopDiscovering();
+		nearbyService.stopAdvertising();
 	}
 }
 

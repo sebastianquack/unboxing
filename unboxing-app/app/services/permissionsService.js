@@ -14,7 +14,13 @@ class PermissionsService extends Service {
 
 	init = () => {
 		this.requestAndroidPermission(
-			PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
+			PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE);
+
+		this.requestAndroidPermission(
+			PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+
+		this.requestAndroidPermission(
+			PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
 	}
 
 	requestAndroidPermission = async (permission) => {

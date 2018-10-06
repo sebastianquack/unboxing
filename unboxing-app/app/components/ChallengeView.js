@@ -6,6 +6,8 @@ import {withServices} from './ServiceConnector';
 
 import Sequence from './Sequence';
 import TrackSelector from './TrackSelector';
+import NearbyStatus from './NearbyStatus';
+
 import {gameService} from '../services';
 
 class ChallengeView extends React.Component { 
@@ -31,6 +33,7 @@ class ChallengeView extends React.Component {
 
         <TrackSelector sequence_id={challenge.sequence_id}/>
         <Sequence/>
+        <NearbyStatus/>
 
       </View>
     );
