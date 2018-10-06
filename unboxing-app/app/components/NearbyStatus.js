@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 
 import {globalStyles} from '../../config/globalStyles';
 import {withServices} from '../components/ServiceConnector';
@@ -15,12 +15,14 @@ class NearbyStatus extends React.Component {
       <View>
         <Text>Nearby</Text>
         <Text> { JSON.stringify(this.props.services.nearby) }</Text>
-        <TouchableOpacity style={globalStyles.button} onPress={()=>nearbyService.toggleDiscovery()}>
-          <Text>Toggle Discovery</Text>
-        </TouchableOpacity>         
-        <TouchableOpacity style={globalStyles.button} onPress={()=>nearbyService.toggleAdvertising()}>
-          <Text>Toggle Advertising</Text>
-        </TouchableOpacity>         
+        <View style={{width:"25%"}}>
+          <Text>Toggle Discovery</Text>         
+          <Switch value={this.props.services.nearby.discovery_active} onValueChange={nearbyService.setDiscovery}/>
+        </View>
+        <View style={{width:"25%"}}>
+          <Text>Toggle Advertising</Text>         
+          <Switch value={this.props.services.nearby.advertising_active} onValueChange={nearbyService.setAdvertising}/>
+        </View>
       </View>
     );
   }

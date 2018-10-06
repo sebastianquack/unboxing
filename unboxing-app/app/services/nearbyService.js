@@ -25,6 +25,28 @@ class NearbyService extends Service {
 		return Object.keys(this.state.endpoints).length;
 	}
 
+	setAdvertising = (value)=> {
+		if(value != this.state.advertising_active) {
+			this.setReactive({advertising_active: value});	
+			if(value) {
+				this.startAdvertising();
+			} else {
+				this.stopAdvertising();
+			}
+		}
+	}
+
+	setDiscovery = (value)=> {
+		if(value != this.state.discovery_active) {
+			this.setReactive({discovery_active: value});
+			if(value) {
+				this.startDiscovering();
+			} else {
+				this.stopDiscovering();
+			}
+		}
+	}
+
 	setupCallbacks() {
 		NearbyConnection.onDiscoveryStarting(({
     		serviceId               // A unique identifier for the service
@@ -168,23 +190,6 @@ class NearbyService extends Service {
 			});
 		}
 	}
-
-	toggleDiscovery() {
-		if(this.state.discovery_service_id) {
-			this.stopDiscovering();
-		} else {
-			this.startDiscovering();
-		}
-	}
-
-	toggleAdvertising() {
-		if(this.state.advertising_service_id) {
-			this.stopAdvertising();
-		} else {
-			this.startAdvertising();
-		}
-	}
-	
 }
 
 const nearbyService = new NearbyService();
