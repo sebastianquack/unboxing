@@ -107,8 +107,9 @@ class NearbyService extends Service {
 	startDiscovering() {
 		let challenge = gameService.getActiveChallenge();
 		if(!challenge) {
-			console.log("nearby: no active challenge, do not know what to discover")
-			return;
+			//console.log("nearby: no active challenge, do not know what to discover")
+			//return;
+			challenge = {name: "test"};
 		}
 
 		// begin discovery of service with challenge id
@@ -135,8 +136,9 @@ class NearbyService extends Service {
 	startAdvertising() {
 		let challenge = gameService.getActiveChallenge();
 		if(!challenge) {
-			console.log("nearby: no active challenge, do not know what to advertise")
-			return;
+			//console.log("nearby: no active challenge, do not know what to advertise")
+			//return;
+			challenge = {name: "test"};
 		}
 
 		NearbyConnection.startAdvertising(

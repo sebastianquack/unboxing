@@ -21,7 +21,7 @@ class NetworkService extends Service {
   initZeroconf() {
     const zeroconf = new Zeroconf();
     zeroconf.scan(type = 'http', protocol = 'tcp', domain = 'local.');
-    zeroconf.on('start', () => console.log('The scan has started.'));
+    zeroconf.on('start', () => console.log('Zeorfonf scan has started.'));
     zeroconf.on('update', () => {
       const zc_services = zeroconf.getServices()
       console.log("update " + JSON.stringify(zc_services))

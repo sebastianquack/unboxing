@@ -26,6 +26,7 @@ import ServerConnector from './app/components/ServerConnector';
 import Files from './app/components/Files';
 import TimeSync from './app/components/TimeSync';
 import GameContainer from './app/components/GameContainer';
+import NearbyStatus from './app/components/NearbyStatus';
 
 class App extends Component {
 
@@ -60,6 +61,7 @@ class App extends Component {
         <ServerConnector/>
         <TimeSync/>
         <Files/>
+        <NearbyStatus/>
       </View>
     );
   }

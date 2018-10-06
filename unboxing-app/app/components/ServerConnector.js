@@ -27,7 +27,7 @@ class ServerConnector extends React.Component {
   	return (
   		<View>
 				<Text>
-					Connection Type: {this.props.services.network.connectionInfo.type}, effective: {this.props.services.network.connectionInfo.effectiveType}
+					Connection Type: {this.props.services.network.connectionInfo ? this.props.services.network.connectionInfo.type : null}, effective: {this.props.services.network.connectionInfo ? this.props.services.network.connectionInfo.effectiveType: null}
 				</Text>
 				<Text style={{marginTop: 20}}>
 					Server: {this.props.services.network.server}

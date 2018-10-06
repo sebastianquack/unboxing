@@ -13,6 +13,7 @@ class NearbyStatus extends React.Component {
   render() {
     return (
       <View>
+        <Text>Nearby</Text>
         <Text> { JSON.stringify(this.props.services.nearby) }</Text>
         <TouchableOpacity style={globalStyles.button} onPress={()=>nearbyService.toggleDiscovery()}>
           <Text>Toggle Discovery</Text>
