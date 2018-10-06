@@ -54,6 +54,7 @@ class NearbyService extends Service {
 		    serviceId               // A unique identifier for the service
 		}) => {
 		    // An endpoint has been discovered we can connect to
+		    console.log("foo");
 		    console.log("onEndpointDiscovered", endpointId, endpointName, serviceId);
 		    if(!this.state.endpoints[endpointId]) {
 		    	let endpoints = this.state.endpoints;
@@ -114,11 +115,14 @@ class NearbyService extends Service {
 
 		// begin discovery of service with challenge id
 		NearbyConnection.startDiscovering(
-  	  		challenge.name
+  	  		challenge.name,
+  	  		Strategy.P2P_STAR
 		);
 		this.setReactive({
 			discovery_service_id: challenge.name
 		})	
+
+
 	}
 
 	stopDiscovering() {
