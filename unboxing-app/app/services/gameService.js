@@ -21,14 +21,8 @@ class GameService extends Service {
 			activeChallenge: challenge
 		});
 
-		/*nearbyService.startDiscovering();
-		this.discoveryTimeout = setTimeout(()=>{
-			// no endpoints found, start advertising
-			if(nearbyService.getNumEndpoints() == 0) {
-				nearbyService.stopDiscovering();
-				nearbyService.startAdvertising();	
-			}
-		}, 10000);*/
+		nearbyService.initConnection();
+		
 	}
 
 	getActiveChallenge() {
@@ -42,9 +36,7 @@ class GameService extends Service {
 			activeChallenge: null
 		});	
 
-		//clearTimeout(this.discoveryTimeout);
-		nearbyService.stopDiscovering();
-		nearbyService.stopAdvertising();
+		nearbyService.cancelConnection();
 	}
 }
 

@@ -2,6 +2,9 @@ import Service from './Service';
 
 import { networkService } from './networkService'; // ATTENTION import from './' generates an error (undefined is not...)
 
+import RNFS from 'react-native-fs';
+persistentFile = RNFS.ExternalStorageDirectoryPath + '/unboxing/collections.json';
+
 class StorageService extends Service {
 
 	constructor() {
@@ -19,7 +22,37 @@ class StorageService extends Service {
 		const result = await networkService.apiRequest('getEverything')
 		if (result) {
 			this.setReactive(result)
+			this.writeCollectionsToFile();
+		} else {
+			this.loadCollectionsFromFile();
 		}
+	}
+
+	loadCollectionsFromFile() {
+		RNFS.readFile(persistentFile, 'utf8')
+	    .then((json) => {
+	      // log the file contents
+	      console.log("reading collections from file", json);
+	      let stateFromFile = JSON.parse(json);
+	      console.log(stateFromFile);
+	      this.setReactive(stateFromFile);
+	    })
+	    .catch((err) => {
+	      console.log(err.message, err.code);
+	    });
+	}
+
+	writeCollectionsToFile() {
+		// write the file
+		let persistentJSON = JSON.stringify(this.state);
+		RNFS.writeFile(persistentFile, persistentJSON, 'utf8')
+		.then((success) => {
+			console.log("succesfully saved collection data to file");
+		})
+		.catch((err) => {
+			console.log("error saving collection data to file");
+			console.log(err.message);
+		});
 	}
 
 	// finds a sequence give its id
