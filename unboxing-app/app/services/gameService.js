@@ -22,7 +22,6 @@ class GameService extends Service {
 		});
 
 		nearbyService.initConnection();
-		
 	}
 
 	getActiveChallenge() {
