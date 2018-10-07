@@ -17,7 +17,7 @@ class NearbyService extends Service {
 			advertisingActive: false,		// true if advertising service is active
 			discoveredEndpoint: null,		// endpoint discovered
 			myEndpointName: uuidv1(),		// uuid for this endpoint
-			myStatus: "solo",				// solo - challengeServer - challengeClient
+			myRole: "solo",				// solo - challengeServer - challengeClient
 			challengeServerEndpoint: null	// id of the challenge Server
 		});
 		this.setupCallbacks();
@@ -106,6 +106,11 @@ class NearbyService extends Service {
     		console.log("onConnectionInitiatedToEndpoint", endpointId, endpointName, serviceId);
     		// Accept all connections for now
     		NearbyConnection.acceptConnection(serviceId, endpointId); 
+
+		    this.setReactive({
+		    	myRole: incomingConnection ? "challengeServer" : "challengeClient",
+		    	challengeServerEndpoint: endpointId
+		    });
 		});
 
 		NearbyConnection.onConnectedToEndpoint(({
@@ -115,10 +120,6 @@ class NearbyService extends Service {
 		}) => {
 		    // Succesful connection to an endpoint established
 		    console.log("onConnectedToEndpoint", endpointId, endpointName, serviceId);
-		    this.setReactive({
-		    	myStatus: "challengeClient",
-		    	challengeServerEndpoint: endpointId
-		    });
 		});
 
 		NearbyConnection.onAdvertisingStarting(({
