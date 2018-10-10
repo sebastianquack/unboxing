@@ -22,6 +22,10 @@ class SequenceService extends Service {
 		this.loopCounter = 0;
 	}
 
+	getControlStatus() {
+		return this.state.controlStatus;
+	}
+
 	// invoked from track selector component - sets up new sequence
 	trackSelect(sequence, track) {
 		this.stopSequence();

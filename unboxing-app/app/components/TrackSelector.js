@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
-import {sequenceService, storageService} from '../services';
+import {gameService, storageService} from '../services';
 import {withServices} from './ServiceConnector';
 
 class TrackSelector extends React.Component { 
@@ -18,7 +18,7 @@ class TrackSelector extends React.Component {
       <TouchableOpacity
           key={index}
           style={trackStyle}
-          onPress={()=>{sequenceService.trackSelect(sequence, track)}}
+          onPress={()=>{gameService.trackSelect(sequence, track)}}
         >
         <Text>{track.name}</Text>
       </TouchableOpacity>
