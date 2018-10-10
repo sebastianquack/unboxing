@@ -214,11 +214,11 @@ class NearbyService extends Service {
 
 				// relay messages through server
 				if(msgObj.type == "broadcast" && this.state.myRole == "server") {
-					this.sendMessageToClients(msgObj.message);
+					this.sendMessageToClients(msgObj);
 				}
 
 				if(typeof this.customCallbacks.onMessageReceived === "function") {
-		    		this.customCallbacks.onMessageReceived(msgObj.message);
+		    		this.customCallbacks.onMessageReceived(msgObj);
 		    	}		    
 			});
 		});
@@ -291,11 +291,11 @@ class NearbyService extends Service {
 
 	broadcastMessage(message) {
 		if(this.state.myRole == "server") {
-			this.sendMessageToClients({type: "broadcast", message: message});
+			this.sendMessageToClients({...message, type: "broadcast"});
 		}
 
 		if(this.state.myRole == "client") {
-			this.sendMessageToServer({type: "broadcast", message: message});	
+			this.sendMessageToServer({...message, type: "broadcast"});	
 		}
 	}
 

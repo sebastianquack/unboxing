@@ -23,15 +23,15 @@ class GameService extends Service {
 
 		nearbyService.setCustomCallbacks({
 			onConnectionEstablished: () => {
-				nearbyService.broadcastMessage("hi everyone");
+				nearbyService.broadcastMessage({message: "hi everyone"});
 			},
 			onMessageReceived: (message) => {
-				console.log("message received: ", message);
+				console.log("message received: ", message.message);
 
 				/* if this is start sequence message 
 				&& we haven't started 
 				&& we are set to autostart sequence (todo) */
-				if(message == "start_sequence" && sequenceService.getControlStatus() == "ready")  {
+				if(message.message == "start_sequence" && sequenceService.getControlStatus() == "ready")  {
 					sequenceService.startSequence(); // todo: set time for sequence to start
 				}
 			},
@@ -57,7 +57,7 @@ class GameService extends Service {
 			sequenceService.startSequence(); // todo: set time for sequence to start
 
 			// send start_sequence message to server or other
-			nearbyService.broadcastMessage("start_sequence"); // send time with message
+			nearbyService.broadcastMessage({message: "start_sequence"}); // send time with message
 		}
 	}
 
