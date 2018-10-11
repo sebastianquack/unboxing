@@ -212,6 +212,7 @@ class NearbyService extends Service {
 		}) => {
     		// Payload has been received
     		console.log("onReceivePayload");
+    		const theEndpointId = endpointId;
 			NearbyConnection.readBytes(
 			    serviceId,               // A unique identifier for the service
 			    endpointId,              // ID of the endpoint wishing to stop playing audio from
@@ -242,13 +243,13 @@ class NearbyService extends Service {
 					// accept the other side as server
 					if(this.myRole != "server" && msgObj.value == "server") {
 						this.setReactive({
-							serverEndpointId: enpointId,
+							serverEndpointId: theEndpointId,
 							myRole: "client"
 						});
 					} else {
 						// note the other side as client
 						if(this.myRole == "server" && msgObj.value != "solo") {
-							this.addClientEndpointId(endpointId);
+							this.addClientEndpointId(theEndpointId);
 						}
 					}
 				}
@@ -286,7 +287,6 @@ class NearbyService extends Service {
     		JSON.stringify(message)  		// A string of bytes to send
 		);
 	}
-
 
 	// send a message to server
 	sendMessageToServer(message) {
