@@ -88,13 +88,14 @@ class NearbyService extends Service {
 		return 1;*/
 	}
 
+	/*
 	addClientEndpointId(endpointId) {
 		let endpointIds = this.state.clientEndpointIds;
 		if(endpointIds.indexOf(endpointId) == -1) {
 			endpointIds.push(endpointId);
 			this.setReactive({clientEndpointIds: endpointIds});
 		}
-	}
+	}*/
 
 	addEndpointId(endpointId) {
 		let endpointIds = this.state.endpointIds;
@@ -146,7 +147,7 @@ class NearbyService extends Service {
 		}) => {
     		// Endpoint moved out of range or disconnected
     		console.log("onEndpointLost", endpointId, endpointName, serviceId)
-    		this.setReactive({serverEndpointId: null});
+    		//this.setReactive({serverEndpointId: null});
 		});
 
 		// this is fired on both sender's and receiver's ends - regardless of advertisting or discovery
@@ -269,7 +270,7 @@ class NearbyService extends Service {
 
 	connectToEndpoint(endpointId) {
 		if(!this.state.serviceId) return;
-		console.log("nearby: connecting to ", this.state.serviceId, this.state.serverEndpointId);
+		console.log("nearby: connecting to ", this.state.serviceId, endpointId);
 		NearbyConnection.connectToEndpoint(
     		this.state.serviceId,         // A unique identifier for the service
     		endpointId
@@ -313,8 +314,8 @@ class NearbyService extends Service {
 		});
 	}*/
 
-	broadcastMessage(message) {
-		this.endpointIds.forEach((endpointId)=>{
+	broadcastMessage = (message) => {
+		this.state.endpointIds.forEach((endpointId)=>{
 			this.sendMessageToEndpoint(endpointId, message);
 		})
 		
