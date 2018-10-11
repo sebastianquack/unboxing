@@ -39,8 +39,8 @@ class GameService extends Service {
 			// todo: onConnectionLost
 		});
 
-		nearbyService.initConnection(challenge.name); 
-		// todo: set timeOut for connection init - after that, allow start of solo challenge?
+		// nearbyService.initConnection(challenge.name); 
+		// unify serviceId for testing
 	}
 
 	getActiveChallenge() {
@@ -79,7 +79,8 @@ class GameService extends Service {
 			activeChallenge: null
 		});	
 
-		nearbyService.cancelConnection();
+		// nearbyService.cancelConnection();
+		// always leave on for testing
 	}
 }
 

@@ -18,6 +18,7 @@ class StorageService extends Service {
 		this.updateEverything()		
 	}
 
+	// called from ServerConnector component
 	updateEverything = async () => {
 		const result = await networkService.apiRequest('getEverything')
 		if (result) {
@@ -31,7 +32,6 @@ class StorageService extends Service {
 
 	setServer(address) {
 		this.setReactive({server: address});
-		this.writeToFile();
 	}
 
 	async loadFromFile() {
@@ -50,6 +50,7 @@ class StorageService extends Service {
 		let persistentJSON = JSON.stringify(this.state);
 		RNFS.writeFile(persistentFile, persistentJSON, 'utf8')
 		.then((success) => {
+			console.log(this.state);
 			console.log("succesfully saved collection data to file");
 		})
 		.catch((err) => {
