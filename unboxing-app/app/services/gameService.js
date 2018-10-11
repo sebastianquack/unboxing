@@ -15,6 +15,7 @@ class GameService extends Service {
 		this.discoveryTimeout;
 	}
 
+	// called, when user selects challenge
 	setActiveChallenge(challenge) {
 		this.setReactive({
 			challengeStatus: "active",
@@ -39,14 +40,14 @@ class GameService extends Service {
 		});
 
 		nearbyService.initConnection(challenge.name); 
-		// todo: set timeOut for connection init - after that, allow start of challenge
+		// todo: set timeOut for connection init - after that, allow start of solo challenge?
 	}
 
 	getActiveChallenge() {
 		return this.state.activeChallenge;
 	}
 
-	// called from TrackSelector
+	// called from TrackSelector when user selects track
 	trackSelect(sequence, track) {
 		sequenceService.trackSelect(sequence, track)
 	}
@@ -61,6 +62,7 @@ class GameService extends Service {
 		}
 	}
 
+	// manual start of items
 	playNextItem() {
     	sequenceService.playNextItem();
   	}

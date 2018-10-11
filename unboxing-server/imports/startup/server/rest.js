@@ -29,6 +29,15 @@ async function getEverything(req, res) {
 
 }
 
+function getTime(req, res) {
+  console.log("getTime");
+  const t = Date.now();
+  res.status(200).json({ 
+    time: t
+  });
+}
+
 export {
-  getEverything
+  getEverything,
+  getTime
 }

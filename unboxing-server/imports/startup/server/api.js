@@ -3,7 +3,8 @@ import serveStatic from 'serve-static';
 import express from 'express';
 
 import {
-  getEverything
+  getEverything,
+  getTime
 } from './rest'
 
 // create files directory if it doesn't exist
@@ -20,6 +21,7 @@ app.use(global.files_uri_path, serveStatic(files_dir, { 'index': false }))
 
 // serve REST api requests
 app.get('/api/getEverything.json', getEverything);
+app.get('/api/getTime.json', getTime);
 
 // connect express to meteor app
 WebApp.connectHandlers.use(app);

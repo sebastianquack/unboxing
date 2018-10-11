@@ -2,6 +2,7 @@ import { NetInfo } from 'react-native';
 import Zeroconf from 'react-native-zeroconf';
 
 import Service from './Service';
+import { storageService } from './';
 
 defaultServer = "192.168.1.2"
 
@@ -41,8 +42,11 @@ class NetworkService extends Service {
     zeroconf.on('error', data => console.log("error " + JSON.stringify(data)))
 	}  	
 	
-  setServer(server) {
+  setServer(server, save=true) {
 		this.setReactive({ server })
+    if(save) {
+      storageService.setServer(server);  
+    }
   }	
 
   initNetInfo = () => {

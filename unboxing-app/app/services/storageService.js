@@ -22,27 +22,30 @@ class StorageService extends Service {
 		const result = await networkService.apiRequest('getEverything')
 		if (result) {
 			this.setReactive(result)
-			this.writeCollectionsToFile();
+			this.writeToFile();
 		} else {
-			this.loadCollectionsFromFile();
+			await this.loadFromFile();
+			networkService.setServer(this.state.server, false); // doesn't neet save, just loaded
 		}
 	}
 
-	loadCollectionsFromFile() {
-		RNFS.readFile(persistentFile, 'utf8')
-	    .then((json) => {
-	      // log the file contents
+	setServer(address) {
+		this.setReactive({server: address});
+		this.writeToFile();
+	}
+
+	async loadFromFile() {
+		let json = await RNFS.readFile(persistentFile, 'utf8').catch((e)=>console.log(err.message, err.code));
+		if(json) {
+			// log the file contents
 	      console.log("reading collections from file", json);
 	      let stateFromFile = JSON.parse(json);
 	      console.log(stateFromFile);
 	      this.setReactive(stateFromFile);
-	    })
-	    .catch((err) => {
-	      console.log(err.message, err.code);
-	    });
+		}
 	}
 
-	writeCollectionsToFile() {
+	writeToFile() {
 		// write the file
 		let persistentJSON = JSON.stringify(this.state);
 		RNFS.writeFile(persistentFile, persistentJSON, 'utf8')
