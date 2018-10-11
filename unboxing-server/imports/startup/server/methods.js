@@ -142,11 +142,6 @@ Meteor.methods({
     }    
 
   },*/
-  'getTime'() {
-    const t = Date.now()
-    //console.log(`sending time ${t} to client`)
-    return t;
-  },
   'updateFiles'() {
     updateFiles();
   },

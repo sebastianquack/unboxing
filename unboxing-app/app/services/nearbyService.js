@@ -11,17 +11,20 @@ class NearbyService extends Service {
 	constructor() {
 		// reactive vars
 		super("nearby", {
-			discoveryServiceId: null, 		// service id to be discovered
+			serviceId: null, 				// service id for discovery & advertising
 			discoveryActive: false,			// true if discovery service is active
-			advertistingServiceId: null, 	// service id to be advertised
 			advertisingActive: false,		// true if advertising service is active
 			myEndpointName: uuidv1(),		// random unique name for this endpoint
-			myRole: "solo",					// solo - challengeServer - challengeClient
+			myRole: "solo",					// solo - server - client
 			serverEndpointId: null,			// endpoint of servier, if client
 			clientEndpointIds: [],			// connected clients, if server
-			challengeServerEndpointId: null	// id of the challenge Server
 		});
-		this.setupCallbacks();
+		this.customCallbacks = {
+			onConnectionEstablished: null,
+			onMessageReceived: null,
+			onConnectionLost: null,
+		}
+		this.setupNearbyCallbacks();
 	}
 
 	setAdvertising = (value)=> {
@@ -46,11 +49,28 @@ class NearbyService extends Service {
 		}
 	}
 
+	setCustomCallbacks(callbacks) {
+		Object.keys(callbacks).forEach((key)=>{
+			this.customCallbacks[key] = callbacks[key];
+		});
+		console.log(this.customCallbacks);
+	}
+
 	getMyRole() {
 		return this.state.myRole;
 	}
 
-	setupCallbacks() {
+	getNumParticipants() {
+		if(this.state.myRole == "server") {
+			return this.state.clientEndpointIds.length + 1;
+		}
+		if(this.state.myRole == "client") {
+			// todo: ask server for num participants
+		}
+		return 1;
+	}
+
+	setupNearbyCallbacks() {
 		NearbyConnection.onDiscoveryStarting(({
     		serviceId               // A unique identifier for the service
 		}) => {
@@ -79,12 +99,11 @@ class NearbyService extends Service {
 		    serviceId               // A unique identifier for the service
 		}) => {
 		    // An endpoint has been discovered we can connect to
-		    console.log("foo");
 		    console.log("onEndpointDiscovered", endpointId, endpointName, serviceId);
 		    if(!this.state.serverEndpointId) {
 		    	this.setReactive({serverEndpointId: endpointId});
 		    	this.stopDiscovering();
-				this.connectToserverEndpointId();
+				this.connectToServerEndpoint();
 		    }
 		});
 
@@ -113,7 +132,7 @@ class NearbyService extends Service {
     		NearbyConnection.acceptConnection(serviceId, endpointId); 
 
 		    this.setReactive({
-		    	myRole: incomingConnection ? "challengeServer" : "challengeClient"
+		    	myRole: incomingConnection ? "server" : "client"
 		    });
 
 		    if(incomingConnection) {
@@ -132,12 +151,10 @@ class NearbyService extends Service {
 		}) => {
 		    // Succesful connection to an endpoint established
 		    console.log("onConnectedToEndpoint", endpointId, endpointName, serviceId);
-		    if(this.state.myRole == "challengeClient") {
-		    	this.sendMessageToChallengeServer("hello server");
-		    } 
-		    if(this.state.myRole == "challengeServer") {
-		    	this.sendMessageToChallengeClients("hello to all clients");	
-		    }
+		    
+		    if(typeof this.customCallbacks.onConnectionEstablished === "function") {
+		    	this.customCallbacks.onConnectionEstablished();
+		    }		    
 		});
 
 		NearbyConnection.onAdvertisingStarting(({
@@ -186,12 +203,29 @@ class NearbyService extends Service {
 			    metadata,                // [Payload.Type.FILE] The metadata sent along with the file
 			    streamType,              // [Payload.Type.STREAM] The type of stream this is [audio or video]
 			}) => {
-				console.log("message received: ", bytes);
+				let msgObj = {};
+				console.log("payload: ", bytes);
+			    try {
+			        msgObj = JSON.parse(bytes);
+			    } catch(e) {
+			        console.log(e);
+			        msgObj = {message: bytes};
+			    }
+
+				// relay messages through server
+				if(msgObj.type == "broadcast" && this.state.myRole == "server") {
+					this.sendMessageToClients(msgObj);
+				}
+
+				if(typeof this.customCallbacks.onMessageReceived === "function") {
+		    		this.customCallbacks.onMessageReceived(msgObj);
+		    	}		    
 			});
 		});
 	}
 
-	initConnection = ()=> {
+	initConnection = (serviceId)=> {
+		this.setReactive({serviceId: serviceId});
 		this.startDiscovering();
 		this.discoveryTimeout = setTimeout(()=>{
 			// no endpoint found, start advertising
@@ -207,104 +241,90 @@ class NearbyService extends Service {
 		nearbyService.stopDiscovering();
 		nearbyService.stopAdvertising();
 		this.setReactive({
-			serverEndpointId: null,
+			serviceId: null,
 			clientEndpointIds: [],
 			myRole: "solo"	
 		});
 	}
 	
 	startDiscovering() {
-		let challenge = gameService.getActiveChallenge();
-		if(!challenge) {
-			//console.log("nearby: no active challenge, do not know what to discover")
-			//return;
-			challenge = {name: "test"};
-		}
-
-		// begin discovery of service with challenge id
+		// begin discovery of service
 		NearbyConnection.startDiscovering(
-  	  		challenge.name,
+  	  		this.state.serviceId ? this.state.serviceId : "test",
   	  		Strategy.P2P_STAR
 		);
-		this.setReactive({
-			discoveryServiceId: challenge.name
-		})	
 	}
 
-	connectToserverEndpointId() {
-		let challenge = gameService.getActiveChallenge();
-		if(!challenge || !this.state.serverEndpointId) return;
-		console.log("nearby: connecting to ", challenge.name, this.state.serverEndpointId);
+	connectToServerEndpoint() {
+		if(!this.state.serviceId || !this.state.serverEndpointId) return;
+		console.log("nearby: connecting to ", this.state.serviceId, this.state.serverEndpointId);
 		NearbyConnection.connectToEndpoint(
-    		challenge.name,         		// A unique identifier for the service
+    		this.state.serviceId,         // A unique identifier for the service
     		this.state.serverEndpointId   // ID of the endpoint to connect to
 		);
 	}
 
 	// send a message to server
-	sendMessageToChallengeServer(message) {
-		let challenge = gameService.getActiveChallenge();
-		if(!challenge || !this.state.serverEndpointId || this.state.myRole != "challengeClient") return;
-		console.log("sendMessageToChallengeServer", message, this.state.serverEndpointId);
+	sendMessageToServer(message) {
+		if(!this.state.serviceId || !this.state.serverEndpointId || this.state.myRole != "client") return;
+		console.log("sendMessageToServer", message, this.state.serverEndpointId);
 		NearbyConnection.sendBytes(
-  		  	challenge.name,               		// A unique identifier for the service
+  		  	this.state.serviceId,           // A unique identifier for the service
     		this.state.serverEndpointId,    // ID of the endpoint
-    		message                    			// A string of bytes to send
+    		JSON.stringify(message)  		// A string of bytes to send
 		);
 	}
 
 	// send a message to all connected clients
-	sendMessageToChallengeClients(message) {
-		let challenge = gameService.getActiveChallenge();
-		if(!challenge || this.state.myRole != "challengeServer") return;
-		console.log("sendMessageToChallengeClients", message, this.state.clientEndpointIds);
+	sendMessageToClients(message) {
+		if(!this.state.serviceId || this.state.myRole != "server") return;
+		console.log("sendMessageToClients", message, this.state.clientEndpointIds);
+		console.log(JSON.stringify(message));
 		this.state.clientEndpointIds.forEach((clientEndpointId)=>{
 			NearbyConnection.sendBytes(
-	  		  	challenge.name,               		// A unique identifier for the service
-	    		clientEndpointId,   				// ID of the endpoint
-	    		message                    			// A string of bytes to send
+	  		  	this.state.serviceId,     	// A unique identifier for the service
+	    		clientEndpointId,   		// ID of the endpoint
+	    		JSON.stringify(message) 	// A string of bytes to send
 			);		
 		});
 	}
 
+	broadcastMessage(message) {
+		if(this.state.myRole == "server") {
+			this.sendMessageToClients({...message, type: "broadcast"});
+		}
+
+		if(this.state.myRole == "client") {
+			this.sendMessageToServer({...message, type: "broadcast"});	
+		}
+	}
+
 	stopDiscovering() {
-		if(this.state.discoveryServiceId) {
-			console.log("nearby: stopping discovery", this.state.discoveryServiceId);
-			NearbyConnection.stopDiscovering(this.state.discoveryServiceId);
+		if(this.state.discoveryActive) {
+			console.log("nearby: stopping discovery", this.state.serviceId);
+			NearbyConnection.stopDiscovering(this.state.serviceId);
 			this.setReactive({
-				discoveryActive: false,
-				discoveryServiceId: null,
+				discoveryActive: false
 			});	
 		}
 	}
 
 	startAdvertising() {
-		let challenge = gameService.getActiveChallenge();
-		if(!challenge) {
-			//console.log("nearby: no active challenge, do not know what to advertise")
-			//return;
-			challenge = {name: "test"};
-		}
-
 		NearbyConnection.startAdvertising(
-		    this.state.endpointName,
-    		challenge.name,              
+		    this.state.myEndpointName,
+    		this.state.serviceId ? this.state.serviceId : "test",
     		Strategy.P2P_STAR
 		);
-		this.setReactive({
-			advertisingServiceId: challenge.name
-		});		
 	}
 
 	stopAdvertising() {
-		if(this.state.advertisingServiceId) {
-			console.log("nearby: stopping advertising", this.state.advertisingServiceId);
+		if(this.state.advertisingActive) {
+			console.log("nearby: stopping advertising", this.state.serviceId);
 			NearbyConnection.stopAdvertising(
-    			this.state.advertistingServiceId
+    			this.state.serviceId
 			);
 			this.setReactive({
-				advertisingActive: false,
-				advertisingServiceId: null,
+				advertisingActive: false
 			});
 		}
 	}

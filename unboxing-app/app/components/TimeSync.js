@@ -11,7 +11,7 @@ import Meteor from 'react-native-meteor';
 
 import {globalStyles} from '../../config/globalStyles';
 
-import {soundService} from '../services/soundService';
+import {soundService, networkService} from '../services';
 import {withServices} from '../components/ServiceConnector';
 
 const clickFilename = '/misc/click.mp3';
@@ -97,19 +97,17 @@ class TimeSync extends React.Component {
   }
 }
 
-function measureDelta(callback) {
+async function measureDelta(callback) {
   let sendTimeStamp = (new Date()).getTime();
-  Meteor.call("getTime", (err, serverTime) => {
-    if(err) {
-        alert("error retrieving time from server");
-        console.log(err);
-        return;
-    }
+  const result = await networkService.apiRequest('getTime').catch((e)=>console.log(err.message, err.code));
+  console.log(result);
+  if(result) {
+    let serverTime = result.time;
     let receiveTimeStamp = (new Date()).getTime();
     let latency = (receiveTimeStamp - sendTimeStamp) / 2.0;
     let delta = receiveTimeStamp - (serverTime + latency);
     callback({latency: latency, delta: delta});
-  });
+  }
 }
 
 function avgTimeDeltas(callback) {

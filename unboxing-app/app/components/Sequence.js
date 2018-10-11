@@ -5,18 +5,8 @@ import {globalStyles} from '../../config/globalStyles';
 
 import Gesture from './Gesture';
 
-/*
-todo: move to challenge service
-const uuidv4 = require('uuid/v4');
-const userUuid = uuidv4();
-var autoStartSequence = false;
-var challengeMode = false;
-var failedAlertShown = false;
-*/
-
 import {withServices} from './ServiceConnector';
-import {soundService} from '../services/soundService';
-import {sequenceService} from '../services/sequenceService';
+import {sequenceService, gameService, soundService} from '../services';
 
 class Sequence extends React.Component { 
   constructor(props) {
@@ -41,42 +31,17 @@ class Sequence extends React.Component {
     clearInterval(this.updateInterval);
   }
 
-  // starts a sequence manually
   handleStartSequence() {
-    sequenceService.startSequence();
+    gameService.handleStartSequence();
   }
 
   handlePlayNow() {
-    
-    /*
-    TODO: move to challenge service
-    // check if challenge mode is on
-    if(this.state.challengeMode) {
-      failedAlertShown = false;
-      Meteor.call("attemptChallenge", this.props.challenge._id, userUuid);
-    } else
-    */
-    
-    sequenceService.playNextItem();
+    gameService.playNextItem();
   }
 
   handleStop() {
-    sequenceService.stopSequence();
+    gameService.handleStopSequence();
   }
-
-  /*
-  TODO: move to challenge service
-  handleAutoStartSequenceSwitch(value) {
-   this.setState({ autoStartSequence: value });
-   autoStartSequence = value; 
-  }
-
-  handleChallengeModeSwitch(value) {
-    this.setState({ challengeMode: value });
-    challengeMode = value;
-    Meteor.call("setupChallenge", userUuid, value);
-  }
-  */
 
   handleEinsatz() {
     console.log("Gesture deteced!");
@@ -165,23 +130,6 @@ class Sequence extends React.Component {
         {this.renderSequenceInfo()}
         
         <View style={globalStyles.buttons}>
-          
-          {/*
-          TODO: hook up to challenge service
-          <View style={styles.control}>
-            <Text style={globalStyles.titleText}>Sequence Challenge</Text>
-            <Switch value={this.state.challengeMode} onValueChange={this.handleChallengeModeSwitch}/>
-            <Text>{this.props.challenge && this.state.challengeMode ? "players: " + Object.keys(this.props.challenge.uuids).length : ""}</Text>
-          </View>
-
-          <View style={styles.control}>
-            <Text style={globalStyles.titleText}>Autostart sequence</Text>
-            <Switch value={this.state.autoStartSequence} onValueChange={this.handleAutoStartSequenceSwitch}/>
-          </View>
-
-          <Text>{this.state.challengeMode ? JSON.stringify(this.props.challenge) : ""}</Text>
-          */}
-
           <Gesture onEinsatz={this.handleEinsatz}/>
         </View>
                     
@@ -191,56 +139,6 @@ class Sequence extends React.Component {
 }
 
 export default withServices(Sequence);
-
-/*  
-TODO: move to challenge service
-
-export default withTracker(params=>{
-  Meteor.subscribe('events.all', () => {
-    Meteor.ddp.on("added", message => {
-      //console.log(message);
-      // check if event originated from this user
-      if(message.fields.userUuid == userUuid) {
-        return;
-      }
-      // event originated from someone else
-      if(message.fields.type == "button pressed") {
-        if(!playScheduled) {
-          console.log("received message to start playing from other device");
-          if(autoStartSequence) {
-            // HOW TO ACCESS METHOD HERE?
-            //this.handleStartSequence(message.fields.startTime);
-          }
-        }
-      }
-    });
-  });
-
-  Meteor.subscribe('challenges.latest', () => {
-    Meteor.ddp.on("changed", message => {
-      //console.log(message);
-      if(challengeMode && message.msg == "changed" && message.fields.status == "completed") {
-        let challengeCompleted = Meteor.collection('challenges').findOne(message.id);
-        this.props.scheduleNextSound(challengeCompleted.targetTime);  
-      }
-      if(challengeMode && message.msg == "changed" && message.fields.status == "failed") {
-        if(!failedAlertShown) {
-          failedAlertShown = true;
-          alert("challenge failed");  
-          setInterval(()=>{
-            failedAlertShown = false;
-          }, 5000);
-        }
-      }
-    });
-  });
-
-  let challenge = Meteor.collection('challenges').findOne();
-
-  return {
-    challenge
-  };
-})(Sequencer); */
 
 const styles = StyleSheet.create({
   welcome: {
