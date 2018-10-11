@@ -52,7 +52,7 @@ class SequenceService extends Service {
   	}
 
   	// start sequence playback
-	startSequence() {
+	startSequence(startTime) {
 		if(this.state.controlStatus != "ready") {
 			console.log("cannot start - sequence not ready to play");
 			return;
@@ -60,7 +60,7 @@ class SequenceService extends Service {
 
 		this.setReactive({
 		  controlStatus: "playing",
-	      startedAt: soundService.getSyncTime()
+	      startedAt: startTime | soundService.getSyncTime()
     	});
 
 		this.setupNextSequenceItem();

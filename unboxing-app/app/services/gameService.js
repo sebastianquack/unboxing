@@ -1,6 +1,6 @@
 import Service from './Service';
 
-import {sequenceService, nearbyService} from './';
+import {sequenceService, nearbyService, soundService} from './';
 
 class GameService extends Service {
 
@@ -33,7 +33,7 @@ class GameService extends Service {
 				&& we haven't started 
 				&& we are set to autostart sequence (todo) */
 				if(message.message == "start_sequence" && sequenceService.getControlStatus() == "ready")  {
-					sequenceService.startSequence(); // todo: set time for sequence to start
+					sequenceService.startSequence(message.startTime);
 				}
 			},
 			// todo: onConnectionLost
@@ -55,10 +55,11 @@ class GameService extends Service {
 	// start triggered by button or gesture
 	handleStartSequence() {
 		if(sequenceService.getControlStatus() == "ready") {
-			sequenceService.startSequence(); // todo: set time for sequence to start
+			let startTime = soundService.getSyncTime() + 2000; // set time for sequence to start
+			sequenceService.startSequence(startTime); 
 
 			// send start_sequence message to server or other
-			nearbyService.broadcastMessage({message: "start_sequence"}); // send time with message
+			nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
 		}
 	}
 
