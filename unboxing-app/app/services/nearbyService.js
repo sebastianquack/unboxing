@@ -22,9 +22,9 @@ class NearbyService extends Service {
 			endpointIds: [] 				// all other devices in range 
 		});
 		this.customCallbacks = {
-			onConnectionEstablished: null,
+			onConnectionEstablished: null, 	// not implemented
 			onMessageReceived: null,
-			onConnectionLost: null,
+			onConnectionLost: null, 		// not implemented
 		}
 		this.setupNearbyCallbacks();
 	}
@@ -48,11 +48,6 @@ class NearbyService extends Service {
 		this.roleDecideTimeout = setTimeout(()=>{
 			if(this.state.myRole != "client") {
 				this.setReactive({myRole: "server"});
-				if(this.state.endpointIds.length > 0) {
-					if(typeof this.customCallbacks.onConnectionEstablished === "function") {
-		    			this.customCallbacks.onConnectionEstablished();
-			    	}
-				}
 			}
 		}, 10000);
 	}
@@ -65,6 +60,7 @@ class NearbyService extends Service {
 			serviceId: null,
 			serverEndpointId: null,
 			clientEndpointIds: [],
+			endpointIds: [],
 			myRole: "solo"	
 		});
 
@@ -248,7 +244,7 @@ class NearbyService extends Service {
 						});
 					} else {
 						// note the other side as client
-						if(this.myRole == "server" && msgObj.value != "solo") {
+						if(this.myRole == "server" && msgObj.value != "server") {
 							this.addClientEndpointId(theEndpointId);
 						}
 					}

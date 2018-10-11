@@ -24,7 +24,7 @@ class GameService extends Service {
 
 		nearbyService.setCustomCallbacks({
 			onConnectionEstablished: () => {
-				nearbyService.broadcastMessage({message: "hi everyone"});
+				// todo
 			},
 			onMessageReceived: (message) => {
 				console.log("message received: ", message.message);
