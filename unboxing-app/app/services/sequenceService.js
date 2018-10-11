@@ -60,7 +60,7 @@ class SequenceService extends Service {
 
 		this.setReactive({
 		  controlStatus: "playing",
-	      startedAt: startTime | soundService.getSyncTime()
+	      startedAt: startTime || soundService.getSyncTime()
     	});
 
 		this.setupNextSequenceItem();
