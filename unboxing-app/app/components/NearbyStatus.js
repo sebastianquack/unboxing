@@ -16,13 +16,10 @@ class NearbyStatus extends React.Component {
         <Text>Nearby</Text>
         <Text> { JSON.stringify(this.props.services.nearby) }</Text>
         <View style={{width:"25%"}}>
-          <Text>Toggle Discovery</Text>         
-          <Switch value={this.props.services.nearby.discoveryActive} onValueChange={nearbyService.setDiscovery}/>
+          <Text>On/Off</Text>         
+          <Switch value={this.props.services.nearby.active} onValueChange={nearbyService.toggleActive}/>
         </View>
-        <View style={{width:"25%"}}>
-          <Text>Toggle Advertising</Text>         
-          <Switch value={this.props.services.nearby.advertisingActive} onValueChange={nearbyService.setAdvertising}/>
-        </View>
+        
       </View>
     );
   }

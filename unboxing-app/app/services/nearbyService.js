@@ -11,13 +11,15 @@ class NearbyService extends Service {
 	constructor() {
 		// reactive vars
 		super("nearby", {
+			active: false,					// general on / off switch for nearby
 			serviceId: null, 				// service id for discovery & advertising
 			discoveryActive: false,			// true if discovery service is active
 			advertisingActive: false,		// true if advertising service is active
 			myEndpointName: uuidv1(),		// random unique name for this endpoint
 			myRole: "solo",					// solo - server - client
-			serverEndpointId: null,			// endpoint of servier, if client
+			serverEndpointId: null,			// what is our current server, if null, we don't know the server
 			clientEndpointIds: [],			// connected clients, if server
+			endpointIds: [] 				// all other devices in range 
 		});
 		this.customCallbacks = {
 			onConnectionEstablished: null,
@@ -27,28 +29,47 @@ class NearbyService extends Service {
 		this.setupNearbyCallbacks();
 	}
 
-	setAdvertising = (value)=> {
-		if(value != this.state.advertisingActive) {
-			this.setReactive({advertisingActive: value});	
-			if(value) {
-				this.startAdvertising();
-			} else {
-				this.stopAdvertising();
-			}
+	toggleActive = ()=> {
+		if(!this.state.active) {
+			this.setReactive({active: true});
+			this.initConnection("test"); // use for debuggung
+		} else {
+			this.setReactive({active: false});
+			this.cancelConnection();
 		}
 	}
 
-	setDiscovery = (value)=> {
-		if(value != this.state.discoveryActive) {
-			this.setReactive({discoveryActive: value});
-			if(value) {
-				this.startDiscovering();
-			} else {
-				this.stopDiscovering();
+	initConnection = (serviceId)=> {
+		this.setReactive({serviceId: serviceId});
+		this.startDiscovering();
+		this.startAdvertising();	
+
+		// wait to see if this device finds a server, if not, declare to be the server
+		this.roleDecideTimeout = setTimeout(()=>{
+			if(this.state.myRole != "client") {
+				this.setReactive({myRole: "server"});
+				if(this.state.endpointIds.length > 0) {
+					if(typeof this.customCallbacks.onConnectionEstablished === "function") {
+		    			this.customCallbacks.onConnectionEstablished();
+			    	}
+				}
 			}
-		}
+		}, 10000);
 	}
 
+	cancelConnection = ()=> {
+		nearbyService.stopDiscovering();
+		nearbyService.stopAdvertising();
+		clearTimeout(this.roleDecideTimeout);
+		this.setReactive({
+			serviceId: null,
+			serverEndpointId: null,
+			clientEndpointIds: [],
+			myRole: "solo"	
+		});
+
+	}
+	
 	setCustomCallbacks(callbacks) {
 		Object.keys(callbacks).forEach((key)=>{
 			this.customCallbacks[key] = callbacks[key];
@@ -68,6 +89,22 @@ class NearbyService extends Service {
 			// todo: ask server for num participants
 		}
 		return 1;
+	}
+
+	addClientEndpointId(endpointId) {
+		let endpointIds = this.state.clientEndpointIds;
+		if(endpointIds.indexOf(endpointId) == -1) {
+			endpointIds.push(endpointId);
+			this.setReactive({clientEndpointIds: endpointIds});
+		}
+	}
+
+	addEndpointId(endpointId) {
+		let endpointIds = this.state.endpointIds;
+		if(endpointIds.indexOf(endpointId) == -1) {
+			endpointIds.push(endpointId);
+			this.setReactive({endpointIds: endpointIds});
+		}
 	}
 
 	setupNearbyCallbacks() {
@@ -100,11 +137,8 @@ class NearbyService extends Service {
 		}) => {
 		    // An endpoint has been discovered we can connect to
 		    console.log("onEndpointDiscovered", endpointId, endpointName, serviceId);
-		    if(!this.state.serverEndpointId) {
-		    	this.setReactive({serverEndpointId: endpointId});
-		    	this.stopDiscovering();
-				this.connectToServerEndpoint();
-		    }
+		    this.addEndpointId(endpointId);
+		    this.connectToEndpoint(endpointId);
 		});
 
 		// Note - Can take up to 3 min to time out
@@ -118,7 +152,7 @@ class NearbyService extends Service {
     		this.setReactive({serverEndpointId: null});
 		});
 
-		// this is fired on both sender's and receiver's ends
+		// this is fired on both sender's and receiver's ends - regardless of advertisting or discovery
 		NearbyConnection.onConnectionInitiatedToEndpoint(({
 		    endpointId,             // ID of the endpoint wishing to connect
 		    endpointName,           // The name of the remote device we're connecting to.
@@ -130,18 +164,6 @@ class NearbyService extends Service {
     		console.log("onConnectionInitiatedToEndpoint", endpointId, endpointName, serviceId);
     		// Accept all connections for now
     		NearbyConnection.acceptConnection(serviceId, endpointId); 
-
-		    this.setReactive({
-		    	myRole: incomingConnection ? "server" : "client"
-		    });
-
-		    if(incomingConnection) {
-		    	let clientEndpointIds = this.state.clientEndpointIds;
-		    	if(clientEndpointIds.indexOf(endpointId) == -1) {
-		    		clientEndpointIds.push(endpointId);	
-		    		this.setReactive({clientEndpointIds: clientEndpointIds});
-		    	}
-		    }
 		});
 
 		NearbyConnection.onConnectedToEndpoint(({
@@ -152,9 +174,8 @@ class NearbyService extends Service {
 		    // Succesful connection to an endpoint established
 		    console.log("onConnectedToEndpoint", endpointId, endpointName, serviceId);
 		    
-		    if(typeof this.customCallbacks.onConnectionEstablished === "function") {
-		    	this.customCallbacks.onConnectionEstablished();
-		    }		    
+		    // inform other side about my role
+			this.sendMessageToEndpoint(endpointId, {message: "myRole", value: this.state.myRole});	
 		});
 
 		NearbyConnection.onAdvertisingStarting(({
@@ -217,6 +238,20 @@ class NearbyService extends Service {
 					this.sendMessageToClients(msgObj);
 				}
 
+				if(msgObj.message == "myRole") {
+					// accept the other side as server
+					if(this.myRole != "server" && msgObj.value == "server") {
+						this.setReactive({
+							serverEndpointId: enpointId,
+							myRole: "client"
+						});
+					} else {
+						// note the other side as client
+						if(this.myRole == "server" && msgObj.value != "solo") {
+							this.addClientEndpointId(endpointId);
+						}
+					}
+				}
 				if(typeof this.customCallbacks.onMessageReceived === "function") {
 		    		this.customCallbacks.onMessageReceived(msgObj);
 		    	}		    
@@ -224,29 +259,6 @@ class NearbyService extends Service {
 		});
 	}
 
-	initConnection = (serviceId)=> {
-		this.setReactive({serviceId: serviceId});
-		this.startDiscovering();
-		this.discoveryTimeout = setTimeout(()=>{
-			// no endpoint found, start advertising
-			if(!this.state.serverEndpointId) {
-				this.stopDiscovering();
-				this.startAdvertising();	
-			}
-		}, 20000);
-	}
-
-	cancelConnection = ()=> {
-		clearTimeout(this.discoveryTimeout);
-		nearbyService.stopDiscovering();
-		nearbyService.stopAdvertising();
-		this.setReactive({
-			serviceId: null,
-			clientEndpointIds: [],
-			myRole: "solo"	
-		});
-	}
-	
 	startDiscovering() {
 		// begin discovery of service
 		NearbyConnection.startDiscovering(
@@ -255,14 +267,26 @@ class NearbyService extends Service {
 		);
 	}
 
-	connectToServerEndpoint() {
-		if(!this.state.serviceId || !this.state.serverEndpointId) return;
+	connectToEndpoint(endpointId) {
+		if(!this.state.serviceId) return;
 		console.log("nearby: connecting to ", this.state.serviceId, this.state.serverEndpointId);
 		NearbyConnection.connectToEndpoint(
     		this.state.serviceId,         // A unique identifier for the service
-    		this.state.serverEndpointId   // ID of the endpoint to connect to
+    		endpointId
 		);
 	}
+
+	// send message to an endpoint
+	sendMessageToEndpoint(endpointId, message) {
+		if(!this.state.serviceId) return;
+		console.log("sendMessageToEndpoint", endpointId, message);
+		NearbyConnection.sendBytes(
+  		  	this.state.serviceId,           // A unique identifier for the service
+    		endpointId,    					// ID of the endpoint
+    		JSON.stringify(message)  		// A string of bytes to send
+		);
+	}
+
 
 	// send a message to server
 	sendMessageToServer(message) {
