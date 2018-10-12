@@ -68,7 +68,7 @@ class SensorService extends Service {
 
 	enable = () => {
 		this.combinedObservable.subscribe(this.receiveCombinedData);
-		this.enableSampleRateMonitoring()
+		//this.enableSampleRateMonitoring()
 	}
 
 	enableReactiveData = () => {
@@ -96,7 +96,7 @@ class SensorService extends Service {
 		return {
 			x: Math.floor(data.x*100)/100,
 			y: Math.floor(data.y*100)/100,
-			z: Math.floor(data.z*100)/100
+			z: Math.floor(data.z*100)/100,
 		}
 	}
 
