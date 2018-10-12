@@ -19,6 +19,16 @@ const globalStyles = StyleSheet.create({
     marginRight: 20,
     marginLeft: 20,
     marginBottom: 20
+  },
+  good: {
+    backgroundColor: "green",
+    color: 'white',
+    paddingHorizontal: 5
+  },
+  bad: {
+    backgroundColor: "red",
+    color: "white",
+    paddingHorizontal: 5
   }
 });
 

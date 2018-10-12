@@ -15,7 +15,7 @@ class StorageService extends Service {
 			collections: {}
 		});
 
-		this.updateEverything()		
+		this.loadFromFile()		
 	}
 
 	// called from ServerConnector component

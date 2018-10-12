@@ -28,6 +28,8 @@ import TimeSync from './app/components/TimeSync';
 import GameContainer from './app/components/GameContainer';
 import NearbyStatus from './app/components/NearbyStatus';
 import Gestures from './app/components/Gestures';
+import SensorInfo from './app/components/SensorInfo';
+
 
 class App extends Component {
 
@@ -61,6 +63,7 @@ class App extends Component {
         <Text style={globalStyles.titleText}>Admin</Text>
         <ServerConnector/>
         <TimeSync/>
+        <SensorInfo />
         <Gestures />
         <Files/>
         <NearbyStatus/>

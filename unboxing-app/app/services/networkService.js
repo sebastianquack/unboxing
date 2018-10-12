@@ -12,7 +12,8 @@ class NetworkService extends Service {
 
 		// reactive vars
 		super("network", {
-			server: defaultServer
+      server: defaultServer,
+      lastApiResult: ""
 		});
 
     this.initZeroconf()
@@ -71,10 +72,12 @@ class NetworkService extends Service {
 			);
 			//console.log("response", response)
 			let responseJson = await response.json();
-			//console.log("response json", responseJson)
+      //console.log("response json", responseJson)
+      this.setReactive({lastApiResult: "OK"})
 			return responseJson;
 		} catch (error) {
-			console.log("REST server error: ", error);
+      console.log("REST server error: ", error);
+      this.setReactive({lastApiResult: "Error"})
 		}
 	}
 
