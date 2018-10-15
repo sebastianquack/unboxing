@@ -135,8 +135,8 @@ class SequenceService extends Service {
 				// listen for gesture
 				if (nextItem.gesture_id) {
 					gestureService.waitForGesture(nextItem.gesture_id, () => {
-						gameService.handlePlayNextItemButton()
 						gestureService.stopWaitingForGesture()
+						gameService.handlePlayNextItemButton()
 					})
 				}
 

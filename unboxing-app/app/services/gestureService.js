@@ -3,9 +3,10 @@ import { DynamicTimeWarping } from 'dynamic-time-warping';
 import debounce from 'debounce';
 
 import Service from './Service';
-import { sensorService, storageService, networkService } from './';
+import { sensorService, storageService, networkService, soundService } from './';
 
 const serviceName = "gestures"
+const clickFilename = '/misc/click.mp3';
 
 class GestureService extends Service {
 
@@ -32,6 +33,10 @@ class GestureService extends Service {
 
 	init = () => {
 		storageService.registerReactiveStateCallback(this.handleStorageData, serviceName)
+
+		soundService.preloadSoundfile(clickFilename, ()=>{
+			this.showNotification("click loaded");
+		});
 	}
 
 	// prepare gesture object for recognition, add attributes:
@@ -111,10 +116,16 @@ class GestureService extends Service {
 	// called if a gesture was detected
 	detected(gesture) {
 		console.log("GESTURE detected", gesture.name)
-		this.setReactive({
+		this.showNotification("GESTURE detected " + gesture.name);
+		if(typeof this.detectionCallback != "function") {
+			soundService.scheduleSound(clickFilename, soundService.getSyncTime());	
+		}
+		
+
+		/*this.setReactive({
 			detectedGestures: [{detectedAt: new Date(), ...gesture}, ...this.state.detectedGestures]
 				.slice(0,5)
-		})
+		})*/
 		if (this.detectionCallback) {
 			this.detectionCallback()
 		}
@@ -150,7 +161,7 @@ class GestureService extends Service {
 			console.warn(`ERROR: gestureService -> waitForGesture: "${gesture_id}" not found!`)
 		} else {
 			this.startRecognition()
-			this.detectionCallback = debounce(callback, debounceMillis)			
+			this.detectionCallback = debounce(callback, debounceMillis, true)			
 			this.setReactive({
 				activeGesture
 			})

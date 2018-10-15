@@ -22,8 +22,8 @@ class Gestures extends React.Component {
   }
 
   renderDetectedGestures = () => {
-    return this.props.services.gestures.detectedGestures.map( gesture => (
-      <Text key={gesture._id}>{gesture.name} {gesture.detectedAt.getHours()}:{gesture.detectedAt.getMinutes()}:{gesture.detectedAt.getSeconds()}</Text>
+    return this.props.services.gestures.detectedGestures.map( (gesture, index) => (
+      <Text key={index}>{gesture.name} {gesture.detectedAt.getHours()}:{gesture.detectedAt.getMinutes()}:{gesture.detectedAt.getSeconds()}</Text>
     ))
   }
 
