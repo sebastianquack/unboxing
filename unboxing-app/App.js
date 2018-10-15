@@ -97,6 +97,9 @@ const styles = StyleSheet.create({
     padding: 20
   },
   adminButton: {
-    marginBottom: 10
+    marginBottom: 10,
+    padding: 10,
+    backgroundColor:'#eee',
+    borderRadius: 5
   }
 });
