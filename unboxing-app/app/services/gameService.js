@@ -59,11 +59,13 @@ class GameService extends Service {
 
 		// if sequence isn't running, start one and inform other players
 		if(sequenceService.getControlStatus() == "ready") {
-
 			// make sure first item is at start of sequence
 			if(sequenceService.firstItemAtBeginningOfSequence()) {
+
+				let nowTime = soundService.getSyncTime();
+				console.log("handlePlayNextItemButton", nowTime);
 			
-				let startTime = soundService.getSyncTime() + 2000; // set time for sequence to start
+				let startTime = nowTime + 2000; // set time for sequence to start
 				sequenceService.startSequence(startTime); 
 
 				// send start_sequence message to server or other
@@ -72,18 +74,20 @@ class GameService extends Service {
 			} else {
 				console.log("first item not at the start of sequence - cancel sequence start");
 				// todo: notification
-				return; 
 			}
-
+		
+		} else {
+			if(sequenceService.getControlStatus() == "playing") {
+   			sequenceService.playNextItem();			
+			}	
 		}
-    	
-    	sequenceService.playNextItem();
-  	}
 
-  	handleStopButton() {
-    	//sequenceService.stopSequence();
-    	sequenceService.stopCurrentSound();
-  	}
+  }
+
+  handleStopButton() {
+   	//sequenceService.stopSequence();
+   	sequenceService.stopCurrentSound();
+  }
 
 	leaveChallenge() {
 		sequenceService.stopSequence();
