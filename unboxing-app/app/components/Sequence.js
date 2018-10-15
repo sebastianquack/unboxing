@@ -50,11 +50,18 @@ class Sequence extends React.Component {
   updateSequenceInfo() {
     const currentTime = soundService.getSyncTime(); // get the synchronized time
     const currentTimeInSequence = currentTime - this.props.services.sequence.startedAt;
+    const playbackTime = currentTime - this.props.services.sequence.playbackStartedAt;
 
     if(this.props.services.sequence.controlStatus == "playing") {
-      this.setState({currentTimeInSequence: currentTimeInSequence});
+      this.setState({
+        currentTimeInSequence: currentTimeInSequence,
+        playbackTime: playbackTime
+      });
     } else {
-      this.setState({currentTimeInSequence: 0});
+      this.setState({
+        currentTimeInSequence: 0,
+        playbackTime: 0
+      });
     }
 
     if(this.props.services.sequence.nextItem) {
@@ -85,6 +92,7 @@ class Sequence extends React.Component {
         currentSequence: {currentSequence ? currentSequence.name : "none"} {"\n"}
         controlStatus: { controlStatus } {"\n"}
         currentTrack: {currentTrack ? currentTrack.name : "none"} {"\n"}
+        Playback time: {Math.floor(this.state.playbackTime / 1000)} {"\n"}
         Sequence playback position: {Math.floor(this.state.currentTimeInSequence / 1000)} {"\n"}
         custom_duration: { currentSequence ? currentSequence.custom_duration : "?" } {"\n"}
         Current item: {currentItem ? currentItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}

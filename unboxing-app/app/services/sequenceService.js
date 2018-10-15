@@ -11,7 +11,8 @@ class SequenceService extends Service {
 			controlStatus: "idle", // idle -> loading -> ready -> playing
 			currentSequence: null, // sequence object
       		currentTrack: null, // track object
-			startedAt: null, // start time of current sequence
+			playbackStartedAt: null, // start time of first loop
+			startedAt: null, // start time of current sequence (in each loop)
 			nextItem: null, // next item to play, if available
 			currentItem: null, // current item playing, if available
 			showPlayItemButton: false // should play button be shown
@@ -69,10 +70,18 @@ class SequenceService extends Service {
 			return;
 		}
 
+		let time = startTime || soundService.getSyncTime();
+
 		this.setReactive({
 		  controlStatus: "playing",
-	      startedAt: startTime || soundService.getSyncTime()
+	      startedAt: time
     	});
+
+    	if(this.loopCounter == 0) {
+    		this.setReactive({
+    			playbackStartedAt: time
+    		})
+    	}
 
 		this.setupNextSequenceItem();
 	}
@@ -127,32 +136,32 @@ class SequenceService extends Service {
 					})
 				}
 
-				this.sequenceCursor = nextItemIndex; // save index for later
+			this.sequenceCursor = nextItemIndex; // save index for later
 	    } else {
-				console.log("no next item found");
-				
-				let loop = false;
-				let activeChallenge = gameService.getActiveChallenge();
-				if(activeChallenge) {
-					if(activeChallenge.sequence_loop) {
-						loop = true;
-					}
+			console.log("no next item found");
+			
+			let loop = false;
+			let activeChallenge = gameService.getActiveChallenge();
+			if(activeChallenge) {
+				if(activeChallenge.sequence_loop) {
+					loop = true;
 				}
+			}
 
-				if(loop) {
-					console.log("looping sequence with custom duration");
-					this.sequenceCursor = 0; // reset cursor
-					let newStartedAt = this.state.startedAt + this.state.currentSequence.custom_duration;
-					console.log("newStartedAt", newStartedAt);
-					this.setReactive({
-						startedAt: newStartedAt
-						});
-						console.log(this.state);
-						this.loopCounter++;
-					this.setupNextSequenceItem();
-				} else {
-					this.stopSequence();
-				}
+			if(loop) {
+				console.log("looping sequence with custom duration");
+				this.sequenceCursor = 0; // reset cursor
+				let newStartedAt = this.state.startedAt + this.state.currentSequence.custom_duration;
+				console.log("newStartedAt", newStartedAt);
+				this.setReactive({
+				  startedAt: newStartedAt
+    			});
+    			console.log(this.state);
+    			this.loopCounter++;
+				this.setupNextSequenceItem();
+			} else {
+				this.stopSequence();
+			}
 	    }
 	}
 	
@@ -176,7 +185,7 @@ class SequenceService extends Service {
 			return true;
 
 		if(challenge.autoplay_items == "first" 
-			&& (this.sequenceCursor == 0 && this.loopCounter == 0))
+			&& (this.sequenceCursor == 0 /*&& this.loopCounter == 0*/))
 			return true;
 		
 		if(challenge.autoplay_items == "none") 
@@ -207,6 +216,7 @@ class SequenceService extends Service {
 	stopCurrentSound() {
 		console.log(this.state.currentItem);
 		soundService.stopSound(this.state.currentItem.path);
+		this.setReactive({currentItem: null});
 		this.setupNextSequenceItem();
 	}
 	
@@ -219,7 +229,8 @@ class SequenceService extends Service {
 	    	currentItem: null,
 	    	nextItem: null,
 	    	startedAt: null,
-			showPlayItemButton: false
+			playbackStartedAt: null,
+			showPlayItemButton: false,
 	    });
 	    this.sequenceCursor = 0;
 	    this.loopCounter = 0;
