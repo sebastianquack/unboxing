@@ -144,14 +144,25 @@ class GestureService extends Service {
 	}
 
 	// run from ssequenceService to register a callback for a specific gesture
-	waitForGesture(gesture_id, callback, debounceMillis = 1000) {		
-		this.startRecognition()
-		this.detectionCallback = debounce(callback, debounceMillis)
+	waitForGesture = (gesture_id, callback, debounceMillis = 1000) => {		
+		const activeGesture = this.state.activeGestures.find( g => (g._id == gesture_id))
+		if (!activeGesture) {
+			console.warn(`ERROR: gestureService -> waitForGesture: "${gesture_id}" not found!`)
+		} else {
+			this.startRecognition()
+			this.detectionCallback = debounce(callback, debounceMillis)			
+			this.setReactive({
+				activeGesture
+			})
+		}
 	}
 
 	// run from sequenceService to unregister gesture
 	stopWaitingForGesture() {
 		this.detectionCallback = null
+		this.setReactive({
+			activeGesture: null
+		})		
 		this.stopRecognition()
 	}
 
