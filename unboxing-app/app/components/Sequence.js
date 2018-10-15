@@ -97,6 +97,8 @@ class Sequence extends React.Component {
         custom_duration: { currentSequence ? currentSequence.custom_duration : "?" } {"\n"}
         Current item: {currentItem ? currentItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}
         Next item: {nextItem ? nextItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""}) {"\n"}
+        Gesture Recognition: { this.props.services.gestures.isRecognizing ? "on" : "off" } {"\n"}
+        Gesture: { this.props.services.gestures.activeGesture ? this.props.services.gestures.activeGesture.name : "-" }
       </Text>
     )
   }
