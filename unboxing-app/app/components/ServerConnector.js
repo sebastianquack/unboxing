@@ -24,11 +24,18 @@ class ServerConnector extends React.Component {
 	}
 
   render() {
+		const connectionType = this.props.services.network.connectionInfo ? this.props.services.network.connectionInfo.type : null
+		const effectiveConnectionType = this.props.services.network.connectionInfo ? this.props.services.network.connectionInfo.effectiveType: null
+		const lastApiResult = this.props.services.network.lastApiResult
   	return (
   		<View>
 				<Text>
-					Connection Type: {this.props.services.network.connectionInfo ? this.props.services.network.connectionInfo.type : null}, effective: {this.props.services.network.connectionInfo ? this.props.services.network.connectionInfo.effectiveType: null}
+					Connection Type: {" "}
+					<Text style={ (connectionType == "none" ? globalStyles.bad : globalStyles.good) }>{connectionType}</Text>
 				</Text>
+				<Text>
+					Effective Connection Type: {effectiveConnectionType}
+				</Text>				
 				<Text style={{marginTop: 20}}>
 					Server: {this.props.services.network.server}
 				</Text>
@@ -40,7 +47,7 @@ class ServerConnector extends React.Component {
 					onSubmitEditing={(e) => networkService.setServer(this.state.serverInput)}
 				/>
 				<TouchableOpacity style={globalStyles.button} onPress={this.handleGetPress}>
-					<Text>Get Everything ({this.props.services.storage.version})</Text>
+					<Text>Get Everything ({this.props.services.storage.version}) {lastApiResult}</Text>
 				</TouchableOpacity>					
   		</View>
   	);

@@ -37,7 +37,15 @@ function getTime(req, res) {
   });
 }
 
+async function addGesture(req, res) {
+  await Meteor.call('addGesture', req.body)
+  res.status(200).json({ 
+    status: "ok"
+  });
+}
+
 export {
   getEverything,
-  getTime
+  getTime,
+  addGesture
 }

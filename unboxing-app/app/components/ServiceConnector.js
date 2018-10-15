@@ -9,6 +9,7 @@ import {
 		permissionsService,
 		networkService,
 		storageService,
+		gestureService,
 		gameService
 	} from '../services/';
 
@@ -31,6 +32,7 @@ class ServiceConnector extends React.Component {
 			permissionsService,
 			networkService,
 			storageService,
+			gestureService,
 			gameService
 		]
 

@@ -15,7 +15,7 @@ class StorageService extends Service {
 			collections: {}
 		});
 
-		this.updateEverything()		
+		this.loadFromFile()		
 	}
 
 	// called from ServerConnector component
@@ -40,7 +40,7 @@ class StorageService extends Service {
 			// log the file contents
 	      console.log("reading collections from file", json);
 	      let stateFromFile = JSON.parse(json);
-	      console.log(stateFromFile);
+	      //console.log(stateFromFile);
 	      this.setReactive(stateFromFile);
 		}
 	}

@@ -5,7 +5,7 @@ var ifaces = os.networkInterfaces();
 
 var ipAddress = "";
 
-Object.keys(ifaces).forEach(function (ifname) {
+Object.keys(ifaces).reverse().forEach(function (ifname) { // reverse to give enX priority over bridgeX (hack)
   var alias = 0;
 
   ifaces[ifname].forEach(function (iface) {

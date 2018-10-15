@@ -12,7 +12,8 @@ class NetworkService extends Service {
 
 		// reactive vars
 		super("network", {
-			server: defaultServer
+      server: defaultServer,
+      lastApiResult: ""
 		});
 
     this.initZeroconf()
@@ -63,18 +64,31 @@ class NetworkService extends Service {
     );
   }
 
-	apiRequest = async (method) => {
+	apiRequest = async (method, data = null) => {
+    let options = {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }
+    if (data) {
+      options.method = 'POST'
+      options.body = JSON.stringify(data)
+    }
 		try {
-			console.log(`requesting data via ${method}`)
+			console.log(`API request ${method}`, options.body)
 			let response = await fetch(
-				`http://${this.state.server}:3000/api/${method}.json`
+        `http://${this.state.server}:3000/api/${method}.json`,
+        options
 			);
-			//console.log("response", response)
+			console.log("response", response)
 			let responseJson = await response.json();
-			//console.log("response json", responseJson)
+      //console.log("response json", responseJson)
+      this.setReactive({lastApiResult: "OK"})
 			return responseJson;
 		} catch (error) {
-			console.log("REST server error: ", error);
+      console.log("REST server error: ", error);
+      this.setReactive({lastApiResult: "Error"})
 		}
 	}
 
