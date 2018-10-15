@@ -8,7 +8,7 @@ import Sequence from './Sequence';
 import TrackSelector from './TrackSelector';
 import NearbyStatus from './NearbyStatus';
 
-import {gameService} from '../services';
+import {gameService, sequenceService} from '../services';
 
 class ChallengeView extends React.Component { 
   constructor(props) {
@@ -21,17 +21,15 @@ class ChallengeView extends React.Component {
     return (
       <View>
         <TouchableOpacity style={styles.button} onPress={()=>{gameService.leaveChallenge()}}>
-          <Text>back</Text>
+          <Text>leave</Text>
         </TouchableOpacity>
         <Text style={globalStyles.titleText}>{challenge.name}</Text>
         <Text>{challenge.instructions}</Text>
-        <Text>
-          sequence_item_autoplay: { challenge.sequence_item_autoplay } {"\n"}
-          sequence_loop: { challenge.sequence_loop.toString() }
-        </Text>
+        <Text>{JSON.stringify(challenge)}</Text>
         
-
-        <TrackSelector sequence_id={challenge.sequence_id}/>
+        {sequenceService.getControlStatus() == "idle" &&
+          <TrackSelector sequence_id={challenge.sequence_id}/>
+        }
         <Sequence/>
         <NearbyStatus/>
 

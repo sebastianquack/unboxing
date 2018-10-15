@@ -47,7 +47,10 @@ class SequenceService extends Service {
 		this.setReactive({controlStatus: "loading"});
 		soundService.preloadSoundfiles(soundfilesToLoad, ()=>{
 			console.log("finished loading sound files for this track");
-			this.setReactive({controlStatus: "ready"});
+			this.setReactive({
+				controlStatus: "ready",
+				showPlayItemButton: this.firstItemAtBeginningOfSequence()
+			});
 		});
   	}
 
@@ -64,6 +67,12 @@ class SequenceService extends Service {
     	});
 
 		this.setupNextSequenceItem();
+	}
+
+	// checks if first item is at the beginning of sequence
+	firstItemAtBeginningOfSequence() {
+		let items = this.state.currentSequence.items;
+		return items[0].startTime == 0;
 	}
 
 	// identifies next item and schedules for playback if autoplay is activated
@@ -89,7 +98,7 @@ class SequenceService extends Service {
 	    if(nextItem) {
 	    	this.setReactive({
 	    		nextItem: nextItem, // show next item to interface
-	    		showPlayItemButton: !this.autoPlayNextItem() // determine if button should be shown
+	    		showPlayItemButton: !this.autoPlayNextItem(), // determine if button should be shown
 	    	}); 
 
 	     	// schedule sound for item
@@ -146,14 +155,14 @@ class SequenceService extends Service {
 		if(!challenge) 
 			return false; // don't play anything if there's no challenge (something went wrong)
 
-		if(challenge.sequence_item_autoplay == "all") 
+		if(challenge.autoplay_items == "all") 
 			return true;
 
-		if(challenge.sequence_item_autoplay == "first" 
+		if(challenge.autoplay_items == "first" 
 			&& (this.sequenceCursor == 0 && this.loopCounter == 0))
 			return true;
 		
-		if(challenge.sequence_item_autoplay == "none") 
+		if(challenge.autoplay_items == "none") 
 			return false;
 
 		// we shouldn't reach this point, don't play anything
@@ -177,12 +186,18 @@ class SequenceService extends Service {
 			}
 		});
 	}
+
+	stopCurrentSound() {
+		console.log(this.state.currentItem);
+		soundService.stopSound(this.state.currentItem.path);
+		this.setupNextSequenceItem();
+	}
 	
 	// stops sequence playback and sound
 	stopSequence() {
 	    soundService.stopAllSounds();
 	    this.setReactive({
-	    	controlStatus: "ready",
+	    	controlStatus: "idle",
 	    	currentItem: null,
 	    	nextItem: null,
 	    	startedAt: null,

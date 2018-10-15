@@ -96,7 +96,8 @@ Meteor.methods({
       instructions: "how it works",
       sequence_id: "",
       sequence_loop: false,
-      sequence_item_autoplay: "all"
+      autoplay_items: "all",
+      item_manual_mode: "off"
     });
   },
   'removeChallenge'(id) {

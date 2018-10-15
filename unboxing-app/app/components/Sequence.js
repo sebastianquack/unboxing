@@ -31,18 +31,6 @@ class Sequence extends React.Component {
     clearInterval(this.updateInterval);
   }
 
-  handleStartSequence() {
-    gameService.handleStartSequence();
-  }
-
-  handlePlayNow() {
-    gameService.playNextItem();
-  }
-
-  handleStop() {
-    gameService.handleStopSequence();
-  }
-
   handleEinsatz() {
     console.log("Gesture deteced!");
     this.handlePlayNow();
@@ -112,19 +100,18 @@ class Sequence extends React.Component {
         {this.renderEinsatzIndicator()}
 
         <View style={globalStyles.buttons}>
-          <TouchableOpacity style={styles.bigButton} onPress={this.handleStartSequence}>
-              <Text>Start sequence</Text>
-          </TouchableOpacity>
-
           {this.props.services.sequence.showPlayItemButton &&
-            <TouchableOpacity style={styles.bigButton} onPress={this.handlePlayNow}>
-                <Text>Play next item now</Text>
+            <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>
+                <Text>Play</Text>
             </TouchableOpacity>
           }
 
-          <TouchableOpacity style={styles.bigButton} onPress={this.handleStop}>
-              <Text>Stop sequence</Text>
-          </TouchableOpacity>
+          {this.props.services.sequence.currentItem &&
+            <TouchableOpacity style={styles.bigButton} onPress={gameService.handleStopButton}>
+                <Text>Stop</Text>
+            </TouchableOpacity>
+          }
+
         </View>
 
         {this.renderSequenceInfo()}
