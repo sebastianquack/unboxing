@@ -7,6 +7,7 @@ import GestureDetail from './GestureDetail';
 import SequencesInfo from './SequencesInfo';
 import SequenceDetail from './SequenceDetail';
 import SequenceDetailItem from './SequenceDetailItem';
+import AudioPreview from './AudioPreview';
 
 export {
   FilesInfo,
@@ -17,5 +18,6 @@ export {
   GestureDetail,
   SequencesInfo,
   SequenceDetail,
-  SequenceDetailItem
+  SequenceDetailItem,
+  AudioPreview
 }

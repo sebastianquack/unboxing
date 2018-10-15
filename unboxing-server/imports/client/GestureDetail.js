@@ -36,12 +36,16 @@ class GestureDetail extends React.Component {
   }
 
   handleActivate(e) {
-    Meteor.call('activateGesture', this.props.data._id)
+    Meteor.call('toggleGesture', this.props.data._id)
   }
 
   renderActive = () => {
     if (this.props.data.active) {
-      return <span style={{color: 'red'}}>ACTIVE</span>
+      return <span>
+        <span style={{color: 'green'}}>ACTIVE</span>
+        &nbsp;
+        <button onClick={this.handleActivate}>disable</button>
+      </span>
     } else {
       return <button onClick={this.handleActivate}>
         activate
@@ -125,8 +129,8 @@ class GestureDetail extends React.Component {
           <ChartRow height="200">
           <YAxis
               id="value"
-              min={-25}
-              max={25}
+              min={-20}
+              max={20}
           />
             <Charts>
               <LineChart

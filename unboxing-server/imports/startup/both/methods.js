@@ -23,10 +23,9 @@ Meteor.methods({
     console.log("remove gesture ", id)
     Gestures.remove(id)
   },
-  'activateGesture'(id) {
-    Gestures.update({active: true}, {$set: {active: false}}, () => {
-      Gestures.update({_id: id}, {$set: {active: true}})
-    })
+  'toggleGesture'(id) {
+    const gesture = Gestures.findOne({_id: id})
+    Gestures.update({_id: id}, {$set: {active: !gesture.active}})
   },
   'updateGesture'(id,$set) {
     Gestures.update({_id: id}, {$set})

@@ -5,6 +5,7 @@ import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
 import { Files, Gestures } from '../collections'
+import { AudioPreview } from './'
 
 class SequenceDetailItem extends React.Component {
   constructor(props) {
@@ -91,10 +92,18 @@ class SequenceDetailItem extends React.Component {
     
     if (blacklist.indexOf(d[0]) > -1) return
 
+    let special = null
+    if (d[0] == "path") {
+      special = <div key={`dt_special_${d[0]}`}>
+        <AudioPreview path={d[1]} />
+      </div>
+    }
+
     return ([
       <label key={`dt_${d[0]}`}>
         <span>{d[0]}</span>{this.renderInput(d[0],d[1])}
       </label>
+      ,special
     ])
   }
 
