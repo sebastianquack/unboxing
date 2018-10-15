@@ -29,11 +29,13 @@ class GameService extends Service {
 			onMessageReceived: (message) => {
 				console.log("message received: ", message.message);
 
-				/* if this is start sequence message 
-				&& we haven't started 
-				&& we are set to autostart sequence (todo) */
-				if(message.message == "start_sequence" && sequenceService.getControlStatus() == "ready")  {
-					sequenceService.startSequence(message.startTime);
+				// if this is start sequence message
+				if(message.message == "start_sequence") {
+
+					// if we haven't started and are ready to play
+					if(sequenceService.getControlStatus() == "ready")  {
+						sequenceService.startSequence(message.startTime);
+					}
 				}
 			},
 			// todo: onConnectionLost
@@ -52,24 +54,35 @@ class GameService extends Service {
 		sequenceService.trackSelect(sequence, track)
 	}
 
-	// start triggered by button or gesture
-	handleStartSequence() {
-		if(sequenceService.getControlStatus() == "ready") {
-			let startTime = soundService.getSyncTime() + 2000; // set time for sequence to start
-			sequenceService.startSequence(startTime); 
-
-			// send start_sequence message to server or other
-			nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
-		}
-	}
-
 	// manual start of items
-	playNextItem() {
+	handlePlayNextItemButton() {
+
+		// if sequence isn't running, start one and inform other players
+		if(sequenceService.getControlStatus() == "ready") {
+
+			// make sure first item is at start of sequence
+			if(sequenceService.firstItemAtBeginningOfSequence()) {
+			
+				let startTime = soundService.getSyncTime() + 2000; // set time for sequence to start
+				sequenceService.startSequence(startTime); 
+
+				// send start_sequence message to server or other
+				nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
+
+			} else {
+				console.log("first item not at the start of sequence - cancel sequence start");
+				// todo: notification
+				return; 
+			}
+
+		}
+    	
     	sequenceService.playNextItem();
   	}
 
-  	handleStopSequence() {
-    	sequenceService.stopSequence();	
+  	handleStopButton() {
+    	//sequenceService.stopSequence();
+    	sequenceService.stopCurrentSound();
   	}
 
 	leaveChallenge() {
