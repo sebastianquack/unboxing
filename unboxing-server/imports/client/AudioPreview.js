@@ -9,6 +9,7 @@ class AudioPreview extends React.Component {
   }
 
   render() {
+    if (!this.props.file) return null
     return <audio controls className="AudioPreview" src={this.props.file.url_path} />
   }
 }

@@ -1,6 +1,6 @@
 import Service from './Service';
 
-import {soundService, gameService} from './';
+import {soundService, gameService, gestureService} from './';
 
 class SequenceService extends Service {
 
@@ -51,6 +51,13 @@ class SequenceService extends Service {
 				controlStatus: "ready",
 				showPlayItemButton: this.firstItemAtBeginningOfSequence()
 			});
+			// listen for gesture if beginning of sequence
+			if (this.firstItemAtBeginningOfSequence()) {
+				const firstItem = this.state.currentSequence.items[0]
+				gestureService.waitForGesture(firstItem.gesture_id, () => {
+					gameService.handlePlayNextItemButton()
+				})
+			}
 		});
   	}
 
@@ -99,43 +106,50 @@ class SequenceService extends Service {
 	    	this.setReactive({
 	    		nextItem: nextItem, // show next item to interface
 	    		showPlayItemButton: !this.autoPlayNextItem(), // determine if button should be shown
-	    	}); 
+				}); 
 
-	     	// schedule sound for item
-			if(this.state.controlStatus == "playing" && this.autoPlayNextItem()) {
-				console.log("scheduling next track item in sequence");
-				console.log(this.state.nextItem);
-				console.log(this.state.targetTime);
-				let targetTime = this.state.startedAt + this.state.nextItem.startTime;
-				this.scheduleSoundForNextItem(targetTime);
-			}
-
-			this.sequenceCursor = nextItemIndex; // save index for later
-	    } else {
-			console.log("no next item found");
-			
-			let loop = false;
-			let activeChallenge = gameService.getActiveChallenge();
-			if(activeChallenge) {
-				if(activeChallenge.sequence_loop) {
-					loop = true;
+				// schedule sound for item
+				if(this.state.controlStatus == "playing" && this.autoPlayNextItem()) {
+					console.log("scheduling next track item in sequence");
+					console.log(this.state.nextItem);
+					console.log(this.state.targetTime);
+					let targetTime = this.state.startedAt + this.state.nextItem.startTime;
+					this.scheduleSoundForNextItem(targetTime);
 				}
-			}
 
-			if(loop) {
-				console.log("looping sequence with custom duration");
-				this.sequenceCursor = 0; // reset cursor
-				let newStartedAt = this.state.startedAt + this.state.currentSequence.custom_duration;
-				console.log("newStartedAt", newStartedAt);
-				this.setReactive({
-				  startedAt: newStartedAt
-    			});
-    			console.log(this.state);
-    			this.loopCounter++;
-				this.setupNextSequenceItem();
-			} else {
-				this.stopSequence();
-			}
+				// listen for gesture
+				if (nextItem.gesture_id) {
+					gestureService.waitForGesture(nextItem.gesture_id, () => {
+						gameService.handlePlayNextItemButton()
+					})
+				}
+
+				this.sequenceCursor = nextItemIndex; // save index for later
+	    } else {
+				console.log("no next item found");
+				
+				let loop = false;
+				let activeChallenge = gameService.getActiveChallenge();
+				if(activeChallenge) {
+					if(activeChallenge.sequence_loop) {
+						loop = true;
+					}
+				}
+
+				if(loop) {
+					console.log("looping sequence with custom duration");
+					this.sequenceCursor = 0; // reset cursor
+					let newStartedAt = this.state.startedAt + this.state.currentSequence.custom_duration;
+					console.log("newStartedAt", newStartedAt);
+					this.setReactive({
+						startedAt: newStartedAt
+						});
+						console.log(this.state);
+						this.loopCounter++;
+					this.setupNextSequenceItem();
+				} else {
+					this.stopSequence();
+				}
 	    }
 	}
 	
