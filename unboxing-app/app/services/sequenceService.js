@@ -56,6 +56,7 @@ class SequenceService extends Service {
 				const firstItem = this.state.currentSequence.items[0]
 				gestureService.waitForGesture(firstItem.gesture_id, () => {
 					gameService.handlePlayNextItemButton()
+					gestureService.stopWaitingForGesture()
 				})
 			}
 		});
@@ -84,7 +85,8 @@ class SequenceService extends Service {
 
 	// identifies next item and schedules for playback if autoplay is activated
 	setupNextSequenceItem() {
-	    console.log("setting up next sequence item");
+			console.log("setting up next sequence item");
+			gestureService.stopWaitingForGesture()
 	    
 	    let items = this.state.currentSequence.items;
 	    if(!items.length) {
@@ -121,6 +123,7 @@ class SequenceService extends Service {
 				if (nextItem.gesture_id) {
 					gestureService.waitForGesture(nextItem.gesture_id, () => {
 						gameService.handlePlayNextItemButton()
+						gestureService.stopWaitingForGesture()
 					})
 				}
 
@@ -209,7 +212,8 @@ class SequenceService extends Service {
 	
 	// stops sequence playback and sound
 	stopSequence() {
-	    soundService.stopAllSounds();
+			soundService.stopAllSounds();
+			gestureService.stopWaitingForGesture();
 	    this.setReactive({
 	    	controlStatus: "idle",
 	    	currentItem: null,

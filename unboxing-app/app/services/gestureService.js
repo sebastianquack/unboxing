@@ -121,7 +121,7 @@ class GestureService extends Service {
 	}
 
 	dtwDist(data1, data2) {
-		console.log(data1, data2)
+		// console.log(data1, data2)
 		this.dtw = new DynamicTimeWarping(data1, data2, this.dtwDistFunc);
 		const dist = Math.round(this.dtw.getDistance())
 		return dist
@@ -144,7 +144,7 @@ class GestureService extends Service {
 	}
 
 	// run from ssequenceService to register a callback for a specific gesture
-	waitForGesture(gesture_id, callback, debounceMillis = 1000) {
+	waitForGesture(gesture_id, callback, debounceMillis = 1000) {		
 		this.startRecognition()
 		this.detectionCallback = debounce(callback, debounceMillis)
 	}
