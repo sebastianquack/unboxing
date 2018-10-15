@@ -59,12 +59,6 @@ class ChallengeDetail extends React.Component {
             {["off", "assisted", "free"].map((o)=>{return <option key={o} value={o}>{o}</option>})}
           </select>
         );          
-      /*case "sequence_start_mode": 
-          return (
-          <select value={value} onChange={ e => this.handleAttributeChange(attributeName, e.target.value) }>
-            {["auto", "assisted", "free"].map((o)=>{return <option key={o} value={o}>{o}</option>})}
-          </select>
-        );        */
       case "sequence_loop":
       	return (
       		 <input

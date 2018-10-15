@@ -108,7 +108,7 @@ class Sequence extends React.Component {
         {this.renderEinsatzIndicator()}
 
         <View style={globalStyles.buttons}>
-          {this.props.services.sequence.showPlayItemButton &&
+          {this.props.services.sequence.showPlayItemButton && !this.props.services.sequence.currentItem &&
             <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>
                 <Text>Play</Text>
             </TouchableOpacity>

@@ -10,7 +10,7 @@ class SequenceService extends Service {
 		super("sequence", {
 			controlStatus: "idle", // idle -> loading -> ready -> playing
 			currentSequence: null, // sequence object
-      		currentTrack: null, // track object
+      currentTrack: null, // track object
 			playbackStartedAt: null, // start time of first loop
 			startedAt: null, // start time of current sequence (in each loop)
 			nextItem: null, // next item to play, if available
@@ -64,7 +64,7 @@ class SequenceService extends Service {
   	}
 
   	// start sequence playback
-	startSequence = (startTime) => {
+	startSequence = (startTime, manualStart) => {
 		if(this.state.controlStatus != "ready") {
 			console.log("cannot start - sequence not ready to play");
 			return;
@@ -88,7 +88,7 @@ class SequenceService extends Service {
 
   	console.log("started sequence at", this.state);
 
-		this.setupNextSequenceItem();
+		this.setupNextSequenceItem(manualStart);
 	}
 
 	// checks if first item is at the beginning of sequence
@@ -98,7 +98,7 @@ class SequenceService extends Service {
 	}
 
 	// identifies next item and schedules for playback if autoplay is activated
-	setupNextSequenceItem() {
+	setupNextSequenceItem(localStart = false) {
 			console.log("setting up next sequence item");
 			gestureService.stopWaitingForGesture()
 	    
@@ -121,11 +121,11 @@ class SequenceService extends Service {
 	    if(nextItem) {
 	    	this.setReactive({
 	    		nextItem: nextItem, // show next item to interface
-	    		showPlayItemButton: !this.autoPlayNextItem(), // determine if button should be shown
+	    		showPlayItemButton: !(this.autoPlayNextItem() || localStart), // determine if button should be shown
 				}); 
 
 				// schedule sound for item
-				if(this.state.controlStatus == "playing" && this.autoPlayNextItem()) {
+				if(this.state.controlStatus == "playing" && (this.autoPlayNextItem() || localStart)) {
 					console.log("scheduling next track item in sequence");
 					console.log(this.state.nextItem);
 					let targetTime = this.state.startedAt + this.state.nextItem.startTime;
@@ -173,7 +173,17 @@ class SequenceService extends Service {
 	// manually start playback of next item if autoplay is deactivated
 	playNextItem() {
 		if(!this.autoPlayNextItem()) {
-			this.scheduleSoundForNextItem(soundService.getSyncTime()); 	
+			
+			let now = soundService.getSyncTime();
+
+			this.scheduleSoundForNextItem(now); 	
+
+			// todo: compare with item's official start time
+			let officialTime = this.state.startedAt + this.state.nextItem.startTime;
+			let difference = now - officialTime;
+
+			this.showNotification("präzision: " + difference + "ms");
+			
 		} else {
 			console.log("manual playback deactivated when item autoplay is on");
 		}

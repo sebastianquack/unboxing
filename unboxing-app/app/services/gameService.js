@@ -34,7 +34,7 @@ class GameService extends Service {
 
 					// if we haven't started and are ready to play
 					if(sequenceService.getControlStatus() == "ready")  {
-						sequenceService.startSequence(message.startTime);
+						sequenceService.startSequence(message.startTime, false); // just start sequence, not item started locally
 					}
 				}
 			},
@@ -57,7 +57,7 @@ class GameService extends Service {
 	// manual start of items
 	handlePlayNextItemButton() {
 
-		// if sequence isn't running, start one and inform other players
+		// if sequence isn't running, start the sequence and inform other players
 		if(sequenceService.getControlStatus() == "ready") {
 			// make sure first item is at start of sequence
 			if(sequenceService.firstItemAtBeginningOfSequence()) {
@@ -66,7 +66,7 @@ class GameService extends Service {
 				console.log("handlePlayNextItemButton", nowTime);
 			
 				let startTime = nowTime + 2000; // set time for sequence to start
-				sequenceService.startSequence(startTime); 
+				sequenceService.startSequence(startTime, true); // set local start flag to true 
 
 				// send start_sequence message to server or other
 				nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
@@ -77,6 +77,8 @@ class GameService extends Service {
 			}
 		
 		} else {
+
+			// sequence is running
 			if(sequenceService.getControlStatus() == "playing") {
    			sequenceService.playNextItem();			
 			}	

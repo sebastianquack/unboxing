@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View } from 'react-native';
+import { View, ToastAndroid } from 'react-native';
 
 import {
 		soundService, 
@@ -42,9 +42,15 @@ class ServiceConnector extends React.Component {
 		for (let service of this.services) {
 			console.log(`connecting ${service.serviceName} service`)
 			service.registerOnChange(this.handleStateUpdate);
+			service.registerNotification(this.showNotification);
 		}
 
 		this.setState({ mounted: true })
+	}
+
+	showNotification = (message) => {
+		console.log("notification", message);
+		ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
 	}
 
 	handleStateUpdate = (name, state) => {

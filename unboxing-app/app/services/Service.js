@@ -27,6 +27,10 @@ export default class Service {
 		}
 	}
 
+	registerNotification = (func) => {
+		this.showNotification = func;
+	}
+
 	// register a callback for reactive state updates
 	registerReactiveStateCallback = (func, handle) => {
 		this.reactiveUpadateCallbacks[handle] = func
