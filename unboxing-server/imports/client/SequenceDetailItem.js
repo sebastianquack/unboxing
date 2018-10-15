@@ -13,7 +13,7 @@ class SequenceDetailItem extends React.Component {
   }
 
   SequenceDetailItemCss = css`
-  display: inline-block;
+  display: block;
   background-color: lightgrey;
   padding: 0 1ex 1ex 1ex;
   /*margin-top: 1ex;*/
