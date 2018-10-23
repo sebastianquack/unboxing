@@ -27,11 +27,16 @@ class StorageService extends Service {
 		} else {
 			await this.loadFromFile();
 			networkService.setServer(this.state.server, false); // doesn't neet save, just loaded
+			networkService.setDeviceId(this.state.deviceId, false); // doesn't neet save, just loaded
 		}
 	}
 
 	setServer(address) {
 		this.setReactive({server: address});
+	}
+
+	setDeviceId(id) {
+		this.setReactive({deviceId: id});
 	}
 
 	async loadFromFile() {

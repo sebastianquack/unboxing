@@ -15,7 +15,8 @@ class ServerConnector extends React.Component {
   constructor(props) {
   	super(props);
   	this.state = {
-      serverInput: this.props.services.network.server
+			serverInput: this.props.services.network.server,
+			deviceIdInput: this.props.services.storage.deviceId
   	}
   }
 
@@ -29,6 +30,13 @@ class ServerConnector extends React.Component {
 		const lastApiResult = this.props.services.network.lastApiResult
   	return (
   		<View>
+				<TextInput
+					underlineColorAndroid='transparent'
+					style={{width: 40, height: 40, borderColor: 'gray', borderWidth: 1}}
+					value={this.state.deviceIdInput}
+					onChangeText={(text) => this.setState({deviceIdInput: text})}
+					onSubmitEditing={(e) => storageService.setDeviceId(this.state.deviceIdInput) }
+				/>				
 				<Text>
 					Connection Type: {" "}
 					<Text style={ (connectionType == "none" ? globalStyles.bad : globalStyles.good) }>{connectionType}</Text>
