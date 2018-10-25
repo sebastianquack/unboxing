@@ -194,6 +194,7 @@ class SequenceService extends Service {
 					console.log(this.state.nextItem);
 					let targetTime = this.state.startedAt + this.state.nextItem.startTime;
 					this.scheduleSoundForNextItem(targetTime);
+
 				}
 
 				this.updatePlayButton();
@@ -213,7 +214,7 @@ class SequenceService extends Service {
 				}
 
 				this.sequenceCursor = nextItemIndex; // save index for later
-	    
+
 	    } else {
 				console.log("no next item found");
 				
@@ -227,6 +228,11 @@ class SequenceService extends Service {
 
 				if(loop) {
 					console.log("looping sequence with custom duration");
+					if(!this.state.currentSequence.custom_duration || !this.state.currentSequence.custom_duration == 0) {
+						console.warn("custom duration not set! aborting loop");
+						this.stopSequence();
+						return;
+					}
 					this.sequenceCursor = 0; // reset cursor
 					let newStartedAt = this.state.startedAt + this.state.currentSequence.custom_duration;
 					console.log("newStartedAt", newStartedAt);
