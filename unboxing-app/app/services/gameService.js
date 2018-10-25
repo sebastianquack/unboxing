@@ -54,36 +54,64 @@ class GameService extends Service {
 		sequenceService.trackSelect(sequence, track)
 	}
 
-	// manual start of items
-	handlePlayNextItemButton() {
+	// manual start of items - also called by gestures
+	handlePlayNextItemButton = ()=> {
 
-		// if sequence isn't running, start the sequence and inform other players
+		// if the sequence isn't running, start the sequence and inform other players
 		if(sequenceService.getControlStatus() == "ready") {
+			
 			// make sure first item is at start of sequence
 			if(sequenceService.firstItemAtBeginningOfSequence()) {
-
 				let nowTime = soundService.getSyncTime();
-				console.log("handlePlayNextItemButton", nowTime);
-			
 				let startTime = nowTime + 2000; // set time for sequence to start
 				sequenceService.startSequence(startTime, true); // set local start flag to true 
 
-				// send start_sequence message to server or other
+				this.showNotification("starting sequence...");
+
+				// send start_sequence message to all players connected via nearby
 				nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
 
 			} else {
 				console.log("first item not at the start of sequence - cancel sequence start");
-				// todo: notification
 			}
 		
+		// else, if the sequence is already running
 		} else {
-
-			// sequence is running
 			if(sequenceService.getControlStatus() == "playing") {
-   			sequenceService.playNextItem();			
+				
+				let now = soundService.getSyncTime();
+				// compare with item's official start time
+				let officialTime = sequenceService.getNextItemStartTimeAbsolute();
+				let difference = now - officialTime;
+				
+				if(this.state.activeChallenge.item_manual_mode == "assisted") {
+					if(difference <= -5000) {
+						this.showNotification("too early! try again");		
+					}
+					if(difference > -5000 && difference <= 0) {
+						this.showNotification("good! playing sound right on time...");		
+						sequenceService.scheduleSoundForNextItem(officialTime); 			
+					}
+					if(difference > 0) {
+						this.showNotification("too late! skipping sound...");		
+						sequenceService.skipNextItem();
+					}
+				} else {
+					sequenceService.scheduleSoundForNextItem(now); 		
+				}		
 			}	
 		}
+  }
 
+  handleMissedCue() {
+  	if(this.state.activeChallenge.item_manual_mode == "assisted") {
+  		this.showNotification("too late! skipping sound...");		
+			sequenceService.skipNextItem();
+		}
+  }
+
+  handleSkipButton() {
+  	sequenceService.skipNextItem();
   }
 
   handleStopButton() {
