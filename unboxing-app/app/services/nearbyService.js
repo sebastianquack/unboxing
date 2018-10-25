@@ -6,7 +6,7 @@ import {gameService, storageService} from './';
 
 const uuidv1 = require('uuid/v1');
 
-const strategy = Strategy.P2P_STAR;
+const strategy = Strategy.P2P_CLUSTER;
 
 class NearbyService extends Service {
 

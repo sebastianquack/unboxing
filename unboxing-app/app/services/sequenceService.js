@@ -228,7 +228,7 @@ class SequenceService extends Service {
 
 				if(loop) {
 					console.log("looping sequence with custom duration");
-					if(!this.state.currentSequence.custom_duration || !this.state.currentSequence.custom_duration == 0) {
+					if(!this.state.currentSequence.custom_duration || this.state.currentSequence.custom_duration == 0) {
 						console.warn("custom duration not set! aborting loop");
 						this.stopSequence();
 						return;
