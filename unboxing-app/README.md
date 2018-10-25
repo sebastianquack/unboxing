@@ -54,6 +54,9 @@ npm --version
 
 `cd android && ./gradlew assembleRelease`
 
+## build production 
 
+`$ cd android`
+`$ ./gradlew assembleRelease`
 
 
