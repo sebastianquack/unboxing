@@ -190,16 +190,16 @@ class SoundSevice extends Service {
 
 		this.sounds[index].status = "scheduled";
 		this.sounds[index].targetTime = targetTime;
-	    this.sounds[index].onPlayEnd = callbacks.onPlayEnd;
-	    this.sounds[index].onPlayStart = callbacks.onPlayStart;  
-	    
-	    if(this.sounds[index].status == "scheduled") {
-	      console.log("scheduled sound " + soundfile + " for " + targetTime);  
-	    }
-  	}
+    this.sounds[index].onPlayEnd = callbacks.onPlayEnd;
+    this.sounds[index].onPlayStart = callbacks.onPlayStart;  
+    
+    if(this.sounds[index].status == "scheduled") {
+      console.log("scheduled sound " + soundfile + " for " + targetTime);  
+    }
+  }
 
-  	// run loop for preloaded, scheduled sound at index to playback precisely at target time + 200ms
-  	runStartingLoop(index) {
+  // run loop for preloaded, scheduled sound at index to playback precisely at target time + 200ms
+  runStartingLoop(index) {
 		const currentTime = this.getSyncTime(); // get the synchronized time
 		this.sounds[index].status = "starting";
 		let targetStartTime = this.sounds[index].targetTime + 200;

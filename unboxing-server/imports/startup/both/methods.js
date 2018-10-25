@@ -57,7 +57,8 @@ Meteor.methods({
         track: "default",
         path: "",
         gesture_id: "",
-        sensorModulation: "off"
+        sensorModulation: "off",
+        autoplay: "off"
       } ], $sort: { startTime: 1 }, $slice: 1000 } } }
     )
   },
@@ -100,7 +101,6 @@ Meteor.methods({
       instructions: "how it works",
       sequence_id: "",
       sequence_loop: false,
-      autoplay_items: "all",
       item_manual_mode: "off"
     });
   },
