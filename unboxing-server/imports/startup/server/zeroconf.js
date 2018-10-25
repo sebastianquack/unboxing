@@ -34,3 +34,8 @@ console.log(name);
  
 // or give it a custom name and configuration details
 zeroconf.publish({ type: 'http', protocol: 'tcp', port: 3000, name, txt: {foo: "bar"}});
+
+zeroconf.find({}, (service) => {
+  if (service.name.indexOf('unboxing') === 0)
+  console.log("found unboxing service", service.name, service.host)
+})

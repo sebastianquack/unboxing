@@ -3,8 +3,6 @@ import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
-import Gesture from './Gesture';
-
 import {withServices} from './ServiceConnector';
 import {sequenceService, gameService, soundService} from '../services';
 
@@ -135,10 +133,6 @@ class Sequence extends React.Component {
         </View>
 
         {this.renderSequenceInfo()}
-        
-        <View style={globalStyles.buttons}>
-          <Gesture onEinsatz={this.handleEinsatz}/>
-        </View>
                     
       </View>
     );
