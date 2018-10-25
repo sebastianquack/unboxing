@@ -67,7 +67,7 @@ class SequenceDetailItem extends React.Component {
       case "autoplay": 
           return (
           <select value={value} onChange={ e => this.handleAttributeChange(type, e.target.value) }>
-            {["off", "on"].map((o)=>{return <option key={o} value={o}>{o}</option>})}
+            {["off", "on", "first"].map((o)=>{return <option key={o} value={o}>{o}</option>})}
           </select>
         );
       default:

@@ -101,7 +101,7 @@ Meteor.methods({
       instructions: "how it works",
       sequence_id: "",
       sequence_loop: false,
-      item_manual_mode: "off"
+      item_manual_mode: "assisted"
     });
   },
   'removeChallenge'(id) {

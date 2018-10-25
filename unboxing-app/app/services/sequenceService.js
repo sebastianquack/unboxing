@@ -31,10 +31,14 @@ class SequenceService extends Service {
 		return this.state.controlStatus;
 	}
 
-	// checks if first item is at the beginning of sequence
-	firstItemAtBeginningOfSequence() {
+	firstItemInTrack(track) {
 		let items = this.state.currentSequence.items;
-		return items[0].startTime == 0;
+		for(let i = 0; i < items.length; i++) {
+			if(items[i].track == track) {
+				return items[i];
+			}
+		}
+		return null	
 	}
 
 	getNextItemStartTimeAbsolute = ()=> {
@@ -52,24 +56,24 @@ class SequenceService extends Service {
 		this.setReactive({
 	    	showPlayItemButton: (this.state.nextItem && !this.autoPlayNextItem())
 		}); 
+		console.log("updating playButton", this.state.showPlayItemButton, this.state.nextItem, this.autoPlayNextItem());
 	}
 
 	// check if next item should be autoplayed
-	autoPlayNextItem() {
-		let challenge = gameService.getActiveChallenge();
+	autoPlayNextItem = ()=> {
+		if(!this.state.nextItem) return false;
 
-		if(!challenge) 
-			return false; // don't play anything if there's no challenge (something went wrong)
-
-		if(challenge.autoplay_items == "all") 
-			return true;
-
-		if(challenge.autoplay_items == "first" 
-			&& (this.sequenceCursor == 0 /*&& this.loopCounter == 0*/))
-			return true;
-		
-		if(challenge.autoplay_items == "none") 
+		if(this.state.nextItem.autoplay == "off") {
 			return false;
+		}
+
+		if(this.state.nextItem.autoplay == "first" && this.loopCounter == 0) {
+			return true;
+		}
+
+		if(this.state.nextItem.autoplay == "on") {
+			return true;
+		}
 
 		// we shouldn't reach this point, don't play anything
 		return false;
@@ -100,17 +104,18 @@ class SequenceService extends Service {
 			console.log("finished loading sound files for this track");
 			this.setReactive({
 				controlStatus: "ready",
-				showPlayItemButton: this.firstItemAtBeginningOfSequence()
+				showPlayItemButton: true
 			});
+
 			// listen for gesture if beginning of sequence
-			if (this.firstItemAtBeginningOfSequence()) {
-				const firstItem = this.state.currentSequence.items[0]
-				if(firstItem.gesture_id) {
+			const firstItem = this.firstItemInTrack(track);
+			if(firstItem) {
+				if(firstItem.startTime == 0 && firstItem.gesture_id) {
 					gestureService.waitForGesture(firstItem.gesture_id, () => {
 						gameService.handlePlayNextItemButton()
 						gestureService.stopWaitingForGesture()
-					})	
-				}
+					});
+				}	
 			}
 		});
   }
@@ -171,7 +176,12 @@ class SequenceService extends Service {
 				}); 
 				
 				// schedule sound for item
-				if(this.state.controlStatus == "playing" && (this.autoPlayNextItem() || this.sequenceStartingLocally())) {
+				if(this.state.controlStatus == "playing" && (
+								this.autoPlayNextItem() || 
+								(this.sequenceStartingLocally() && this.state.nextItem.startTime == 0)
+							)
+					) {
+					
 					console.log("scheduling next track item in sequence");
 					console.log(this.state.nextItem);
 					let targetTime = this.state.startedAt + this.state.nextItem.startTime;

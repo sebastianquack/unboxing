@@ -47,16 +47,10 @@ class ChallengeDetail extends React.Component {
             {this.props.ready && this.props.sequences.map( s => <option key={s._id} value={s._id}>{s.name}</option>)}      
           </select>
         );        
-      case "autoplay_items": 
-          return (
-          <select value={value} onChange={ e => this.handleAttributeChange(attributeName, e.target.value) }>
-            {["all", "first", "none"].map((o)=>{return <option key={o} value={o}>{o}</option>})}
-          </select>
-        );
       case "item_manual_mode": 
           return (
           <select value={value} onChange={ e => this.handleAttributeChange(attributeName, e.target.value) }>
-            {["off", "assisted", "free"].map((o)=>{return <option key={o} value={o}>{o}</option>})}
+            {["assisted", "free"].map((o)=>{return <option key={o} value={o}>{o}</option>})}
           </select>
         );          
       case "sequence_loop":
