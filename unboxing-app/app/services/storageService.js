@@ -48,8 +48,8 @@ class StorageService extends Service {
 	      console.log("reading collections from file", json);
 	      let stateFromFile = JSON.parse(json);
 	      //console.log(stateFromFile);
-	      this.setReactive(stateFromFile);
-	      networkService.setServer(this.state.server, false); // doesn't neet save, just loaded
+				this.setReactive(stateFromFile);
+				networkService.setServer(this.state.server, false); // doesn't need save, just load
 		}
 	}
 

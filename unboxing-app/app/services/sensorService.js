@@ -36,7 +36,7 @@ class SensorService extends Service {
 		 * with recognition on, the maximum seems 8 SpS
 		 * 
 		 * */
-		this.sampleIntervalMillis = 117 // every 7 frames 
+		this.sampleIntervalMillis = 117 // every 7 frames
 
 		this.accelerationObservable = null;
 		this.gyroscopeObservable = null;

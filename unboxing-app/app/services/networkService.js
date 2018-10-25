@@ -81,13 +81,13 @@ class NetworkService extends Service {
         `http://${this.state.server}:3000/api/${method}.json`,
         options
 			);
-			console.log("response", response)
+			//console.log("response", response)
 			let responseJson = await response.json();
       //console.log("response json", responseJson)
       this.setReactive({lastApiResult: "OK"})
 			return responseJson;
 		} catch (error) {
-      console.log("REST server error: ", error);
+      console.warn("REST server error: ", error);
       this.setReactive({lastApiResult: "Error"})
 		}
 	}

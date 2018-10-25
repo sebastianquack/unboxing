@@ -6,7 +6,7 @@ import Service from './Service';
 import { sensorService, storageService, networkService, soundService } from './';
 
 const serviceName = "gestures"
-const clickFilename = '/misc/click.mp3';
+const clickFilename = '/misc/woosh.mp3';
 
 class GestureService extends Service {
 
@@ -55,9 +55,10 @@ class GestureService extends Service {
 		}
 	}
 
-	// transform record entry for comparison
+	// transform record entry for comparison (e.g. reorder)
 	transformRecord(record) {
-		return {x: record.x, y: record.y, z: record.z}
+		return record
+		// return {x: record.x, y: record.y, z: record.z}
 	}
 
 	// reset the buffers that buffer the recent sensor data for each gesture

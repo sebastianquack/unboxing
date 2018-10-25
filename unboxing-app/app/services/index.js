@@ -7,6 +7,7 @@ import {storageService} from './storageService'
 import {networkService} from './networkService'
 import {gameService} from './gameService'
 import {gestureService} from './gestureService'
+import {peakService} from './peakService'
 
 export {
   sensorService,
@@ -17,5 +18,6 @@ export {
   storageService,
   networkService,
   gameService,
-  gestureService
+  gestureService,
+  peakService
 }

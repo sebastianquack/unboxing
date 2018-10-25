@@ -1,6 +1,6 @@
 import Service from './Service';
 
-import {soundService, gameService, gestureService} from './';
+import {soundService, gameService, gestureService, peakService } from './';
 
 class SequenceService extends Service {
 
@@ -42,7 +42,7 @@ class SequenceService extends Service {
 	}
 
 	getNextItemStartTimeAbsolute = ()=> {
-		if(!this.state.nextItem) return
+		if (!this.state.nextItem) return
 		const startTime = this.state.startedAt + this.state.nextItem.startTime;
 		return startTime;
 	}
@@ -107,15 +107,23 @@ class SequenceService extends Service {
 				showPlayItemButton: true
 			});
 
-			// listen for gesture if beginning of sequence
+			// listen for gestures if first item in track is at beginning of sequence
 			const firstItem = this.firstItemInTrack(track);
 			if(firstItem) {
-				if(firstItem.startTime == 0 && firstItem.gesture_id) {
-					gestureService.waitForGesture(firstItem.gesture_id, () => {
-						gameService.handlePlayNextItemButton()
-						gestureService.stopWaitingForGesture()
-					});
-				}	
+				if(firstItem.startTime == 0) {				
+					if(firstItem.gesture_id) {
+						gestureService.waitForGesture(firstItem.gesture_id, () => {
+							gameService.handlePlayNextItemButton()
+							gestureService.stopWaitingForGesture()
+						});
+					}
+					if(firstItem.sensorStart) {
+						peakService.waitForStart(() => {
+							gameService.handlePlayNextItemButton()
+							peakService.stopWaitingForStart()
+						})	
+					}
+				}
 			}
 		});
   }
@@ -191,7 +199,13 @@ class SequenceService extends Service {
 				this.updatePlayButton();
 
 				// listen for gesture
-				if (nextItem.gesture_id) {
+				if (nextItem.sensorStart) {
+					peakService.waitForStart(() => {
+						gameService.handlePlayNextItemButton()
+						peakService.stopWaitingForStart()
+					})	
+				}				
+				if (nextItem.gesture_id) {					
 					gestureService.waitForGesture(nextItem.gesture_id, () => {
 						gestureService.stopWaitingForGesture()
 						gameService.handlePlayNextItemButton()
@@ -239,6 +253,7 @@ class SequenceService extends Service {
 	// needs to wait because currently soundService can only save one targetTime per sound
 	// also useful if we want to be able to turn autoplay on and off
 	scheduleSoundForNextItem(targetTime) {
+		if (!this.state.nextItem) return
 		soundService.scheduleSound(this.state.nextItem.path, targetTime, {
 			onPlayStart: () => {
 				this.setReactive({
