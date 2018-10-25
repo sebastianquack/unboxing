@@ -66,7 +66,10 @@ class Sequence extends React.Component {
 
     if(this.props.services.sequence.nextItem) {
       let timeToNextItem = this.props.services.sequence.nextItem.startTime - currentTimeInSequence
-      this.setState({timeToNextItem: timeToNextItem});   
+      this.setState({timeToNextItem: timeToNextItem});
+      if(timeToNextItem < 0) {
+        gameService.handleMissedCue();
+      }
     } else {
       this.setState({timeToNextItem: null});   
     }
@@ -110,7 +113,7 @@ class Sequence extends React.Component {
         {this.renderEinsatzIndicator()}
 
         <View style={globalStyles.buttons}>
-          {this.props.services.sequence.showPlayItemButton && !this.props.services.sequence.currentItem &&
+          {this.props.services.sequence.showPlayItemButton &&
             <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>
                 <Text>Play</Text>
             </TouchableOpacity>

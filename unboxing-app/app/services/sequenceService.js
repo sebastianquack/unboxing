@@ -14,6 +14,7 @@ class SequenceService extends Service {
 			playbackStartedAt: null, // start time of first loop
 			startedAt: null, // start time of current sequence (in each loop)
 			nextItem: null, // next item to play, if available
+			scheduledItem: null, // item scheduled for play
 			currentItem: null, // current item playing, if available
 			showPlayItemButton: false // should play button be shown
 		});
@@ -21,11 +22,59 @@ class SequenceService extends Service {
 		// not reative - used for internal calculations
 		this.sequenceCursor = 0; // runs through the items in the sequence during playback
 		this.loopCounter = 0;
+		this.localStart = false;
 	}
+
+	/* HELPER FUNCTIONS */
 
 	getControlStatus() {
 		return this.state.controlStatus;
 	}
+
+	// checks if first item is at the beginning of sequence
+	firstItemAtBeginningOfSequence() {
+		let items = this.state.currentSequence.items;
+		return items[0].startTime == 0;
+	}
+
+	getNextItemStartTimeAbsolute = ()=> {
+		const startTime = this.state.startedAt + this.state.nextItem.startTime;
+		return startTime;
+	}
+
+	sequenceStartingLocally = ()=> {
+		return this.localStart && this.sequenceCursor == 0 && this.loopCounter == 0;
+	}
+
+	// updates if play button should be shown in interface
+	updatePlayButton = ()=> {
+		this.setReactive({
+	    	showPlayItemButton: (this.state.nextItem && !this.autoPlayNextItem())
+		}); 
+	}
+
+	// check if next item should be autoplayed
+	autoPlayNextItem() {
+		let challenge = gameService.getActiveChallenge();
+
+		if(!challenge) 
+			return false; // don't play anything if there's no challenge (something went wrong)
+
+		if(challenge.autoplay_items == "all") 
+			return true;
+
+		if(challenge.autoplay_items == "first" 
+			&& (this.sequenceCursor == 0 /*&& this.loopCounter == 0*/))
+			return true;
+		
+		if(challenge.autoplay_items == "none") 
+			return false;
+
+		// we shouldn't reach this point, don't play anything
+		return false;
+	}
+
+	/* CONTROL INTERFACE */
 
 	// invoked from track selector component - sets up new sequence
 	trackSelect(sequence, track) {
@@ -61,10 +110,10 @@ class SequenceService extends Service {
 				})
 			}
 		});
-  	}
+  }
 
-  	// start sequence playback
-	startSequence = (startTime, manualStart) => {
+  // start sequence playback - localStart marks if sequence was started on this device
+ 	startSequence = (startTime, localStart) => {
 		if(this.state.controlStatus != "ready") {
 			console.log("cannot start - sequence not ready to play");
 			return;
@@ -87,18 +136,13 @@ class SequenceService extends Service {
   	}
 
   	console.log("started sequence at", this.state);
+  	this.localStart = localStart;
 
-		this.setupNextSequenceItem(manualStart);
-	}
-
-	// checks if first item is at the beginning of sequence
-	firstItemAtBeginningOfSequence() {
-		let items = this.state.currentSequence.items;
-		return items[0].startTime == 0;
+		this.setupNextSequenceItem();
 	}
 
 	// identifies next item and schedules for playback if autoplay is activated
-	setupNextSequenceItem(localStart = false) {
+	setupNextSequenceItem() {
 			console.log("setting up next sequence item");
 			gestureService.stopWaitingForGesture()
 	    
@@ -121,16 +165,17 @@ class SequenceService extends Service {
 	    if(nextItem) {
 	    	this.setReactive({
 	    		nextItem: nextItem, // show next item to interface
-	    		showPlayItemButton: !(this.autoPlayNextItem() || localStart), // determine if button should be shown
 				}); 
-
+				
 				// schedule sound for item
-				if(this.state.controlStatus == "playing" && (this.autoPlayNextItem() || localStart)) {
+				if(this.state.controlStatus == "playing" && (this.autoPlayNextItem() || this.sequenceStartingLocally())) {
 					console.log("scheduling next track item in sequence");
 					console.log(this.state.nextItem);
 					let targetTime = this.state.startedAt + this.state.nextItem.startTime;
 					this.scheduleSoundForNextItem(targetTime);
 				}
+
+				this.updatePlayButton();
 
 				// listen for gesture
 				if (nextItem.gesture_id) {
@@ -169,52 +214,12 @@ class SequenceService extends Service {
 				}
 	    }
 	}
-	
-	// manually start playback of next item if autoplay is deactivated
-	playNextItem() {
-		if(!this.autoPlayNextItem()) {
-			
-			let now = soundService.getSyncTime();
-
-			this.scheduleSoundForNextItem(now); 	
-
-			// todo: compare with item's official start time
-			let officialTime = this.state.startedAt + this.state.nextItem.startTime;
-			let difference = now - officialTime;
-
-			this.showNotification("präzision: " + difference + "ms");
-			
-		} else {
-			console.log("manual playback deactivated when item autoplay is on");
-		}
-	}
-
+		
 	skipNextItem() {
 		console.log(this.state.nextItem);
 		if(this.state.nextItem) {
 			this.setupNextSequenceItem();
 		}
-	}
-
-	// check if next item should be autoplayed
-	autoPlayNextItem() {
-		let challenge = gameService.getActiveChallenge();
-
-		if(!challenge) 
-			return false; // don't play anything if there's no challenge (something went wrong)
-
-		if(challenge.autoplay_items == "all") 
-			return true;
-
-		if(challenge.autoplay_items == "first" 
-			&& (this.sequenceCursor == 0 /*&& this.loopCounter == 0*/))
-			return true;
-		
-		if(challenge.autoplay_items == "none") 
-			return false;
-
-		// we shouldn't reach this point, don't play anything
-		return false;
 	}
 
 	// call sound service to schedule sound for next item, set callback to setup next item after playback
@@ -224,8 +229,7 @@ class SequenceService extends Service {
 		soundService.scheduleSound(this.state.nextItem.path, targetTime, {
 			onPlayStart: () => {
 				this.setReactive({
-					currentItem: this.state.nextItem,
-					nextItem: null
+					currentItem: this.state.scheduledItem,
 				});
 			},
 			onPlayEnd: () => {
@@ -233,6 +237,11 @@ class SequenceService extends Service {
 				this.setupNextSequenceItem();
 			}
 		});
+		this.setReactive({
+			scheduledItem: this.state.nextItem,
+			nextItem: null,
+		});
+		this.updatePlayButton();
 	}
 
 	stopCurrentSound() {
