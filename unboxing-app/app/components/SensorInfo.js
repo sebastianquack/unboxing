@@ -12,19 +12,45 @@ class SensorInfo extends React.Component {
 
   componentDidMount() {
     sensorService.enableReactiveData()
+    sensorService.enableSampleRateMonitoring()
+  }
+
+  renderSensor(name, value, min=-5, max=5) {
+    scale=20
+    return <View flexDirection="row" style={{
+      borderLeftColor: "black",
+      borderLeftWidth: 1,
+      borderRightColor: "black",
+      borderRightWidth: 1,      
+      width: (-min*scale)+100
+    }}>
+      <Text style={{width: 100}}>{name}</Text>
+      <View style={{
+        left: -min*scale + value*scale
+      }}><Text>{name}: {value}</Text></View>
+    </View>
+  }
+
+  renderSensorData(data) {
+    return <View>
+      {this.renderSensor("acc_x", data.acc.x)}
+      {this.renderSensor("acc_y", data.acc.y)}
+      {this.renderSensor("acc_z", data.acc.z)}
+      {this.renderSensor("gyr_x", data.gyr.x)}
+      {this.renderSensor("gyr_y", data.gyr.y)}
+      {this.renderSensor("gyr_z", data.gyr.z)}      
+    </View>
   }
 
   render() {
     return (
       <View style={styles.info}>
         <Text style={globalStyles.titleText}>Sensor Info</Text>
-        <Text>acc x { this.props.services.sensors.data.acc.x }</Text>
-        <Text>acc y { this.props.services.sensors.data.acc.y }</Text>
-        <Text>acc z { this.props.services.sensors.data.acc.z }</Text>
-        <Text>gyr x { this.props.services.sensors.data.gyr.x }</Text>
-        <Text>gyr y { this.props.services.sensors.data.gyr.y }</Text>
-        <Text>gyr z { this.props.services.sensors.data.gyr.z }</Text>
+        {this.renderSensorData(this.props.services.sensors.data)}
         <Text>Sample Rate: { this.props.services.sensors.sampleRate }</Text>
+        <Text>isUp: { this.props.services.peak.isUp ? "up" : "" }</Text>
+        <Text>isDown: { this.props.services.peak.isDown ? "down" : "" }</Text>
+        <Text>bpm: { this.props.services.peak.bpm }</Text>
       </View>
     );
   }

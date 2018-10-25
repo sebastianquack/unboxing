@@ -32,8 +32,8 @@ class NearbyService extends Service {
 	}
 
 	debug = (...msg) => {
-		this.showNotification(msg.join(", "));
-		console.log(msg);  
+		// this.showNotification(msg.join(", "));
+		// console.log(msg);  
 	}
 
 	pingEndpoints = ()=> {

@@ -63,7 +63,7 @@ class App extends Component {
         <Text style={globalStyles.titleText}>Admin</Text>
         <ServerConnector/>
         <TimeSync/>
-        {/*<SensorInfo />*/}
+        {<SensorInfo />}
         <Gestures />
         <Files/>
         <NearbyStatus/>

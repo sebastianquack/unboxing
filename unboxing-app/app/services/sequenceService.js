@@ -38,6 +38,7 @@ class SequenceService extends Service {
 	}
 
 	getNextItemStartTimeAbsolute = ()=> {
+		if (!this.state.nextItem) return
 		const startTime = this.state.startedAt + this.state.nextItem.startTime;
 		return startTime;
 	}

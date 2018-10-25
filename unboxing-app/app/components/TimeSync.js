@@ -113,7 +113,7 @@ async function measureDelta(callback) {
 function avgTimeDeltas(callback) {
   let deltas = [];
   let timeout = 800;
-  let num = 16;
+  let num = 40;
 
   // send num requests to server, save deltas
   console.log("starting measurement of time deltas");
