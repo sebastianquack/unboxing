@@ -89,6 +89,7 @@ class GestureDetail extends React.Component {
               borderWidth: "0 0 1px 0",
               fontWeight: "bold"
             }}
+            onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
             onChange={this.handleNameChange} 
             html={d.name}
             tagName="span"

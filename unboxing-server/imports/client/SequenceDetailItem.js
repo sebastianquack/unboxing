@@ -78,6 +78,7 @@ class SequenceDetailItem extends React.Component {
             fontWeight: "bold"
           }}
           onChange={ e => this.handleAttributeChange(type, inputTransform(e.target.value)) } 
+          onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
           onFocus={ e => {this.props.onFocusChange(true); setTimeout(()=>document.execCommand('selectAll',false,null),20)} }
           onBlur={ e => this.props.onFocusChange(false) }
           html={value + ""}
