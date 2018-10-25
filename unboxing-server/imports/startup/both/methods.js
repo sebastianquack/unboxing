@@ -27,6 +27,9 @@ Meteor.methods({
     const gesture = Gestures.findOne({_id: id})
     Gestures.update({_id: id}, {$set: {active: !gesture.active}})
   },
+  'activateGesture'(id) {
+    Gestures.update({_id: id}, {$set: {active: true}})
+  },  
   'updateGesture'(id,$set) {
     Gestures.update({_id: id}, {$set})
   },

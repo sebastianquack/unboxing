@@ -28,6 +28,9 @@ class GestureService extends Service {
 		this.handleSensorDataForRecording = this.handleSensorDataForRecording.bind(this)
 		this.detect = this.detect.bind(this)
 
+		this.gesturesLastDetection = {} // { gesture_id: last_detection_time, ... }
+		this.reRecognitionPreventionMillis = 500 // how many milliseconds should be ignored after recognition
+
 		this.init();
 	}
 
@@ -76,10 +79,15 @@ class GestureService extends Service {
 			const buffer = this.buffers[_id]
 			buffer.push(data.acc)
 			
-			// check for gesture recognition
-			const gesture = gestures.find( (g) => (g._id == _id) )
-			
-			this.detect(gesture, buffer.toArray())
+			// recognize
+
+			if (!this.gesturesLastDetection[_id] || this.gesturesLastDetection[_id] + this.reRecognitionPreventionMillis < soundService.getSyncTime()) {
+				const gesture = gestures.find( (g) => (g._id == _id) )
+				this.detect(gesture, buffer.toArray())				
+			} else if (this.gesturesLastDetection[_id]) {
+				console.debug("preventing re-recognition")
+			}
+
 		}
 	}
 
@@ -94,7 +102,7 @@ class GestureService extends Service {
 	// check for gesture in recent records
 	detect(gesture, records) {
 		if (gesture.activeRecords.length != records.length) {
-			console.log(`gesture length ${gesture.activeRecords.length} != records length ${records.length}`)
+			console.log(`${records.length}/${gesture.activeRecords.length} filling gesture buffer for "${gesture.name}"`)
 			return
 		}
 
@@ -115,13 +123,12 @@ class GestureService extends Service {
 
 	// called if a gesture was detected
 	detected(gesture) {
+		this.gesturesLastDetection[gesture._id] = soundService.getSyncTime()
 		console.log("GESTURE detected", gesture.name)
 		this.showNotification("GESTURE detected " + gesture.name);
 		if(typeof this.detectionCallback != "function") {
 			soundService.scheduleSound(clickFilename, soundService.getSyncTime());	
 		}
-		
-
 		/*this.setReactive({
 			detectedGestures: [{detectedAt: new Date(), ...gesture}, ...this.state.detectedGestures]
 				.slice(0,5)
@@ -195,6 +202,7 @@ class GestureService extends Service {
 		this.resetBuffers()
 	}	
 
+	// switch the recognition on and off
 	toggleRecognition = () => {
 		if (this.state.isRecognizing) {
 			this.stopRecognition()
@@ -218,6 +226,7 @@ class GestureService extends Service {
 		this.setReactive({ hasRecords: false })
 	}	
 
+	// send recorded gesture to server
 	sendRecords = async () => {
 		const reply = await networkService.apiRequest('addGesture',{
 			records: this.localRecords

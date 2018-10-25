@@ -6,6 +6,8 @@ const globalStyles = StyleSheet.create({
   titleText: {
     fontSize: 20,
     fontWeight: 'bold',
+    marginTop: 20,
+    marginBottom: 10,
   },
   buttons: {
     flexDirection: 'row',

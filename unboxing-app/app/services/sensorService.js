@@ -21,19 +21,22 @@ class SensorService extends Service {
 		 * 
 		 * Measured Samples per Second on Samung Galaxy Tab
 		 * 
-		 *  10ms -> 66   Hz (15ms)
-		 *  20ms -> 40   Hz (25ms)
-		 *  30ms -> 28.5 Hz (35ms)
-		 *  40ms -> 21.8 Hz (46ms)
-		 *  50ms -> 18   Hz (55ms)
-		 *  60ms -> 15.5 Hz (65ms)
-		 *  70ms -> 13.4 Hz
-		 *  80ms -> 11.8 Hz
-		 *  90ms -> 10.6 Hz
-		 * 100ms -> 9.5  Hz
-		 * 200ms -> 4.9  Hz
+		 *  10ms -> 66   SpS (15ms)
+		 *  20ms -> 40   SpS (25ms)
+		 *  30ms -> 28.5 SpS (35ms)
+		 *  40ms -> 21.8 SpS (46ms)
+		 *  50ms -> 18   SpS (55ms)
+		 *  60ms -> 15.5 SpS (65ms)
+		 *  70ms -> 13.4 SpS
+		 *  80ms -> 11.8 SpS
+		 *  90ms -> 10.6 SpS
+		 * 100ms -> 9.5  SpS
+		 * 200ms -> 4.9  SpS
+		 * 
+		 * with recognition on, the maximum seems 8 SpS
+		 * 
 		 * */
-		this.sampleIntervalMillis = 100
+		this.sampleIntervalMillis = 117 // every 7 frames 
 
 		this.accelerationObservable = null;
 		this.gyroscopeObservable = null;
@@ -76,6 +79,7 @@ class SensorService extends Service {
 	}
 
 	enableSampleRateMonitoring = () => {
+		if (this.monitorSampleRate) return
 		const seconds = 1
 		this.sampleCount = 0
 		this.monitorSampleRate = true
