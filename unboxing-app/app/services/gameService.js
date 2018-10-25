@@ -117,7 +117,6 @@ class GameService extends Service {
   }
 
   handleStopButton() {
-   	//sequenceService.stopSequence();
    	sequenceService.stopCurrentSound();
   }
 

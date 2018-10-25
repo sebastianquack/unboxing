@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
+import SensorModulator from './SensorModulator';
 import {withServices} from './ServiceConnector';
 import {sequenceService, gameService, soundService} from '../services';
 
@@ -18,7 +19,6 @@ class Sequence extends React.Component {
     };
     
     this.updateSequenceInfo = this.updateSequenceInfo.bind(this);
-    this.handleEinsatz = this.handleEinsatz.bind(this);
     this.countDownDisplayDelay = 1;
   }
 
@@ -28,21 +28,6 @@ class Sequence extends React.Component {
 
   componentWillUnmount() {
     clearInterval(this.updateInterval);
-  }
-
-  handleEinsatz() {
-    console.log("Gesture deteced!");
-    this.handlePlayNow();
-    this.setState({displayEinsatzIndicator: true}, ()=>{
-      setTimeout(()=>this.setState({displayEinsatzIndicator: false}), 1000)
-    })
-  }
-
-  renderEinsatzIndicator() {
-    if (!this.state.displayEinsatzIndicator) return null
-    return (<Text style={styles.einsatzIndicator}>
-      Einsatz!
-    </Text>)
   }
 
   // called every second to calculate sequence info
@@ -109,8 +94,6 @@ class Sequence extends React.Component {
 
     return (
       <View> 
-        {this.renderEinsatzIndicator()}
-
         <View style={globalStyles.buttons}>
           {this.props.services.sequence.showPlayItemButton &&
             <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>
@@ -129,11 +112,9 @@ class Sequence extends React.Component {
                 <Text>Stop</Text>
             </TouchableOpacity>
           }
-
         </View>
-
+        <SensorModulator mode={this.props.services.sequence.currentItem ? this.props.services.sequence.currentItem.sensorModulation : ""}/>
         {this.renderSequenceInfo()}
-                    
       </View>
     );
   }

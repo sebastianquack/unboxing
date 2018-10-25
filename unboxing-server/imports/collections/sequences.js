@@ -23,6 +23,7 @@ export default Sequences;
  *   - path: string (file path)
  *   - track: string (indicates events that belong to the same track, like "violin1" or "piano")
  *   - gesture_id: string (name of the entry gesture)
+ *   - sensorModulation: string // ongoing play mode, for example tilt to volume
  * tracks[]: (auto generated)
  *   - name
  *   - color

@@ -8,7 +8,7 @@ class AttributeSlider extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      gestureControl: false
+      sensorControl: true
     }
     this.receiveData = this.receiveData.bind(this)
     this.handleSwitch = this.handleSwitch.bind(this)
@@ -45,21 +45,17 @@ class AttributeSlider extends React.Component {
     this.setState({gyr: data});
     this.addBuffer(data)
 
-    if(this.state.gestureControl) {
+    if(this.state.sensorControl) {
       let newValue = this.props.sensorTranslate(data, this.props, this.buffer);
       this.setState({sliderPosition: newValue, value: newValue});
-      if(this.state.gestureControl) {
+      if(this.state.sensorControl) {
         this.props.onValueChange(newValue);    
       }
     }
   }
 
-  componentWillUnmount() {
-    this.gyroObservable.stop();
-  }
-
   handleSwitch(value) {
-    this.setState({ gestureControl: value })
+    this.setState({ sensorControl: value })
   }
 
   renderDebugInfo() {
@@ -87,10 +83,10 @@ class AttributeSlider extends React.Component {
             this.props.onValueChange(Math.round(value * 100) / 100);
           }}
         />
-        <View style={{flexDirection: 'row'}}>
+        {/*<View style={{flexDirection: 'row'}}>
           <Text>Sensor Control Active</Text>
-          <Switch value={this.state.gestureControl} onValueChange={this.handleSwitch} />
-        </View>
+          <Switch value={this.state.sensorControl} onValueChange={this.handleSwitch} />
+        </View>*/}
         {this.renderDebugInfo()}
       </View>
     );

@@ -165,7 +165,7 @@ class GestureService extends Service {
 	waitForGesture = (gesture_id, callback, debounceMillis = 1000) => {		
 		const activeGesture = this.state.activeGestures.find( g => (g._id == gesture_id))
 		if (!activeGesture) {
-			console.warn(`ERROR: gestureService -> waitForGesture: "${gesture_id}" not found!`)
+			console.warn(`ERROR: gestureService -> waitForGesture: "${gesture_id}" not found - inactive?`);
 		} else {
 			this.startRecognition()
 			this.detectionCallback = debounce(callback, debounceMillis, true)			

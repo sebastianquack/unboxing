@@ -222,22 +222,29 @@ class SoundSevice extends Service {
 		console.log("starting to play " + JSON.stringify(this.sounds[index]));
 		this.sounds[index].status = "playing";
 		this.sounds[index].soundObj.play((success) => {
+		  	this.sounds[index].status = "ready";
 		  	if (success) {
 		    	console.log('successfully finished playing');
 		    	// todo: reset sound for next playback?
 		  	} else {
 		    	console.log('playback failed due to audio decoding errors');
-		    	this.showNotification('playback error - restart app');
+		    	this.showNotification('playback error - resetting player - restart app?');
+		    	this.sounds[index].soundObj.reset();
 		  	}		  
 		  	// calling callback
 	    	if(typeof this.sounds[index].onPlayEnd == "function") {
 	      		this.sounds[index].onPlayEnd();
 	    	}
 		});
-	    if(typeof this.sounds[index].onPlayStart == "function") {
-	    	console.log("onPlayStart callback");
-	      	this.sounds[index].onPlayStart();
-	    }
+    
+		this.setVolumeFor(this.sounds[index].filename, 1);
+		this.setSpeedFor(this.sounds[index].filename, 1);
+		
+    if(typeof this.sounds[index].onPlayStart == "function") {
+    	console.log("onPlayStart callback");
+      	this.sounds[index].onPlayStart();
+    }
+    		
 	}
 
 	// public - stops playback of all sounds
@@ -264,13 +271,34 @@ class SoundSevice extends Service {
 		}
 	}
 
+	setVolumeFor(filename, v) {
+		let index = this.findLoadedSoundIndex(filename);
+		if(index > -1) {
+			if(this.sounds[index].soundObj) {
+				this.sounds[index].soundObj.setVolume(v);
+			}
+		}
+	}
+
+	setSpeedFor(filename, s) {
+		let index = this.findLoadedSoundIndex(filename);
+		if(index > -1) {
+			if(this.sounds[index].soundObj) {
+				if(this.sounds[index] == "playing") {
+					this.sounds[index].soundObj.setSpeed(s);
+				}
+			}
+		}
+	}
+
 	setVolume(v) {
 		if(typeof(v) == "number") {
 		  if(v != this.getReactive("volume")) {
-		  	if(this.sound) {
-		  		this.sound.setVolume(v);	
-		  	}
-		    
+		  	this.sounds.forEach((sound)=>{
+					if(sound) {
+		  			sound.soundObj.setVolume(v);	
+		  		}
+				});
 		    console.log("setting reactive volume to" + v);          
 		    this.setReactive({volume: v});
 		  }
@@ -280,9 +308,11 @@ class SoundSevice extends Service {
 	setSpeed(s) {
 		if(typeof(s) == "number") {
 		  if(s != this.getReactive("speed")) {
-		  	if(this.sound && this.isPlaying) {
-		  		this.sound.setSpeed(s);    	
-		  	}
+		  	this.sounds.forEach((sound)=>{
+			  	if(sound.status == "playing") {
+			  		sound.soundObj.setSpeed(s);    	
+			  	}
+			  });
 		    this.setReactive({speed: s});
 		  }
 		}

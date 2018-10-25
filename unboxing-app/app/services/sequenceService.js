@@ -105,10 +105,12 @@ class SequenceService extends Service {
 			// listen for gesture if beginning of sequence
 			if (this.firstItemAtBeginningOfSequence()) {
 				const firstItem = this.state.currentSequence.items[0]
-				gestureService.waitForGesture(firstItem.gesture_id, () => {
-					gameService.handlePlayNextItemButton()
-					gestureService.stopWaitingForGesture()
-				})
+				if(firstItem.gesture_id) {
+					gestureService.waitForGesture(firstItem.gesture_id, () => {
+						gameService.handlePlayNextItemButton()
+						gestureService.stopWaitingForGesture()
+					})	
+				}
 			}
 		});
   }

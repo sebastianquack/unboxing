@@ -81,6 +81,7 @@ class ChallengeDetail extends React.Component {
             fontWeight: "bold"
           }}
           onChange={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.value)) } 
+          onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
           html={value + ""}
           tagName="span"
         />)
