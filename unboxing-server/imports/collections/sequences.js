@@ -24,6 +24,7 @@ export default Sequences;
  *   - track: string (indicates events that belong to the same track, like "violin1" or "piano")
  *   - gesture_id: string (name of the entry gesture)
  *   - sensorModulation: string // ongoing play mode, for example tilt to volume
+ *   - sensorStart: boolean (use peakService to start.)
  * tracks[]: (auto generated)
  *   - name
  *   - color
@@ -43,7 +44,8 @@ export default Sequences;
 updateItemsDuration = (userId, doc,fieldNames, modifier, options) => {
   if (modifier && modifier.$set && modifier.$set["items.$"]) {
     const path = modifier.$set["items.$"].path
-    const duration = Files.findOne({path}).duration
+    const file = Files.findOne({path})
+    const duration = (file && file.duration) ? file.duration : 0
     if (duration) {
       modifier.$set["items.$"].duration = duration
     }

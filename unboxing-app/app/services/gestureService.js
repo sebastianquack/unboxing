@@ -6,7 +6,7 @@ import Service from './Service';
 import { sensorService, storageService, networkService, soundService } from './';
 
 const serviceName = "gestures"
-const clickFilename = '/misc/click.mp3';
+const clickFilename = '/misc/woosh.mp3';
 
 class GestureService extends Service {
 

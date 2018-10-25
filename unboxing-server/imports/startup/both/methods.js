@@ -57,7 +57,8 @@ Meteor.methods({
         track: "default",
         path: "",
         gesture_id: "",
-        sensorModulation: "off"
+        sensorModulation: "off",
+        sensorStart: false,
       } ], $sort: { startTime: 1 }, $slice: 1000 } } }
     )
   },

@@ -188,8 +188,8 @@ class SoundSevice extends Service {
 			return;
 		}
 
-		this.sounds[index].status = "scheduled";
-		this.sounds[index].targetTime = targetTime;
+			this.sounds[index].status = "scheduled";
+			this.sounds[index].targetTime = targetTime;
 	    this.sounds[index].onPlayEnd = callbacks.onPlayEnd;
 	    this.sounds[index].onPlayStart = callbacks.onPlayStart;  
 	    
@@ -202,7 +202,7 @@ class SoundSevice extends Service {
   	runStartingLoop(index) {
 		const currentTime = this.getSyncTime(); // get the synchronized time
 		this.sounds[index].status = "starting";
-		let targetStartTime = this.sounds[index].targetTime + 200;
+		let targetStartTime = this.sounds[index].targetTime + 34;
 		let counter = 0;
 		let now = null;
 		do {

@@ -47,6 +47,10 @@ class SequenceDetailItem extends React.Component {
   renderInput(type, value) {
     const emptyOption = <option key="empty" value="">&lt;none&gt;</option>
     switch(type) {
+      case "sensorStart": 
+        return (
+          <input type="checkbox" checked={value} onChange={ e => this.handleAttributeChange(type, e.target.checked)}/>
+        )
       case "path": 
         return (
           <select value={value} onChange={ e => this.handleAttributeChange(type, e.target.value) }>

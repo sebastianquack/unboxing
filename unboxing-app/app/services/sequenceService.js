@@ -1,6 +1,6 @@
 import Service from './Service';
 
-import {soundService, gameService, gestureService} from './';
+import {soundService, gameService, gestureService, peakService } from './';
 
 class SequenceService extends Service {
 
@@ -105,6 +105,13 @@ class SequenceService extends Service {
 			// listen for gesture if beginning of sequence
 			if (this.firstItemAtBeginningOfSequence()) {
 				const firstItem = this.state.currentSequence.items[0]
+				
+				if (firstItem.sensorStart) {
+					peakService.waitForStart(() => {
+						gameService.handlePlayNextItemButton()
+						peakService.stopWaitingForStart()
+					})	
+				}
 				if(firstItem.gesture_id) {
 					gestureService.waitForGesture(firstItem.gesture_id, () => {
 						gameService.handlePlayNextItemButton()
@@ -181,7 +188,13 @@ class SequenceService extends Service {
 				this.updatePlayButton();
 
 				// listen for gesture
-				if (nextItem.gesture_id) {
+				if (nextItem.sensorStart) {
+					peakService.waitForStart(() => {
+						gameService.handlePlayNextItemButton()
+						peakService.stopWaitingForStart()
+					})	
+				}				
+				if (nextItem.gesture_id) {					
 					gestureService.waitForGesture(nextItem.gesture_id, () => {
 						gestureService.stopWaitingForGesture()
 						gameService.handlePlayNextItemButton()
@@ -229,6 +242,7 @@ class SequenceService extends Service {
 	// needs to wait because currently soundService can only save one targetTime per sound
 	// also useful if we want to be able to turn autoplay on and off
 	scheduleSoundForNextItem(targetTime) {
+		if (!this.state.nextItem) return
 		soundService.scheduleSound(this.state.nextItem.path, targetTime, {
 			onPlayStart: () => {
 				this.setReactive({

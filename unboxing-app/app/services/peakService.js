@@ -2,7 +2,7 @@ import Service from './Service';
 import { sensorService, soundService } from './';
 
 const serviceName = "peak"
-const clickFilename = '/misc/click.mp3';
+const clickFilename = '/misc/tick.wav';
 
 class PeakService extends Service {
 
@@ -15,14 +15,17 @@ class PeakService extends Service {
 
 		this.sensorReceiverHandle = null;
 
-		this.isUp = y => y < -0.7
-		this.isDown = y => y > 0.7
+		this.isUp = y => y < -0.75
+		this.isDown = y => y > 0.55
 
 		this.peakDistMillis = 1000
 		this.peakStartTime = null
 
 		this.init();
 
+		soundService.preloadSoundfile(clickFilename, ()=>{
+			this.showNotification("tick loaded");
+		});
 		//this.handleSensorDataForRecognition = this.handleSensorDataForRecognition.bind(this)
 	}
 
@@ -45,10 +48,7 @@ class PeakService extends Service {
 		// detect down if in time
 		if (this.isDown(y)) {
 			if (this.peakStartTime && this.peakStartTime + this.peakDistMillis > soundService.getSyncTime()) {
-				const bpm = 1000 / (soundService.getSyncTime() - this.peakStartTime)*60
-				this.setReactive({bpm})
-				this.peakStartTime = null
-				this.showNotification("PEAK")
+				this.detected()
 			}
 		}
 
@@ -60,12 +60,28 @@ class PeakService extends Service {
 
 	}
 
+	detected = () => {
+		const bpm = 1000 / (soundService.getSyncTime() - this.peakStartTime)*60
+		this.setReactive({bpm})
+		this.peakStartTime = null
+		this.showNotification("PEAK")
+		if(typeof this.detectionCallback != "function") {
+			soundService.scheduleSound(clickFilename, soundService.getSyncTime());	
+		}				
+		if (this.detectionCallback) {
+			this.detectionCallback()
+			this.detectionCallback = null
+		}		
+	}
+
 	// run from ssequenceService to register a callback for a specific gesture
-	waitForGesture = () => {		
+	waitForStart = (callback) => {		
+		this.detectionCallback = callback
 	}
 
 	// run from sequenceService to unregister gesture
-	stopWaitingForGesture() {
+	stopWaitingForStart() {
+		this.detectionCallback = null
 	}
 
 }
