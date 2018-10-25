@@ -7,6 +7,7 @@ import './methods';
 import '../both/methods';
 
 // startup
+import './migrations';
 import './fixtures';
 import './files';
 import './api';
