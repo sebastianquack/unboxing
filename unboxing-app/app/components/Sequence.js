@@ -116,6 +116,12 @@ class Sequence extends React.Component {
             </TouchableOpacity>
           }
 
+          {this.props.services.sequence.nextItem && this.state.timeToNextItem < 0 &&
+            <TouchableOpacity style={styles.bigButton} onPress={gameService.handleSkipButton}>
+                  <Text>Skip</Text>
+            </TouchableOpacity>
+          }
+
           {this.props.services.sequence.currentItem &&
             <TouchableOpacity style={styles.bigButton} onPress={gameService.handleStopButton}>
                 <Text>Stop</Text>

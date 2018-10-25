@@ -61,29 +61,29 @@ class GameService extends Service {
 		if(sequenceService.getControlStatus() == "ready") {
 			// make sure first item is at start of sequence
 			if(sequenceService.firstItemAtBeginningOfSequence()) {
-
 				let nowTime = soundService.getSyncTime();
-				console.log("handlePlayNextItemButton", nowTime);
-			
 				let startTime = nowTime + 2000; // set time for sequence to start
 				sequenceService.startSequence(startTime, true); // set local start flag to true 
 
-				// send start_sequence message to server or other
+				// send start_sequence message to all players connected via nearby
 				nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
 
 			} else {
 				console.log("first item not at the start of sequence - cancel sequence start");
-				// todo: notification
 			}
 		
 		} else {
 
-			// sequence is running
+			// if the sequence is already running
 			if(sequenceService.getControlStatus() == "playing") {
    			sequenceService.playNextItem();			
 			}	
 		}
 
+  }
+
+  handleSkipButton() {
+  	sequenceService.skipNextItem();
   }
 
   handleStopButton() {

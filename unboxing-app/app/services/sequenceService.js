@@ -189,6 +189,13 @@ class SequenceService extends Service {
 		}
 	}
 
+	skipNextItem() {
+		console.log(this.state.nextItem);
+		if(this.state.nextItem) {
+			this.setupNextSequenceItem();
+		}
+	}
+
 	// check if next item should be autoplayed
 	autoPlayNextItem() {
 		let challenge = gameService.getActiveChallenge();

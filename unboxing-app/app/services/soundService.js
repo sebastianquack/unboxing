@@ -227,6 +227,7 @@ class SoundSevice extends Service {
 		    	// todo: reset sound for next playback?
 		  	} else {
 		    	console.log('playback failed due to audio decoding errors');
+		    	this.showNotification('playback error - restart app');
 		  	}		  
 		  	// calling callback
 	    	if(typeof this.sounds[index].onPlayEnd == "function") {
