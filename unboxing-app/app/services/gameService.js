@@ -13,6 +13,8 @@ class GameService extends Service {
 
 		// not reactive vars
 		this.discoveryTimeout;
+
+		this.assistanceThreshold = 2000;
 	}
 
 	// called, when user selects challenge
@@ -85,10 +87,10 @@ class GameService extends Service {
 				let difference = now - officialTime;
 				
 				if(this.state.activeChallenge.item_manual_mode == "assisted") {
-					if(difference <= -5000) {
+					if(difference <= -this.assistanceThreshold) {
 						this.showNotification("too early! try again");		
 					}
-					if(difference > -5000 && difference <= 0) {
+					if(difference > -this.assistanceThreshold && difference <= 0) {
 						this.showNotification("good! playing sound right on time...");		
 						sequenceService.scheduleSoundForNextItem(officialTime); 			
 					}

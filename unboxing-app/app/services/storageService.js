@@ -26,7 +26,6 @@ class StorageService extends Service {
 			this.writeToFile();
 		} else {
 			await this.loadFromFile();
-			networkService.setServer(this.state.server, false); // doesn't neet save, just loaded
 		}
 	}
 
@@ -50,6 +49,7 @@ class StorageService extends Service {
 	      let stateFromFile = JSON.parse(json);
 	      //console.log(stateFromFile);
 	      this.setReactive(stateFromFile);
+	      networkService.setServer(this.state.server, false); // doesn't neet save, just loaded
 		}
 	}
 

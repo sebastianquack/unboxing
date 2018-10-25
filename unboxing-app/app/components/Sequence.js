@@ -21,6 +21,7 @@ class Sequence extends React.Component {
     
     this.updateSequenceInfo = this.updateSequenceInfo.bind(this);
     this.handleEinsatz = this.handleEinsatz.bind(this);
+    this.countDownDisplayDelay = 1;
   }
 
   componentDidMount() {
@@ -66,7 +67,7 @@ class Sequence extends React.Component {
 
     if(this.props.services.sequence.nextItem) {
       let timeToNextItem = this.props.services.sequence.nextItem.startTime - currentTimeInSequence
-      this.setState({timeToNextItem: timeToNextItem});
+      this.setState({timeToNextItem: timeToNextItem > 0 ? timeToNextItem + this.countDownDisplayDelay : 0 });
       if(timeToNextItem < 0) {
         gameService.handleMissedCue();
       }
