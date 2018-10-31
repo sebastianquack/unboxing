@@ -49,8 +49,12 @@ class Sequence extends React.Component {
     }
 
     if(this.props.services.sequence.nextItem) {
+      
       let timeToNextItem = this.props.services.sequence.nextItem.startTime - currentTimeInSequence
-      this.setState({timeToNextItem: timeToNextItem > 0 ? timeToNextItem + this.countDownDisplayDelay : 0 });
+      
+      this.setState({
+        timeToNextItem: timeToNextItem > 0 ? timeToNextItem + this.countDownDisplayDelay : 0
+      });
       if(timeToNextItem < 0) {
         gameService.handleMissedCue();
       }
@@ -75,18 +79,21 @@ class Sequence extends React.Component {
     const controlStatus = this.props.services.sequence.controlStatus;
     
     return(
-      <Text>
-        currentSequence: {currentSequence ? currentSequence.name : "none"} {"\n"}
-        controlStatus: { controlStatus } {"\n"}
-        currentTrack: {currentTrack ? currentTrack.name : "none"} {"\n"}
-        Playback time: {Math.floor(this.state.playbackTime / 1000)} {"\n"}
-        Sequence playback position: {Math.floor(this.state.currentTimeInSequence / 1000)} {"\n"}
-        custom_duration: { currentSequence ? currentSequence.custom_duration : "?" } {"\n"}
-        Current item: {currentItem ? currentItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}
-        Next item: {nextItem ? nextItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""}) {"\n"}
-        Gesture Recognition: { this.props.services.gestures.isRecognizing ? "on" : "off" } {"\n"}
-        Gesture: { this.props.services.gestures.activeGesture ? this.props.services.gestures.activeGesture.name : "-" }
-      </Text>
+      <View>
+        <Text>
+          currentSequence: {currentSequence ? currentSequence.name : "none"} {"\n"}
+          controlStatus: { controlStatus } {"\n"}
+          currentTrack: {currentTrack ? currentTrack.name : "none"} {"\n"}
+          Playback time: {Math.floor(this.state.playbackTime / 1000)} {"\n"}
+          Sequence playback position: {Math.floor(this.state.currentTimeInSequence / 1000)} {"\n"}
+          custom_duration: { currentSequence ? currentSequence.custom_duration : "?" } {"\n"}
+          Current item: {currentItem ? currentItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}
+          Next item: {nextItem ? nextItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""}) {"\n"}
+          Gesture Recognition: { this.props.services.gestures.isRecognizing ? "on" : "off" } {"\n"}
+          Gesture: { this.props.services.gestures.activeGesture ? this.props.services.gestures.activeGesture.name : "-" }
+        </Text>
+        <Text style={{fontSize: 50}}>{ this.props.services.sequence.beatsToNextItem }</Text>
+      </View>
     )
   }
 

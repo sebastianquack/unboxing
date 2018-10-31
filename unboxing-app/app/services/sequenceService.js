@@ -23,6 +23,8 @@ class SequenceService extends Service {
 		this.sequenceCursor = 0; // runs through the items in the sequence during playback
 		this.loopCounter = 0;
 		this.localStart = false;
+
+		this.beatTimeout = null;
 	}
 
 	/* HELPER FUNCTIONS */
@@ -45,6 +47,49 @@ class SequenceService extends Service {
 		if (!this.state.nextItem) return
 		const startTime = this.state.startedAt + this.state.nextItem.startTime;
 		return startTime;
+	}
+
+	getBpm = ()=> {
+		if(this.state.currentSequence) {
+			return this.state.currentSequence.bpm;	
+		} else {
+			return null;
+		}
+	}
+
+	doBeatUpdate = ()=> {
+		// calculate time to next item
+		const currentTime = soundService.getSyncTime();
+    const currentTimeInSequence = currentTime - this.state.startedAt;
+
+		// beat calculations
+		const durationOfBeat = (60000 / this.state.currentSequence.bpm);
+		const currentBeatInSequence = Math.floor(currentTimeInSequence / durationOfBeat);
+		const timeOfThisBeat = this.state.startedAt + (currentBeatInSequence * durationOfBeat);
+
+    if(this.state.nextItem) {
+    	const timeToNextItem = this.state.nextItem.startTime - currentTimeInSequence;	
+    
+    	// calculate this in beats
+			const beatsToNextItem = Math.floor(timeToNextItem / durationOfBeat);
+
+			// update beatsToNextItem
+			this.setReactive({beatsToNextItem: beatsToNextItem});
+    }
+    
+    // calculate time to next update
+    const timeOfNextBeat = this.state.startedAt + ((currentBeatInSequence + 1) * durationOfBeat);
+    console.log("beat", currentBeatInSequence);
+		soundService.click(timeOfNextBeat);
+
+    let timeToNextBeat = timeOfNextBeat - soundService.getSyncTime();
+
+		if(this.state.controlStatus == "playing") {
+			if(!timeToNextBeat) {
+				timeToNextBeat = 1000;
+			}
+			this.beatTimeout = setTimeout(this.doBeatUpdate, timeToNextBeat);		
+		}
 	}
 
 	sequenceStartingLocally = ()=> {
@@ -155,6 +200,8 @@ class SequenceService extends Service {
   	this.localStart = localStart;
 
 		this.setupNextSequenceItem();
+
+		this.doBeatUpdate();
 	}
 
 	// identifies next item and schedules for playback if autoplay is activated
@@ -299,6 +346,10 @@ class SequenceService extends Service {
 	    });
 	    this.sequenceCursor = 0;
 	    this.loopCounter = 0;
+	    if(this.beatTimeout) {
+	    	clearTimeout(this.beatTimeout);
+	    	this.beatTimeout = null
+	    }
   	}
 
 }

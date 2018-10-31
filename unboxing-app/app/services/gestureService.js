@@ -6,7 +6,7 @@ import Service from './Service';
 import { sensorService, storageService, networkService, soundService } from './';
 
 const serviceName = "gestures"
-const clickFilename = '/misc/woosh.mp3';
+//const clickFilename = '/misc/woosh.mp3';
 
 class GestureService extends Service {
 
@@ -37,9 +37,9 @@ class GestureService extends Service {
 	init = () => {
 		storageService.registerReactiveStateCallback(this.handleStorageData, serviceName)
 
-		soundService.preloadSoundfile(clickFilename, ()=>{
+		/*soundService.preloadSoundfile(clickFilename, ()=>{
 			this.showNotification("click loaded");
-		});
+		});*/
 	}
 
 	// prepare gesture object for recognition, add attributes:
@@ -128,7 +128,8 @@ class GestureService extends Service {
 		console.log("GESTURE detected", gesture.name)
 		this.showNotification("GESTURE detected " + gesture.name);
 		if(typeof this.detectionCallback != "function") {
-			soundService.scheduleSound(clickFilename, soundService.getSyncTime());	
+			//soundService.scheduleSound(clickFilename, soundService.getSyncTime());	
+			soundService.click();
 		}
 		/*this.setReactive({
 			detectedGestures: [{detectedAt: new Date(), ...gesture}, ...this.state.detectedGestures]
