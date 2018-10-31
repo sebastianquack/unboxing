@@ -1,5 +1,9 @@
 /* CSS declarations go here */
 
+body {
+  font-family: sans-serif;
+}
+
 pre, div {
   padding:0;
   margin:0;
@@ -7,4 +11,9 @@ pre, div {
 
 li {
   list-style-type: none;
+}
+
+h3 {
+  font-size:2rem;
+  text-decoration: underline;
 }

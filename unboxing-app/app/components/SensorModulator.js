@@ -4,7 +4,7 @@ import { Accelerometer } from 'react-native-sensors';
 
 import AttributeSlider from './AttributeSlider';
 
-import {soundService} from '../services/soundService';
+import {soundService, gameService} from '../services';
 import {withServices} from '../components/ServiceConnector';
 
 class SensorModulator extends React.Component { 
@@ -14,6 +14,8 @@ class SensorModulator extends React.Component {
 
   // used for mode "volume movement"
   translateMovementAmount = (data, props, dataBuffer)=>{
+    data = data.acc
+    dataBuffer = dataBuffer.map( d => d.acc)
     if (dataBuffer.length == 0) return 0
     const speedBufferSize = 5
     const speedX = Math.abs(data.x-dataBuffer[0].x)
@@ -56,7 +58,7 @@ class SensorModulator extends React.Component {
             maxValue={1}
             onValueChange={value=>soundService.setVolume(value)}
             sensorTranslate={(data, props)=>{
-              let sensorValue = data.x;
+              let sensorValue = data.gyr.x;
               if(sensorValue > 5) sensorValue = 5;
               if(sensorValue < -5) sensorValue = -5;
               let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;
@@ -74,7 +76,7 @@ class SensorModulator extends React.Component {
             maxValue={1.2}
             onValueChange={value=>soundService.setSpeed(value)}
             sensorTranslate={(data, props)=>{
-              let sensorValue = data.y;
+              let sensorValue = data.gyr.y;
               if(sensorValue > 5) sensorValue = 5;
               if(sensorValue < -5) sensorValue = -5;
               let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;
@@ -96,6 +98,33 @@ class SensorModulator extends React.Component {
             sensorTranslate={this.translateMovementAmount}
           />
         );
+      case "off when moving":
+        return (
+          <AttributeSlider
+            attributeName={"off when moving"}
+            sensor="acc"
+            initialValue={this.props.services.sound.volume}
+            value={this.props.services.sound.volume}
+            minValue={0}
+            maxValue={1}
+            dataBufferSize={1}
+            updateInterval={200}
+            onValueChange={value=>soundService.setVolume(value)}
+            sensorTranslate={(data, props)=>{
+              data = data.acc
+              const limit = 0.3 // larger number means more movement
+              const speed = Math.abs(data.x) + Math.abs(data.y) + Math.abs(data.z);
+              let result = 0
+              console.log(speed)
+              if (speed < limit) {
+                result = 1 - speed*limit;
+              } else {
+                gameService.handleStopButton()
+              }
+              return Math.floor(100*result)/100;      
+            }}
+          />
+        );        
       default: 
         return null;
     }

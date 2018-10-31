@@ -41,8 +41,7 @@ class AttributeSlider extends React.Component {
   }
 
   receiveData(data) {
-    data = data.gyr
-    this.setState({gyr: data});
+    this.setState(data);
     this.addBuffer(data)
 
     if(this.state.sensorControl) {

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
-import { Files, Gestures } from '../collections'
+import { Files, Gestures, itemSchema } from '../collections'
 import { AudioPreview } from './'
 
 class SequenceDetailItem extends React.Component {
@@ -65,7 +65,15 @@ class SequenceDetailItem extends React.Component {
             {emptyOption}
             {this.props.ready && this.props.gestures.map( f => <option key={f._id} value={f._id}>{f.name}</option>)}      
           </select>
-        )        
+        )
+      case "sensorModulation": 
+          const schema = itemSchema.sensorModulation
+          return (
+            <select value={value} onChange={ e => this.handleAttributeChange(type, e.target.value) }>
+              <option key={schema.default} value={schema.default}>&lt;{schema.default}&gt;</option>
+              {this.props.ready && schema.options.map( o => <option key={o} value={o}>{o}</option>)}      
+            </select>
+          )
       case "duration":
         return <span>{value}</span>
       case "autoplay": 

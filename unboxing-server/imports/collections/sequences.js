@@ -12,7 +12,19 @@ Sequences.allow({
   remove: () => true
 });
 
-export default Sequences;
+const itemSchema = {
+  sensorModulation: {
+    default: "off",
+    options: [
+      "volume tilt", 
+      "speed tilt", 
+      "volume move",
+      "off when moving"
+    ]
+  }
+}
+
+export {Sequences, itemSchema};
 
 /* SCHEMA 
  *
@@ -29,6 +41,7 @@ export default Sequences;
  *   - name
  *   - color
  */
+
 
  updateTracksInfo = (userId, doc) => {
   const trackNames = [...new Set(doc.items.map( i => i.track))]

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
-import Sequences from '../collections/sequences';
+import {Sequences} from '../collections';
 import {SequenceDetail} from './';
 
 class SequencesInfo extends React.Component {
