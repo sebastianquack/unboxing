@@ -56,6 +56,8 @@ npm --version
 
 ## build production 
 
+- keystore goes in android/app - see https://facebook.github.io/react-native/docs/signed-apk-android
+
 `$ cd android`
 `$ ./gradlew assembleRelease`
 

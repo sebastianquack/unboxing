@@ -28,7 +28,17 @@ Migrations.add({
   }
 });
 
-const version = 3;
+Migrations.add({
+  version: 4,
+  name: 'add bpm to sequence',
+  up: function() {
+    add_default_attributes_to_sequence({
+      bpm: 60
+    });
+  }
+});
+
+const version = 4;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);
@@ -36,6 +46,22 @@ Meteor.startup(() => {
 
 
 /***** helper *****/
+
+// add attribute to sequence
+add_default_attributes_to_sequence = function(attribs) {
+  Sequences.find().forEach( sequence => {
+      let new_attribs = {};
+      for (let a in attribs) {
+        if (!sequence[a]) {
+          new_attribs[a] = attribs[a]
+        }
+      }
+      if (Object.keys(new_attribs).length > 0) {
+        console.log(`adding new default attributes ${JSON.stringify(new_attribs)} to sequence"`)
+        Meteor.call('updateSequence', sequence._id, new_attribs)
+      }
+  });
+}
 
 // add attributes with default values to all items unless they are already set in the item
 add_default_attributes_to_items = function(attribs) {
