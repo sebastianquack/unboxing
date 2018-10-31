@@ -24,14 +24,20 @@ class Sequence extends React.Component {
  SequenceDetailCss = css`
     display: inline-block;
     background-color: lightgrey;
-    padding: 0 1ex 1ex 1ex;
-    margin-bottom: 1ex;
+    padding: 1em 1ex 1em 1ex;
+    border-radius: 1em 1em 0 0;
+    margin-bottom: 0;
     label {
+      &:first-child {
+        margin-bottom: 1em;
+        span:first-child { display: none }
+        font-size:180%;
+      }
       display: block;
       font-family: monospace;
       + label {margin-top: 0.5ex}
       span {
-        min-width: 6em;
+        min-width: 10em;
         display: inline-block;
       }
       select, span {
@@ -126,14 +132,16 @@ class Sequence extends React.Component {
         <pre>
           <div className={this.SequenceDetailCss}>
             {Object.entries(this.props.sequence).map(this.renderAttribute)}              
+            <br />
+            <button onClick={this.handleAdd}>
+              Add Item
+            </button>            
+            &nbsp;&nbsp;    
             <button onClick={()=>Meteor.call('removeSequence',this.props.sequence._id)}>
               Delete Sequence
-            </button>     
+            </button>
           </div>
         </pre>
-        <button onClick={this.handleAdd}>
-          Add Item
-        </button>
         <div className={tracksCSS}>
           <ol className="tracks_list">
           {this.props.sequence.tracks && this.props.sequence.tracks.map(this.liTracks)}
@@ -162,7 +170,6 @@ export default withTracker(props => {
 const tracksCSS = css`
 width: 90%;
 position: relative;
-margin-top: 1ex;
 .tracks_list {
   padding-left: 0;
   margin-bottom: 5em;
@@ -177,6 +184,11 @@ margin-top: 1ex;
     &:first-of-type {
       border-width: 1px 0 1px 0;
     }
+    &:last-of-type {
+      &, .title {
+        border-radius: 0 0 0 1ex;
+      }
+    }    
     .title {
       box-sizing: border-box;
       display: inline-block;
@@ -202,6 +214,5 @@ margin-top: 1ex;
         width: auto !important;
       }
     }
-
-}
+  }
 `

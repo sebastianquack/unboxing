@@ -76,7 +76,7 @@ Meteor.methods({
   'removeSequenceItem'(id) {
     console.log("remove sequence item", id)
     Sequences.update(
-      { },
+      { items: { $elemMatch: { _id: id } } },
       { $pull: { items: { _id: id } } }
     )
   },
