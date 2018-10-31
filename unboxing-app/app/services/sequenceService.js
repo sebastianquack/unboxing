@@ -16,13 +16,16 @@ class SequenceService extends Service {
 			nextItem: null, // next item to play, if available
 			scheduledItem: null, // item scheduled for play
 			currentItem: null, // current item playing, if available
-			showPlayItemButton: false // should play button be shown
+			showPlayItemButton: false, // should play button be shown
+			beatTickActive: false // should beat be played on the beat
 		});
 
 		// not reative - used for internal calculations
 		this.sequenceCursor = 0; // runs through the items in the sequence during playback
 		this.loopCounter = 0;
 		this.localStart = false;
+
+		this.beatTimeout = null;
 	}
 
 	/* HELPER FUNCTIONS */
@@ -45,6 +48,63 @@ class SequenceService extends Service {
 		if (!this.state.nextItem) return
 		const startTime = this.state.startedAt + this.state.nextItem.startTime;
 		return startTime;
+	}
+
+	toggleBeatTick = ()=> {
+		this.setReactive({beatTickActive: !this.state.beatTickActive});
+	}
+
+	doBeatUpdate = ()=> {
+		// calculate time to next item
+		const currentTime = soundService.getSyncTime();
+    const currentTimeInSequence = currentTime - this.state.startedAt;
+
+		// beat calculations
+		const durationOfBeat = (60000 / this.state.currentSequence.bpm);
+		const currentBeatInSequence = Math.floor(currentTimeInSequence / durationOfBeat);
+		const timeOfThisBeat = this.state.startedAt + (currentBeatInSequence * durationOfBeat);
+
+		// determine next startime to count down to
+		let startTime = null;
+    if(this.state.nextItem) {
+    	startTime = this.state.nextItem.startTime;
+    } 
+    if(this.state.scheduledItem) {
+    	startTime = this.state.scheduledItem.startTime;
+    }
+
+    if(startTime) {
+
+	    const timeToNextItem = startTime - currentTimeInSequence;	
+	    
+	    // calculate this in beats
+			const beatsToNextItem = Math.floor(timeToNextItem / durationOfBeat);
+
+			// update beatsToNextItem
+			if(beatsToNextItem > 0) {
+				this.setReactive({beatsToNextItem: beatsToNextItem});	
+			} else {
+				this.setReactive({beatsToNextItem: ""});	
+			}
+			
+		}
+    
+    // calculate time to next update
+    const timeOfNextBeat = this.state.startedAt + ((currentBeatInSequence + 1) * durationOfBeat);
+    console.log("beat", currentBeatInSequence);
+
+    if(this.state.beatTickActive) {
+    	soundService.click(timeOfNextBeat);	
+    }
+		
+    let timeToNextBeat = timeOfNextBeat - soundService.getSyncTime();
+
+		if(this.state.controlStatus == "playing") {
+			if(!timeToNextBeat) {
+				timeToNextBeat = 1000;
+			}
+			this.beatTimeout = setTimeout(this.doBeatUpdate, timeToNextBeat);		
+		}
 	}
 
 	sequenceStartingLocally = ()=> {
@@ -155,6 +215,8 @@ class SequenceService extends Service {
   	this.localStart = localStart;
 
 		this.setupNextSequenceItem();
+
+		this.doBeatUpdate();
 	}
 
 	// identifies next item and schedules for playback if autoplay is activated
@@ -238,9 +300,9 @@ class SequenceService extends Service {
 					console.log("newStartedAt", newStartedAt);
 					this.setReactive({
 					  startedAt: newStartedAt
-	    			});
-	    			console.log(this.state);
-	    			this.loopCounter++;
+	    		});
+	    		console.log(this.state);
+	    		this.loopCounter++;
 					this.setupNextSequenceItem();
 				} else {
 					this.stopSequence();
@@ -299,6 +361,10 @@ class SequenceService extends Service {
 	    });
 	    this.sequenceCursor = 0;
 	    this.loopCounter = 0;
+	    if(this.beatTimeout) {
+	    	clearTimeout(this.beatTimeout);
+	    	this.beatTimeout = null
+	    }
   	}
 
 }

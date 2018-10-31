@@ -2,7 +2,7 @@ import Service from './Service';
 import { sensorService, soundService } from './';
 
 const serviceName = "peak"
-const clickFilename = '/misc/tick.wav';
+//const clickFilename = '/misc/tick.wav';
 
 class PeakService extends Service {
 
@@ -23,9 +23,9 @@ class PeakService extends Service {
 
 		this.init();
 
-		soundService.preloadSoundfile(clickFilename, ()=>{
+		/*soundService.preloadSoundfile(clickFilename, ()=>{
 			this.showNotification("tick loaded");
-		});
+		});*/
 		//this.handleSensorDataForRecognition = this.handleSensorDataForRecognition.bind(this)
 	}
 
@@ -66,7 +66,8 @@ class PeakService extends Service {
 		this.peakStartTime = null
 		this.showNotification("PEAK")
 		if(typeof this.detectionCallback != "function") {
-			soundService.scheduleSound(clickFilename, soundService.getSyncTime());	
+			//soundService.scheduleSound(clickFilename, soundService.getSyncTime());	
+			soundService.click();
 		}				
 		if (this.detectionCallback) {
 			this.detectionCallback()

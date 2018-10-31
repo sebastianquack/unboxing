@@ -37,7 +37,8 @@ Meteor.methods({
     Sequences.insert({
       name: "new",
       custom_duration: 0,
-      items: []
+      items: [],
+      bpm: 60
     })
   },
   'removeSequence'(id) {
