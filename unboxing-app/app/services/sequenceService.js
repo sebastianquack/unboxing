@@ -16,7 +16,8 @@ class SequenceService extends Service {
 			nextItem: null, // next item to play, if available
 			scheduledItem: null, // item scheduled for play
 			currentItem: null, // current item playing, if available
-			showPlayItemButton: false // should play button be shown
+			showPlayItemButton: false, // should play button be shown
+			beatTickActive: false // should beat be played on the beat
 		});
 
 		// not reative - used for internal calculations
@@ -57,6 +58,10 @@ class SequenceService extends Service {
 		}
 	}
 
+	toggleBeatTick = ()=> {
+		this.setReactive({beatTickActive: !this.state.beatTickActive});
+	}
+
 	doBeatUpdate = ()=> {
 		// calculate time to next item
 		const currentTime = soundService.getSyncTime();
@@ -67,21 +72,39 @@ class SequenceService extends Service {
 		const currentBeatInSequence = Math.floor(currentTimeInSequence / durationOfBeat);
 		const timeOfThisBeat = this.state.startedAt + (currentBeatInSequence * durationOfBeat);
 
+		// determine next startime to count down to
+		let startTime = null;
     if(this.state.nextItem) {
-    	const timeToNextItem = this.state.nextItem.startTime - currentTimeInSequence;	
-    
-    	// calculate this in beats
+    	startTime = this.state.nextItem.startTime;
+    } 
+    if(this.state.scheduledItem) {
+    	startTime = this.state.scheduledItem.startTime;
+    }
+
+    if(startTime) {
+
+	    const timeToNextItem = startTime - currentTimeInSequence;	
+	    
+	    // calculate this in beats
 			const beatsToNextItem = Math.floor(timeToNextItem / durationOfBeat);
 
 			// update beatsToNextItem
-			this.setReactive({beatsToNextItem: beatsToNextItem});
-    }
+			if(beatsToNextItem > 0) {
+				this.setReactive({beatsToNextItem: beatsToNextItem});	
+			} else {
+				this.setReactive({beatsToNextItem: ""});	
+			}
+			
+		}
     
     // calculate time to next update
     const timeOfNextBeat = this.state.startedAt + ((currentBeatInSequence + 1) * durationOfBeat);
     console.log("beat", currentBeatInSequence);
-		soundService.click(timeOfNextBeat);
 
+    if(this.state.beatTickActive) {
+    	soundService.click(timeOfNextBeat);	
+    }
+		
     let timeToNextBeat = timeOfNextBeat - soundService.getSyncTime();
 
 		if(this.state.controlStatus == "playing") {

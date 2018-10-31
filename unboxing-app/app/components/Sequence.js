@@ -122,6 +122,10 @@ class Sequence extends React.Component {
         </View>
         <SensorModulator mode={this.props.services.sequence.currentItem ? this.props.services.sequence.currentItem.sensorModulation : ""}/>
         {this.renderSequenceInfo()}
+        <View style={{width:"25%"}}>
+          <Text>Beat Tick Off/On</Text>         
+          <Switch value={this.props.services.sequence.beatTickActive} onValueChange={sequenceService.toggleBeatTick}/>
+        </View>
       </View>
     );
   }
