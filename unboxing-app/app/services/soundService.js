@@ -35,6 +35,8 @@ class SoundSevice extends Service {
 
     this.volume = 0.5;
     this.speed = 1;
+
+    this.schedulingIntervals = [];
     
     this.preloadSoundfiles([clickFilename], ()=>{
     	console.log("click loaded");
@@ -172,9 +174,9 @@ class SoundSevice extends Service {
 
     const timeToRunStartingLoop = targetTime - this.getSyncTime();
 
-    setTimeout(()=>{
+    this.schedulingIntervals.push(setTimeout(()=>{
 			this.runStartingLoop(index, targetTime, callbacks);
-    }, timeToRunStartingLoop - 34); // set timeout to a bit less to allow for loop
+    }, timeToRunStartingLoop - 34)); // set timeout to a bit less to allow for loop
   }
 
   // run loop for preloaded, scheduled sound at index to playback precisely at target time
@@ -244,6 +246,10 @@ class SoundSevice extends Service {
 		this.sounds.forEach((sound)=>{
 			this.stopSound(sound.filename);
 		});
+		this.schedulingIntervals.forEach((interval)=> {
+			clearInterval(interval);
+		});
+		this.schedulingIntervals = [];
 	}
 
 	// public - stops playback of a single sound and removes callback

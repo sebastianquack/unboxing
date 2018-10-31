@@ -50,14 +50,6 @@ class SequenceService extends Service {
 		return startTime;
 	}
 
-	getBpm = ()=> {
-		if(this.state.currentSequence) {
-			return this.state.currentSequence.bpm;	
-		} else {
-			return null;
-		}
-	}
-
 	toggleBeatTick = ()=> {
 		this.setReactive({beatTickActive: !this.state.beatTickActive});
 	}
@@ -308,9 +300,9 @@ class SequenceService extends Service {
 					console.log("newStartedAt", newStartedAt);
 					this.setReactive({
 					  startedAt: newStartedAt
-	    			});
-	    			console.log(this.state);
-	    			this.loopCounter++;
+	    		});
+	    		console.log(this.state);
+	    		this.loopCounter++;
 					this.setupNextSequenceItem();
 				} else {
 					this.stopSequence();
