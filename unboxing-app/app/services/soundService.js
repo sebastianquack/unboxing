@@ -292,7 +292,7 @@ class SoundSevice extends Service {
 		if(typeof(v) == "number") {
 		  if(v != this.getReactive("volume")) {
 		  	this.sounds.forEach((sound)=>{
-					if(sound) {
+					if(sound.soundObj) {
 		  			sound.soundObj.setVolume(v);	
 		  		}
 				});

@@ -42,13 +42,21 @@ class GameService extends Service {
 			},
 			// todo: onConnectionLost
 		});
-
-		// nearbyService.initConnection(challenge.name); 
-		// unify serviceId for testing
 	}
 
-	getActiveChallenge() {
+	getActiveChallenge = ()=> {
 		return this.state.activeChallenge;
+	}
+
+	isChallengeLooping = ()=> {
+		let looping = false;
+		let activeChallenge = this.getActiveChallenge();
+		if(activeChallenge) {
+			if(activeChallenge.sequence_loop) {
+				looping = true;
+			}
+		}
+		return looping;
 	}
 
 	// called from TrackSelector when user selects track
@@ -120,9 +128,6 @@ class GameService extends Service {
 			challengeStatus: "list",
 			activeChallenge: null
 		});	
-
-		// nearbyService.cancelConnection();
-		// always leave on for testing
 	}
 }
 

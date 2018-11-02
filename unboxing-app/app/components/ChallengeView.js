@@ -27,10 +27,9 @@ class ChallengeView extends React.Component {
         <Text>{challenge.instructions}</Text>
         <Text>{JSON.stringify(challenge)}</Text>
         
-        {sequenceService.getControlStatus() == "idle" &&
-          <TrackSelector sequence_id={challenge.sequence_id}/>
-        }
+        <TrackSelector sequence_id={challenge.sequence_id}/>
         <Sequence/>
+        
         <NearbyStatus/>
 
       </View>

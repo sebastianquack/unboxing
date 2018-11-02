@@ -56,7 +56,7 @@ class Sequence extends React.Component {
         timeToNextItem: timeToNextItem > 0 ? timeToNextItem + this.countDownDisplayDelay : 0
       });
       if(timeToNextItem < 0) {
-        gameService.handleMissedCue();
+        gameService.handleMissedCue(); // todo: move to sequence service
       }
     } else {
       this.setState({timeToNextItem: null});   
@@ -92,7 +92,6 @@ class Sequence extends React.Component {
           Gesture Recognition: { this.props.services.gestures.isRecognizing ? "on" : "off" } {"\n"}
           Gesture: { this.props.services.gestures.activeGesture ? this.props.services.gestures.activeGesture.name : "-" }
         </Text>
-        <Text style={{fontSize: 50}}>{ this.props.services.sequence.beatsToNextItem }</Text>
       </View>
     )
   }
@@ -120,12 +119,13 @@ class Sequence extends React.Component {
             </TouchableOpacity>
           }
         </View>
-        <SensorModulator mode={this.props.services.sequence.currentItem ? this.props.services.sequence.currentItem.sensorModulation : ""}/>
-        {this.renderSequenceInfo()}
+        <Text style={{fontSize: 50}}>{ this.props.services.sequence.beatsToNextItem }</Text>
         <View style={{width:"25%"}}>
           <Text>Beat Tick Off/On</Text>         
           <Switch value={this.props.services.sequence.beatTickActive} onValueChange={sequenceService.toggleBeatTick}/>
         </View>
+        <SensorModulator mode={this.props.services.sequence.currentItem ? this.props.services.sequence.currentItem.sensorModulation : ""}/>
+        {this.renderSequenceInfo()}
       </View>
     );
   }
