@@ -19,7 +19,8 @@ const itemSchema = {
       "volume tilt", 
       "speed tilt", 
       "volume move",
-      "off when moving"
+      "off when moving",
+      "crescendo"
     ]
   }
 }

@@ -11,7 +11,7 @@ class SensorInfo extends React.Component {
   }
 
   componentDidMount() {
-    sensorService.enableReactiveData()
+    // sensorService.enableReactiveData()
     sensorService.enableSampleRateMonitoring()
   }
 
@@ -46,10 +46,11 @@ class SensorInfo extends React.Component {
     return (
       <View style={styles.info}>
         <Text style={globalStyles.titleText}>Sensor Info</Text>
-        {this.renderSensorData(this.props.services.sensors.data)}
+        {/* this.renderSensorData(this.props.services.sensors.data) */}
         <Text>Sample Rate: { this.props.services.sensors.sampleRate }</Text>
         <Text>isUp: { this.props.services.peak.isUp ? "up" : "" }</Text>
         <Text>isDown: { this.props.services.peak.isDown ? "down" : "" }</Text>
+        <Text>deltaUpDown: { this.props.services.peak.deltaUpDown }</Text>
         <Text>bpm: { this.props.services.peak.bpm }</Text>
       </View>
     );

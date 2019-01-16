@@ -20,7 +20,7 @@ class SequenceService extends Service {
 			beatTickActive: false // should beat be played on the beat
 		});
 
-		// not reative - used for internal calculations
+		// not reactive - used for internal calculations
 		this.loopCounter = 0;
 		this.localStart = false;
 		this.beatTimeout = null;
