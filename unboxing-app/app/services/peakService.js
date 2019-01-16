@@ -18,7 +18,8 @@ class PeakService extends Service {
 		this.isUp = y => y < -0.75
 		this.isDown = y => y > 0.55
 
-		this.peakDistMillis = 1000
+		this.peakDistMillisMin = 150
+		this.peakDistMillisMax = 2000
 		this.peakStartTime = null
 
 		this.init();
@@ -47,8 +48,13 @@ class PeakService extends Service {
 		}
 		// detect down if in time
 		if (this.isDown(y)) {
-			if (this.peakStartTime && this.peakStartTime + this.peakDistMillis > soundService.getSyncTime()) {
-				this.detected()
+			if (this.peakStartTime && this.peakStartTime + this.peakDistMillisMin < soundService.getSyncTime()) {
+				this.setReactive({
+					deltaUpDown: soundService.getSyncTime() - this.peakStartTime
+				})			
+				if (this.peakStartTime + this.peakDistMillisMax > soundService.getSyncTime()) {
+					this.detected()
+				}
 			}
 		}
 

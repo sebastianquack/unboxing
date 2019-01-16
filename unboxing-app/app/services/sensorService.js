@@ -13,7 +13,7 @@ class SensorService extends Service {
 				acc:{x:0,y:0,z:0},
 				gyr:{x:0,y:0,z:0},
 			},
-			sampleRate: 0,
+			sampleRate: -1,
 		});
 
 		/* 
@@ -36,7 +36,7 @@ class SensorService extends Service {
 		 * with recognition on, the maximum seems 8 SpS
 		 * 
 		 * */
-		this.sampleIntervalMillis = 117 // every 7 frames
+		this.sampleIntervalMillis = 50 //
 
 		this.accelerationObservable = null;
 		this.gyroscopeObservable = null;
@@ -51,17 +51,21 @@ class SensorService extends Service {
 		this.receivers = {}
 		this.receiversCounter = 0
 
+		this.swapGyrAcc = true
+
 		this.init();
 		this.enable();
 	}
 
 	init = () => {
-		this.gyroscopeObservable = new Accelerometer({ // swap gyro and acc
+		accObs = new Accelerometer({ // swap gyro and acc
 			updateInterval: this.sampleIntervalMillis
 		})
-		this.accelerationObservable = new Gyroscope({	// swap gyro and acc
+		gyrObs = new Gyroscope({	// swap gyro and acc
 			updateInterval: this.sampleIntervalMillis
 		})
+		this.gyroscopeObservable = (this.swapGyrAcc ? accObs : gyrObs)
+		this.accelerationObservable = (this.swapGyrAcc ? gyrObs : accObs)
 		this.combinedObservable = zip(
 			this.gyroscopeObservable,
 			this.accelerationObservable,
