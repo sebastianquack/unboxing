@@ -29,6 +29,7 @@ import GameContainer from './app/components/GameContainer';
 import NearbyStatus from './app/components/NearbyStatus';
 import Gestures from './app/components/Gestures';
 import SensorInfo from './app/components/SensorInfo';
+import DebugToggle from './app/components/DebugToggle';
 
 
 class App extends Component {
@@ -67,6 +68,7 @@ class App extends Component {
         <Gestures />
         <Files/>
         <NearbyStatus/>
+        <DebugToggle/>
       </View>
     );
   }

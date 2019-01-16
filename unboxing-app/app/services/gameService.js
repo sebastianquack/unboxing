@@ -7,8 +7,9 @@ class GameService extends Service {
 	constructor() {
 		// initialize with reactive vars
 		super("game", {
-			challengeStatus: "list",	// list <-> active 
-			activeChallenge: null 		// active challenge saved here
+			challengeStatus: "list",	// list <-> navigate <-> prepare <-> play 
+			activeChallenge: null, 		// active challenge saved here
+			debugMode: false					// show debugging info in interface
 		});
 
 		// not reactive vars
@@ -17,31 +18,47 @@ class GameService extends Service {
 		this.assistanceThreshold = 2000;
 	}
 
-	// called, when user selects challenge
+	toggleDebugMode = ()=> {
+		this.setReactive({
+			debugMode: !this.state.debugMode
+		});
+	}
+
+	// called, when user first challenge
 	setActiveChallenge(challenge) {
 		this.setReactive({
-			challengeStatus: "active",
+			challengeStatus: "navigate",
 			activeChallenge: challenge
 		});
+	}
 
-		nearbyService.setCustomCallbacks({
-			onConnectionEstablished: () => {
-				// todo
-			},
-			onMessageReceived: (message) => {
-				console.log("message received: ", message.message);
+	setActiveChallengeStatus(status) {
 
-				// if this is start sequence message
-				if(message.message == "start_sequence") {
-
-					// if we haven't started and are ready to play
-					if(sequenceService.getControlStatus() == "ready")  {
-						sequenceService.startSequence(message.startTime, false); // just start sequence, not item started locally
-					}
-				}
-			},
-			// todo: onConnectionLost
+		this.setReactive({
+			challengeStatus: status
 		});
+
+		if(status == "prepare") {
+			nearbyService.setCustomCallbacks({
+				onConnectionEstablished: () => {
+					// todo
+				},
+				onMessageReceived: (message) => {
+					console.log("message received: ", message.message);
+
+					// if this is start sequence message
+					if(message.message == "start_sequence") {
+
+						// if we haven't started and are ready to play
+						if(sequenceService.getControlStatus() == "ready")  {
+							sequenceService.startSequence(message.startTime, false); // just start sequence, not item started locally
+						}
+					}
+				},
+				// todo: onConnectionLost
+			});
+		}
+
 	}
 
 	getActiveChallenge = ()=> {
@@ -69,16 +86,7 @@ class GameService extends Service {
 
 		// if the sequence isn't running, start the sequence and inform other players
 		if(sequenceService.getControlStatus() == "ready") {
-			
-			let nowTime = soundService.getSyncTime();
-			let startTime = nowTime + 2000; // set time for sequence to start
-			sequenceService.startSequence(startTime, true); // set local start flag to true 
-
-			this.showNotification("starting sequence...");
-
-			// send start_sequence message to all players connected via nearby
-			nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
-
+			this.startSequence();
 		// else, if the sequence is already running
 		} else {
 			if(sequenceService.getControlStatus() == "playing") {
@@ -105,6 +113,17 @@ class GameService extends Service {
 				}		
 			}	
 		}
+  }
+
+  startSequence = () => {
+			let nowTime = soundService.getSyncTime();
+			let startTime = nowTime + 2000; // set time for sequence to start
+			sequenceService.startSequence(startTime, true); // set local start flag to true 
+
+			this.showNotification("starting sequence...");
+
+			// send start_sequence message to all players connected via nearby
+			nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
   }
 
   handleMissedCue() {

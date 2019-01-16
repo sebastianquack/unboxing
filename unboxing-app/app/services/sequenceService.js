@@ -33,6 +33,7 @@ class SequenceService extends Service {
 		return this.state.controlStatus;
 	}
 
+	// return the first item of a specified track in the current Sequence
 	firstItemInTrack = (track)=> {
 		let items = this.state.currentSequence.items;
 		for(let i = 0; i < items.length; i++) {
@@ -136,7 +137,7 @@ class SequenceService extends Service {
 	// updates if play button should be shown in interface
 	updatePlayButton = ()=> {
 		this.setReactive({
-	    	showPlayItemButton: (this.state.nextItem && !this.autoPlayNextItem())
+	    	showPlayItemButton: (this.state.controlStatus == "playing" && this.state.nextItem && !this.autoPlayNextItem())
 		}); 
 	}
 
@@ -162,6 +163,8 @@ class SequenceService extends Service {
   		return;
   	}
 
+  	// vvvvv from here on we assume that sequence has not started yet vvvvv
+
 		// if sequence has changed
 		if(sequence != this.state.currentSequence) {
 		
@@ -177,30 +180,46 @@ class SequenceService extends Service {
 				console.log("finished loading sound files for this track");
 				this.setReactive({
 					controlStatus: "ready",
-					showPlayItemButton: true
+					showPlayItemButton: false
 				});
-
-				// listen for gestures if first item in track is at beginning of sequence
-				const firstItem = this.firstItemInTrack(track);
-				if(firstItem) {
-					if(firstItem.startTime == 0) {				
-						if(firstItem.gesture_id) {
-							gestureService.waitForGesture(firstItem.gesture_id, () => {
-								gameService.handlePlayNextItemButton()
-								gestureService.stopWaitingForGesture()
-							});
-						}
-						if(firstItem.sensorStart) {
-							peakService.waitForStart(() => {
-								gameService.handlePlayNextItemButton()
-								peakService.stopWaitingForStart()
-							})	
-						}
-					}
-				}
 			});
 		}
-  
+		
+		// listen for gestures if first item in track is at beginning of sequence
+		console.log("checking firstItem in track " + track.name);
+		const firstItem = this.firstItemInTrack(track.name);
+		console.log(firstItem);
+		if(firstItem) {
+			if(firstItem.startTime == 0) {				
+				this.setReactive({
+					showPlayItemButton: true,
+					nextActionMessage: "your part is right at the beginning of this sequence. perform the start gesture to start the sequence for everyone here!"
+				});
+
+				if(firstItem.gesture_id) {
+					gestureService.waitForGesture(firstItem.gesture_id, () => {
+						gameService.handlePlayNextItemButton()
+						gestureService.stopWaitingForGesture()
+					});
+				}
+				if(firstItem.sensorStart) {
+					peakService.waitForStart(() => {
+						gameService.handlePlayNextItemButton()
+						peakService.stopWaitingForStart()
+					})	
+				}
+			} else {
+				this.setReactive({
+					showPlayItemButton: false,
+					nextActionMessage: "you don't have anything to play at the beginning of this sequence. wait for another player to start the sequence, then join at the right moment!"
+				});	
+			}
+		} else {
+			this.setReactive({
+				nextActionMessage: "your instrument has nothing to do in this sequence. listen or choose a different one!"
+			});
+		}
+
   }
 
   // start sequence playback - localStart marks if sequence was started on this device
@@ -232,7 +251,7 @@ class SequenceService extends Service {
 	/* called from:
 	- startSequence
 	- trackSelect (if track is changed)
-	- scheduleSoundForNextItem (after playback ends)
+	- scheduleSoundForNextItem (wehn playback starts and after playback ends)
 	- skipNextItem
 	- stopCurrentSound
 	- setupNextSequenceItem (if end of loop reached)
@@ -338,6 +357,7 @@ class SequenceService extends Service {
 				}
     	
     	} else {
+    		this.setReactive({nextActionMessage: "sequence ended"});
     		this.stopSequence();
     	}
 	}
@@ -359,6 +379,7 @@ class SequenceService extends Service {
 					scheduledItem: null,
 					currentItem: this.state.scheduledItem,
 				});
+				this.setupNextSequenceItem();
 			},
 			onPlayEnd: () => {
 				this.setReactive({currentItem: null});
