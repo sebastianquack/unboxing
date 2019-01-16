@@ -3,6 +3,7 @@ import { Text, View, Switch, Slider } from 'react-native';
 import { Accelerometer } from 'react-native-sensors';
 
 import AttributeSlider from './AttributeSlider';
+import AttributeNavigator from './AttributeNavigator';
 
 import {soundService, gameService} from '../services';
 import {withServices} from '../components/ServiceConnector';
@@ -10,39 +11,6 @@ import {withServices} from '../components/ServiceConnector';
 class SensorModulator extends React.Component { 
   constructor(props) {
     super(props);
-  }
-
-  // used for mode "volume movement"
-  translateMovementAmount = (data, props, dataBuffer)=>{
-    data = data.acc
-    dataBuffer = dataBuffer.map( d => d.acc)
-    if (dataBuffer.length == 0) return 0
-    const speedBufferSize = 5
-    const speedX = Math.abs(data.x-dataBuffer[0].x)
-    const speedY = Math.abs(data.y-dataBuffer[0].y)
-    const speedZ = Math.abs(data.z-dataBuffer[0].z)
-    const currentSpeed = speedX + speedY + speedZ
-    if (typeof(this.speedBuffer) == "undefined") {
-      this.speedBuffer = []
-      this.speedBuffer.fill(0,0,speedBufferSize)
-    }
-
-    //FIFO in
-    if (this.speedBuffer.length <= speedBufferSize) {
-      this.speedBuffer.push(currentSpeed)
-    }
-    //FIFO out
-    if (this.speedBuffer.length > speedBufferSize) {
-      this.speedBuffer.shift()
-    }    
-
-    const average = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
-    const avg = average(this.speedBuffer)
-
-    // console.log(currentSpeed, avg)
-
-    let result = 0.1 * ((currentSpeed + avg) / 2);
-    return Math.floor(100*result)/100;      
   }
 
   // render an AttributeSlide depending on mode prop
@@ -95,14 +63,13 @@ class SensorModulator extends React.Component {
             dataBufferSize={1}
             updateInterval={200}
             onValueChange={value=>soundService.setVolume(value)}
-            sensorTranslate={this.translateMovementAmount}
+            sensorTranslate={translateMovementAmount}
           />
         );
       case "off when moving":
         return (
           <AttributeSlider
             attributeName={"off when moving"}
-            sensor="acc"
             initialValue={this.props.services.sound.volume}
             value={this.props.services.sound.volume}
             minValue={0}
@@ -125,6 +92,30 @@ class SensorModulator extends React.Component {
             }}
           />
         );        
+      case "crescendo":
+        return (
+          <AttributeNavigator
+            attributeName={"Crescendo"}
+            initialValue={this.props.services.sound.volume}
+            value={this.props.services.sound.volume}
+            minValue={0.1}
+            maxValue={1}
+            onValueChange={value=>soundService.setVolume(value)}
+            sensorTranslate={(data, props, buffer)=>{
+              let sensorValue = data.gyr.x;
+              if(sensorValue > 5) sensorValue = 5;
+              if(sensorValue < -5) sensorValue = -5;
+              let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;
+              return Math.floor(100*result)/100;      
+            }}
+            targetValueFunction={(time, duration) => {
+              return {
+                target: 0.1 + (time/duration) * 0.9,
+                threshold: 0.2
+              }
+            }}
+          />
+        );                
       default: 
         return null;
     }
@@ -132,3 +123,36 @@ class SensorModulator extends React.Component {
 }
 
 export default withServices(SensorModulator);
+
+// translation function for "volume movement"
+translateMovementAmount = (data, props, dataBuffer)=>{
+  data = data.acc
+  dataBuffer = dataBuffer.map( d => d.acc)
+  if (dataBuffer.length == 0) return 0
+  const speedBufferSize = 5
+  const speedX = Math.abs(data.x-dataBuffer[0].x)
+  const speedY = Math.abs(data.y-dataBuffer[0].y)
+  const speedZ = Math.abs(data.z-dataBuffer[0].z)
+  const currentSpeed = speedX + speedY + speedZ
+  if (typeof(this.speedBuffer) == "undefined") {
+    this.speedBuffer = []
+    this.speedBuffer.fill(0,0,speedBufferSize)
+  }
+
+  //FIFO in
+  if (this.speedBuffer.length <= speedBufferSize) {
+    this.speedBuffer.push(currentSpeed)
+  }
+  //FIFO out
+  if (this.speedBuffer.length > speedBufferSize) {
+    this.speedBuffer.shift()
+  }    
+
+  const average = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
+  const avg = average(this.speedBuffer)
+
+  // console.log(currentSpeed, avg)
+
+  let result = 0.1 * ((currentSpeed + avg) / 2);
+  return Math.floor(100*result)/100;      
+}
