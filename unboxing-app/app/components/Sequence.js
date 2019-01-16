@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
-import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
+import SequenceVisualizer from './SequenceVisualizer';
 
 import SensorModulator from './SensorModulator';
 import {withServices} from './ServiceConnector';
@@ -105,6 +105,13 @@ class Sequence extends React.Component {
 
     return (
       <View> 
+        <SequenceVisualizer 
+          sequence={this.props.services.sequence.currentSequence}
+          track={this.props.services.sequence.currentTrack}
+          item={this.props.services.sequence.currentItem}
+          controlStatus={this.props.services.sequence.controlStatus}
+          currentTime={this.state.currentTimeInSequence}
+        />
         <View style={globalStyles.buttons}>
           <Text style={{fontSize: 30}}>{this.props.services.sequence.nextActionMessage}</Text>
 
