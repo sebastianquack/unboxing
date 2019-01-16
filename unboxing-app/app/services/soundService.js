@@ -9,7 +9,7 @@ Sound.setCategory('Playback');
 import RNFS from 'react-native-fs';
 const pathPrefix = RNFS.ExternalStorageDirectoryPath + '/unboxing/files';
 
-const clickFilename = '/misc/tick.wav';
+const clickFilename = '/misc/click.mp3';
 
 class SoundSevice extends Service {
 
