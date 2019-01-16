@@ -86,7 +86,7 @@ class SensorModulator extends React.Component {
               if (speed < limit) {
                 result = 1 - speed*limit;
               } else {
-                gameService.handleStopButton()
+                result = 0;
               }
               return Math.floor(100*result)/100;      
             }}

@@ -1,5 +1,5 @@
 import Service from './Service';
-import { sensorService, soundService } from './';
+import { sensorService, soundService, gameService } from './';
 
 const serviceName = "peak"
 //const clickFilename = '/misc/tick.wav';
@@ -70,11 +70,15 @@ class PeakService extends Service {
 		const bpm = 1000 / (soundService.getSyncTime() - this.peakStartTime)*60
 		this.setReactive({bpm})
 		this.peakStartTime = null
-		this.showNotification("PEAK")
-		if(typeof this.detectionCallback != "function") {
-			//soundService.scheduleSound(clickFilename, soundService.getSyncTime());	
-			soundService.click();
-		}				
+		
+		if(gameService.debugMode) {
+			this.showNotification("PEAK")
+				if(typeof this.detectionCallback != "function") {
+				//soundService.scheduleSound(clickFilename, soundService.getSyncTime());	
+				soundService.click();
+			}			
+		}
+		
 		if (this.detectionCallback) {
 			this.detectionCallback()
 			this.detectionCallback = null
