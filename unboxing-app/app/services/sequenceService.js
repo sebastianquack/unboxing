@@ -58,7 +58,7 @@ class SequenceService extends Service {
 		const currentTime = soundService.getSyncTime();
     const currentTimeInSequence = currentTime - this.state.startedAt;
 
-    console.log("currentTimeInSequence", currentTimeInSequence);
+    console.log("beat update - currentTimeInSequence", currentTimeInSequence);
 
 		// beat calculations
 		const durationOfBeat = (60000 / this.state.currentSequence.bpm);
@@ -83,14 +83,17 @@ class SequenceService extends Service {
 			const beatsToNextItem = Math.floor(timeToNextItem / durationOfBeat) - 1;
 
 			// update beatsToNextItem
-			if(beatsToNextItem > 0) {
+			if(beatsToNextItem > 0 && !this.state.currentItem) {
 				this.setReactive({beatsToNextItem: beatsToNextItem});	
 			} else {
 				this.setReactive({beatsToNextItem: ""});	
+
+				if(beatsToNextItem < 0 && currentTimeInSequence > 0) {
+					gameService.handleMissedCue();	
+				}
 			}
-			
 		}
-    
+
     // calculate time to next update
     const timeOfNextBeat = this.state.startedAt + ((currentBeatInSequence + 1) * durationOfBeat);
     console.log("beat", currentBeatInSequence);
@@ -349,7 +352,9 @@ class SequenceService extends Service {
 				// update Gesture listening
 				
 				if (nextItem.sensorStart) {
-					this.setReactive({nextActionMessage: "get ready to do the start gesture to start playing at the right moment!"});
+					if(!this.state.currentItem) {
+						this.setReactive({nextActionMessage: "use the gesture to start playing at the right moment!"});	
+					}
 					peakService.waitForStart(() => {
 						gameService.handlePlayNextItemButton()
 						peakService.stopWaitingForStart()
@@ -384,6 +389,7 @@ class SequenceService extends Service {
 					scheduledItem: null,
 					currentItem: this.state.scheduledItem,
 				});
+				this.setReactive({nextActionMessage: "you're playing! see how you can modulate the sound..."});
 				this.setupNextSequenceItem();
 			},
 			onPlayEnd: () => {

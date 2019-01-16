@@ -214,6 +214,10 @@ class SoundSevice extends Service {
 
 		console.log("starting to play " + JSON.stringify(this.sounds[index]));
 		this.sounds[index].status = "playing";
+		
+		this.setVolumeFor(this.sounds[index].filename, 1);
+		this.setSpeedFor(this.sounds[index].filename, 1);
+		
 		this.sounds[index].soundObj.play((success) => {
 		  	this.sounds[index].status = "ready";
 		  	if (success) {
@@ -230,9 +234,6 @@ class SoundSevice extends Service {
 	    	}
 		});
     
-		this.setVolumeFor(this.sounds[index].filename, 1);
-		this.setSpeedFor(this.sounds[index].filename, 1);
-		
     if(typeof callbacks.onPlayStart == "function") {
     	console.log("onPlayStart callback");
       callbacks.onPlayStart();

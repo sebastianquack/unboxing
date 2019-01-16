@@ -55,9 +55,7 @@ class Sequence extends React.Component {
       this.setState({
         timeToNextItem: timeToNextItem > 0 ? timeToNextItem + this.countDownDisplayDelay : 0
       });
-      if(timeToNextItem < 0) {
-        gameService.handleMissedCue(); // todo: move to sequence service
-      }
+      
     } else {
       this.setState({timeToNextItem: null});   
     }
@@ -105,8 +103,7 @@ class Sequence extends React.Component {
 
     return (
       <View> 
-        <View style={globalStyles.buttons}>
-          <Text style={{fontSize: 30}}>{this.props.services.sequence.nextActionMessage}</Text>
+          <View><Text style={{fontSize: 30}}>{this.props.services.sequence.nextActionMessage}</Text></View>
 
           {this.props.services.sequence.showPlayItemButton && this.props.services.game.debugMode &&
               <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>
@@ -121,11 +118,12 @@ class Sequence extends React.Component {
           }
 
           {this.props.services.sequence.currentItem &&
-            <TouchableOpacity style={styles.bigButton} onPress={gameService.handleStopButton}>
-                <Text>Stop</Text>
-            </TouchableOpacity>
+            <View>
+              <TouchableOpacity style={styles.bigButton} onPress={gameService.handleStopButton}>
+                  <Text>Stop</Text>
+              </TouchableOpacity>
+            </View>
           }
-        </View>
         <Text style={{fontSize: 50}}>{ this.props.services.sequence.beatsToNextItem }</Text>
         {gameService.debugMode &&
           <View style={{width:"25%"}}>
@@ -135,7 +133,7 @@ class Sequence extends React.Component {
         }
         <SensorModulator mode={this.props.services.sequence.currentItem ? this.props.services.sequence.currentItem.sensorModulation : ""}/>
         {this.props.services.game.debugMode ? this.renderSequenceDebugInfo() : null}
-      </View>
+      </View> 
     );
   }
 }
