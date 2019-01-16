@@ -22,11 +22,12 @@ class ChallengeView extends React.Component {
     return (
       <View>
 
-        <Text style={globalStyles.titleText}>{challenge.name}</Text>
-        <Text>{challenge.instructions}</Text>
+        <View><Text style={globalStyles.titleText}>{challenge.name}</Text></View>
+        
         
         {challengeStatus == "navigate" &&
           <View>
+            <Text>{challenge.instructions}</Text>
             <Text style={globalStyles.titleText}>Here's how to get to {challenge.name}</Text>
             <Text>Navigation placeholder</Text>
             <TouchableOpacity style={styles.button} onPress={()=>{
@@ -39,6 +40,8 @@ class ChallengeView extends React.Component {
 
         {challengeStatus == "prepare" &&        
           <View>
+            <Text>{challenge.instructions}</Text>
+            <Text style={globalStyles.titleText}>Select your instrument!</Text>
             <TrackSelector sequence_id={challenge.sequence_id}/>
             <TouchableOpacity style={styles.button} onPress={()=>{
               gameService.setActiveChallengeStatus("play");            

@@ -22,7 +22,6 @@ class SequenceService extends Service {
 
 		// not reative - used for internal calculations
 		this.loopCounter = 0;
-		this.itemCounter = 0; // just counts items played
 		this.localStart = false;
 		this.beatTimeout = null;
 	}
@@ -111,7 +110,7 @@ class SequenceService extends Service {
 	}
 
 	sequenceStartingLocally = ()=> {
-		return this.localStart && this.itemCounter == 0 && this.loopCounter == 0;
+		return this.localStart && this.loopCounter == 0;
 	}
 
 	// check if next item should be autoplayed
@@ -270,9 +269,15 @@ class SequenceService extends Service {
 			// calculate total time in playback
 			const currentTime = soundService.getSyncTime();
     	const currentTimeInPlayback = currentTime - this.state.playbackStartedAt;
+
+    	console.log("currentTimeInPlayback", currentTimeInPlayback);
     	
     	// figure out what loop we are on
     	this.loopCounter = Math.floor(currentTimeInPlayback / this.state.currentSequence.custom_duration);
+
+    	if(this.loopCounter < 0) {
+    		this.loopCounter = 0;
+    	}
     	
     	console.log("loopCounter", this.loopCounter);
 
@@ -344,6 +349,7 @@ class SequenceService extends Service {
 				// update Gesture listening
 				
 				if (nextItem.sensorStart) {
+					this.setReactive({nextActionMessage: "get ready to do the start gesture to start playing at the right moment!"});
 					peakService.waitForStart(() => {
 						gameService.handlePlayNextItemButton()
 						peakService.stopWaitingForStart()
@@ -357,8 +363,8 @@ class SequenceService extends Service {
 				}
     	
     	} else {
-    		this.setReactive({nextActionMessage: "sequence ended"});
     		this.stopSequence();
+				this.setReactive({nextActionMessage: "sequence ended"});
     	}
 	}
 		
@@ -372,7 +378,6 @@ class SequenceService extends Service {
 	// call sound service to schedule sound for next item, set callback to setup next item after playback
 	scheduleSoundForNextItem(targetTime) {
 		if (!this.state.nextItem) return
-		this.itemCounter++;
 		soundService.scheduleSound(this.state.nextItem.path, targetTime, {
 			onPlayStart: () => {
 				this.setReactive({
@@ -415,6 +420,7 @@ class SequenceService extends Service {
 	    	startedAt: null,
 				showPlayItemButton: false,
 				beatsToNextItem: ""
+
 	    });
 	    this.loopCounter = 0;
 	    if(this.beatTimeout) {
