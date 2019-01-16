@@ -56,7 +56,7 @@ class Sequence extends React.Component {
         timeToNextItem: timeToNextItem > 0 ? timeToNextItem + this.countDownDisplayDelay : 0
       });
       if(timeToNextItem < 0) {
-        gameService.handleMissedCue();
+        gameService.handleMissedCue(); // todo: move to sequence service
       }
     } else {
       this.setState({timeToNextItem: null});   
@@ -71,7 +71,7 @@ class Sequence extends React.Component {
   }
 
   // renders current sequence display, called when info changes
-  renderSequenceInfo() {
+  renderSequenceDebugInfo() {
     const currentSequence = this.props.services.sequence.currentSequence;
     const currentTrack = this.props.services.sequence.currentTrack;
     const currentItem = this.props.services.sequence.currentItem;
@@ -80,19 +80,23 @@ class Sequence extends React.Component {
     
     return(
       <View>
-        <Text>
-          currentSequence: {currentSequence ? currentSequence.name : "none"} {"\n"}
-          controlStatus: { controlStatus } {"\n"}
-          currentTrack: {currentTrack ? currentTrack.name : "none"} {"\n"}
-          Playback time: {Math.floor(this.state.playbackTime / 1000)} {"\n"}
-          Sequence playback position: {Math.floor(this.state.currentTimeInSequence / 1000)} {"\n"}
-          custom_duration: { currentSequence ? currentSequence.custom_duration : "?" } {"\n"}
-          Current item: {currentItem ? currentItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}
-          Next item: {nextItem ? nextItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""}) {"\n"}
-          Gesture Recognition: { this.props.services.gestures.isRecognizing ? "on" : "off" } {"\n"}
-          Gesture: { this.props.services.gestures.activeGesture ? this.props.services.gestures.activeGesture.name : "-" }
-        </Text>
-        <Text style={{fontSize: 50}}>{ this.props.services.sequence.beatsToNextItem }</Text>
+          <Text>
+            currentSequence: {currentSequence ? currentSequence.name : "none"} {"\n"}
+            controlStatus: { controlStatus } {"\n"}
+            currentTrack: {currentTrack ? currentTrack.name : "none"} {"\n"}
+            Playback time: {Math.floor(this.state.playbackTime / 1000)} {"\n"}
+            Sequence playback position: {Math.floor(this.state.currentTimeInSequence / 1000)} {"\n"}
+            custom_duration: { currentSequence ? currentSequence.custom_duration : "?" } {"\n"}
+            Current item: {currentItem ? currentItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}
+            Next item: {nextItem ? nextItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""}) {"\n"}
+            Gesture Recognition: { this.props.services.gestures.isRecognizing ? "on" : "off" } {"\n"}
+            Gesture: { this.props.services.gestures.activeGesture ? this.props.services.gestures.activeGesture.name : "-" }
+          </Text>
+          {controlStatus == "ready" &&
+            <TouchableOpacity style={styles.button} onPress={gameService.startSequence}>
+                <Text>Start Sequence</Text>
+            </TouchableOpacity>
+          }
       </View>
     )
   }
@@ -102,13 +106,15 @@ class Sequence extends React.Component {
     return (
       <View> 
         <View style={globalStyles.buttons}>
-          {this.props.services.sequence.showPlayItemButton &&
-            <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>
-                <Text>Play</Text>
-            </TouchableOpacity>
+          <Text style={{fontSize: 30}}>{this.props.services.sequence.nextActionMessage}</Text>
+
+          {this.props.services.sequence.showPlayItemButton && this.props.services.game.debugMode &&
+              <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>
+                  <Text>Play</Text>
+              </TouchableOpacity>
           }
 
-          {this.props.services.sequence.nextItem && this.state.timeToNextItem < 0 &&
+          {this.props.services.game.debugMode && this.props.services.sequence.nextItem && this.state.timeToNextItem < 0 &&
             <TouchableOpacity style={styles.bigButton} onPress={gameService.handleSkipButton}>
                   <Text>Skip</Text>
             </TouchableOpacity>
@@ -120,12 +126,15 @@ class Sequence extends React.Component {
             </TouchableOpacity>
           }
         </View>
+        <Text style={{fontSize: 50}}>{ this.props.services.sequence.beatsToNextItem }</Text>
+        {gameService.debugMode &&
+          <View style={{width:"25%"}}>
+            <Text>Beat Tick Off/On</Text>         
+            <Switch value={this.props.services.sequence.beatTickActive} onValueChange={sequenceService.toggleBeatTick}/>
+          </View>
+        }
         <SensorModulator mode={this.props.services.sequence.currentItem ? this.props.services.sequence.currentItem.sensorModulation : ""}/>
-        {this.renderSequenceInfo()}
-        <View style={{width:"25%"}}>
-          <Text>Beat Tick Off/On</Text>         
-          <Switch value={this.props.services.sequence.beatTickActive} onValueChange={sequenceService.toggleBeatTick}/>
-        </View>
+        {this.props.services.game.debugMode ? this.renderSequenceDebugInfo() : null}
       </View>
     );
   }
@@ -139,6 +148,11 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     margin: 10,
   },
+  button: {
+    margin: 20,
+    padding: 20,
+    backgroundColor: '#aaa',
+  },  
   bigButton: {
     margin: 20,
     paddingTop: 40,

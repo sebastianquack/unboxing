@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
-import {gameService, storageService} from '../services';
+import {gameService, sequenceService, storageService} from '../services';
 import {withServices} from './ServiceConnector';
 
 class TrackSelector extends React.Component { 
@@ -14,13 +14,15 @@ class TrackSelector extends React.Component {
 
   renderTrack = (sequence, track, index)=> {
     const trackStyle = Object.assign({backgroundColor: track.color}, styles.button);
+    const selected = this.props.services.sequence.currentTrack ? 
+      ((this.props.services.sequence.currentTrack == track) ? "(selected)" : "") : ""
     return (
       <TouchableOpacity
           key={index}
           style={trackStyle}
           onPress={()=>{gameService.trackSelect(sequence, track)}}
         >
-        <Text>{track.name}</Text>
+        <Text>{track.name} {selected}</Text>
       </TouchableOpacity>
     )
   }

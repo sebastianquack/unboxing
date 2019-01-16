@@ -18,21 +18,51 @@ class ChallengeView extends React.Component {
 
   render() {
     const challenge = this.props.services.game.activeChallenge;
+    const challengeStatus = this.props.services.game.challengeStatus;
     return (
       <View>
-        <TouchableOpacity style={styles.button} onPress={()=>{gameService.leaveChallenge()}}>
-          <Text>leave</Text>
-        </TouchableOpacity>
+
         <Text style={globalStyles.titleText}>{challenge.name}</Text>
         <Text>{challenge.instructions}</Text>
-        <Text>{JSON.stringify(challenge)}</Text>
         
-        {sequenceService.getControlStatus() == "idle" &&
-          <TrackSelector sequence_id={challenge.sequence_id}/>
+        {challengeStatus == "navigate" &&
+          <View>
+            <Text style={globalStyles.titleText}>Here's how to get to {challenge.name}</Text>
+            <Text>Navigation placeholder</Text>
+            <TouchableOpacity style={styles.button} onPress={()=>{
+              gameService.setActiveChallengeStatus("prepare");            
+            }}>
+              <Text>I'm here!</Text>
+            </TouchableOpacity>
+          </View>
         }
-        <Sequence/>
-        <NearbyStatus/>
 
+        {challengeStatus == "prepare" &&        
+          <View>
+            <TrackSelector sequence_id={challenge.sequence_id}/>
+            <TouchableOpacity style={styles.button} onPress={()=>{
+              gameService.setActiveChallengeStatus("play");            
+            }}>
+              <Text>ready to play</Text>
+            </TouchableOpacity>
+          </View>
+        }
+        
+        {challengeStatus == "play" &&        
+          <Sequence/>
+        }
+
+        <TouchableOpacity style={styles.button} onPress={()=>{
+          if(challengeStatus == "play") {
+            gameService.setActiveChallengeStatus("prepare");
+          } else {
+            gameService.leaveChallenge();
+          }
+        }}>
+          <Text>back</Text>
+        </TouchableOpacity>
+        
+          
       </View>
     );
   }
