@@ -7,7 +7,7 @@ class PermissionsService extends Service {
 	constructor() {
 
 		// reactive vars
-		super("permissions", {
+		super("permissionService", {
 		});
 		setTimeout(this.init, 1000)
 	}

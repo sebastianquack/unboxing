@@ -15,7 +15,7 @@ class DebugToggle extends React.Component {
       <View>
         <View style={{width:"25%"}}>
           <Text>Debugmode Off/On</Text>         
-          <Switch value={this.props.services.game.debugMode} onValueChange={gameService.toggleDebugMode}/>
+          <Switch value={this.props.gameService.debugMode} onValueChange={gameService.toggleDebugMode}/>
         </View>
         
       </View>
@@ -23,4 +23,4 @@ class DebugToggle extends React.Component {
   }
 }
 
-export default withServices(DebugToggle);
+export default withServices(DebugToggle, ["gameService"]);

@@ -20,8 +20,8 @@ class SensorModulator extends React.Component {
         return (
           <AttributeSlider
             attributeName={"Volume"}
-            initialValue={this.props.services.sound.volume}
-            value={this.props.services.sound.volume}
+            initialValue={this.props.soundService.volume}
+            value={this.props.soundService.volume}
             minValue={0.1}
             maxValue={1}
             onValueChange={value=>soundService.setVolume(value)}
@@ -38,8 +38,8 @@ class SensorModulator extends React.Component {
         return (
           <AttributeSlider
             attributeName={"Speed"}
-            initialValue={this.props.services.sound.speed}
-            value={this.props.services.sound.speed}
+            initialValue={this.props.soundService.speed}
+            value={this.props.soundService.speed}
             minValue={0.8}
             maxValue={1.2}
             onValueChange={value=>soundService.setSpeed(value)}
@@ -56,8 +56,8 @@ class SensorModulator extends React.Component {
         return (
           <AttributeSlider
             attributeName={"Volume by amount of movement"}
-            initialValue={this.props.services.sound.volume}
-            value={this.props.services.sound.volume}
+            initialValue={this.props.soundService.volume}
+            value={this.props.soundService.volume}
             minValue={0.1}
             maxValue={1}
             dataBufferSize={1}
@@ -70,8 +70,8 @@ class SensorModulator extends React.Component {
         return (
           <AttributeSlider
             attributeName={"off when moving"}
-            initialValue={this.props.services.sound.volume}
-            value={this.props.services.sound.volume}
+            initialValue={this.props.soundService.volume}
+            value={this.props.soundService.volume}
             minValue={0}
             maxValue={1}
             dataBufferSize={1}
@@ -96,8 +96,8 @@ class SensorModulator extends React.Component {
         return (
           <AttributeNavigator
             attributeName={"Crescendo"}
-            initialValue={this.props.services.sound.volume}
-            value={this.props.services.sound.volume}
+            initialValue={this.props.soundService.volume}
+            value={this.props.soundService.volume}
             minValue={0.1}
             maxValue={1}
             onValueChange={value=>soundService.setVolume(value)}
@@ -122,7 +122,7 @@ class SensorModulator extends React.Component {
   }
 }
 
-export default withServices(SensorModulator);
+export default withServices(SensorModulator, ["soundService"]);
 
 // translation function for "volume movement"
 translateMovementAmount = (data, props, dataBuffer)=>{

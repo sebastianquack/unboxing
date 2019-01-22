@@ -7,7 +7,7 @@ class SequenceService extends Service {
 	constructor() {
 
 		// reactive vars - used in interface component
-		super("sequence", {
+		super("sequenceService", {
 			controlStatus: "idle", // idle -> loading -> ready -> playing
 			currentSequence: null, // sequence object
       currentTrack: null, // track object

@@ -1,7 +1,7 @@
 import Service from './Service';
 import { sensorService, soundService, gameService } from './';
 
-const serviceName = "peak"
+const serviceName = "peakService"
 //const clickFilename = '/misc/tick.wav';
 
 class PeakService extends Service {

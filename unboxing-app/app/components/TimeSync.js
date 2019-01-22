@@ -7,12 +7,10 @@ import {
   Switch
 } from 'react-native';
 
-import Meteor from 'react-native-meteor';
-
 import {globalStyles} from '../../config/globalStyles';
 
 import {soundService, networkService} from '../services';
-import {withServices} from '../components/ServiceConnector';
+import {withSoundService} from '../components/ServiceConnector';
 
 const clickFilename = '/misc/click.mp3';
 
@@ -72,9 +70,10 @@ class TimeSync extends React.Component {
   }
 
   render() {
+    console.log("RENDER TS", this.props)
   	return (
   		<View>
-        <Text>Time delta: {this.props.services.sound.delta}</Text>
+        <Text>Time delta: {this.props.soundService.delta}</Text>
         
         <View style={globalStyles.buttons}>
           <TouchableOpacity style={globalStyles.button} onPress={this.handleSyncPress}>
@@ -144,4 +143,5 @@ function avgTimeDeltas(callback) {
   }  
 }
 
-export default withServices(TimeSync);
+export default withSoundService(TimeSync);
+//export default TimeSync

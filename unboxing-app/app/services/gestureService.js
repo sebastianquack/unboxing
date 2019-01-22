@@ -5,7 +5,7 @@ import debounce from 'debounce';
 import Service from './Service';
 import { sensorService, storageService, networkService, soundService } from './';
 
-const serviceName = "gestures"
+const serviceName = "gestureService"
 //const clickFilename = '/misc/woosh.mp3';
 
 class GestureService extends Service {

@@ -32,6 +32,7 @@ export {Sequences, itemSchema};
  * name: string
  * custom_duration: integer (milliseconds) // use to manually set duration of sequence (for example with silence at the end)
  * items[]:
+ *   - name
  *   - startTime: integer (milliseconds)
  *   - path: string (file path)
  *   - track: string (indicates events that belong to the same track, like "violin1" or "piano")

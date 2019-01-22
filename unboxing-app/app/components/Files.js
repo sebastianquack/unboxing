@@ -72,7 +72,7 @@ class Files extends React.Component {
               })
 
               RNFS.downloadFile({
-                fromUrl: 'http://'+this.props.services.network.server+':3000' + file.url_path,
+                fromUrl: 'http://'+this.props.networkService.server+':3000' + file.url_path,
                 toFile: folder + file.path,
                 progress: p => {this.setState((prevState) => { 
                   prevState.localFiles[file._id].size = p.bytesWritten; 
@@ -102,8 +102,8 @@ class Files extends React.Component {
  }
 
   renderFiles = () => {
-    if (this.props.services.storage.collections.files) {
-      return this.props.services.storage.collections.files.map( this.renderFile )
+    if (this.props.storageService.collections.files) {
+      return this.props.storageService.collections.files.map( this.renderFile )
     }
   }
 
@@ -127,7 +127,7 @@ class Files extends React.Component {
   }
 
   updateFilesInfo = () => {
-    for (let file of this.props.services.storage.collections.files) {
+    for (let file of this.props.storageService.collections.files) {
       this.updateFileInfo(file)
     }    
   }
@@ -166,7 +166,7 @@ class Files extends React.Component {
   }
 
   render() {
-   
+    console.log("RENDER FILES")
     return (
       <View style={styles.container}>
         <Text style={globalStyles.titleText}>Files</Text>
@@ -188,7 +188,7 @@ class Files extends React.Component {
   }
 }
 
-export default withServices(Files)
+export default withServices(Files, ["networkService", "storageService"])
 
 const styles = StyleSheet.create({
   container: {

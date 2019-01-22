@@ -5,7 +5,7 @@ import {
 		soundService, 
 		sequenceService, 
 		nearbyService,
-		sensorService,
+		//sensorService,
 		permissionsService,
 		networkService,
 		storageService,
@@ -14,8 +14,25 @@ import {
 		gameService
 	} from '../services/';
 
-const ServiceContext = React.createContext({});
-const ServiceContextConsumer = ServiceContext.Consumer;
+const services = [ // all services need to be imported above and registered here
+		soundService,
+		sequenceService,
+		nearbyService,
+		//sensorService,
+		permissionsService,
+		networkService,
+		storageService,
+		gestureService,
+		peakService,
+		gameService
+	]
+
+// create a context for each service
+let serviceContexts = {}
+for (service of services) {
+	serviceContexts[service.serviceName] = React.createContext({});
+}
+console.log(serviceContexts)
 
 // wraps application to provide states of registered services as react context
 class ServiceConnector extends React.Component {
@@ -24,24 +41,10 @@ class ServiceConnector extends React.Component {
 		this.state = {
 			mounted: false
 		};
-
-		this.services = [ // all services need to be imported above and registered here
-			soundService,
-			sequenceService,
-			nearbyService,
-			sensorService,
-			permissionsService,
-			networkService,
-			storageService,
-			gestureService,
-			peakService,
-			gameService
-		]
-
 	}
 
 	componentDidMount() {
-		for (let service of this.services) {
+		for (let service of services) {
 			console.log(`connecting ${service.serviceName} service`)
 			service.registerOnChange(this.handleStateUpdate);
 			service.registerNotification(this.showNotification);
@@ -58,8 +61,9 @@ class ServiceConnector extends React.Component {
 
 	handleStateUpdate = (name, state) => {
 		// react state of this component
+		console.log("state update: " + name)
 		this.setState( prevState => {
-			prevState[name] = state;
+			prevState[name] = state; // here the name of the service is used as key on state of ServiceConnector
 			return prevState;
 		});
 	}
@@ -67,24 +71,36 @@ class ServiceConnector extends React.Component {
 	render() {
 		if (this.state.mounted) {
 			return (
-				<ServiceContext.Provider value={this.state}>
-					{this.props.children}
-				</ServiceContext.Provider>
+				// here we nest all providers
+				<serviceContexts.soundService.Provider value={this.state.soundService}>
+					<serviceContexts.peakService.Provider value={this.state.peakService}>
+						{this.props.children}
+					</serviceContexts.peakService.Provider>
+				</serviceContexts.soundService.Provider>
 			);
 		}
 		else return null
 	}
 }
-
-// higher order component
-function withServices(Component) {
-  return function ComponentWithServices(props) {
+// hoc for single consumers
+function withSoundService(Component) {
+  return function ComponentWithService(props) {
     return (
-      <ServiceContextConsumer>
-        {services => <Component {...props} services={services} />}
-      </ServiceContextConsumer>
+      <serviceContexts.soundService.Consumer>
+				{ value => <Component {...props} soundService={value} /> }
+      </serviceContexts.soundService.Consumer>
     );
   };
 }
 
-export { ServiceConnector, ServiceContextConsumer, withServices };
+function withPeakService(Component) {
+  return function ComponentWithService(props) {
+    return (
+      <serviceContexts.peakService.Consumer>
+				{ value => <Component {...props} peakService={value} /> }
+      </serviceContexts.peakService.Consumer>
+    );
+  };
+}
+
+export { ServiceConnector, withSoundService, withPeakService};

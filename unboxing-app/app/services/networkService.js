@@ -11,7 +11,7 @@ class NetworkService extends Service {
 	constructor() {
 
 		// reactive vars
-		super("network", {
+		super("networkService", {
       server: defaultServer,
       lastApiResult: ""
 		});

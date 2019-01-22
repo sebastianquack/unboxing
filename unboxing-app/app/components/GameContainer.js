@@ -16,7 +16,7 @@ class GameContainer extends React.Component {
   render() {
     return (
       <View>
-        {this.props.services.game.challengeStatus != "list" ? 
+        {this.props.gameService.challengeStatus != "list" ? 
           <ChallengeView/> : <ChallengeSelector/>
         }
       </View>
@@ -24,4 +24,4 @@ class GameContainer extends React.Component {
   }
 }
 
-export default withServices(GameContainer);
+export default withServices(GameContainer, ["gameService"]);
