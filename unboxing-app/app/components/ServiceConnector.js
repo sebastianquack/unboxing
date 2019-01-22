@@ -33,10 +33,9 @@ let serviceContexts = {}
 for (service of services) {
 	serviceContexts[service.serviceName] = React.createContext({});
 }
-console.log(serviceContexts)
 
-// wraps application to provide states of registered services as react context
-class ServiceConnector extends React.Component {
+// experimental - create a react component with a state for each provider
+class SingleServiceProvider extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -45,13 +44,19 @@ class ServiceConnector extends React.Component {
 	}
 
 	componentDidMount() {
-		for (let service of services) {
+		let myService = null;
+		for (service of services) {
+			if(this.props.serviceName == service.serviceName) {
+				myService = service
+				break;
+			}
+		}
+		if(myService) {
 			console.log(`connecting ${service.serviceName} service`)
 			service.registerOnChange(this.handleStateUpdate);
 			service.registerNotification(this.showNotification);
+			this.setState({ mounted: true })
 		}
-
-		this.setState({ mounted: true })
 	}
 
 	showNotification = (message) => {
@@ -62,43 +67,59 @@ class ServiceConnector extends React.Component {
 
 	handleStateUpdate = (name, state) => {
 		// react state of this component
-		console.log("state update: " + name)
-		this.setState( prevState => {
-			prevState[name] = state; // here the name of the service is used as key on state of ServiceConnector
-			return prevState;
-		});
+		state.mounted = this.state.mounted; // preserve mounted state
+		//console.log("state update: ", name, state)
+		this.setState(state);
 	}
 
 	render() {
 		if (this.state.mounted) {
+			let context = serviceContexts[this.props.serviceName];
 			return (
-				// here we nest all providers so they can be individually consumed
-				<serviceContexts.soundService.Provider value={this.state.soundService}>
-					<serviceContexts.sequenceService.Provider value={this.state.sequenceService}>
-						<serviceContexts.nearbyService.Provider value={this.state.nearbyService}>
-							<serviceContexts.sensorService.Provider value={this.state.sensorService}>
-								<serviceContexts.permissionService.Provider value={this.state.permissionService}>
-									<serviceContexts.networkService.Provider value={this.state.networkService}>
-										<serviceContexts.storageService.Provider value={this.state.storageService}>
-											<serviceContexts.gestureService.Provider value={this.state.gestureService}>
-												<serviceContexts.peakService.Provider value={this.state.peakService}>
-													<serviceContexts.gameService.Provider value={this.state.gameService}>
-														{this.props.children}
-													</serviceContexts.gameService.Provider>
-												</serviceContexts.peakService.Provider>
-											</serviceContexts.gestureService.Provider>
-										</serviceContexts.storageService.Provider>
-									</serviceContexts.networkService.Provider>
-								</serviceContexts.permissionService.Provider>
-							</serviceContexts.sensorService.Provider>
-						</serviceContexts.nearbyService.Provider>
-					</serviceContexts.sequenceService.Provider>
-				</serviceContexts.soundService.Provider>
+				<context.Provider value={this.state}>
+					{this.props.children}
+				</context.Provider>
+											
 			);
 		}
 		else return null
 	}
 }
+
+// wraps application to provide states of registered services as react context
+class ServiceConnector extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+
+	render() {
+			return (
+			// here we nest all providers so they can be individually consumed
+			<SingleServiceProvider serviceName="soundService">
+				<SingleServiceProvider serviceName="sequenceService">
+					<SingleServiceProvider serviceName="nearbyService">
+						<SingleServiceProvider serviceName="sensorService">
+							<SingleServiceProvider serviceName="permissionService">
+								<SingleServiceProvider serviceName="networkService">
+									<SingleServiceProvider serviceName="storageService">
+										<SingleServiceProvider serviceName="gestureService">
+											<SingleServiceProvider serviceName="peakService">
+												<SingleServiceProvider serviceName="gameService">
+													{this.props.children}
+												</SingleServiceProvider>
+											</SingleServiceProvider>
+										</SingleServiceProvider>
+									</SingleServiceProvider>
+								</SingleServiceProvider>
+							</SingleServiceProvider>
+						</SingleServiceProvider>
+					</SingleServiceProvider>
+				</SingleServiceProvider>
+			</SingleServiceProvider>
+		);
+	}
+}
+
 // hocs for single consumers
 function withSoundService(Component) {
   return function ComponentWithService(props) {

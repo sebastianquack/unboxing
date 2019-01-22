@@ -44,7 +44,7 @@ class SensorInfo extends React.Component {
   }
 
   render() {
-    console.log("RENDER SENSORINFO")
+
     return (
       <View style={styles.info}>
         <Text style={globalStyles.titleText}>Sensor Info</Text>

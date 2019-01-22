@@ -80,7 +80,7 @@ class App extends Component {
           {this.state.adminMenu ?
             this.renderAdminMenu() 
           :
-            null 
+            <GameContainer/> 
           }
         </ScrollView>
       </ServiceConnector>

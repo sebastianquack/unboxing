@@ -36,41 +36,43 @@ class TimeSync extends React.Component {
   }
 
   handleTestClickSwitch(value) {
-    this.setState({testClick: value});
-    if(value == true) {
+    this.setState({testClick: value}, ()=>{
+      if(value == true) {
       
-      // check if soundService already knows about click sound
-      let status = soundService.getSoundStatus(clickFilename);
-      
-      if(!status) {
-        // sound hasn't been loaded
-        soundService.preloadSoundfile(clickFilename, ()=>{
-          // callback called after sound is loaded
-          this.initClickLoop();
-        });  
-      } else {
-        // sound is preloaded but currently not scheduled for play
-        if(status == "ready") {
-          this.initClickLoop();
+        // check if soundService already knows about click sound
+        let status = soundService.getSoundStatus(clickFilename);
+        
+        if(!status) {
+          // sound hasn't been loaded
+          soundService.preloadSoundfile(clickFilename, ()=>{
+            // callback called after sound is loaded
+            this.initClickLoop();
+          });  
+        } else {
+          // sound is preloaded but currently not scheduled for play
+          if(status == "ready") {
+            this.initClickLoop();
+          }
         }
-      }
-    } else {
-      soundService.stopSound(clickFilename);
-    }
-  }
-
-  initClickLoop() {
-    // schedule first playback for next second
-    soundService.scheduleSound(clickFilename, Math.ceil(soundService.getSyncTime()/1000)*1000, {
-      onPlayEnd: ()=>{
-        // callback called after end of playback, schedule new playback for next second
-        this.initClickLoop();
+      } else {
+        soundService.stopSound(clickFilename);
       }
     });    
   }
 
+  initClickLoop() {
+    if(this.state.testClick) {
+      // schedule first playback for next second
+      soundService.scheduleSound(clickFilename, Math.ceil(soundService.getSyncTime()/1000)*1000, {
+        onPlayEnd: ()=>{
+          // callback called after end of playback, schedule new playback for next second
+          this.initClickLoop();
+        }
+      });    
+    }
+  }
+
   render() {
-    console.log("RENDER TS", this.props)
   	return (
   		<View>
         <Text>Time delta: {this.props.soundService.delta}</Text>
