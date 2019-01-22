@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
-import {withServices} from './ServiceConnector';
+import {withStorageService} from './ServiceConnector';
 
 import {gameService} from '../services';
 
@@ -39,7 +39,7 @@ class ChallengeSelector extends React.Component {
   }
 }
 
-export default withServices(ChallengeSelector, ["storageService"]);
+export default withStorageService(ChallengeSelector);
 
 const styles = StyleSheet.create({
   button: {

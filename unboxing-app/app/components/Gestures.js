@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Text, View, Switch, StyleSheet, TouchableOpacity, Slider } from 'react-native';
+import compose from 'lodash.flowright'
 
 import {gestureService, sensorService} from '../services'
-import {withServices} from './ServiceConnector';
+import {withGestureService, withSensorService} from './ServiceConnector';
 import {globalStyles} from '../../config/globalStyles';
 
 class Gestures extends React.Component { 
@@ -93,7 +94,7 @@ class Gestures extends React.Component {
   }
 }
 
-export default withServices(Gestures, ["gestureService", "sensorService"]);
+export default compose(withGestureService, withSensorService, Gestures)
 
 const buttonStyle = {
   padding: 10,

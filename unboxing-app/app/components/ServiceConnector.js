@@ -82,6 +82,7 @@ class ServiceConnector extends React.Component {
 		else return null
 	}
 }
+
 // hoc for single consumers
 function withSoundService(Component) {
   return function ComponentWithService(props) {

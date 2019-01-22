@@ -39,7 +39,7 @@ class TrackSelector extends React.Component {
   }
 }
 
-export default withServices(TrackSelector, "sequenceService");
+export default withSequenceService(TrackSelector);
 
 const styles = StyleSheet.create({
   button: {

@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
+import compose from 'lodash.flowright'
 
 import {globalStyles} from '../../config/globalStyles';
 import {sensorService} from '../services';
 import {withServices} from '../components/ServiceConnector';
+import {withGestureService, withSensorService} from './ServiceConnector';
 
 class SensorInfo extends React.Component { 
   constructor(props) {
@@ -57,7 +59,7 @@ class SensorInfo extends React.Component {
   }
 }
 
-export default withServices(SensorInfo, ["sensorService", "peakService"]);
+export default compose(withSensorService, withPeakService, SensorInfo);
 
 
 const styles = StyleSheet.create({

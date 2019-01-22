@@ -6,7 +6,7 @@ import AttributeSlider from './AttributeSlider';
 import AttributeNavigator from './AttributeNavigator';
 
 import {soundService, gameService} from '../services';
-import {withServices} from '../components/ServiceConnector';
+import {withSoundService} from '../components/ServiceConnector';
 
 class SensorModulator extends React.Component { 
   constructor(props) {
@@ -122,7 +122,7 @@ class SensorModulator extends React.Component {
   }
 }
 
-export default withServices(SensorModulator, ["soundService"]);
+export default withSoundService(SensorModulator);
 
 // translation function for "volume movement"
 translateMovementAmount = (data, props, dataBuffer)=>{

@@ -7,8 +7,10 @@ import {
 	TouchableOpacity
 } from 'react-native';
 
+import compose from 'lodash.flowright'
+
 import {globalStyles} from '../../config/globalStyles';
-import { withServices } from './ServiceConnector';
+import { withNetworkService, withStorageService } from './ServiceConnector';
 import { networkService, storageService } from '../services';
 
 class ServerConnector extends React.Component { 
@@ -62,4 +64,4 @@ class ServerConnector extends React.Component {
   }
 }
 
-export default withServices(ServerConnector, ["networkService", "storageService"]);
+export default compose(withNetworkService, withStorageService, ServerConnector);

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 
 import {globalStyles} from '../../config/globalStyles';
-import {withServices} from '../components/ServiceConnector';
+import {withNearbyService} from '../components/ServiceConnector';
 import {nearbyService} from '../services';
 
 class NearbyStatus extends React.Component { 
@@ -35,4 +35,4 @@ class NearbyStatus extends React.Component {
   }
 }
 
-export default withServices(NearbyStatus, ["nearbyService"]);
+export default withNearbyService(NearbyStatus);

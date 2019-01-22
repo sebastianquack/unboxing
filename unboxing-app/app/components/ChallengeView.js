@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
-import {withServices} from './ServiceConnector';
+import {withGameService} from './ServiceConnector';
 
 import Sequence from './Sequence';
 import TrackSelector from './TrackSelector';
@@ -71,7 +71,7 @@ class ChallengeView extends React.Component {
   }
 }
 
-export default withServices(ChallengeView, ["gameService"]);
+export default withGameService(ChallengeView);
 
 const styles = StyleSheet.create({
   button: {

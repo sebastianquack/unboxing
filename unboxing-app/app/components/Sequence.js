@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
+import compose from 'lodash.flowright'
+
 import {globalStyles} from '../../config/globalStyles';
 import SequenceVisualizer from './SequenceVisualizer';
-
 import SensorModulator from './SensorModulator';
-import {withServices} from './ServiceConnector';
+import {withSequenceService, withGestureService, withGameService} from './ServiceConnector';
 import {sequenceService, gameService, soundService} from '../services';
 
 class Sequence extends React.Component { 
@@ -145,7 +146,7 @@ class Sequence extends React.Component {
   }
 }
 
-export default withServices(Sequence, ["sequenceService", "gestureService", "gameService"]);
+export default compose(withSequenceService, withGestureService, withGameService, Sequence);
 
 const styles = StyleSheet.create({
   welcome: {

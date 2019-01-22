@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import RNFS from 'react-native-fs'
 import path from 'react-native-path'
+import compose from 'lodash.flowright'
 
 import {globalStyles} from '../../config/globalStyles';
-import {withServices} from './ServiceConnector';
+import {withNetworkService, withStorageService} from './ServiceConnector';
 
 folder = RNFS.ExternalStorageDirectoryPath + '/unboxing/files'
 
@@ -166,7 +167,6 @@ class Files extends React.Component {
   }
 
   render() {
-    console.log("RENDER FILES")
     return (
       <View style={styles.container}>
         <Text style={globalStyles.titleText}>Files</Text>
@@ -188,7 +188,12 @@ class Files extends React.Component {
   }
 }
 
-export default withServices(Files, ["networkService", "storageService"])
+export default compose(
+  withNetworkService,
+  withStorageService,
+  Files
+  )
+
 
 const styles = StyleSheet.create({
   container: {
