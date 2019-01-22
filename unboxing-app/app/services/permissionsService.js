@@ -2,7 +2,7 @@ import { PermissionsAndroid } from 'react-native';
 
 import Service from './Service';
 
-class PermissionsService extends Service {
+class PermissionService extends Service {
 
 	constructor() {
 
@@ -41,6 +41,6 @@ class PermissionsService extends Service {
 
 }
 
-const permissionsService = new PermissionsService();
+const permissionService = new PermissionService();
 
-export {permissionsService};
+export {permissionService};
