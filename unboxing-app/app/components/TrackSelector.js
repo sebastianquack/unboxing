@@ -4,7 +4,7 @@ import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-
 import {globalStyles} from '../../config/globalStyles';
 
 import {gameService, sequenceService, storageService} from '../services';
-import {withServices} from './ServiceConnector';
+import {withSequenceService} from './ServiceConnector';
 
 class TrackSelector extends React.Component { 
   constructor(props) {

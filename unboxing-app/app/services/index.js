@@ -2,7 +2,7 @@ import {sensorService} from './sensorService'
 import {nearbyService} from './nearbyService'
 import {sequenceService} from './sequenceService'
 import {soundService} from './soundService'
-import {permissionsService} from './permissionsService'
+import {permissionService} from './permissionService'
 import {storageService} from './storageService'
 import {networkService} from './networkService'
 import {gameService} from './gameService'
@@ -14,7 +14,7 @@ export {
   nearbyService,
   sequenceService,
   soundService,
-  permissionsService,
+  permissionService,
   storageService,
   networkService,
   gameService,

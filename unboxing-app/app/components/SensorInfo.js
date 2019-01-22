@@ -4,8 +4,7 @@ import compose from 'lodash.flowright'
 
 import {globalStyles} from '../../config/globalStyles';
 import {sensorService} from '../services';
-import {withServices} from '../components/ServiceConnector';
-import {withGestureService, withSensorService} from './ServiceConnector';
+import {withPeakService, withSensorService} from './ServiceConnector';
 
 class SensorInfo extends React.Component { 
   constructor(props) {
@@ -45,6 +44,7 @@ class SensorInfo extends React.Component {
   }
 
   render() {
+    console.log("RENDER SENSORINFO")
     return (
       <View style={styles.info}>
         <Text style={globalStyles.titleText}>Sensor Info</Text>
@@ -59,7 +59,7 @@ class SensorInfo extends React.Component {
   }
 }
 
-export default compose(withSensorService, withPeakService, SensorInfo);
+export default withSensorService(withPeakService(SensorInfo));
 
 
 const styles = StyleSheet.create({

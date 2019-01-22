@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 
 import {globalStyles} from '../../config/globalStyles';
-import {withGameServices} from '../components/ServiceConnector';
+import {withGameService} from '../components/ServiceConnector';
 import {gameService} from '../services';
 
 class DebugToggle extends React.Component { 

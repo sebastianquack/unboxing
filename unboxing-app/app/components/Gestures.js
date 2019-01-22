@@ -94,7 +94,7 @@ class Gestures extends React.Component {
   }
 }
 
-export default compose(withGestureService, withSensorService, Gestures)
+export default compose(withGestureService, withSensorService)(Gestures)
 
 const buttonStyle = {
   padding: 10,

@@ -146,7 +146,7 @@ class Sequence extends React.Component {
   }
 }
 
-export default compose(withSequenceService, withGestureService, withGameService, Sequence);
+export default compose(withSequenceService, withGestureService, withGameService)(Sequence);
 
 const styles = StyleSheet.create({
   welcome: {

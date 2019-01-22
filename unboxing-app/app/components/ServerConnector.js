@@ -64,4 +64,4 @@ class ServerConnector extends React.Component {
   }
 }
 
-export default compose(withNetworkService, withStorageService, ServerConnector);
+export default compose(withNetworkService, withStorageService)(ServerConnector);

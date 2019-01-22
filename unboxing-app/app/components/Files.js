@@ -188,11 +188,7 @@ class Files extends React.Component {
   }
 }
 
-export default compose(
-  withNetworkService,
-  withStorageService,
-  Files
-  )
+export default compose(withNetworkService,withStorageService)(Files)
 
 
 const styles = StyleSheet.create({
