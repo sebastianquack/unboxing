@@ -29,7 +29,7 @@ class ChallengeSelector extends React.Component {
   }
 
   render() {
-    const challenges = this.props.services.storage.collections.challenges ? this.props.services.storage.collections.challenges : [];
+    const challenges = this.props.storageService.collections.challenges ? this.props.storageService.collections.challenges : [];
     return (
       <View style={{width: "50%"}}>
         <Text style={globalStyles.titleText}>Challenge List</Text>
@@ -39,7 +39,7 @@ class ChallengeSelector extends React.Component {
   }
 }
 
-export default withServices(ChallengeSelector);
+export default withServices(ChallengeSelector, ["storageService"]);
 
 const styles = StyleSheet.create({
   button: {

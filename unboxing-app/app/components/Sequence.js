@@ -33,10 +33,10 @@ class Sequence extends React.Component {
   // called every second to calculate sequence info
   updateSequenceInfo() {
     const currentTime = soundService.getSyncTime(); // get the synchronized time
-    const currentTimeInSequence = currentTime - this.props.services.sequence.startedAt;
-    const playbackTime = currentTime - this.props.services.sequence.playbackStartedAt;
+    const currentTimeInSequence = currentTime - this.props.sequenceService.startedAt;
+    const playbackTime = currentTime - this.props.sequenceService.playbackStartedAt;
 
-    if(this.props.services.sequence.controlStatus == "playing") {
+    if(this.props.sequenceService.controlStatus == "playing") {
       this.setState({
         currentTimeInSequence: currentTimeInSequence,
         playbackTime: playbackTime
@@ -48,9 +48,9 @@ class Sequence extends React.Component {
       });
     }
 
-    if(this.props.services.sequence.nextItem) {
+    if(this.props.sequenceService.nextItem) {
       
-      let timeToNextItem = this.props.services.sequence.nextItem.startTime - currentTimeInSequence
+      let timeToNextItem = this.props.sequenceService.nextItem.startTime - currentTimeInSequence
       
       this.setState({
         timeToNextItem: timeToNextItem > 0 ? timeToNextItem + this.countDownDisplayDelay : 0
@@ -60,8 +60,8 @@ class Sequence extends React.Component {
       this.setState({timeToNextItem: null});   
     }
 
-    if(this.props.services.sequence.currentItem) {
-      let timeInCurrentItem = currentTimeInSequence - this.props.services.sequence.currentItem.startTime
+    if(this.props.sequenceService.currentItem) {
+      let timeInCurrentItem = currentTimeInSequence - this.props.sequenceService.currentItem.startTime
       this.setState({timeInCurrentItem: timeInCurrentItem});   
     } else {
       this.setState({timeInCurrentItem: null});   
@@ -70,11 +70,11 @@ class Sequence extends React.Component {
 
   // renders current sequence display, called when info changes
   renderSequenceDebugInfo() {
-    const currentSequence = this.props.services.sequence.currentSequence;
-    const currentTrack = this.props.services.sequence.currentTrack;
-    const currentItem = this.props.services.sequence.currentItem;
-    const nextItem = this.props.services.sequence.nextItem;
-    const controlStatus = this.props.services.sequence.controlStatus;
+    const currentSequence = this.props.sequenceService.currentSequence;
+    const currentTrack = this.props.sequenceService.currentTrack;
+    const currentItem = this.props.sequenceService.currentItem;
+    const nextItem = this.props.sequenceService.nextItem;
+    const controlStatus = this.props.sequenceService.controlStatus;
     
     return(
       <View>
@@ -85,10 +85,10 @@ class Sequence extends React.Component {
             Playback time: {Math.floor(this.state.playbackTime / 1000)} {"\n"}
             Sequence playback position: {Math.floor(this.state.currentTimeInSequence / 1000)} {"\n"}
             custom_duration: { currentSequence ? currentSequence.custom_duration : "?" } {"\n"}
-            Current item: {currentItem ? currentItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}
-            Next item: {nextItem ? nextItem.path : "none"} ({this.props.services.sequence.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""}) {"\n"}
-            Gesture Recognition: { this.props.services.gestures.isRecognizing ? "on" : "off" } {"\n"}
-            Gesture: { this.props.services.gestures.activeGesture ? this.props.services.gestures.activeGesture.name : "-" }
+            Current item: {currentItem ? currentItem.path : "none"} ({this.props.sequenceService.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}
+            Next item: {nextItem ? nextItem.path : "none"} ({this.props.sequenceService.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""}) {"\n"}
+            Gesture Recognition: { this.props.gestureService.isRecognizing ? "on" : "off" } {"\n"}
+            Gesture: { this.props.gestureService.activeGesture ? this.props.gestureService.activeGesture.name : "-" }
           </Text>
           {controlStatus == "ready" &&
             <TouchableOpacity style={styles.button} onPress={gameService.startSequence}>
@@ -104,48 +104,48 @@ class Sequence extends React.Component {
     return (
       <View> 
         <SequenceVisualizer 
-          sequence={this.props.services.sequence.currentSequence}
-          track={this.props.services.sequence.currentTrack}
-          item={this.props.services.sequence.currentItem}
-          controlStatus={this.props.services.sequence.controlStatus}
+          sequence={this.props.sequenceService.currentSequence}
+          track={this.props.sequenceService.currentTrack}
+          item={this.props.sequenceService.currentItem}
+          controlStatus={this.props.sequenceService.controlStatus}
           currentTime={this.state.currentTimeInSequence}
         />
-          <View><Text style={{fontSize: 30}}>{this.props.services.sequence.nextActionMessage}</Text></View>
+          <View><Text style={{fontSize: 30}}>{this.props.sequenceService.nextActionMessage}</Text></View>
 
-          {this.props.services.sequence.showPlayItemButton && this.props.services.game.debugMode &&
+          {this.props.sequenceService.showPlayItemButton && this.props.gameService.debugMode &&
               <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>
                   <Text>Play</Text>
               </TouchableOpacity>
           }
 
-          {this.props.services.game.debugMode && this.props.services.sequence.nextItem && this.state.timeToNextItem < 0 &&
+          {this.props.gameService.debugMode && this.props.sequenceService.nextItem && this.state.timeToNextItem < 0 &&
             <TouchableOpacity style={styles.bigButton} onPress={gameService.handleSkipButton}>
                   <Text>Skip</Text>
             </TouchableOpacity>
           }
 
-          {this.props.services.sequence.currentItem &&
+          {this.props.sequenceService.currentItem &&
             <View>
               <TouchableOpacity style={styles.bigButton} onPress={gameService.handleStopButton}>
                   <Text>Stop</Text>
               </TouchableOpacity>
             </View>
           }
-        <Text style={{fontSize: 50}}>{ this.props.services.sequence.beatsToNextItem }</Text>
+        <Text style={{fontSize: 50}}>{ this.props.sequenceService.beatsToNextItem }</Text>
         {gameService.debugMode &&
           <View style={{width:"25%"}}>
             <Text>Beat Tick Off/On</Text>         
-            <Switch value={this.props.services.sequence.beatTickActive} onValueChange={sequenceService.toggleBeatTick}/>
+            <Switch value={this.props.sequenceService.beatTickActive} onValueChange={sequenceService.toggleBeatTick}/>
           </View>
         }
-        <SensorModulator mode={this.props.services.sequence.currentItem ? this.props.services.sequence.currentItem.sensorModulation : ""}/>
-        {this.props.services.game.debugMode ? this.renderSequenceDebugInfo() : null}
+        <SensorModulator mode={this.props.sequenceService.currentItem ? this.props.sequenceService.currentItem.sensorModulation : ""}/>
+        {this.props.gameService.debugMode ? this.renderSequenceDebugInfo() : null}
       </View> 
     );
   }
 }
 
-export default withServices(Sequence);
+export default withServices(Sequence, ["sequenceService", "gestureService", "gameService"]);
 
 const styles = StyleSheet.create({
   welcome: {

@@ -13,8 +13,8 @@ class Gestures extends React.Component {
   }
 
   renderGestures = () => {
-    return this.props.services.gestures.activeGestures.map( gesture => {
-      const dtwValue = this.props.services.gestures.dtwValues[gesture._id];
+    return this.props.gestureService.activeGestures.map( gesture => {
+      const dtwValue = this.props.gestureService.dtwValues[gesture._id];
       return <Text key={gesture._id}>
           <Text style={{fontWeight:"bold"}}>{(gesture.sensitivity/dtwValue).toFixed(1)}  </Text> 
           ({dtwValue} {"<"} {gesture.sensitivity}) (length: {gesture.activeLength})  <Text style={{fontWeight:"bold"}}>{gesture.name}</Text>
@@ -23,7 +23,7 @@ class Gestures extends React.Component {
   }
 
   renderDetectedGestures = () => {
-    return this.props.services.gestures.detectedGestures.map( (gesture, index) => (
+    return this.props.gestureService.detectedGestures.map( (gesture, index) => (
       <Text key={index}>{gesture.name} {gesture.detectedAt.getHours()}:{gesture.detectedAt.getMinutes()}:{gesture.detectedAt.getSeconds()}</Text>
     ))
   }
@@ -49,8 +49,8 @@ class Gestures extends React.Component {
         ><Text>Send Recording to Server</Text>
       </TouchableOpacity>
 
-    const isRecording = this.props.services.gestures.isRecording
-    const hasRecords = this.props.services.gestures.hasRecords
+    const isRecording = this.props.gestureService.isRecording
+    const hasRecords = this.props.gestureService.hasRecords
 
     const firstButton = ( isRecording ? stopButton : ( hasRecords ? clearButton : recordButton ) )
     const secondButton = ( hasRecords ? sendButton : null )
@@ -68,8 +68,8 @@ class Gestures extends React.Component {
 
 
   render() {
-    const gesturesState = this.props.services.gestures
-    const sensorsState = this.props.services.sensors
+    const gesturesState = this.props.gestureService
+    const sensorsState = this.props.sensorService
     return (
       <View>
         <Text style={globalStyles.titleText}>
@@ -93,7 +93,7 @@ class Gestures extends React.Component {
   }
 }
 
-export default withServices(Gestures);
+export default withServices(Gestures, ["gestureService", "sensorService"]);
 
 const buttonStyle = {
   padding: 10,

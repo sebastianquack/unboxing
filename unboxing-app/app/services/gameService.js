@@ -6,7 +6,7 @@ class GameService extends Service {
 
 	constructor() {
 		// initialize with reactive vars
-		super("game", {
+		super("gameService", {
 			challengeStatus: "list",	// list <-> navigate <-> prepare <-> play 
 			activeChallenge: null, 		// active challenge saved here
 			debugMode: false					// show debugging info in interface

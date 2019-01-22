@@ -14,8 +14,8 @@ class TrackSelector extends React.Component {
 
   renderTrack = (sequence, track, index)=> {
     const trackStyle = Object.assign({backgroundColor: track.color}, styles.button);
-    const selected = this.props.services.sequence.currentTrack ? 
-      ((this.props.services.sequence.currentTrack == track) ? "(selected)" : "") : ""
+    const selected = this.props.sequenceService.currentTrack ? 
+      ((this.props.sequenceService.currentTrack == track) ? "(selected)" : "") : ""
     return (
       <TouchableOpacity
           key={index}
@@ -39,7 +39,7 @@ class TrackSelector extends React.Component {
   }
 }
 
-export default withServices(TrackSelector);
+export default withServices(TrackSelector, "sequenceService");
 
 const styles = StyleSheet.create({
   button: {

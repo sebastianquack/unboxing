@@ -15,8 +15,8 @@ class ServerConnector extends React.Component {
   constructor(props) {
   	super(props);
   	this.state = {
-			serverInput: this.props.services.network.server,
-			deviceIdInput: this.props.services.storage.deviceId
+			serverInput: this.props.networkService.server,
+			deviceIdInput: this.props.storageService.deviceId
   	}
   }
 
@@ -25,9 +25,9 @@ class ServerConnector extends React.Component {
 	}
 
   render() {
-		const connectionType = this.props.services.network.connectionInfo ? this.props.services.network.connectionInfo.type : null
-		const effectiveConnectionType = this.props.services.network.connectionInfo ? this.props.services.network.connectionInfo.effectiveType: null
-		const lastApiResult = this.props.services.network.lastApiResult
+		const connectionType = this.props.networkService.connectionInfo ? this.props.networkService.connectionInfo.type : null
+		const effectiveConnectionType = this.props.networkService.connectionInfo ? this.props.networkService.connectionInfo.effectiveType: null
+		const lastApiResult = this.props.networkService.lastApiResult
   	return (
   		<View>
 				<TextInput
@@ -45,7 +45,7 @@ class ServerConnector extends React.Component {
 					Effective Connection Type: {effectiveConnectionType}
 				</Text>				
 				<Text style={{marginTop: 20}}>
-					Server: {this.props.services.network.server}
+					Server: {this.props.networkService.server}
 				</Text>
 				<TextInput
 					underlineColorAndroid='transparent'
@@ -55,11 +55,11 @@ class ServerConnector extends React.Component {
 					onSubmitEditing={(e) => networkService.setServer(this.state.serverInput)}
 				/>
 				<TouchableOpacity style={globalStyles.button} onPress={this.handleGetPress}>
-					<Text>Get Everything ({this.props.services.storage.version}) {lastApiResult}</Text>
+					<Text>Get Everything ({this.props.storageService.version}) {lastApiResult}</Text>
 				</TouchableOpacity>					
   		</View>
   	);
   }
 }
 
-export default withServices(ServerConnector);
+export default withServices(ServerConnector, ["networkService", "storageService"]);

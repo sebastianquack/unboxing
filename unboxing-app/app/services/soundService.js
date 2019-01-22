@@ -16,7 +16,7 @@ class SoundSevice extends Service {
 	constructor() {
 
 		// reactive vars
-		super("sound", {
+		super("soundService", {
 			delta: 0,
 			volume: 1,
 			speed: 0.5

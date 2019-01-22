@@ -12,7 +12,7 @@ class NearbyService extends Service {
 
 	constructor() {
 		// reactive vars
-		super("nearby", {
+		super("nearbyService", {
 			active: false,					// general on / off switch for nearby
 			serviceId: null, 				// service id for discovery & advertising
 			discoveryActive: false,			// true if discovery service is active

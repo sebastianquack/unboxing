@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Text, View, Switch, Slider } from 'react-native';
 
 import {sensorService} from '../services'
-import {withServices} from '../components/ServiceConnector'
 import {globalStyles} from '../../config/globalStyles';
 
 class AttributeSlider extends React.Component { 
@@ -91,4 +90,4 @@ class AttributeSlider extends React.Component {
   }
 }
 
-export default withServices(AttributeSlider);
+export default AttributeSlider;

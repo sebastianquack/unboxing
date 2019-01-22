@@ -17,8 +17,8 @@ class ChallengeView extends React.Component {
   }
 
   render() {
-    const challenge = this.props.services.game.activeChallenge;
-    const challengeStatus = this.props.services.game.challengeStatus;
+    const challenge = this.props.gameService.activeChallenge;
+    const challengeStatus = this.props.gameService.challengeStatus;
     return (
       <View>
 
@@ -71,7 +71,7 @@ class ChallengeView extends React.Component {
   }
 }
 
-export default withServices(ChallengeView);
+export default withServices(ChallengeView, ["gameService"]);
 
 const styles = StyleSheet.create({
   button: {

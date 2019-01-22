@@ -8,7 +8,7 @@ class SensorService extends Service {
 	constructor() {
 
 		// reactive vars
-		super("sensors", {
+		super("sensorService", {
 			data: {
 				acc:{x:0,y:0,z:0},
 				gyr:{x:0,y:0,z:0},

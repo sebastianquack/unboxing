@@ -10,7 +10,7 @@ class StorageService extends Service {
 	constructor() {
 
 		// reactive vars
-		super("storage", {
+		super("storageService", {
 			version: 0,
 			collections: {}
 		});
