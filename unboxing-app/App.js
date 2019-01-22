@@ -21,8 +21,8 @@ import {ServiceConnector} from './app/components/ServiceConnector';
 
 import {globalStyles} from './config/globalStyles';
 
-// import ServerConnector from './app/components/ServerConnector';
-// import Files from './app/components/Files';
+import ServerConnector from './app/components/ServerConnector';
+import Files from './app/components/Files';
 import TimeSync from './app/components/TimeSync';
 // import GameContainer from './app/components/GameContainer';
 // import NearbyStatus from './app/components/NearbyStatus';

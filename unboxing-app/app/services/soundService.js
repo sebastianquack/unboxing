@@ -282,7 +282,7 @@ class SoundSevice extends Service {
 		let index = this.findLoadedSoundIndex(filename);
 		if(index > -1) {
 			if(this.sounds[index].soundObj) {
-				if(this.sounds[index] == "playing") {
+				if(this.sounds[index] == "playing" && sound.soundObj.isPlaying()) {
 					this.sounds[index].soundObj.setSpeed(s);
 				}
 			}
