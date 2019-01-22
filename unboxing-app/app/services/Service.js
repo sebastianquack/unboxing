@@ -6,7 +6,7 @@ export default class Service {
 		this.serviceName = name;
 		this.state = {};
 		this.initialState = initialState;
-		this.reactiveUpadateCallbacks = [];
+		this.reactiveUpdateCallbacks = [];
 	}
 
 	registerOnChange(func) {
@@ -22,8 +22,8 @@ export default class Service {
 		// send to react
 		this.onChange(this.serviceName, this.state);
 		// send to other services
-		for (let handle in this.reactiveUpadateCallbacks) {
-			this.reactiveUpadateCallbacks[handle](this.state)
+		for (let handle in this.reactiveUpdateCallbacks) {
+			this.reactiveUpdateCallbacks[handle](this.state)
 		}
 	}
 
@@ -33,12 +33,12 @@ export default class Service {
 
 	// register a callback for reactive state updates
 	registerReactiveStateCallback = (func, handle) => {
-		this.reactiveUpadateCallbacks[handle] = func
+		this.reactiveUpdateCallbacks[handle] = func
 		func(this.state) // initial call
 	}
 
 	unRegisterReactiveStateCallback = (handle) => {
-		delete this.reactiveUpadateCallbacks[handle]
+		delete this.reactiveUpdateCallbacks[handle]
 	}		
 
 	getReactive(key) {
