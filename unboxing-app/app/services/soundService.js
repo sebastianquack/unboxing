@@ -19,7 +19,8 @@ class SoundSevice extends Service {
 		super("soundService", {
 			delta: 0,
 			volume: 1,
-			speed: 0.5
+			speed: 0.5,
+			soundCounter: 0
 		});
 
 		// not reative
@@ -38,9 +39,12 @@ class SoundSevice extends Service {
 
     this.schedulingIntervals = [];
     
-    this.preloadSoundfiles([clickFilename], ()=>{
-    	console.log("click loaded");
-    });
+    setTimeout(()=>{
+	    this.preloadSoundfiles([clickFilename], ()=>{
+	    	console.log("click loaded");
+	    });	
+    }, 1000);
+    
 	}
 
 	// delta and sync time
@@ -60,38 +64,41 @@ class SoundSevice extends Service {
 		this.setDelta(this.getDelta() + d);
 	}
 	
-	// utility function to find a sound that has already been loaded, return -1 if not found
-	findLoadedSoundIndex(filename) {
+	// utility function to find sounds with a given filename, optional: specify status 
+	findSoundIndices(filename, status=null) {
+		let indices = []
 		for(let i = 0; i < this.sounds.length; i++) {
-			if(this.sounds[i].filename == filename) {
-				return i;
+			if(this.sounds[i].filename == filename && (this.sounds[i].status == status) || !status) {
+				indices.push(i);
 			}
 		}
-		return -1;
+		return indices;
 	}
+	// -> todo: give back array of indices if multiple sounds are found
 
 	// preload an array of soundfiles, callback is called when all are ready
-	preloadSoundfiles(filenames, callback) {
+	preloadSoundfiles(filenames, callback, allowDuplicates=false) {
 		console.log("loading filenames");
 		console.log(filenames);
 		filenames.forEach((filename)=>{
 			// only load sounds we don't know about yet 
-			// question: are there use cases where we want to preload the same sound file multiple times?
-			if(this.findLoadedSoundIndex(filename) == -1) { 
-				console.log("adding pending sound");
+			// unless allowDuplicates specified
+			if(allowDuplicates || this.findSoundIndices(filename).length == 0) { 
+				console.log("adding new pending sound");
 				this.sounds.push({
 					filename: filename,
 					status: "pending",
 					soundObj: null
-				});	
-			}
+				});
+				this.setReactive({soundCounter: this.state.soundCounter + 1});	
+			} 
 		});
 		this.loadNextSoundfile(0, callback); // this iterates over all and loads what is needed
 	}
 
 	// preload a single soundfile
-	preloadSoundfile(filename, callback) {
-		this.preloadSoundfiles([filename], callback);
+	preloadSoundfile(filename, callback, allowDuplicates=false) {
+		this.preloadSoundfiles([filename], callback, allowDuplicates);
 	}
 
 	// preload a soundfile from this.sounds array at index
@@ -102,7 +109,7 @@ class SoundSevice extends Service {
 		if(index >= this.sounds.length) {
 			console.log("no more sounds to load, finishing...");
 			if(typeof callback === 'function') {
-				callback();	
+				callback(index - 1);	
 			}
 			return;
 		}
@@ -150,32 +157,37 @@ class SoundSevice extends Service {
   		this.sounds = [];
 	}
 
-	// public - check what a sound's status is
-	getSoundStatus(filename) {
-		let index = this.findLoadedSoundIndex(filename);
+	// public - check what a sound's status is - todo: update to findSoundIndices
+	/*getSoundStatus(filename) {
+		let index = this.findSoundIndex(filename);
 		if(index > -1) {
 			return this.sounds[index].status;
 		} else {
 			return null;
 		}
-	}
+	}*/
 
 	// schedule playback of preloaded soundfile
 	scheduleSound(soundfile, targetTime, callbacks={}) {
 
-		//find sound index
-		let index = this.findLoadedSoundIndex(soundfile);
-		if(index == -1) {
-			console.log("aborting scheduling, soundfile not found - sound needs to be preloaded first");
+		// find sound index of a ready version for this sound
+		let indices = this.findSoundIndices(soundfile, "ready");
+		
+		if(indices.length == 0) {
+			console.log("no ready sound found - attempting to load a new version");
+			this.preloadSoundfile(soundfile, ()=>{
+					console.log("finished loading duplicate sound, setting index to last sound loaded")
+					this.scheduleSound(soundfile, targetTime, callbacks);
+				}, true); // allow duplicates			
+
 			return;
 		}
-
-    console.log(this.getSyncTime() + ": scheduled sound " + soundfile + " for " + targetTime);  
-
+		
+    console.log(this.getSyncTime() + ": scheduling sound " + soundfile + " for " + targetTime);  
     const timeToRunStartingLoop = targetTime - this.getSyncTime();
 
     this.schedulingIntervals.push(setTimeout(()=>{
-			this.runStartingLoop(index, targetTime, callbacks);
+			this.runStartingLoop(indices[0], targetTime, callbacks);
     }, timeToRunStartingLoop - 34)); // set timeout to a bit less to allow for loop
   }
 
@@ -256,37 +268,37 @@ class SoundSevice extends Service {
 	// public - stops playback of a single sound and removes callback
 	stopSound(filename) {
 		console.log("stopping sound", filename);
-		let index = this.findLoadedSoundIndex(filename);
-		if(index > -1) {
-			if(this.sounds[index].soundObj) {
-				this.sounds[index].soundObj.stop();
+		let indices = this.findSoundIndices(filename);
+		indices.forEach(index=>{
+			if(this.sounds[index].status == "playing") {
+				if(this.sounds[index].soundObj) {
+					this.sounds[index].soundObj.stop();
+				}
+				this.sounds[index].onPlayEnd = undefined;
+				this.sounds[index].onPlayStart = undefined;
+				this.sounds[index].status = "ready";			
 			}
-			this.sounds[index].onPlayEnd = undefined;
-			this.sounds[index].onPlayStart = undefined;
-			this.sounds[index].status = "ready";
-		} else {
-			console.log("cannot stop sound, filename not found");
-		}
+		});
 	}
 
 	setVolumeFor(filename, v) {
-		let index = this.findLoadedSoundIndex(filename);
-		if(index > -1) {
+		let indices = this.findSoundIndices(filename);
+		indices.forEach((index)=>{
 			if(this.sounds[index].soundObj) {
 				this.sounds[index].soundObj.setVolume(v);
 			}
-		}
+		});
 	}
 
 	setSpeedFor(filename, s) {
-		let index = this.findLoadedSoundIndex(filename);
-		if(index > -1) {
+		let indices = this.findSoundIndices(filename);
+		indices.forEach((index)=>{
 			if(this.sounds[index].soundObj) {
 				if(this.sounds[index] == "playing" && sound.soundObj.isPlaying()) {
 					this.sounds[index].soundObj.setSpeed(s);
 				}
 			}
-		}
+		});
 	}
 
 	setVolume(v) {

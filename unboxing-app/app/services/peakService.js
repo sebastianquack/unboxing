@@ -71,8 +71,8 @@ class PeakService extends Service {
 		this.setReactive({bpm})
 		this.peakStartTime = null
 		
-		if(gameService.debugMode) {
-			this.showNotification("PEAK")
+		if(gameService.state.debugMode) {
+			//this.showNotification("PEAK")
 				if(typeof this.detectionCallback != "function") {
 				//soundService.scheduleSound(clickFilename, soundService.getSyncTime());	
 				soundService.click();

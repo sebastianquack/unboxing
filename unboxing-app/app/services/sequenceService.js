@@ -12,16 +12,16 @@ class SequenceService extends Service {
 			currentSequence: null, // sequence object
       currentTrack: null, // track object
 			playbackStartedAt: null, // start time of first loop of this sequence
-			startedAt: null, // start time of current sequence (in each loop)
+			loopStartedAt: null, // start time of current sequence (in each loop)
 			nextItem: null, // next item to play, if available
 			scheduledItem: null, // item scheduled for play
 			currentItem: null, // current item playing, if available
 			showPlayItemButton: false, // should play button be shown
-			beatTickActive: false // should beat be played on the beat
+			beatTickActive: false, // should beat be played on the beat
+			loopCounter: 0
 		});
 
 		// not reactive - used for internal calculations
-		this.loopCounter = 0;
 		this.localStart = false;
 		this.beatTimeout = null;
 	}
@@ -45,7 +45,7 @@ class SequenceService extends Service {
 
 	getNextItemStartTimeAbsolute = ()=> {
 		if (!this.state.nextItem) return
-		const startTime = this.state.startedAt + this.state.nextItem.startTime;
+		const startTime = this.state.loopStartedAt + this.state.nextItem.startTime;
 		return startTime;
 	}
 
@@ -56,25 +56,21 @@ class SequenceService extends Service {
 	doBeatUpdate = ()=> {
 		// calculate time to next item
 		const currentTime = soundService.getSyncTime();
-    const currentTimeInSequence = currentTime - this.state.startedAt;
+    const currentTimeInSequence = currentTime - this.state.loopStartedAt;
 
-    console.log("beat update - currentTimeInSequence", currentTimeInSequence);
+    //console.log("beat update - currentTimeInSequence", currentTimeInSequence);
 
 		// beat calculations
 		const durationOfBeat = (60000 / this.state.currentSequence.bpm);
 		const currentBeatInSequence = Math.floor(currentTimeInSequence / durationOfBeat);
-		const timeOfThisBeat = this.state.startedAt + (currentBeatInSequence * durationOfBeat);
+		const timeOfThisBeat = this.state.loopStartedAt + (currentBeatInSequence * durationOfBeat);
 
 		// determine next startime to count down to
 		let startTime = null;
     if(this.state.nextItem) {
     	startTime = this.state.nextItem.startTime;
     }
-    // also countdown to scheduled items 
-    if(this.state.scheduledItem) {
-    	startTime = this.state.scheduledItem.startTime;
-    }
-
+    
     if(startTime != null) {
 
 	    const timeToNextItem = startTime - currentTimeInSequence;	
@@ -82,21 +78,26 @@ class SequenceService extends Service {
 	    // calculate this in beats
 			const beatsToNextItem = Math.floor(timeToNextItem / durationOfBeat) - 1;
 
-			// update beatsToNextItem
-			if(beatsToNextItem > 0 && !this.state.currentItem) {
+			// check if beats should be shown
+			if(beatsToNextItem > 0 && !this.state.currentItem && !this.autoPlayNextItem()) {
 				this.setReactive({beatsToNextItem: beatsToNextItem});	
 			} else {
 				this.setReactive({beatsToNextItem: ""});	
 
-				if(beatsToNextItem < 0 && currentTimeInSequence > 0) {
-					gameService.handleMissedCue();	
+				// check if we are already past the next item, skip item
+				if(beatsToNextItem < -1 && currentTimeInSequence > 0 && !this.autoPlayNextItem()) {
+						gameService.handleMissedCue();		
+						this.doBeatUpdate(); // jump back to start of beatUpdate, because sequence might have shifted to next loop
+						return;
 				}
 			}
+		} else {
+			this.setReactive({beatsToNextItem: ""});				
 		}
 
     // calculate time to next update
-    const timeOfNextBeat = this.state.startedAt + ((currentBeatInSequence + 1) * durationOfBeat);
-    console.log("beat", currentBeatInSequence);
+    const timeOfNextBeat = this.state.loopStartedAt + ((currentBeatInSequence + 1) * durationOfBeat);
+    //console.log("beat", currentBeatInSequence);
 
     if(this.state.beatTickActive) {
     	soundService.click(timeOfNextBeat);	
@@ -113,7 +114,7 @@ class SequenceService extends Service {
 	}
 
 	sequenceStartingLocally = ()=> {
-		return this.localStart && this.loopCounter == 0;
+		return this.localStart && this.state.loopCounter == 0;
 	}
 
 	// check if next item should be autoplayed
@@ -124,7 +125,7 @@ class SequenceService extends Service {
 			return false;
 		}
 
-		if(this.state.nextItem.autoplay == "first" && this.loopCounter == 0) {
+		if(this.state.nextItem.autoplay == "first" && this.state.loopCounter == 0) {
 			return true;
 		}
 
@@ -139,7 +140,7 @@ class SequenceService extends Service {
 	// updates if play button should be shown in interface
 	updatePlayButton = ()=> {
 		this.setReactive({
-	    	showPlayItemButton: (this.state.controlStatus == "playing" && this.state.nextItem && !this.autoPlayNextItem())
+	    	showPlayItemButton: (this.state.controlStatus == "playing" && !this.state.currentItem && this.state.nextItem && !this.autoPlayNextItem())
 		}); 
 	}
 
@@ -239,10 +240,10 @@ class SequenceService extends Service {
 		this.setReactive({
 		 	controlStatus: "playing",
 		 	playbackStartedAt: time,
-	    startedAt: time
+	    loopStartedAt: time
     });
 
-  	console.log("started sequence at", this.state.startedAt);
+  	console.log("started sequence at", this.state.loopStartedAt);
   	this.localStart = localStart;
 
 		this.setupNextSequenceItem();
@@ -267,6 +268,11 @@ class SequenceService extends Service {
 	setupNextSequenceItem = ()=> {
 			console.log("setupNextSequenceItem");
 
+			if(!this.state.currentSequence) {
+				console.log("sequence has ended, aborting");
+				return;
+			}
+
 			gestureService.stopWaitingForGesture();
 
 			// calculate total time in playback
@@ -276,21 +282,21 @@ class SequenceService extends Service {
     	console.log("currentTimeInPlayback", currentTimeInPlayback);
     	
     	// figure out what loop we are on
-    	this.loopCounter = Math.floor(currentTimeInPlayback / this.state.currentSequence.custom_duration);
+    	this.setReactive({loopCounter: Math.floor(currentTimeInPlayback / this.state.currentSequence.custom_duration)});
 
-    	if(this.loopCounter < 0) {
-    		this.loopCounter = 0;
+    	if(this.state.loopCounter < 0) {
+    		this.setReactive({loopCounter: 0});
     	}
     	
-    	console.log("loopCounter", this.loopCounter);
+    	console.log("loopCounter", this.state.loopCounter);
 
     	this.setReactive({
-			  startedAt: this.state.playbackStartedAt + (this.loopCounter * this.state.currentSequence.custom_duration)
+			  loopStartedAt: this.state.playbackStartedAt + (this.state.loopCounter * this.state.currentSequence.custom_duration)
   		});
-  		console.log("new startedAt", this.state.startedAt);
+  		console.log("new loopStartedAt", this.state.loopStartedAt);
 
   		// figure out what time inside the sequence we are on
-    	const currentTimeInSequence = currentTime - this.state.startedAt;
+    	const currentTimeInSequence = currentTime - this.state.loopStartedAt;
     	console.log("currentTimeInSequence", currentTimeInSequence);
 
 			// get items sorted by start time
@@ -316,11 +322,12 @@ class SequenceService extends Service {
 		    			nextItem = items[i];
 
 		    			// update sequence loop info
-		    			this.loopCounter++;
+		    			this.setReactive({loopCounter: this.state.loopCounter + 1});
 		    			this.setReactive({
-			  				startedAt: this.state.playbackStartedAt + (this.loopCounter * this.state.currentSequence.custom_duration)
+			  				loopStartedAt: this.state.playbackStartedAt + (this.state.loopCounter * this.state.currentSequence.custom_duration)
   						});
-  	
+  						console.log("updated loopCounter", this.state.loopCounter, this.state.loopStartedAt);
+  						
 		    			break;
 		    		}
 		    	}	
@@ -341,9 +348,11 @@ class SequenceService extends Service {
 								(this.sequenceStartingLocally() && this.state.nextItem.startTime == 0) 
 							)
 					) {					
-					let targetTime = this.state.startedAt + this.state.nextItem.startTime;
-					if(this.state.scheduledItem != nextItem) {
+					let targetTime = this.state.loopStartedAt + this.state.nextItem.startTime;
+					if(!this.state.scheduledItem) {
 						this.scheduleSoundForNextItem(targetTime);	
+					} else {
+						console.log("there is already a sound scheduled, abort scheduling");
 					}
 				}
 				
@@ -407,7 +416,7 @@ class SequenceService extends Service {
 	stopCurrentSound() {
 		console.log(this.state.currentItem);
 		soundService.stopSound(this.state.currentItem.path);
-		this.setReactive({currentItem: null, scheduledItem: null});
+		this.setReactive({currentItem: null});
 		this.setupNextSequenceItem();
 	}
 	
@@ -423,12 +432,12 @@ class SequenceService extends Service {
 				scheduledItem: null,
 	    	currentItem: null,
 				playbackStartedAt: null,	    	
-	    	startedAt: null,
+	    	loopStartedAt: null,
 				showPlayItemButton: false,
-				beatsToNextItem: ""
-
+				beatsToNextItem: "",
+				loopCounter: 0
 	    });
-	    this.loopCounter = 0;
+
 	    if(this.beatTimeout) {
 	    	clearTimeout(this.beatTimeout);
 	    	this.beatTimeout = null
