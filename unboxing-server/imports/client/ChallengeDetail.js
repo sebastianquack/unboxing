@@ -13,9 +13,12 @@ class ChallengeDetail extends React.Component {
   }
 
   ChallengeDetailCss = css`
+    width: 20em;
 	  display: inline-block;
 	  background-color: lightgrey;
-	  padding: 0 1ex 1ex 1ex;
+	  padding: 1ex 1ex 1ex 1ex;
+    border: solid 1px darkgrey;    
+    border-radius: 1ex;
 	  margin-bottom: 1ex;
 	  label {
 	    display: block;
@@ -23,12 +26,14 @@ class ChallengeDetail extends React.Component {
 	    + label {margin-top: 0.5ex}
 	    span {
 	      min-width: 6em;
+        width: 50%;
+        vertical-align: top;
 	      display: inline-block;
 	    }
-	    select, span {
-	    	margin-left: 1ex;
-	    }
 	  }
+    button {
+      margin-top: 1em;
+    }
 	`
 
   handleAttributeChange = (attributeName, value) => {

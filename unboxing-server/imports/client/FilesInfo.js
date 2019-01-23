@@ -13,14 +13,16 @@ class FilesInfo extends React.Component {
   }
 
   render() {
-    const listItems = this.props.files.map( e => <li key={e._id}>{JSON.stringify(e)}</li>)
+    const listItems = this.props.files.map( e => <li key={e._id}>{e.path}</li>)
 
     return (
       <div className="FilesInfo">
         <h3>Files <button onClick={this.handleReload}>Reload</button></h3>
-        <ul>
-        {listItems}
-        </ul>
+        <tt>
+          <ul>
+          {listItems}
+          </ul>
+        </tt>
       </div>
     );
   }
@@ -28,7 +30,7 @@ class FilesInfo extends React.Component {
 
 export default withTracker(props => {
   Meteor.subscribe('files.all')
-  const files = Files.find().fetch()
+  const files = Files.find({},{sort: {path: 1}}).fetch()
 
   console.log(files)
 
