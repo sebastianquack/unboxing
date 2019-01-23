@@ -2,9 +2,10 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
-import {withGameService} from './ServiceConnector';
+import {withGameService, withSequenceService} from './ServiceConnector';
 
 import Sequence from './Sequence';
+import SequenceVisualizer from './SequenceVisualizer';
 import TrackSelector from './TrackSelector';
 import NearbyStatus from './NearbyStatus';
 
@@ -41,37 +42,46 @@ class ChallengeView extends React.Component {
         {challengeStatus == "prepare" &&        
           <View>
             <Text>{challenge.instructions}</Text>
+              <SequenceVisualizer 
+                sequence={this.props.sequenceService.currentSequence}
+                track={this.props.sequenceService.currentTrack}
+                item={this.props.sequenceService.currentItem}
+                controlStatus={this.props.sequenceService.controlStatus}
+                currentTime={this.props.sequenceService.sequenceTimeVisualizer}
+              />
             <Text style={globalStyles.titleText}>Select your instrument!</Text>
-            <TrackSelector sequence_id={challenge.sequence_id}/>
+            <TrackSelector sequence={this.props.sequenceService.currentSequence}/>
             <TouchableOpacity style={styles.button} onPress={()=>{
               gameService.setActiveChallengeStatus("play");            
             }}>
               <Text>ready to play</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={()=>{
+              gameService.leaveChallenge();
+            }}>
+              <Text>stop challenge and leave</Text>
+            </TouchableOpacity>
           </View>
         }
         
         {challengeStatus == "play" &&        
-          <Sequence/>
+          <View>
+            <Sequence/>
+            <TouchableOpacity style={styles.button} onPress={()=>{
+              sequenceService.cancelItemsAndSounds()
+              gameService.setActiveChallengeStatus("prepare");
+            }}>
+              <Text>switch instrument or leave</Text>
+            </TouchableOpacity>
+          </View>
         }
-
-        <TouchableOpacity style={styles.button} onPress={()=>{
-          if(challengeStatus == "play") {
-            gameService.setActiveChallengeStatus("prepare");
-          } else {
-            gameService.leaveChallenge();
-          }
-        }}>
-          <Text>back</Text>
-        </TouchableOpacity>
-        
-          
+                  
       </View>
     );
   }
 }
 
-export default withGameService(ChallengeView);
+export default withSequenceService(withGameService(ChallengeView));
 
 const styles = StyleSheet.create({
   button: {

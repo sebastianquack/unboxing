@@ -26,7 +26,7 @@ class SensorModulator extends React.Component {
             maxValue={1}
             onValueChange={value=>soundService.setVolume(value)}
             sensorTranslate={(data, props)=>{
-              let sensorValue = data.gyr.x;
+              let sensorValue = data.gyr.y;
               if(sensorValue > 5) sensorValue = 5;
               if(sensorValue < -5) sensorValue = -5;
               let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;
@@ -44,7 +44,7 @@ class SensorModulator extends React.Component {
             maxValue={1.2}
             onValueChange={value=>soundService.setSpeed(value)}
             sensorTranslate={(data, props)=>{
-              let sensorValue = data.gyr.y;
+              let sensorValue = -data.gyr.x;
               if(sensorValue > 5) sensorValue = 5;
               if(sensorValue < -5) sensorValue = -5;
               let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;
@@ -72,7 +72,7 @@ class SensorModulator extends React.Component {
             attributeName={"off when moving"}
             initialValue={this.props.soundService.volume}
             value={this.props.soundService.volume}
-            minValue={0}
+            minValue={0.2}
             maxValue={1}
             dataBufferSize={1}
             updateInterval={200}
@@ -86,7 +86,7 @@ class SensorModulator extends React.Component {
               if (speed < limit) {
                 result = 1 - speed*limit;
               } else {
-                result = 0;
+                result = 0.1;
               }
               return Math.floor(100*result)/100;      
             }}
@@ -154,5 +154,9 @@ translateMovementAmount = (data, props, dataBuffer)=>{
   // console.log(currentSpeed, avg)
 
   let result = 0.1 * ((currentSpeed + avg) / 2);
-  return Math.floor(100*result)/100;      
+  result = Math.floor(100*result)/100; // rounding to 2 decimals
+  if(result < 0.1) {
+    result = 0.1;
+  }
+  return result;
 }

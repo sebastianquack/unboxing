@@ -9,7 +9,7 @@ class GameService extends Service {
 		super("gameService", {
 			challengeStatus: "list",	// list <-> navigate <-> prepare <-> play 
 			activeChallenge: null, 		// active challenge saved here
-			debugMode: false					// show debugging info in interface
+			debugMode: true					// show debugging info in interface
 		});
 
 		// not reactive vars
@@ -30,6 +30,8 @@ class GameService extends Service {
 			challengeStatus: "navigate",
 			activeChallenge: challenge
 		});
+
+		sequenceService.setSequence(challenge.sequence_id);
 	}
 
 	setActiveChallengeStatus(status) {

@@ -5,7 +5,7 @@ import compose from 'lodash.flowright'
 import {globalStyles} from '../../config/globalStyles';
 import SequenceVisualizer from './SequenceVisualizer';
 import SensorModulator from './SensorModulator';
-import {withSequenceService, withGestureService, withGameService} from './ServiceConnector';
+import {withSequenceService, withGestureService, withGameService, withSoundService} from './ServiceConnector';
 import {sequenceService, gameService, soundService} from '../services';
 
 class Sequence extends React.Component { 
@@ -34,7 +34,7 @@ class Sequence extends React.Component {
   // called every second to calculate sequence info
   updateSequenceInfo() {
     const currentTime = soundService.getSyncTime(); // get the synchronized time
-    const currentTimeInSequence = currentTime - this.props.sequenceService.startedAt;
+    const currentTimeInSequence = currentTime - this.props.sequenceService.loopStartedAt;
     const playbackTime = currentTime - this.props.sequenceService.playbackStartedAt;
 
     if(this.props.sequenceService.controlStatus == "playing") {
@@ -71,25 +71,36 @@ class Sequence extends React.Component {
 
   // renders current sequence display, called when info changes
   renderSequenceDebugInfo() {
+    const activeChallenge = this.props.gameService.activeChallenge;
     const currentSequence = this.props.sequenceService.currentSequence;
     const currentTrack = this.props.sequenceService.currentTrack;
-    const currentItem = this.props.sequenceService.currentItem;
+    const loopCounter = this.props.sequenceService.loopCounter;
+    
     const nextItem = this.props.sequenceService.nextItem;
+    const currentItem = this.props.sequenceService.currentItem;
+    const scheduledItem = this.props.sequenceService.scheduledItem;
+    
     const controlStatus = this.props.sequenceService.controlStatus;
     
     return(
       <View>
           <Text>
-            currentSequence: {currentSequence ? currentSequence.name : "none"} {"\n"}
+            activeChallenge: {activeChallenge ? JSON.stringify(activeChallenge) : "none"} {"\n"}{"\n"}
+            currentSequence: {currentSequence ? JSON.stringify(currentSequence) : "none"} {"\n"}{"\n"}
             controlStatus: { controlStatus } {"\n"}
-            currentTrack: {currentTrack ? currentTrack.name : "none"} {"\n"}
+            currentTrack: {currentTrack ? currentTrack.name : "none"} {"\n"}{"\n"}
             Playback time: {Math.floor(this.state.playbackTime / 1000)} {"\n"}
+            Loop Counter: {loopCounter} {"\n"}
             Sequence playback position: {Math.floor(this.state.currentTimeInSequence / 1000)} {"\n"}
-            custom_duration: { currentSequence ? currentSequence.custom_duration : "?" } {"\n"}
-            Current item: {currentItem ? currentItem.path : "none"} ({this.props.sequenceService.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}
-            Next item: {nextItem ? nextItem.path : "none"} ({this.props.sequenceService.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""}) {"\n"}
+            
+            Next item: {nextItem ? JSON.stringify(nextItem) : "none"} ({this.props.sequenceService.controlStatus == "playing" ? Math.floor(this.state.timeToNextItem / 1000) : ""}) {"\n"}
+            Scheduled item: {scheduledItem ? JSON.stringify(scheduledItem) : "none"} {"\n"}
+            Current item: {currentItem ? JSON.stringify(currentItem) : "none"} ({this.props.sequenceService.controlStatus == "playing" ? Math.floor(this.state.timeInCurrentItem / 1000) : ""}) {"\n"}
+            
             Gesture Recognition: { this.props.gestureService.isRecognizing ? "on" : "off" } {"\n"}
-            Gesture: { this.props.gestureService.activeGesture ? this.props.gestureService.activeGesture.name : "-" }
+            Gesture: { this.props.gestureService.activeGesture ? this.props.gestureService.activeGesture.name : "-" } {"\n"} {"\n"}
+
+            soundService soundCounter: { this.props.soundService.soundCounter }
           </Text>
           {controlStatus == "ready" &&
             <TouchableOpacity style={styles.button} onPress={gameService.startSequence}>
@@ -109,7 +120,7 @@ class Sequence extends React.Component {
           track={this.props.sequenceService.currentTrack}
           item={this.props.sequenceService.currentItem}
           controlStatus={this.props.sequenceService.controlStatus}
-          currentTime={this.state.currentTimeInSequence}
+          currentTime={this.props.sequenceService.sequenceTimeVisualizer}
         />
           <View><Text style={{fontSize: 30}}>{this.props.sequenceService.nextActionMessage}</Text></View>
 
@@ -146,7 +157,7 @@ class Sequence extends React.Component {
   }
 }
 
-export default compose(withSequenceService, withGestureService, withGameService)(Sequence);
+export default compose(withSequenceService, withGestureService, withGameService, withSoundService)(Sequence);
 
 const styles = StyleSheet.create({
   welcome: {

@@ -35,7 +35,7 @@ class SequenceVisualizer extends React.Component {
     items = this.props.sequence.items.filter( item => item.track === track.name)
 
     return (
-      <View style={styles.track} key={1000 + track._id}>
+      <View style={styles.track} key={"body " + track.name}>
         { items.map(this.renderBodyTrackItem) }
       </View>
     )
@@ -74,21 +74,28 @@ class SequenceVisualizer extends React.Component {
   }
 
   render() {
-    const tracks = this.props.sequence.tracks
+    let tracks = null;
+    if(this.props.sequence) {
+      tracks = this.props.sequence.tracks
+    }
 
-    return (
-      <View> 
-        <View style={styles.container}>
-          <View style={styles.header}>
-            {tracks.map(this.renderHeaderTrack)}
-          </View>
-          <View style={styles.body}>
-            {tracks.map(this.renderBodyTrack)}
-            {this.renderIndicator()}
+    if(tracks) {
+      return (
+        <View> 
+          <View style={styles.container}>
+            <View style={styles.header}>
+              {tracks.map(this.renderHeaderTrack)}
+            </View>
+            <View style={styles.body}>
+              {tracks.map(this.renderBodyTrack)}
+              {this.renderIndicator()}
+            </View>
           </View>
         </View>
-      </View>
-    );
+      );
+    } else {
+      return null;
+    }
   }
 }
 
