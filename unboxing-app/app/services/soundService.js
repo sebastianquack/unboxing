@@ -227,10 +227,7 @@ class SoundSevice extends Service {
 		console.log("starting to play " + JSON.stringify(this.sounds[index]));
 		this.sounds[index].status = "playing";
 		
-		this.setVolumeFor(this.sounds[index].filename, 1);
-		this.setSpeedFor(this.sounds[index].filename, 1);
-		
-		this.sounds[index].soundObj.play((success) => {
+		this.sounds[index].soundObj.setVolume(1).play((success) => {
 		  	this.sounds[index].status = "ready";
 		  	if (success) {
 		    	console.log('successfully finished playing at', this.getSyncTime());
@@ -245,7 +242,11 @@ class SoundSevice extends Service {
 	    		callbacks.onPlayEnd();
 	    	}
 		});
-    
+		this.sounds[index].soundObj.getCurrentTime((seconds) => {
+			console.log('getCurrentTime ' + seconds)
+			this.sounds[index].soundObj.setSpeed(1);
+		});
+
     if(typeof callbacks.onPlayStart == "function") {
     	console.log("onPlayStart callback");
       callbacks.onPlayStart();
@@ -309,7 +310,7 @@ class SoundSevice extends Service {
 		  			sound.soundObj.setVolume(v);	
 		  		}
 				});
-		    console.log("setting reactive volume to" + v);          
+		    console.log("setting reactive volume to " + v);          
 		    this.setReactive({volume: v});
 		  }
 		}
