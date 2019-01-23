@@ -414,10 +414,12 @@ class SequenceService extends Service {
 	}
 
 	stopCurrentSound() {
-		console.log(this.state.currentItem);
-		soundService.stopSound(this.state.currentItem.path);
-		this.setReactive({currentItem: null});
-		this.setupNextSequenceItem();
+		if(this.state.currentItem) {
+			console.log(this.state.currentItem);
+			soundService.stopSound(this.state.currentItem.path);
+			this.setReactive({currentItem: null});
+			this.setupNextSequenceItem();
+		}
 	}
 	
 	// stops sequence playback and sound
