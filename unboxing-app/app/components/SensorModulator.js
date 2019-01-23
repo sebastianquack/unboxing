@@ -86,7 +86,7 @@ class SensorModulator extends React.Component {
               if (speed < limit) {
                 result = 1 - speed*limit;
               } else {
-                result = 1;
+                result = 0.1;
               }
               return Math.floor(100*result)/100;      
             }}
@@ -154,5 +154,9 @@ translateMovementAmount = (data, props, dataBuffer)=>{
   // console.log(currentSpeed, avg)
 
   let result = 0.1 * ((currentSpeed + avg) / 2);
-  return Math.floor(100*result)/100;      
+  result = Math.floor(100*result)/100; // rounding to 2 decimals
+  if(result < 0.1) {
+    result = 0.1;
+  }
+  return result;
 }

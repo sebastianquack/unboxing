@@ -227,7 +227,7 @@ class SoundSevice extends Service {
 		console.log("starting to play " + JSON.stringify(this.sounds[index]));
 		this.sounds[index].status = "playing";
 		
-		this.sounds[index].soundObj.setVolume(1).play((success) => {
+		this.sounds[index].soundObj.setVolume(0.3).play((success) => {
 		  	this.sounds[index].status = "ready";
 		  	if (success) {
 		    	console.log('successfully finished playing at', this.getSyncTime());
