@@ -178,7 +178,7 @@ class SequenceService extends Service {
 		
 	}
 
-	// invoked from track selector component - sets up new sequence
+	// invoked from track selector component
 	trackSelect = (track)=> {
 		
   	this.setReactive({currentTrack: track});

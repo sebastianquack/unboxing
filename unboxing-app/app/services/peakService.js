@@ -15,8 +15,8 @@ class PeakService extends Service {
 
 		this.sensorReceiverHandle = null;
 
-		this.isUp = y => y < -0.75
-		this.isDown = y => y > 0.55
+		this.isUp = y => y > 0.55
+		this.isDown = y => y < -0.75
 
 		this.peakDistMillisMin = 150
 		this.peakDistMillisMax = 2000
@@ -42,12 +42,13 @@ class PeakService extends Service {
 	handleSensorDataForRecognition = (data) => {
 	// console.log("sensor data received", data.acc)
 		const y = data.acc.y
+		const x = data.acc.x
 		// detect Up and set start time
-		if (this.isUp(y)) {
+		if (this.isUp(x)) {
 			this.peakStartTime = soundService.getSyncTime()
 		}
 		// detect down if in time
-		if (this.isDown(y)) {
+		if (this.isDown(x)) {
 			if (this.peakStartTime && this.peakStartTime + this.peakDistMillisMin < soundService.getSyncTime()) {
 				this.setReactive({
 					deltaUpDown: soundService.getSyncTime() - this.peakStartTime
@@ -59,8 +60,8 @@ class PeakService extends Service {
 		}
 
 		this.setReactive({
-			isUp: this.isUp(y),
-			isDown: this.isDown(y),
+			isUp: this.isUp(x),
+			isDown: this.isDown(x),
 			startTime: this.peakStartTime
 		})
 
