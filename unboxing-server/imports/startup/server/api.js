@@ -2,11 +2,13 @@ import fs from 'fs';
 import serveStatic from 'serve-static';
 import express from 'express';
 import bodyParser from 'body-parser';
+import {importExportConfig} from '../../helper/server/importexport'
 
 import {
   getEverything,
   getTime,
-  addGesture
+  addGesture,
+  getDataJSON
 } from './rest'
 
 // create files directory if it doesn't exist
@@ -28,6 +30,7 @@ app.use(bodyParser.json()); // for parsing application/json
 app.get('/api/getEverything.json', getEverything);
 app.get('/api/getTime.json', getTime);
 app.post('/api/addGesture.json', addGesture);
+app.get(importExportConfig.path, getDataJSON);
 
 // connect express to meteor app
 WebApp.connectHandlers.use(app);

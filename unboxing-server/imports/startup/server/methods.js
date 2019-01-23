@@ -1,9 +1,10 @@
 import { Meteor } from 'meteor/meteor';
-import { Random } from 'meteor/random'
+import os from 'os';
 
 import Events from '../../collections/events';
 import { Challenges, Gestures, Sequences } from '../../collections/';
 
+import {importExportConfig} from '../../helper/server/importexport'
 import { updateFiles } from '../../helper/server/files';
 
 function createChallenge(uuid) {
@@ -145,5 +146,28 @@ Meteor.methods({
   'updateFiles'() {
     updateFiles();
   },
+  'dataExportJSONmeta'() {
+    return {
+      path: importExportConfig.path,
+      hostname: os.hostname(),
+    }
+  },
+  async 'importEntries'(json) {
+    const collections = Object.keys(json)
+    console.log("received entries import", collections)
+
+    for (collection in importExportConfig.collections) {
+      if (json[collection]) {
+        const Coll = importExportConfig.collections[collection]
+        console.log("replacing collection: " + collection)
+        await Coll.rawCollection().remove({}, {multi:true})
+        for (let entry of json[collection]) {
+          await Coll.rawCollection().insert(entry)
+        }
+      } else {
+        console.warn(collection + " not found")
+      }
+    }
+  }  
 
 });

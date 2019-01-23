@@ -4,6 +4,7 @@ import NetworkInfo from './NetworkInfo';
 import ChallengesInfo from './ChallengesInfo';
 import GesturesInfo from './GesturesInfo';
 import GestureDetail from './GestureDetail';
+import ImportExport from './ImportExport';
 import SequencesInfo from './SequencesInfo';
 import SequenceDetail from './SequenceDetail';
 import SequenceDetailItem from './SequenceDetailItem';
@@ -16,6 +17,7 @@ export {
   ChallengesInfo,
   GesturesInfo,
   GestureDetail,
+  ImportExport,
   SequencesInfo,
   SequenceDetail,
   SequenceDetailItem,
