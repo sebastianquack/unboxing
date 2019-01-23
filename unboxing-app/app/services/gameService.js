@@ -30,6 +30,8 @@ class GameService extends Service {
 			challengeStatus: "navigate",
 			activeChallenge: challenge
 		});
+
+		sequenceService.setSequence(challenge.sequence_id);
 	}
 
 	setActiveChallengeStatus(status) {

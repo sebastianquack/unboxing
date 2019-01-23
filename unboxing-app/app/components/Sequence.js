@@ -67,13 +67,6 @@ class Sequence extends React.Component {
     } else {
       this.setState({timeInCurrentItem: null});   
     }
-
-    if(this.props.sequenceService) {
-      this.setState({sequenceTimeVisualizer: 
-        currentTimeInSequence >= 0 || this.props.sequenceService.loopCounter == 0 ? currentTimeInSequence : 
-          currentTimeInSequence + this.props.sequenceService.currentSequence.custom_duration
-      });  
-    }
   }
 
   // renders current sequence display, called when info changes
@@ -127,7 +120,7 @@ class Sequence extends React.Component {
           track={this.props.sequenceService.currentTrack}
           item={this.props.sequenceService.currentItem}
           controlStatus={this.props.sequenceService.controlStatus}
-          currentTime={this.state.sequenceTimeVisualizer}
+          currentTime={this.props.sequenceService.sequenceTimeVisualizer}
         />
           <View><Text style={{fontSize: 30}}>{this.props.sequenceService.nextActionMessage}</Text></View>
 

@@ -1,6 +1,6 @@
 import Service from './Service';
 
-import {soundService, gameService, gestureService, peakService } from './';
+import {soundService, gameService, gestureService, peakService, storageService } from './';
 
 class SequenceService extends Service {
 
@@ -18,7 +18,8 @@ class SequenceService extends Service {
 			currentItem: null, // current item playing, if available
 			showPlayItemButton: false, // should play button be shown
 			beatTickActive: false, // should beat be played on the beat
-			loopCounter: 0
+			loopCounter: 0,
+			sequenceTimeVisualizer: 0
 		});
 
 		// not reactive - used for internal calculations
@@ -54,10 +55,16 @@ class SequenceService extends Service {
 	}
 
 	doBeatUpdate = ()=> {
+		
 		// calculate time to next item
 		const currentTime = soundService.getSyncTime();
     const currentTimeInSequence = currentTime - this.state.loopStartedAt;
 
+		this.setReactive({sequenceTimeVisualizer: 
+        currentTimeInSequence >= 0 || this.state.loopCounter == 0 ? currentTimeInSequence : 
+        currentTimeInSequence + this.state.currentSequence.custom_duration
+    });      
+    
     //console.log("beat update - currentTimeInSequence", currentTimeInSequence);
 
 		// beat calculations
@@ -146,34 +153,15 @@ class SequenceService extends Service {
 
 	/* CONTROL INTERFACE */
 
-	// invoked from track selector component - sets up new sequence
-	trackSelect = (sequence, track)=> {
-		
-		if(this.state.controlStatus == "loading") {
-			this.showNotification("track switch during loading not possible");
-			return;
-		}
-
-		if(sequence != this.state.currentSequence) {
-			this.stopSequence(); 
-		}
-		
-  	this.setReactive({currentTrack: track});
-
-  	// if sequence is already running - just this.setupNextSequenceItem(); and quit
-  	if(this.state.controlStatus == "playing") {
-  		this.setupNextSequenceItem();
-  		return;
-  	}
-
-  	// vvvvv from here on we assume that sequence has not started yet vvvvv
+	setSequence(sequence_id) {
+		const sequence = storageService.findSequence(sequence_id);
 
 		// if sequence has changed
 		if(sequence != this.state.currentSequence) {
-		
+			this.stopSequence(); 		
 			this.setReactive({currentSequence: sequence});
 
-			// preload all sounds from this track in sequence 
+			// preload all sounds from this sequence
 			let soundfilesToLoad = [];
 			sequence.items.forEach((item)=>{
 				soundfilesToLoad.push(item.path);
@@ -188,6 +176,21 @@ class SequenceService extends Service {
 			});
 		}
 		
+	}
+
+	// invoked from track selector component - sets up new sequence
+	trackSelect = (track)=> {
+		
+  	this.setReactive({currentTrack: track});
+
+  	// if sequence is already running - just this.setupNextSequenceItem(); and quit
+  	if(this.state.controlStatus == "playing") {
+  		this.setupNextSequenceItem();
+  		return;
+  	}
+
+  	// vvvvv from here on we assume that sequence has not started yet vvvvv
+
 		// listen for gestures if first item in track is at beginning of sequence
 		console.log("checking firstItem in track " + track.name);
 		const firstItem = this.firstItemInTrack(track.name);
@@ -421,6 +424,16 @@ class SequenceService extends Service {
 			this.setupNextSequenceItem();
 		}
 	}
+
+	// stops all sounds and removes all planned items - used in preparation for track switch
+	cancelItemsAndSounds() {
+		this.setReactive({
+	    nextItem: null,
+			scheduledItem: null,
+	    currentItem: null
+	  });
+	  soundService.stopAllSounds();
+	}
 	
 	// stops sequence playback and sound
 	stopSequence() {
@@ -437,7 +450,8 @@ class SequenceService extends Service {
 	    	loopStartedAt: null,
 				showPlayItemButton: false,
 				beatsToNextItem: "",
-				loopCounter: 0
+				loopCounter: 0,
+				sequenceTimeVisualizer: 0
 	    });
 
 	    if(this.beatTimeout) {

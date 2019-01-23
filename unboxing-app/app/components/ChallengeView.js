@@ -47,9 +47,10 @@ class ChallengeView extends React.Component {
                 track={this.props.sequenceService.currentTrack}
                 item={this.props.sequenceService.currentItem}
                 controlStatus={this.props.sequenceService.controlStatus}
+                currentTime={this.props.sequenceService.sequenceTimeVisualizer}
               />
             <Text style={globalStyles.titleText}>Select your instrument!</Text>
-            <TrackSelector sequence_id={challenge.sequence_id}/>
+            <TrackSelector sequence={this.props.sequenceService.currentSequence}/>
             <TouchableOpacity style={styles.button} onPress={()=>{
               gameService.setActiveChallengeStatus("play");            
             }}>
@@ -67,7 +68,7 @@ class ChallengeView extends React.Component {
           <View>
             <Sequence/>
             <TouchableOpacity style={styles.button} onPress={()=>{
-              gameService.handleStopButton();
+              sequenceService.cancelItemsAndSounds()
               gameService.setActiveChallengeStatus("prepare");
             }}>
               <Text>switch instrument or leave</Text>

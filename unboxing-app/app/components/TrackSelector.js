@@ -20,7 +20,7 @@ class TrackSelector extends React.Component {
       <TouchableOpacity
           key={index}
           style={trackStyle}
-          onPress={()=>{gameService.trackSelect(sequence, track)}}
+          onPress={()=>{gameService.trackSelect(track)}}
         >
         <Text>{track.name} {selected}</Text>
       </TouchableOpacity>
@@ -28,9 +28,8 @@ class TrackSelector extends React.Component {
   }
 
   render() {
-    const sequence = storageService.findSequence(this.props.sequence_id);
-    if(!sequence) return <View><Text>sequence not found</Text></View>;
-    const tracks = sequence.tracks.map((t, index)=>this.renderTrack(sequence, t, index));
+    if(!this.props.sequence) return <View><Text>sequence not found</Text></View>;
+    const tracks = this.props.sequence.tracks.map((t, index)=>this.renderTrack(this.props.sequence, t, index));
     return (
       <View style={{width: "50%"}}>
         {tracks}
