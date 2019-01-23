@@ -2,6 +2,7 @@ import { Meteor } from 'meteor/meteor'
 
 import { Challenges, Gestures, Sequences, Files } from '../../collections/';
 import objectHash from 'object-hash'
+import { importExportConfig } from '../../helper/server/importexport';
 
 async function getEverything(req, res) {  
   const challenges = await Challenges.find().fetch();
@@ -44,8 +45,20 @@ async function addGesture(req, res) {
   });
 }
 
+// export all data
+async function getDataJSON(req, res) {
+
+  const collections = {}
+  for (collection in importExportConfig.collections) {
+    collections[collection] = await importExportConfig.collections[collection].find().fetch();
+  }
+
+  res.status(200).json(collections);  
+}
+
 export {
   getEverything,
   getTime,
-  addGesture
+  addGesture,
+  getDataJSON
 }

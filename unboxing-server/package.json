@@ -9,6 +9,7 @@
     "body-parser": "^1.18.3",
     "bonjour": "^3.5.0",
     "color": "^3.0.0",
+    "dateformat": "^3.0.3",
     "emotion": "^9.2.6",
     "express": "^4.16.2",
     "get-mp3-duration": "^1.0.0",
