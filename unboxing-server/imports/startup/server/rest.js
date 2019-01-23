@@ -8,7 +8,7 @@ async function getEverything(req, res) {
   const challenges = await Challenges.find().fetch();
   const sequences = await Sequences.find().fetch();
   const gestures = await Gestures.find().fetch();
-  const files = await Files.find().fetch();
+  const files = await Files.find({},{sort: {path: 1}}).fetch();
 
   const collections = {
     challenges,
