@@ -29,8 +29,8 @@ class SequenceService extends Service {
 		this.beatTimeout = null;
 
 		// bind
-		this.setNextUserAction = this.setNextUserAction.bind(this)
-		this.unsetNextUserAction = this.unsetNextUserAction.bind(this)
+		this.activateNextUserAction = this.activateNextUserAction.bind(this)
+		this.deactivateUserAction = this.deactivateUserAction.bind(this)
 	}
 
 
@@ -165,7 +165,7 @@ class SequenceService extends Service {
 			this.beatTimeout = setTimeout(this.doBeatUpdate, timeToNextBeat);		
 		}
 
-		this.updateActionMessage();
+		this.updateActionInterface();
 	}
 
 
@@ -181,8 +181,8 @@ class SequenceService extends Service {
 
 	// analyse current state and display appropriate action message
 	// called on every beat and at special events (setupNextSequenceItem, sound ended)
-	updateActionMessage = ()=> {
-		console.log("updateActionMessage");
+	updateActionInterface = ()=> {
+		console.log("updateActionInterface");
 
 		// sequence hasn't started yet
 		if(this.state.controlStatus == "ready" && this.state.currentTrack) {
@@ -190,14 +190,15 @@ class SequenceService extends Service {
 			if(firstItem) {
 				if(firstItem.startTime == 0) {				
 					this.setActionMessage("your part is right at the beginning of this sequence. perform the start gesture to start the sequence for everyone here!");
-					this.togglePlayButton(true);
+					this.activateNextUserAction();
+					
 				} else {
 					this.setActionMessage("you don't have anything to play at the beginning of this sequence. wait for another player to start the sequence, then join at the right moment!");
-					this.togglePlayButton(false);
+					this.deactivateUserAction();
 				}
 			} else {
 				this.setActionMessage("your instrument has nothing to play in this sequence");
-				this.togglePlayButton(false);
+				this.deactivateUserAction();
 			}
 		}
 		
@@ -208,10 +209,10 @@ class SequenceService extends Service {
 				
 				if(this.state.currentItem.sensorModulation == "off") {
 					this.setActionMessage("you're playing! try to point your instrument in a good direction!");	
-					this.togglePlayButton(false);
+					this.deactivateUserAction();
 				} else {
 					this.setActionMessage("you're playing! see how you can modulate the sound...");	
-					this.togglePlayButton(false);
+					this.deactivateUserAction();
 				}
 
 				// check if the start time of the next item is directly after end of current item
@@ -230,7 +231,7 @@ class SequenceService extends Service {
 								nextActionMessage: this.state.nextActionMessage +
 								" also prepare to play your next sound with the start gesture!"
 							});	
-							this.togglePlayButton(true);		
+							this.activateNextUserAction();
 						}
 					}
 				}
@@ -243,7 +244,7 @@ class SequenceService extends Service {
 					if(this.autoPlayItem(this.state.scheduledItem) // only show this if the item is being autoplayed
 						&& !(this.state.scheduledItem.startTime == 0 && this.sequenceStartingLocally())) { 
 						this.setActionMessage("wait for your next sound to start playing automatically");	
-						this.togglePlayButton(false);
+						this.deactivateUserAction();
 					} else {
 						this.setActionMessage("preparing to play...");	
 						this.togglePlayButton(false);
@@ -253,7 +254,7 @@ class SequenceService extends Service {
 					// no sound scheduled, but a next item has been set that is not on autoplay 
 					if(this.state.nextItem && !this.autoPlayNextItem()) {
 						this.setActionMessage("use the gesture to start playing at the right moment!");
-						this.togglePlayButton(true);
+						this.activateNextUserAction();
 					}
 				}	
 			}		
@@ -263,17 +264,38 @@ class SequenceService extends Service {
 		if(this.state.controlStatus == "idle") {
 			if(this.state.currentSequence.endedFlag) {
 				this.setReactive({nextActionMessage: "sequence ended"})
-				this.togglePlayButton(false);
+				this.deactivateUserAction();
 			}
 		}
 		
 	}
 
-	setNextUserAction(obj) {
+	activateNextUserAction() {
 		if (this.state.nextItem) {
 			const nextItemStartTimeInSequence = this.state.nextItem.startTime
 			const startTime = nextItemStartTimeInSequence - gameService.assistanceThreshold
 			const stopTime = nextItemStartTimeInSequence
+			
+			let obj = { type: null };
+
+			// update Gesture listening
+			if (this.state.nextItem.sensorStart) {
+				obj = { type: "peak" };
+				peakService.waitForStart(() => {
+					gameService.handlePlayNextItemButton()
+					peakService.stopWaitingForStart()
+					this.deactivateUserAction()
+				})	
+			}	
+			if (this.state.nextItem.gesture_id) {					
+				obj = { type: "gesture" };
+				gestureService.waitForGesture(nextItem.gesture_id, () => {
+					gestureService.stopWaitingForGesture()
+					gameService.handlePlayNextItemButton()
+					this.deactivateUserAction()
+				})
+			}
+
 			this.setReactive({
 				nextUserAction: {
 					type: obj.type,
@@ -282,10 +304,16 @@ class SequenceService extends Service {
 					duration: stopTime - startTime
 				}
 			})
+
+			// activate play button in debug mode
+			this.togglePlayButton(true);
+						
 		}
 	}
 
-	unsetNextUserAction() {
+	deactivateUserAction() {
+		this.togglePlayButton(false);
+		gestureService.stopWaitingForGesture();
 		this.setReactive({nextUserAction: {}})
 	}	
 
@@ -311,7 +339,7 @@ class SequenceService extends Service {
 					controlStatus: "ready",
 					endedFlag: false
 				});
-				this.updateActionMessage();
+				this.updateActionInterface();
 			});
 		}
 		
@@ -352,7 +380,7 @@ class SequenceService extends Service {
 			}
 		}
 
-		this.updateActionMessage();
+		this.updateActionInterface();
 
   }
 
@@ -404,8 +432,7 @@ class SequenceService extends Service {
 				return;
 			}
 
-			gestureService.stopWaitingForGesture();
-			this.unsetNextUserAction()
+			this.deactivateUserAction()
 
 			// calculate total time in playback
 			const currentTime = soundService.getSyncTime();
@@ -488,30 +515,11 @@ class SequenceService extends Service {
 					}
 				}
 				
-				// update Gesture listening
-				
-				if (nextItem.sensorStart) {
-					this.setNextUserAction({ type: "peak" })
-					peakService.waitForStart(() => {
-						gameService.handlePlayNextItemButton()
-						peakService.stopWaitingForStart()
-						this.unsetNextUserAction()
-					})	
-				}	
-				if (nextItem.gesture_id) {					
-					this.setNextUserAction({ type: "gesture" })
-					gestureService.waitForGesture(nextItem.gesture_id, () => {
-						gestureService.stopWaitingForGesture()
-						gameService.handlePlayNextItemButton()
-						this.unsetNextUserAction()
-					})
-				}
-    	
     	} else {
     		this.stopSequence();
     	}
 
-    	this.updateActionMessage();
+    	this.updateActionInterface();
 	}
 		
 	skipNextItem() {
@@ -535,7 +543,7 @@ class SequenceService extends Service {
 			onPlayEnd: () => {
 				this.setReactive({currentItem: null});
 				this.setupNextSequenceItem();
-				this.updateActionMessage();
+				this.updateActionInterface();
 			}
 		});
 		this.setReactive({
@@ -550,7 +558,7 @@ class SequenceService extends Service {
 			soundService.stopSound(this.state.currentItem.path);
 			this.setReactive({currentItem: null});
 			this.setupNextSequenceItem();
-			this.updateActionMessage();
+			this.updateActionInterface();
 		}
 	}
 
@@ -581,7 +589,8 @@ class SequenceService extends Service {
 				beatsToNextItem: "",
 				loopCounter: 0,
 				sequenceTimeVisualizer: 0,
-				endedFlag: true
+				endedFlag: true,
+				nextUserAction: {}
 	    });
 
 	    if(this.beatTimeout) {

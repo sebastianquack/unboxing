@@ -63,10 +63,15 @@ class SequenceVisualizer extends React.Component {
 
   renderActionItem = (item) => {
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
-    const leftPercentage = 100 * item.startTime / sequenceDuration
+    let leftPercentage = 100 * item.startTime / sequenceDuration
+
     const widthPercentage = 100 * item.duration / sequenceDuration
 
-    console.log("RENDER action item", item)
+    if(item.startTime < 0 && this.props.loopCounter > 0) {
+      leftPercentage += 100;  
+    }
+    
+    console.log("RENDER action item", item, this.props.loopCounter)
 
     return (
       <View key={item._id} style={{
