@@ -115,6 +115,8 @@ class GameService extends Service {
 				}		
 			}	
 		}
+
+		sequenceService.updateActionMessage();
   }
 
   startSequence = () => {
