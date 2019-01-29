@@ -270,9 +270,11 @@ class SequenceService extends Service {
 
 		// sequence has ended
 		if(this.state.controlStatus == "idle") {
-			if(this.state.currentSequence.endedFlag) {
-				this.setReactive({nextActionMessage: "sequence ended"})
-				this.deactivateUserAction();
+			if(this.state.currentSequence) {
+				if(this.state.currentSequence.endedFlag) {
+					this.setReactive({nextActionMessage: "sequence ended"})
+					this.deactivateUserAction();
+				}	
 			}
 		}
 		
@@ -591,7 +593,8 @@ class SequenceService extends Service {
 	// stops sequence playback and sound
 	stopSequence() {
 			soundService.stopAllSounds();
-			gestureService.stopWaitingForGesture();
+			this.deactivateUserAction();
+
 	    this.setReactive({
 	    	controlStatus: "idle",
 	    	currentSequence: null,

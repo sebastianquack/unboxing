@@ -329,11 +329,11 @@ class SoundSevice extends Service {
 		}
 	}	
 
-	click = (targetTime) => {
+	click = (targetTime, callbacks={}) => {
 		if(!targetTime) {
 			targetTime = this.getSyncTime();
 		}
-    this.scheduleSound(clickFilename, targetTime);
+    this.scheduleSound(clickFilename, targetTime, callbacks);
   }
 }
 
