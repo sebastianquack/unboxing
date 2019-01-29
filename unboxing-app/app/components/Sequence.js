@@ -121,6 +121,7 @@ class Sequence extends React.Component {
           item={this.props.sequenceService.currentItem}
           controlStatus={this.props.sequenceService.controlStatus}
           currentTime={this.props.sequenceService.sequenceTimeVisualizer}
+          nextUserAction={this.props.sequenceService.nextUserAction}
         />
           <View><Text style={{fontSize: 30}}>{this.props.sequenceService.nextActionMessage}</Text></View>
 

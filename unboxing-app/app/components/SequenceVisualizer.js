@@ -32,11 +32,13 @@ class SequenceVisualizer extends React.Component {
 
   renderBodyTrack = (track) => {
     // items belonging to this track
-    items = this.props.sequence.items.filter( item => item.track === track.name)
+    sequenceItems = this.props.sequence.items.filter( item => item.track === track.name)
+    actionItem = (this.props.track && this.props.nextUserAction && this.props.track.name == track.name ? this.props.nextUserAction : {} )
 
     return (
       <View style={styles.track} key={"body " + track.name}>
-        { items.map(this.renderBodyTrackItem) }
+        { sequenceItems.map(this.renderBodyTrackItem) }
+        { actionItem.startTime && this.renderActionItem(actionItem) }
       </View>
     )
   }   
@@ -59,16 +61,42 @@ class SequenceVisualizer extends React.Component {
     )
   }
 
+  renderActionItem = (item) => {
+    const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
+    const leftPercentage = 100 * item.startTime / sequenceDuration
+    const widthPercentage = 100 * item.duration / sequenceDuration
+
+    console.log("RENDER action item", item)
+
+    return (
+      <View key={item._id} style={{
+          ...styles.bodyTrackItem, 
+          ...styles.bodyTrackItem__actionItem,
+          width: widthPercentage+"%", 
+          left: leftPercentage+"%",
+        }}>
+        <Text style={styles.bodyTrackItemText}>
+          { item.type }
+        </Text>    
+      </View>
+    )
+  }
+
   renderIndicator = () => {    
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
-    const color = this.props.controlStatus === "playing" ? "red" : "black"
+    const playing = this.props.controlStatus === "playing"
+    const color = playing ? "red" : "green"
     const leftPercentage = this.props.currentTime ? 100 * this.props.currentTime / sequenceDuration : 0
+    const width = 1 // (100 / (( sequenceDuration / 60000 ) * this.props.sequence.bpm))+"%"
 
     return (
       <View style={{
         ...styles.indicator,
+        backgroundColor: color,
         borderColor: color,
-        left: leftPercentage+"%"
+        opacity: 0.7,
+        left: leftPercentage+"%",
+        width
         }} />
     )
   }
@@ -121,17 +149,22 @@ const styles = StyleSheet.create({
     backgroundColor: '#bbb',
     height: "100%",
     justifyContent: "center",
-    borderRadius: 8,
+    borderRadius: 2,
     position: "absolute",
     paddingHorizontal: 8,
   },
+  bodyTrackItem__actionItem: {
+    borderRadius: 20,
+    backgroundColor: 'yellow',
+    padding: 4,
+  }, 
   bodyTrackItemText: {
     flexWrap: "nowrap", // doesn't work
   },
   indicator: {
     position: "absolute",
     height: "100%",
-    borderLeftWidth: 1,
+    borderRightWidth: 0,
     borderColor: "black",
     top:0,
     left:0,
