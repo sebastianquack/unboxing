@@ -442,6 +442,12 @@ class SequenceService extends Service {
 				return;
 			}
 
+			if(!this.state.currentTrack) {
+				console.log("no track found, aborting");
+				return;
+			}
+
+
 			this.deactivateUserAction()
 
 			// calculate total time in playback

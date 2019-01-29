@@ -103,7 +103,7 @@ class GameService extends Service {
 						this.showNotification("too early! try again");		
 					}
 					if(difference > -this.assistanceThreshold && difference <= 0) {
-						this.showNotification("good! playing sound right on time...");		
+						this.showNotification("good!");		
 						sequenceService.scheduleSoundForNextItem(officialTime); 			
 					}
 					if(difference > 0) {
