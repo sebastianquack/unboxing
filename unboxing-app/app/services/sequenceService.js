@@ -206,6 +206,11 @@ class SequenceService extends Service {
 		if(this.state.controlStatus == "playing") {
 
 			if(this.state.currentItem) { // currently playing
+
+				// activate stop gesture
+				peakService.waitForStop(() => {
+					gameService.handleStopButton()
+				});				
 				
 				if(this.state.currentItem.sensorModulation == "off") {
 					this.setActionMessage("you're playing! try to point your instrument in a good direction!");	
@@ -238,6 +243,9 @@ class SequenceService extends Service {
 
 			
 			}	else { // currently not playing
+
+				// deactivate stop gesture
+				peakService.stopWaitingForStop();
 				
 				// next sound has been scheduled
 				if(this.state.scheduledItem) {
@@ -317,6 +325,8 @@ class SequenceService extends Service {
 		this.setReactive({nextUserAction: {}})
 	}	
 
+	
+	
 	/** CONTROL INTERFACE **/
 
 	setSequence(sequence_id) {

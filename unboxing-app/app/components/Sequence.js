@@ -138,7 +138,7 @@ class Sequence extends React.Component {
             </TouchableOpacity>
           }
 
-          {this.props.sequenceService.currentItem &&
+          {this.props.sequenceService.currentItem && this.props.gameService.debugMode &&
             <View>
               <TouchableOpacity style={styles.bigButton} onPress={gameService.handleStopButton}>
                   <Text>Stop</Text>

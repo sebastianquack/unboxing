@@ -22,6 +22,9 @@ class PeakService extends Service {
 		this.peakDistMillisMax = 2000
 		this.peakStartTime = null
 
+		this.facingDown = false // for stop gesture
+		this.checkIfFacingDown = data => data.gyr.y < -6
+
 		this.init();
 
 		/*soundService.preloadSoundfile(clickFilename, ()=>{
@@ -40,7 +43,7 @@ class PeakService extends Service {
 
 	// handle incoming sensor data for recognition
 	handleSensorDataForRecognition = (data) => {
-	// console.log("sensor data received", data.acc)
+		//console.log("sensor data received", data)
 		const y = data.acc.y
 		const x = data.acc.x
 		// detect Up and set start time
@@ -53,16 +56,29 @@ class PeakService extends Service {
 				this.setReactive({
 					deltaUpDown: soundService.getSyncTime() - this.peakStartTime
 				})			
+				// finish detection and fire start gesture callback
 				if (this.peakStartTime + this.peakDistMillisMax > soundService.getSyncTime()) {
 					this.detected()
 				}
 			}
 		}
 
+		if(this.checkIfFacingDown(data)) {
+			if(!this.isFacingDown) {
+				this.faceDownDetected();
+				console.log("facing down detected");
+			}
+			this.isFacingDown = true;
+			
+		} else {
+			this.isFacingDown = false;
+		}
+
 		this.setReactive({
 			isUp: this.isUp(x),
 			isDown: this.isDown(x),
-			startTime: this.peakStartTime
+			startTime: this.peakStartTime,
+			isFacingDown: this.isFacingDown
 		})
 
 	}
@@ -86,14 +102,31 @@ class PeakService extends Service {
 		}		
 	}
 
-	// run from ssequenceService to register a callback for a specific gesture
+	// run from ssequenceService to register a callback for a start gesture
 	waitForStart = (callback) => {		
 		this.detectionCallback = callback
 	}
 
-	// run from sequenceService to unregister gesture
-	stopWaitingForStart() {
+	// run from sequenceService to unregister start gesture
+	stopWaitingForStart = ()=> {
 		this.detectionCallback = null
+	}
+
+	faceDownDetected = ()=> {
+		if(this.stopDetectionCallback) {
+			this.stopDetectionCallback()
+			this.stopDetectionCallback = null;
+		}
+	}
+
+	// run from ssequenceService to register a callback for stop gesture
+	waitForStop = (callback) => {		
+		this.stopDetectionCallback = callback
+	}
+
+	// run from sequenceService to unregister stop gesture
+	stopWaitingForStop = ()=> {
+		this.stopDetectionCallback = null
 	}
 
 }
