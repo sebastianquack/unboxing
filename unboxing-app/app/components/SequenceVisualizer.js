@@ -20,7 +20,7 @@ class SequenceVisualizer extends React.Component {
 
   renderHeaderTrack = (track) => {
     return (
-      <View style={styles.track} key={track.name}>
+      <View style={{...styles.track, backgroundColor: track.color}} key={track.name}>
         <View style={styles.headerTrack}>
           <Text>
             {track.name}
@@ -36,14 +36,14 @@ class SequenceVisualizer extends React.Component {
     actionItem = (this.props.track && this.props.nextUserAction && this.props.track.name == track.name ? this.props.nextUserAction : {} )
 
     return (
-      <View style={styles.track} key={"body " + track.name}>
+      <View style={{...styles.track}} key={"body " + track.name}>
         { sequenceItems.map(this.renderBodyTrackItem) }
         { actionItem.startTime && this.renderActionItem(actionItem) }
       </View>
     )
   }   
 
-  renderBodyTrackItem = (item) => {
+  renderBodyTrackItem = (item, style) => {
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
     const leftPercentage = 100 * item.startTime / sequenceDuration
     const widthPercentage = 100 * item.duration / sequenceDuration
@@ -85,7 +85,7 @@ class SequenceVisualizer extends React.Component {
   renderIndicator = () => {    
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
     const playing = this.props.controlStatus === "playing"
-    const color = playing ? "red" : "green"
+    const color = playing ? "red" : "#333"
     const leftPercentage = this.props.currentTime ? 100 * this.props.currentTime / sequenceDuration : 0
     const width = 1 // (100 / (( sequenceDuration / 60000 ) * this.props.sequence.bpm))+"%"
 
