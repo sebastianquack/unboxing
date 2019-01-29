@@ -48,9 +48,13 @@ class SequenceService extends Service {
 	}
 
 	getNextItemStartTimeAbsolute = ()=> {
-		if (!this.state.nextItem) return
-		const startTime = this.state.loopStartedAt + this.state.nextItem.startTime;
-		return startTime;
+		return this.getStartTimeAbsolute(this.state.nextItem);
+	}
+
+	getStartTimeAbsolute = (item)=> {
+		if (!item) return
+		const startTime = this.state.loopStartedAt + item.startTime;
+		return startTime;	
 	}
 
 	sequenceStartingLocally = ()=> {
@@ -162,11 +166,8 @@ class SequenceService extends Service {
 
 	/** INTERFACE UPDATES **/
 
-	// updates if play button should be shown in interface
-	updatePlayButton = ()=> {
-		this.setReactive({
-	    	showPlayItemButton: (this.state.controlStatus == "playing" && !this.state.currentItem && this.state.nextItem && !this.autoPlayNextItem())
-		}); 
+	togglePlayButton = (value)=> {
+		this.setReactive({showPlayItemButton: value});
 	}
 
 	setActionMessage = (msg)=> {
@@ -184,11 +185,14 @@ class SequenceService extends Service {
 			if(firstItem) {
 				if(firstItem.startTime == 0) {				
 					this.setActionMessage("your part is right at the beginning of this sequence. perform the start gesture to start the sequence for everyone here!");
+					this.togglePlayButton(true);
 				} else {
 					this.setActionMessage("you don't have anything to play at the beginning of this sequence. wait for another player to start the sequence, then join at the right moment!");
+					this.togglePlayButton(false);
 				}
 			} else {
 				this.setActionMessage("your instrument has nothing to play in this sequence");
+				this.togglePlayButton(false);
 			}
 		}
 		
@@ -199,24 +203,52 @@ class SequenceService extends Service {
 				
 				if(this.state.currentItem.sensorModulation == "off") {
 					this.setActionMessage("you're playing! try to point your instrument in a good direction!");	
+					this.togglePlayButton(false);
 				} else {
 					this.setActionMessage("you're playing! see how you can modulate the sound...");	
+					this.togglePlayButton(false);
 				}
+
+				// check if the start time of the next item is directly after end of current item
+				if(this.state.nextItem) {
+					let nextStartTime = this.getStartTimeAbsolute(this.state.nextItem);
+					let currentEndTime = this.getStartTimeAbsolute(this.state.currentItem) + this.state.currentItem.duration;
+					// check if loop has already moved to future
+					if(this.state.loopStartedAt > soundService.getSyncTime()) {
+						currentEndTime -= this.state.currentSequence.custom_duration;
+					}
+					console.log("currentEnd vs. nextStart", currentEndTime, nextStartTime);
+
+					if(nextStartTime < currentEndTime + 100) {
+						if(!this.autoPlayNextItem()) {
+							this.setReactive({
+								nextActionMessage: this.state.nextActionMessage +
+								" also prepare to play your next sound with the start gesture!"
+							});	
+							this.togglePlayButton(true);		
+						}
+					}
+				}
+
 			
 			}	else { // currently not playing
 				
 				// next sound has been scheduled
 				if(this.state.scheduledItem) {
-					if(this.autoPlayItem(this.state.scheduledItem)) { // only show this if the item is being autoplayed
+					if(this.autoPlayItem(this.state.scheduledItem) // only show this if the item is being autoplayed
+						&& !(this.state.scheduledItem.startTime == 0 && this.sequenceStartingLocally())) { 
 						this.setActionMessage("wait for your next sound to start playing automatically");	
+						this.togglePlayButton(false);
 					} else {
 						this.setActionMessage("preparing to play...");	
+						this.togglePlayButton(false);
 					}
 				} else {
 
 					// no sound scheduled, but a next item has been set that is not on autoplay 
 					if(this.state.nextItem && !this.autoPlayNextItem()) {
 						this.setActionMessage("use the gesture to start playing at the right moment!");
+						this.togglePlayButton(true);
 					}
 				}	
 			}		
@@ -226,6 +258,7 @@ class SequenceService extends Service {
 		if(this.state.controlStatus == "idle") {
 			if(this.state.currentSequence.endedFlag) {
 				this.setReactive({nextActionMessage: "sequence ended"})
+				this.togglePlayButton(false);
 			}
 		}
 		
@@ -252,7 +285,6 @@ class SequenceService extends Service {
 				console.log("finished loading sound files for this track");
 				this.setReactive({
 					controlStatus: "ready",
-					showPlayItemButton: false,
 					endedFlag: false
 				});
 				this.updateActionMessage();
@@ -280,10 +312,7 @@ class SequenceService extends Service {
 		console.log(firstItem);
 		if(firstItem) {
 			if(firstItem.startTime == 0) {				
-				this.setReactive({
-					showPlayItemButton: true
-				});
-
+				
 				if(firstItem.gesture_id) {
 					gestureService.waitForGesture(firstItem.gesture_id, () => {
 						gameService.handlePlayNextItemButton()
@@ -296,10 +325,6 @@ class SequenceService extends Service {
 						peakService.stopWaitingForStart()
 					})	
 				}
-			} else {
-				this.setReactive({
-					showPlayItemButton: false
-				});	
 			}
 		}
 
@@ -438,8 +463,6 @@ class SequenceService extends Service {
 					}
 				}
 				
-				this.updatePlayButton();
-
 				// update Gesture listening
 				
 				if (nextItem.sensorStart) {
@@ -490,7 +513,6 @@ class SequenceService extends Service {
 			scheduledItem: this.state.nextItem,
 			nextItem: null,
 		});
-		this.updatePlayButton();
 	}
 
 	stopCurrentSound() {
