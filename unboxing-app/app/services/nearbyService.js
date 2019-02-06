@@ -17,9 +17,9 @@ class NearbyService extends Service {
 			serviceId: null, 				// service id for discovery & advertising
 			discoveryActive: false,			// true if discovery service is active
 			advertisingActive: false,		// true if advertising service is active
-			myEndpointName: uuidv1(),		// random unique name for this endpoint
-			endpointIds: [], 				// all other devices in range 
-			endpointInfo: {}
+			
+			endpointInfo: {},				// status of all known endpoints {discoveryStatus: "discovered" / "connected", meshStatus: "available" / "unknown"}
+		
 		});
 		this.customCallbacks = {
 			onConnectionEstablished: null, 	// not implemented
@@ -33,7 +33,7 @@ class NearbyService extends Service {
 
 	debug = (...msg) => {
 		// this.showNotification(msg.join(", "));
-		// console.log(msg);  
+		console.log(msg);  
 	}
 
 	pingEndpoints = ()=> {
@@ -48,15 +48,24 @@ class NearbyService extends Service {
 		}
 	}
 
+	// for example count these: ("discoveryStatus", "connected")
+	countEndpointsWithStatus(statusKey, statusValue) {
+		return Object.values(this.state.endpointInfo).filter( (value) => {
+			(value[statusKey] === statusValue)
+		}).length
+	}
+
 	toggleActive = ()=> {
 		this.setReactive({active: !this.state.active});
 
+		/*	
 		if(this.state.active) {
 			this.pingEndpoints();
 			this.endpointPingInterval = setInterval(this.pingEndpoints, 20000);
 		} else {
 			clearInterval(this.endpointPingInterval);
 		}
+		*/
 	}
 
 	toggleDiscovery = ()=> {
@@ -90,7 +99,6 @@ class NearbyService extends Service {
 		let newEndpointInfo = this.state.endpointInfo;
 
 		if(!newEndpointInfo[endpointId]) {
-			this.addEndpointId(endpointId);
 			newEndpointInfo[endpointId] = {};
 		}
 
@@ -100,24 +108,6 @@ class NearbyService extends Service {
 
 		this.setReactive({endpointInfo: newEndpointInfo});
 	}
-
-	addEndpointId(endpointId) {
-		let endpointIds = this.state.endpointIds;
-		if(endpointIds.indexOf(endpointId) == -1) {			
-			endpointIds.push(endpointId);
-			this.setReactive({endpointIds: endpointIds});
-		}
-	}
-
-	removeEndpointId(endpointId) {
-		let endpointIds = this.state.endpointIds;
-		const index = endpointIds.indexOf(endpointId)
-		if(index > -1) {
-			endpointIds.splice(index,1);
-			this.setReactive({endpointIds: endpointIds});
-		}
-	}	
-
 	setupNearbyCallbacks() {
 		NearbyConnection.onDiscoveryStarting(({
     		serviceId               // A unique identifier for the service
@@ -141,13 +131,22 @@ class NearbyService extends Service {
 		});
 
 		NearbyConnection.onEndpointDiscovered(({
-		    endpointId,             // ID of the endpoint wishing to connect
-		    endpointName,           // The name of the remote device we're connecting to.
+		    endpointId,             // ID of the endpoint discovered
+		    endpointName,           // The name of the remote device we're connecting to. -> this seems to be the only point were we have id and name
 		    serviceId               // A unique identifier for the service
 		}) => {
 		    // An endpoint has been discovered we can connect to - save it!
 		    this.debug("onEndpointDiscovered", endpointId, endpointName, serviceId);
-		    this.updateEndpointInfo(endpointId, {status: "discovered"});
+				this.updateEndpointInfo(endpointId, {discoveryStatus: "discovered", name: endpointName});
+				
+				// if less than 2 connected endpoints and discovered endpoint is not available in mesh, connect
+				if (
+					this.countEndpointsWithStatus("discoveryStatus","connected") < 2 
+					&& this.state.endpointInfo[endpointId]
+					&& this.state.endpointInfo[endpointId].meshStatus !== "available" ) {
+						this.connectToEndpoint(endpointId);
+				}
+
 		});
 
 		// Note - Can take up to 3 min to time out
@@ -163,25 +162,36 @@ class NearbyService extends Service {
 		// this is fired on both sender's and receiver's ends - regardless of advertisting or discovery
 		NearbyConnection.onConnectionInitiatedToEndpoint(({
 		    endpointId,             // ID of the endpoint wishing to connect
-		    endpointName,           // The name of the remote device we're connecting to.
+		    endpointName,           // The name of the remote device we're connecting to. // this is always discoverer
 		    authenticationToken,    // A small symmetrical token that has been given to both devices.
 		    serviceId,              // A unique identifier for the service
-		    incomingConnection      // True if the connection request was initated from a remote device.
+		    incomingConnection      // True if the connection request was initated from a remote device. - possibly set the wrong way?
 		}) => {
     		// Connection has been initated
-    		this.debug("onConnectionInitiatedToEndpoint", endpointId, endpointName, serviceId);
+				this.debug("onConnectionInitiatedToEndpoint", endpointId, endpointName, serviceId);
+				//this.showNotification("onConnectionInitiatedToEndpoint: " + endpointId + " " + endpointName + " " + serviceId);
+
     		// Accept all connections for now
     		NearbyConnection.acceptConnection(serviceId, endpointId); 
 		});
 
 		NearbyConnection.onConnectedToEndpoint(({
 		    endpointId,             // ID of the endpoint we connected to
-		    endpointName,           // The name of the service
+		    endpointName,           // this is always discoverers name
 		    serviceId,              // A unique identifier for the service
 		}) => {
 		    // Succesful connection to an endpoint established
-		    this.debug("onConnectedToEndpoint", endpointId, endpointName, serviceId);
-		    this.updateEndpointInfo(endpointId, {status: "connected"});
+				this.debug("onConnectedToEndpoint", endpointId, endpointName, serviceId);
+				//this.showNotification("onConnectedToEndpoint: " + endpointId + " " + endpointName + " " + serviceId);
+				
+				this.updateEndpointInfo(endpointId, {discoveryStatus: "connected"});
+				// exchange mesh information
+				this.broadcastMessage({
+					message: "endpointInfo",
+					originator: storageService.getDeviceId(),
+					endpointInfo: this.state.endpointInfo
+				})
+				// possibly turn of discovery here if 2 connections
 		});
 
 		NearbyConnection.onAdvertisingStarting(({
@@ -217,7 +227,7 @@ class NearbyService extends Service {
 		}) => {
     	// Failed to send a payload
     	this.debug("onSendPayloadFailed", endpointId, serviceId, statusCode);
-    	this.connectToEndpoint(endpointId, serviceId);
+    	//this.connectToEndpoint(endpointId, serviceId);
 		});
 
 		NearbyConnection.onReceivePayload(({
@@ -249,10 +259,46 @@ class NearbyService extends Service {
 			        this.debug(e);
 			        msgObj = {message: bytes};
 				}
+
+				this.showNotification("message received from " + endpointId + ": " + bytes)
+
+				// always update the sender information
+				if(!this.state.endpointInfo[endpointId]) {
+					this.state.endpointInfo[endpointId] = {};
+				}
+				this.state.endpointInfo[endpointId].name = msgObj.sender;
+				this.setReactive({endpointInfo: this.state.endpointInfo});
 				
+				// tell sender about her own id (and only do this once)
+				if(msgObj.message == "idPingback")	{
+					if(!this.state.endpointInfo[msgObj.endpointId]) {
+						this.state.endpointInfo[msgObj.endpointId] = {};
+					}
+					this.state.endpointInfo[msgObj.endpointId].name = storageService.getDeviceId();
+					this.setReactive({endpointInfo: this.state.endpointInfo});
+				} else {
+					this.sendMessageToEndpoint(endpointId, {message: "idPingback", endpointId: endpointId});
+				}
+				
+				// check if received for the first time & forward
 				if (!this.receivedPayloads[msgObj.uuid]) {
 					this.receivedPayloads[msgObj.uuid] = true;
 					this.broadcastMessage(msgObj)
+
+					// update message status from received object
+					if (msgObj.message === "endpointInfo") {	
+						for ( let key in msgObj.endpointInfo) {
+							if(!this.state.endpointInfo[key]) {
+								this.state.endpointInfo[key] = {};
+							}
+							this.state.endpointInfo[key].meshStatus = msgObj.endpointInfo[key].meshStatus
+							if(msgObj.endpointInfo[key].name) {
+								this.state.endpointInfo[key].name = msgObj.endpointInfo[key].name
+							}
+						}
+						this.setReactive({endpointInfo: this.state.endpointInfo});
+					}
+
 					if(typeof this.customCallbacks.onMessageReceived === "function") {
 						this.customCallbacks.onMessageReceived(msgObj);
 					}	
@@ -280,7 +326,8 @@ class NearbyService extends Service {
 
 	// send message to an endpoint
 	sendMessageToEndpoint(endpointId, message) {
-		this.debug("sendMessageToEndpoint", endpointId, message);
+		message.sender = storageService.getDeviceId();
+		console.log("sendMessageToEndpoint", endpointId, message);
 		NearbyConnection.sendBytes(
   		  "test",           // A unique identifier for the service
     		endpointId,    					// ID of the endpoint
@@ -291,9 +338,13 @@ class NearbyService extends Service {
 	broadcastMessage = (message) => {
 		if (!message.uuid) {
 			message.uuid = uuidv1()
+			this.receivedPayloads[message.uuid] = true;
 		}
-		this.state.endpointIds.forEach((endpointId)=>{
-			this.sendMessageToEndpoint(endpointId, message);
+		// send to connected neighbors
+		Object.entries(this.state.endpointInfo).forEach(([endpointId, value])=>{
+			if (value.discoveryStatus === "connected"){
+				this.sendMessageToEndpoint(endpointId, message);
+			}
 		})
 	}
 

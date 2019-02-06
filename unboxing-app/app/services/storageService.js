@@ -5,6 +5,8 @@ import { networkService } from './networkService'; // ATTENTION import from './'
 import RNFS from 'react-native-fs';
 persistentFile = RNFS.ExternalStorageDirectoryPath + '/unboxing/collections.json';
 
+const uuidv1 = require('uuid/v1');
+
 class StorageService extends Service {
 
 	constructor() {
@@ -47,7 +49,8 @@ class StorageService extends Service {
 			// log the file contents
 	      console.log("reading collections from file", json);
 	      let stateFromFile = JSON.parse(json);
-	      //console.log(stateFromFile);
+				//console.log(stateFromFile);
+				if (!stateFromFile.deviceId) stateFromFile.deviceId = uuidv1()
 				this.setReactive(stateFromFile);
 				networkService.setServer(this.state.server, false); // doesn't need save, just load
 		}
