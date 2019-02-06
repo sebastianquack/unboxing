@@ -39,21 +39,8 @@ class TimeSync extends React.Component {
     this.setState({testClick: value}, ()=>{
       if(value == true) {
       
-        // check if soundService already knows about click sound
-        let status = soundService.getSoundStatus(clickFilename);
+        this.initClickLoop();
         
-        if(!status) {
-          // sound hasn't been loaded
-          soundService.preloadSoundfile(clickFilename, ()=>{
-            // callback called after sound is loaded
-            this.initClickLoop();
-          });  
-        } else {
-          // sound is preloaded but currently not scheduled for play
-          if(status == "ready") {
-            this.initClickLoop();
-          }
-        }
       } else {
         soundService.stopSound(clickFilename);
       }
@@ -63,7 +50,7 @@ class TimeSync extends React.Component {
   initClickLoop() {
     if(this.state.testClick) {
       // schedule first playback for next second
-      soundService.scheduleSound(clickFilename, Math.ceil(soundService.getSyncTime()/1000)*1000, {
+      soundService.click(Math.ceil(soundService.getSyncTime()/1000)*1000, {
         onPlayEnd: ()=>{
           // callback called after end of playback, schedule new playback for next second
           this.initClickLoop();

@@ -4,7 +4,7 @@ import compose from 'lodash.flowright'
 
 import {globalStyles} from '../../config/globalStyles';
 import {sensorService} from '../services';
-import {withPeakService, withSensorService} from './ServiceConnector';
+import {withPeakService, withSensorService, withGameService} from './ServiceConnector';
 
 class SensorInfo extends React.Component { 
   constructor(props) {
@@ -33,14 +33,21 @@ class SensorInfo extends React.Component {
   }
 
   renderSensorData(data) {
-    return <View>
-      {this.renderSensor("acc_x", data.acc.x)}
-      {this.renderSensor("acc_y", data.acc.y)}
-      {this.renderSensor("acc_z", data.acc.z)}
-      {this.renderSensor("gyr_x", data.gyr.x)}
-      {this.renderSensor("gyr_y", data.gyr.y)}
-      {this.renderSensor("gyr_z", data.gyr.z)}      
-    </View>
+    if(this.props.gameService.debugMode) {
+      return (
+        <View>
+          {this.renderSensor("acc_x", data.acc.x)}
+          {this.renderSensor("acc_y", data.acc.y)}
+          {this.renderSensor("acc_z", data.acc.z)}
+          {this.renderSensor("gyr_x", data.gyr.x)}
+          {this.renderSensor("gyr_y", data.gyr.y)}
+          {this.renderSensor("gyr_z", data.gyr.z)}      
+        </View>
+      )
+    } else {
+      return null;
+    }
+
   }
 
   render() {
@@ -60,7 +67,7 @@ class SensorInfo extends React.Component {
   }
 }
 
-export default withSensorService(withPeakService(SensorInfo));
+export default withGameService(withSensorService(withPeakService(SensorInfo)));
 
 
 const styles = StyleSheet.create({
