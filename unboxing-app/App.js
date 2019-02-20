@@ -103,7 +103,7 @@ class App extends Component {
   }
 
   renderSections = () => {
-    return sections.map(section => <View style={{borderBottomWidth: 2, borderStyle:"dotted"}}>
+    return sections.map(section => <View key={section.name} style={{borderBottomWidth: 2, borderStyle:"dotted"}}>
       {this.renderSectionSwitch(section.name)}
       {this.showSection(section.name) && <View><section.component /></View>}
     </View>)
