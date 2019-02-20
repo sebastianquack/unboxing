@@ -42,6 +42,8 @@ class NearbyStatus extends React.Component {
       name: "name",      
       meshStatus: "meshStatus",
       myNearbyStatus: "myNearbyStatus",
+      //lastHealthCheckSent: "checkSent",
+      //lastHeardFrom: "headFrom",
     }
     
     const entriesFlat =  Object // [{endpointId, myNearbyStatus, name, ...}, {...}, ...]

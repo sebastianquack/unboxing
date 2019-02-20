@@ -28,9 +28,9 @@ class NearbyService extends Service {
 		this.setupNearbyCallbacks();		
 		
 		this.endpointPingInterval;
-		this.endpointPingIntervalTime = 5000; // rythm of checking enpointInfo and initiating connections
-		this.healthCheckInterval = 20000; // rythm of checking in with connected nodes
-		this.healthCheckTimeout = 2000; // timout before assuming connection is lost
+		this.endpointPingIntervalTime = 10000; // rythm of checking enpointInfo and initiating connections
+		this.healthCheckInterval = 10000; // rythm of checking in with connected nodes
+		this.lastHealthCheckSent = 0; // timestamp of last healthcheck we sent
 	}
 
 	debug = (...msg) => {
@@ -39,10 +39,11 @@ class NearbyService extends Service {
 	}
 
 	// for example count these: ("myNearbyStatus", "connected")
-	countEndpointsWithStatus(statusKey, statusValue) {
-		return Object.values(this.state.endpointInfo).filter( (value) => {
-			(value[statusKey] === statusValue)
+	countEndpointsWithStatus = (statusKey, statusValue)=> {
+		let r = Object.values(this.state.endpointInfo).filter( (value) => {
+			return (value[statusKey] === statusValue)
 		}).length
+		return r;
 	}
 
 	toggleActive = ()=> {
@@ -61,7 +62,16 @@ class NearbyService extends Service {
 		if(this.state.active) {
 
 			console.log("ping endpoints");
+		
+			// is it time to send another health check
+			if(soundService.getSyncTime() - this.lastHealthCheckSent > this.healthCheckInterval) {
+				console.log("sending alive message");
+				// send a health check message to everyone
+				this.broadcastMessage({message: "alive"});
+				this.lastHealthCheckSent = soundService.getSyncTime();
+			}
 			
+
 			let connectionCounter = 0; 
 			const connectionMaxPerPing = 1; // maximum number of connections to initiate at the same time
 
@@ -83,31 +93,13 @@ class NearbyService extends Service {
 				}
 
 				if(this.state.endpointInfo[endpointId].myNearbyStatus == "connected") { 
-
-					let lastHealthCheckSent = this.state.endpointInfo[endpointId].lastHealthCheckSent || 0;
-					let timeSinceHealthCheckSent = soundService.getSyncTime() - lastHealthCheckSent;
 					
-					// have we sent a health check to this node?
-					if(lastHealthCheckSent > 0) {
-						// should we be expecting to have a response?
-						if(timeSinceHealthCheckSent > this.healthCheckTimeout) {
-							if(!this.state.endpointInfo[endpointId].lastHeardFrom ||
-								this.state.endpointInfo[endpointId].lastHeardFrom - lastHealthCheckSent	>	this.healthCheckTimeout						
-							) {
-								// we lost connection
-								this.showNotification("connection lost to " + this.state.endpointInfo[endpointId].name);
-								this.updateEndpointInfo(endpointId, {myNearbyStatus: "lost"});
-							}
-						}
+					// should we be expecting to have heard from this node? (2 x healthCheckInterval)
+					if(soundService.getSyncTime() - this.state.endpointInfo[endpointId].lastHeardFrom > this.healthCheckInterval * 2) {
+						// we lost connection
+						this.showNotification("connection lost to " + this.state.endpointInfo[endpointId].name);
+						//this.updateEndpointInfo(endpointId, {myNearbyStatus: "lost"});
 					}
-
-					// is it time to send another health check request?
-					if(timeSinceHealthCheckSent > this.healthCheckInterval) {
-						// send a health check message
-						this.sendMessageToEndpoint(endpointId, {message: "healthCheck"});
-						this.updateEndpointInfo(endpointId, {lastHealthCheckSent: soundService.getSyncTime()});
-					}
-					
 				}
 				
 			});
@@ -212,8 +204,21 @@ class NearbyService extends Service {
 				this.debug("onConnectionInitiatedToEndpoint", endpointId, endpointName, serviceId);
 				//this.showNotification("onConnectionInitiatedToEndpoint: " + endpointId + " " + endpointName + " " + serviceId);
 
-    		// Accept all connections for now
-    		NearbyConnection.acceptConnection(serviceId, endpointId); 
+    		// only accept a new connection if I don't have 
+    		if(this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2) {
+    			NearbyConnection.acceptConnection(serviceId, endpointId); 	
+    		}     		
+		});
+
+		NearbyConnection.onEndpointConnectionFailed(({
+    endpointId,             // ID of the endpoint we failed to connect to
+    endpointName,           // The name of the service
+    serviceId,              // A unique identifier for the service
+    statusCode              // The status of the response [See CommonStatusCodes](https://developers.google.com/android/reference/com/google/android/gms/common/api/CommonStatusCodes)
+		}) => {
+		    this.showNotification("onEndpointConnectionFailed");
+		    this.updateEndpointInfo(endpointId, {myNearbyStatus: "discovered"});
+		    // Failed to connect to an endpoint
 		});
 
 		NearbyConnection.onConnectedToEndpoint(({
@@ -314,7 +319,7 @@ class NearbyService extends Service {
 					this.state.endpointInfo[endpointId] = {};
 				}
 				this.state.endpointInfo[endpointId].name = msgObj.sender;
-				this.state.endpointInfo[endpointId].lastHeardFrom = soundServive.getSyncTime();
+				this.state.endpointInfo[endpointId].lastHeardFrom = soundService.getSyncTime();
 				this.setReactive({endpointInfo: this.state.endpointInfo});
 				
 				// tell sender about her own id (and only do this once)
