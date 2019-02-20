@@ -50,9 +50,11 @@ npm --version
 
 ## build apk
 
-`react-native bundle --dev false --platform android --entry-file index.js --bundle-output ./android/app/build/intermediates/assets/debug/index.android.bundle --assets-dest ./android/app/build/intermediates/res/merged/debug`
+````
+react-native bundle --dev false --platform android --entry-file index.js --bundle-output ./android/app/build/intermediates/assets/debug/index.android.bundle --assets-dest ./android/app/build/intermediates/res/merged/debug
 
-`cd android && ./gradlew assembleRelease`
+cd android && ./gradlew assembleRelease
+````
 
 ## build production 
 
