@@ -2,7 +2,7 @@ import Service from './Service';
 
 import NearbyConnection, {CommonStatusCodes, ConnectionsStatusCodes, Strategy, Payload, PayloadTransferUpdate} from 'react-native-google-nearby-connection';
 
-import {gameService, storageService} from './';
+import {gameService, storageService, soundService} from './';
 
 const uuidv1 = require('uuid/v1');
 
@@ -29,6 +29,8 @@ class NearbyService extends Service {
 		
 		this.endpointPingInterval;
 		this.endpointPingIntervalTime = 5000; // rythm of checking enpointInfo and initiating connections
+		this.healthCheckInterval = 20000; // rythm of checking in with connected nodes
+		this.healthCheckTimeout = 2000; // timout before assuming connection is lost
 	}
 
 	debug = (...msg) => {
@@ -78,6 +80,34 @@ class NearbyService extends Service {
 							this.updateEndpointInfo(endpointId, {myNearbyStatus: "connecting"});
 							connectionCounter++;
 					}
+				}
+
+				if(this.state.endpointInfo[endpointId].myNearbyStatus == "connected") { 
+
+					let lastHealthCheckSent = this.state.endpointInfo[endpointId].lastHealthCheckSent || 0;
+					let timeSinceHealthCheckSent = soundService.getSyncTime() - lastHealthCheckSent;
+					
+					// have we sent a health check to this node?
+					if(lastHealthCheckSent > 0) {
+						// should we be expecting to have a response?
+						if(timeSinceHealthCheckSent > this.healthCheckTimeout) {
+							if(!this.state.endpointInfo[endpointId].lastHeardFrom ||
+								this.state.endpointInfo[endpointId].lastHeardFrom - lastHealthCheckSent	>	this.healthCheckTimeout						
+							) {
+								// we lost connection
+								this.showNotification("connection lost to " + this.state.endpointInfo[endpointId].name);
+								this.updateEndpointInfo(endpointId, {myNearbyStatus: "lost"});
+							}
+						}
+					}
+
+					// is it time to send another health check request?
+					if(timeSinceHealthCheckSent > this.healthCheckInterval) {
+						// send a health check message
+						this.sendMessageToEndpoint(endpointId, {message: "healthCheck"});
+						this.updateEndpointInfo(endpointId, {lastHealthCheckSent: soundService.getSyncTime()});
+					}
+					
 				}
 				
 			});
@@ -196,7 +226,11 @@ class NearbyService extends Service {
 				//this.showNotification("onConnectedToEndpoint: " + endpointId + " " + endpointName + " " + serviceId);
 				
 				// update local endpointInfo object
-				this.updateEndpointInfo(endpointId, {myNearbyStatus: "connected", meshStatus: "available"});
+				this.updateEndpointInfo(endpointId, {
+					myNearbyStatus: "connected", 
+					lastHeardFrom: soundService.getSyncTime(),
+					meshStatus: "available"
+				});
 				
 				// broadcast endpointInfo object
 				this.broadcastMessage({
@@ -280,6 +314,7 @@ class NearbyService extends Service {
 					this.state.endpointInfo[endpointId] = {};
 				}
 				this.state.endpointInfo[endpointId].name = msgObj.sender;
+				this.state.endpointInfo[endpointId].lastHeardFrom = soundServive.getSyncTime();
 				this.setReactive({endpointInfo: this.state.endpointInfo});
 				
 				// tell sender about her own id (and only do this once)
