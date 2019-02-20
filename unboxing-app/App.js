@@ -11,7 +11,8 @@ import {
   ScrollView,
   TextInput,
   TouchableOpacity,
-  Slider
+  Slider,
+  Switch
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
 
@@ -30,6 +31,39 @@ import Gestures from './app/components/Gestures';
 import SensorInfo from './app/components/SensorInfo';
 import DebugToggle from './app/components/DebugToggle';
 
+const sections = [
+  {
+    name: "ServerConnector",
+    component:ServerConnector,
+    default: false,
+  },
+  {
+    name: "TimeSync",
+    component:TimeSync,
+    default: false,
+  },
+  {
+    name: "SensorInfo",
+    component:SensorInfo,
+    default: false,
+  },
+  {
+    name: "Gestures",
+    component:Gestures,
+    default: false,
+  },
+  {
+    name: "Files",
+    component:Files,
+    default: false,
+  },
+  {
+    name: "NearbyStatus",
+    component:NearbyStatus,
+    default: true,
+  },          
+]
+
 class App extends Component {
 
   constructor(props) {
@@ -41,6 +75,38 @@ class App extends Component {
     this.state = {
       adminMenu: false
     };    
+
+    this.initSections()
+  }
+
+  toggleSection = (value,name) => {
+    this.setState({
+      ["show" + name]: value
+    })
+  }
+
+  showSection = (name) => {
+    return this.state["show" + name]
+  }
+
+  initSections = () => {
+    sections.forEach( section => {
+      this.state["show" + section.name] = section.default
+    })
+  }
+
+  renderSectionSwitch = (name) => {
+    return <View key={name}>
+        <Text>{name}</Text>
+        <Switch value={this.state["show" + name]} onValueChange={value => this.toggleSection(value, name)}/>
+      </View>
+  }
+
+  renderSections = () => {
+    return sections.map(section => <View style={{borderBottomWidth: 2, borderStyle:"dotted"}}>
+      {this.renderSectionSwitch(section.name)}
+      {this.showSection(section.name) && <View><section.component /></View>}
+    </View>)
   }
 
   renderAdminButton = ()=>{
@@ -60,13 +126,9 @@ class App extends Component {
     return (
       <View>
         <Text style={globalStyles.titleText}>Admin</Text>
-        <ServerConnector/>
-        <TimeSync/>
-        <SensorInfo />
-        <Gestures />
-        <Files/>
-        <NearbyStatus/>
-        <DebugToggle/>
+        <View>
+          { this.renderSections() }
+        </View>        
       </View>
     );
   }
