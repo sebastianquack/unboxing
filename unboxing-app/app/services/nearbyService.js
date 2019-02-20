@@ -18,7 +18,7 @@ class NearbyService extends Service {
 			discoveryActive: false,			// true if discovery service is active
 			advertisingActive: false,		// true if advertising service is active
 			
-			endpointInfo: {},				// status of all known endpoints {discoveryStatus: "discovered" / "connected", meshStatus: "available" / "unknown"}
+			endpointInfo: {},				// status of all known endpoints {myNearbyStatus: "discovered" / "connected", meshStatus: "available" / "unknown"}
 		
 		});
 		this.customCallbacks = {
@@ -36,19 +36,7 @@ class NearbyService extends Service {
 		console.log(msg);  
 	}
 
-	pingEndpoints = ()=> {
-		if(this.state.active) {
-			this.state.endpointIds.forEach((endpointId)=>{
-				if(this.state.endpointInfo[endpointId].status != "connected") {
-					this.connectToEndpoint(endpointId);
-				} else {
-					this.sendMessageToEndpoint(endpointId, "ping");		
-				}
-			});
-		}
-	}
-
-	// for example count these: ("discoveryStatus", "connected")
+	// for example count these: ("myNearbyStatus", "connected")
 	countEndpointsWithStatus(statusKey, statusValue) {
 		return Object.values(this.state.endpointInfo).filter( (value) => {
 			(value[statusKey] === statusValue)
@@ -57,15 +45,6 @@ class NearbyService extends Service {
 
 	toggleActive = ()=> {
 		this.setReactive({active: !this.state.active});
-
-		/*	
-		if(this.state.active) {
-			this.pingEndpoints();
-			this.endpointPingInterval = setInterval(this.pingEndpoints, 20000);
-		} else {
-			clearInterval(this.endpointPingInterval);
-		}
-		*/
 	}
 
 	toggleDiscovery = ()=> {
@@ -95,6 +74,7 @@ class NearbyService extends Service {
 		console.log(this.customCallbacks);
 	}
 
+	// update the endpointInfo object for a specified endpoint, only change the keys in update object
 	updateEndpointInfo(endpointId, update) {
 		let newEndpointInfo = this.state.endpointInfo;
 
@@ -108,6 +88,7 @@ class NearbyService extends Service {
 
 		this.setReactive({endpointInfo: newEndpointInfo});
 	}
+
 	setupNearbyCallbacks() {
 		NearbyConnection.onDiscoveryStarting(({
     		serviceId               // A unique identifier for the service
@@ -137,11 +118,11 @@ class NearbyService extends Service {
 		}) => {
 		    // An endpoint has been discovered we can connect to - save it!
 		    this.debug("onEndpointDiscovered", endpointId, endpointName, serviceId);
-				this.updateEndpointInfo(endpointId, {discoveryStatus: "discovered", name: endpointName});
+				this.updateEndpointInfo(endpointId, {myNearbyStatus: "discovered", name: endpointName});
 				
 				// if less than 2 connected endpoints and discovered endpoint is not available in mesh, connect
 				if (
-					this.countEndpointsWithStatus("discoveryStatus","connected") < 2 
+					this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2 
 					&& this.state.endpointInfo[endpointId]
 					&& this.state.endpointInfo[endpointId].meshStatus !== "available" ) {
 						this.connectToEndpoint(endpointId);
@@ -177,15 +158,17 @@ class NearbyService extends Service {
 
 		NearbyConnection.onConnectedToEndpoint(({
 		    endpointId,             // ID of the endpoint we connected to
-		    endpointName,           // this is always discoverers name
+		    endpointName,           // this is always discoverers name? not sure - can also be advertisers name if we are on discoverer
 		    serviceId,              // A unique identifier for the service
 		}) => {
 		    // Succesful connection to an endpoint established
 				this.debug("onConnectedToEndpoint", endpointId, endpointName, serviceId);
 				//this.showNotification("onConnectedToEndpoint: " + endpointId + " " + endpointName + " " + serviceId);
 				
-				this.updateEndpointInfo(endpointId, {discoveryStatus: "connected"});
-				// exchange mesh information
+				// update local endpointInfo object
+				this.updateEndpointInfo(endpointId, {myNearbyStatus: "connected", meshStatus: "available"});
+				
+				// broadcast endpointInfo object
 				this.broadcastMessage({
 					message: "endpointInfo",
 					originator: storageService.getDeviceId(),
@@ -260,7 +243,7 @@ class NearbyService extends Service {
 			        msgObj = {message: bytes};
 				}
 
-				this.showNotification("message received from " + endpointId + ": " + bytes)
+				//this.showNotification("message received from " + endpointId + ": " + bytes)
 
 				// always update the sender information
 				if(!this.state.endpointInfo[endpointId]) {
@@ -274,29 +257,34 @@ class NearbyService extends Service {
 					if(!this.state.endpointInfo[msgObj.endpointId]) {
 						this.state.endpointInfo[msgObj.endpointId] = {};
 					}
+					// set my own name for this id if someone sends me a message with idPingback
 					this.state.endpointInfo[msgObj.endpointId].name = storageService.getDeviceId();
 					this.setReactive({endpointInfo: this.state.endpointInfo});
 				} else {
+					// if this is not a pingback message, do the pingback
 					this.sendMessageToEndpoint(endpointId, {message: "idPingback", endpointId: endpointId});
 				}
 				
 				// check if received for the first time & forward
-				if (!this.receivedPayloads[msgObj.uuid]) {
+				if (msgObj.message != "idPingback" && !this.receivedPayloads[msgObj.uuid]) {
 					this.receivedPayloads[msgObj.uuid] = true;
-					this.broadcastMessage(msgObj)
+					this.broadcastMessage(msgObj) // todo optimize dont send back to sender
 
 					// update message status from received object
 					if (msgObj.message === "endpointInfo") {	
+					
 						for ( let key in msgObj.endpointInfo) {
 							if(!this.state.endpointInfo[key]) {
 								this.state.endpointInfo[key] = {};
 							}
 							this.state.endpointInfo[key].meshStatus = msgObj.endpointInfo[key].meshStatus
+							// just extract and copy names for future reference
 							if(msgObj.endpointInfo[key].name) {
 								this.state.endpointInfo[key].name = msgObj.endpointInfo[key].name
 							}
 						}
 						this.setReactive({endpointInfo: this.state.endpointInfo});
+					
 					}
 
 					if(typeof this.customCallbacks.onMessageReceived === "function") {
@@ -342,7 +330,7 @@ class NearbyService extends Service {
 		}
 		// send to connected neighbors
 		Object.entries(this.state.endpointInfo).forEach(([endpointId, value])=>{
-			if (value.discoveryStatus === "connected"){
+			if (value.myNearbyStatus === "connected"){
 				this.sendMessageToEndpoint(endpointId, message);
 			}
 		})
