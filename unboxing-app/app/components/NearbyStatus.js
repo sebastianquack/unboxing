@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 
 import {globalStyles} from '../../config/globalStyles';
 import {withNearbyService} from '../components/ServiceConnector';
-import {nearbyService} from '../services';
+import {nearbyService, storageService} from '../services';
 
 const tableContainerStyle = {
   borderStyle: "solid",
@@ -28,6 +28,9 @@ const rowItemStyle = {
 class NearbyStatus extends React.Component { 
   constructor(props) {
     super(props);
+    this.state = {
+      deviceId: storageService.getDeviceId()
+    }
     this.renderEndpointInfo = this.renderEndpointInfo.bind(this)
   }
 
@@ -54,18 +57,22 @@ class NearbyStatus extends React.Component {
           </View>
         )
 
-    const rows = entriesFlat.map( entry => (
-      <View key={entry.endpointId} style={rowContainerStyle}>
-        {Object.keys(columns).map( key =>
-          <View key={key} style={rowItemStyle}>
-            <Text>{entry[key] || "-"}</Text>
+    const rows = entriesFlat.map( entry => {
+      rowStyle = (entry.myNearbyStatus === "connected") ? { backgroundColor: "lightgreen" } : {}
+      return <View key={entry.endpointId} style={{...rowContainerStyle, ...rowStyle}}>
+        {Object.keys(columns).map( key => {
+          itemStyle = (this.state.deviceId === entry[key]) ? { fontWeight: "bold" } : {}
+          return <View key={key} style={rowItemStyle}>
+            <Text style={itemStyle}>
+              {entry[key] || "-"}
+            </Text>
           </View>
-        )}
+        })}
       </View>
-    ))
+    })
 
     return <View style={tableContainerStyle}>
-      <View style={rowContainerStyle}>
+      <View style={{...rowContainerStyle, backgroundColor: "#eee"}}>
         {headerRow}
       </View>
       <View>
@@ -78,15 +85,13 @@ class NearbyStatus extends React.Component {
 
     return (
       <View>
-        <Text>Nearby - {this.props.nearbyService.discoveryActive}</Text>
-        <Text> { JSON.stringify(this.props.nearbyService) }</Text>
-        {this.renderEndpointInfo(this.props.nearbyService.endpointInfo)}
-        {/*
+        <Text>Nearby</Text>
+        <Text style={{fontSize:30, fontWeight: "bold"}}>{this.state.deviceId}</Text>
+        { this.renderEndpointInfo(this.props.nearbyService.endpointInfo) }
         <View style={{width:"25%"}}>
-          <Text>Nearby Messages Off/On</Text>         
+          <Text>Nearby Ping Off/On</Text>         
           <Switch value={this.props.nearbyService.active} onValueChange={nearbyService.toggleActive}/>
         </View>
-        */}
         <View style={{width:"25%"}}>
           <Text>Discovery Off/On</Text>         
           <Switch value={this.props.nearbyService.discoveryActive} onValueChange={nearbyService.toggleDiscovery}/>

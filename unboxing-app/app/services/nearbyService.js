@@ -16,10 +16,8 @@ class NearbyService extends Service {
 			active: false,					// general on / off switch for nearby
 			serviceId: null, 				// service id for discovery & advertising
 			discoveryActive: false,			// true if discovery service is active
-			advertisingActive: false,		// true if advertising service is active
-			
+			advertisingActive: false,		// true if advertising service is active			
 			endpointInfo: {},				// status of all known endpoints {myNearbyStatus: "discovered" / "connected", meshStatus: "available" / "unknown"}
-		
 		});
 		this.customCallbacks = {
 			onConnectionEstablished: null, 	// not implemented
@@ -28,7 +26,9 @@ class NearbyService extends Service {
 		}
 		this.receivedPayloads = {};
 		this.setupNearbyCallbacks();		
+		
 		this.endpointPingInterval;
+		this.endpointPingIntervalTime = 5000; // rythm of checking enpointInfo and initiating connections
 	}
 
 	debug = (...msg) => {
@@ -45,6 +45,43 @@ class NearbyService extends Service {
 
 	toggleActive = ()=> {
 		this.setReactive({active: !this.state.active});
+
+		if(this.state.active) {
+			this.pingEndpoints();
+			this.endpointPingInterval = setInterval(this.pingEndpoints, this.endpointPingIntervalTime);
+		} else {
+			clearInterval(this.endpointPingInterval);
+		}
+
+	}
+	
+	pingEndpoints = ()=> {
+		if(this.state.active) {
+
+			console.log("ping endpoints");
+			
+			let connectionCounter = 0; 
+			const connectionMaxPerPing = 1; // maximum number of connections to initiate at the same time
+
+			Object.keys(this.state.endpointInfo).forEach((endpointId)=>{
+				
+				if(this.state.endpointInfo[endpointId].myNearbyStatus == "discovered") {
+
+					// if less than 2 connected endpoints and discovered endpoint is not available in mesh, connect
+					if (
+						this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2 
+						&& this.state.endpointInfo[endpointId]
+						&& this.state.endpointInfo[endpointId].meshStatus !== "available" 
+						&& connectionCounter < connectionMaxPerPing) {
+
+							this.connectToEndpoint(endpointId);
+							this.updateEndpointInfo(endpointId, {myNearbyStatus: "connecting"});
+							connectionCounter++;
+					}
+				}
+				
+			});
+		}
 	}
 
 	toggleDiscovery = ()=> {
@@ -120,14 +157,7 @@ class NearbyService extends Service {
 		    this.debug("onEndpointDiscovered", endpointId, endpointName, serviceId);
 				this.updateEndpointInfo(endpointId, {myNearbyStatus: "discovered", name: endpointName});
 				
-				// if less than 2 connected endpoints and discovered endpoint is not available in mesh, connect
-				if (
-					this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2 
-					&& this.state.endpointInfo[endpointId]
-					&& this.state.endpointInfo[endpointId].meshStatus !== "available" ) {
-						this.connectToEndpoint(endpointId);
-				}
-
+				// connection is initiated in pingEndpoints
 		});
 
 		// Note - Can take up to 3 min to time out
@@ -174,7 +204,7 @@ class NearbyService extends Service {
 					originator: storageService.getDeviceId(),
 					endpointInfo: this.state.endpointInfo
 				})
-				// possibly turn of discovery here if 2 connections
+				// possibly turn off discovery here if 2 connections
 		});
 
 		NearbyConnection.onAdvertisingStarting(({
@@ -224,7 +254,7 @@ class NearbyService extends Service {
     		const theEndpointId = endpointId;
 			NearbyConnection.readBytes(
 			    serviceId,               // A unique identifier for the service
-			    endpointId,              // ID of the endpoint wishing to stop playing audio from
+			    endpointId,              // ID of the endpoint 
 			    payloadId                // Unique identifier of the payload
 			).then(({
 			    type,                    // The Payload.Type represented by this payload
@@ -268,7 +298,7 @@ class NearbyService extends Service {
 				// check if received for the first time & forward
 				if (msgObj.message != "idPingback" && !this.receivedPayloads[msgObj.uuid]) {
 					this.receivedPayloads[msgObj.uuid] = true;
-					this.broadcastMessage(msgObj) // todo optimize dont send back to sender
+					this.broadcastMessage(msgObj, endpointId) // todo optimize dont send back to sender
 
 					// update message status from received object
 					if (msgObj.message === "endpointInfo") {	
@@ -323,15 +353,18 @@ class NearbyService extends Service {
 		);
 	}
 
-	broadcastMessage = (message) => {
+	// send message to all connected endpoints, exlude one (usually where it came from)
+	broadcastMessage = (message, excludeId) => {
 		if (!message.uuid) {
 			message.uuid = uuidv1()
 			this.receivedPayloads[message.uuid] = true;
 		}
 		// send to connected neighbors
 		Object.entries(this.state.endpointInfo).forEach(([endpointId, value])=>{
-			if (value.myNearbyStatus === "connected"){
-				this.sendMessageToEndpoint(endpointId, message);
+			if(excludeId != endpointId) {
+				if (value.myNearbyStatus === "connected"){
+					this.sendMessageToEndpoint(endpointId, message);
+				}	
 			}
 		})
 	}
