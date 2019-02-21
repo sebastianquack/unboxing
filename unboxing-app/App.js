@@ -97,13 +97,13 @@ class App extends Component {
 
   renderSectionSwitch = (name) => {
     return <View key={name}>
-        <Text>{name}</Text>
+        <Text style={{fontSize: 16}}>{name}</Text>
         <Switch value={this.state["show" + name]} onValueChange={value => this.toggleSection(value, name)}/>
       </View>
   }
 
   renderSections = () => {
-    return sections.map(section => <View key={section.name} style={{borderBottomWidth: 2, borderStyle:"dotted"}}>
+    return sections.map(section => <View key={section.name} style={{borderTopWidth: 2, borderStyle:"dotted"}}>
       {this.renderSectionSwitch(section.name)}
       {this.showSection(section.name) && <View><section.component /></View>}
     </View>)
