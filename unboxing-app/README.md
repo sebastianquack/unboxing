@@ -50,17 +50,10 @@ npm --version
 
 ## build apk
 
+- keystore goes in android/app - see https://facebook.github.io/react-native/docs/signed-apk-android
+
 ````
 react-native bundle --dev false --platform android --entry-file index.js --bundle-output ./android/app/build/intermediates/assets/debug/index.android.bundle --assets-dest ./android/app/build/intermediates/res/merged/debug
 
 cd android && ./gradlew assembleRelease
 ````
-
-## build production 
-
-- keystore goes in android/app - see https://facebook.github.io/react-native/docs/signed-apk-android
-
-`$ cd android`
-`$ ./gradlew assembleRelease`
-
-

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 
 import {globalStyles} from '../../config/globalStyles';
-import {withNearbyService} from '../components/ServiceConnector';
+import {withNearbyService, withStorageService} from '../components/ServiceConnector';
 import {nearbyService, storageService} from '../services';
 
 const tableContainerStyle = {
@@ -28,9 +28,6 @@ const rowItemStyle = {
 class NearbyStatus extends React.Component { 
   constructor(props) {
     super(props);
-    this.state = {
-      deviceId: storageService.getDeviceId()
-    }
     this.renderEndpointInfo = this.renderEndpointInfo.bind(this)
   }
 
@@ -48,7 +45,7 @@ class NearbyStatus extends React.Component {
     const entriesFlat =  Object // [{endpointId, myNearbyStatus, name, ...}, {...}, ...]
       .entries(endpointInfo)
       .map( ([endpointId, value]) => ({ ...value, endpointId }) )
-      .sort( (elem1, elem2) => elem1.name.localeCompare(elem2.name) )
+      .sort( (elem1, elem2) => (elem1.name && elem2.name ? elem1.name.localeCompare(elem2.name) : 0))
 
     const headerRow = Object
       .entries(columns)
@@ -59,10 +56,12 @@ class NearbyStatus extends React.Component {
         )
 
     const rows = entriesFlat.map( entry => {
-      const rowStyle = (entry.myNearbyStatus === "connected") ? { backgroundColor: "lightgreen" } : {}
+      const rowStyle = {}
+      if (entry.myNearbyStatus === "connected") rowStyle.backgroundColor = "lightgreen"
+      if (entry.myNearbyStatus === "connecting") rowStyle.backgroundColor = "orange"
       return <View key={entry.endpointId} style={{...rowContainerStyle, ...rowStyle}}>
         {Object.keys(columns).map( key => {
-          itemStyle = (this.state.deviceId === entry[key]) ? { fontWeight: "bold" } : {}
+          itemStyle = (this.props.storageService.deviceId === entry[key]) ? { fontWeight: "bold" } : {}
           return <View key={key} style={rowItemStyle}>
             <Text style={itemStyle}>
               {entry[key] || "-"}
@@ -87,17 +86,16 @@ class NearbyStatus extends React.Component {
     return (
       <View>
         <Text>Nearby</Text>
-        <Text style={{fontSize:30, fontWeight: "bold"}}>{this.state.deviceId}</Text>
+        <Text style={{fontSize:30, fontWeight: "bold"}}>{this.props.storageService.deviceId}</Text>
         { this.renderEndpointInfo(this.props.nearbyService.endpointInfo) }
         <View style={{width:"25%"}}>
-          <Text>Nearby Ping Off/On</Text>         
+          <Text>Active Off/On</Text>         
           <Switch value={this.props.nearbyService.active} onValueChange={nearbyService.toggleActive}/>
         </View>
         <View style={{width:"25%"}}>
           <Text>Discovery Off/On</Text>         
           <Switch value={this.props.nearbyService.discoveryActive} onValueChange={nearbyService.toggleDiscovery}/>
         </View>
-
         <View style={{width:"25%"}}>
           <Text>Advertising Off/On</Text>         
           <Switch value={this.props.nearbyService.advertisingActive} onValueChange={nearbyService.toggleAdvertising}/>
@@ -111,4 +109,4 @@ class NearbyStatus extends React.Component {
   }
 }
 
-export default withNearbyService(NearbyStatus);
+export default withNearbyService(withStorageService(NearbyStatus));

@@ -31,8 +31,8 @@ class NearbyService extends Service {
 		this.setupNearbyCallbacks();		
 		
 		this.endpointPingInterval;
-		this.endpointPingIntervalTime = 10000; // rythm of checking enpointInfo and initiating connections
-		this.healthCheckInterval = 10000; // rythm of checking in with connected nodes
+		this.endpointPingIntervalTime = 5000; // rythm of checking enpointInfo and initiating connections
+		this.healthCheckInterval = 5000; // rythm of checking in with connected nodes
 	}
 
 	debug = (...msg) => {
@@ -75,7 +75,7 @@ class NearbyService extends Service {
 				
 				
 				// send a health check message to everyone
-				//if(storageService.getDeviceId() == "Blank") {
+				//if(storageService.getDeviceId() == "2") {
 
 					if(this.getMyEnpointId()) {
 
@@ -86,7 +86,7 @@ class NearbyService extends Service {
 							message: "alive",
 							originator: storageService.getDeviceId(),
 							originatorId: this.getMyEnpointId()
-						}, this.getMyEnpointId());
+						}, this.getMyEnpointId(), true);
 						this.setReactive({lastHealthCheckSent: soundService.getSyncTime()});
 
 					}
@@ -122,6 +122,13 @@ class NearbyService extends Service {
 					}
 				}
 
+				// check if a neighbor connection is lost
+				if(soundService.getSyncTime() - this.state.lastHealthCheckSent > this.healthCheckInterval) {
+					if(soundService.getSyncTime() - this.state.endpointInfo[endpointId].lastHeardFromAsNeighbor > this.healthCheckInterval * 2) {
+						this.disconnectEndpoint(endpointId, {myNearbyStatus: "lost neighbor"})
+					}
+				}
+
 				// check alive status of all nodes that are not me
 				if(this.state.endpointInfo[endpointId].name != storageService.getDeviceId()) {
 					if(soundService.getSyncTime() - this.state.endpointInfo[endpointId].lastHeardFrom > this.healthCheckInterval * 4) {
@@ -129,20 +136,11 @@ class NearbyService extends Service {
 						this.showNotification("havent heard from " + this.state.endpointInfo[endpointId].name);
 						//this.updateEndpointInfo(endpointId, {myNearbyStatus: "lost"});
 
-						/*
 						if(this.state.endpointInfo[endpointId].myNearbyStatus == "connected") {
-							NearbyConnection.disconnectFromEndpoint(
-		  					"test",              // A unique identifier for the service
-		  					endpointId              // ID of the endpoint we wish to disconnect from
-							);
-							this.updateEndpointInfo(endpointId, {myNearbyStatus: "lost", meshStatus: "gone"});
-							if(this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2) {
-    						this.startDiscovering();	
-    						this.startAdvertising();	
-    					}
+							this.disconnectEndpoint(endpointId, {myNearbyStatus: "lost", meshStatus: "gone"})
 						} else {
 							this.updateEndpointInfo(endpointId, {meshStatus: "gone"});	
-						}	*/			
+						}
 					}
 				}
 				
@@ -178,6 +176,22 @@ class NearbyService extends Service {
 		} else {
 			this.stopAdvertising();
 			this.setReactive({advertisingActive: false});
+		}
+	}
+
+	fixLoop = () => {
+		// find all endpoints in the loop
+		const availableEndpointsSorted = Object.entries(this.state.endpointInfo)
+			.filter( ([endpointId, endpoint]) => endpoint.meshStatus === "available")
+			.sort( ([endpoint1Id], [endpoint2Id]) => endpoint1Id.localeCompare(endpoint2Id))
+		// take first endpointId in list
+		const responsibleEndpointId = availableEndpointsSorted[0][0]
+		// am I responsible to solve this?
+		if (responsibleEndpointId === this.getMyEnpointId()) {
+			// disconnect the endpoint next in list
+			const endpointIdToDisconnect = availableEndpointsSorted[1][0]
+			this.showNotification("I need to fix the loop by disconnecting " + endpointIdToDisconnect)
+			this.disconnectEndpoint(endpointIdToDisconnect, {myNearbyStatus: "suspended", meshStatus: "removed"})
 		}
 	}
 
@@ -245,8 +259,8 @@ class NearbyService extends Service {
     		serviceId               // A unique identifier for the service
 		}) => {
 			// Endpoint moved out of range or disconnected
-    	this.debug("onEndpointLost", endpointId, endpointName, serviceId)
-    	this.showNotification("onEndpointLost: " + this.state.endpointInfo[endpointId].name);
+    	this.debug("received onEndpointLost", endpointId, endpointName, serviceId)
+    	this.showNotification("received onEndpointLost: " + this.state.endpointInfo[endpointId].name);
     	// this.updateEndpointInfo(endpointId, {myNearbyStatus: "nearbyLost"});
 
     	// if(this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2) {
@@ -383,7 +397,7 @@ class NearbyService extends Service {
 				//this.showNotification("message received from " + endpointId + ": " + bytes)
 				this.setReactive({messageCounter: this.state.messageCounter+1});
 
-				this.setReactive({messageLog: this.state.messageLog + "\n" + msgObj.originator + "->" + msgObj.sender + ": " + msgObj.message});
+				this.setReactive({messageLog: this.state.messageLog + "\n" + msgObj.originator + "->" + msgObj.sender + "->me: " + msgObj.message + " uuid:" + (msgObj.uuid ? "..."+msgObj.uuid.substr(-3) : "-" )});
 
 				// extract info about direct neighbour
 				if(!this.state.endpointInfo[endpointId]) {
@@ -392,11 +406,26 @@ class NearbyService extends Service {
 				this.state.endpointInfo[endpointId].name = msgObj.sender;
 				this.state.endpointInfo[endpointId].lastHeardFrom = soundService.getSyncTime();
 
+				// remember when we heard from our neighbors
+				const neighborIds = Object
+					.entries(this.state.endpointInfo)
+					.filter(([endpointId, endpoint]) => endpoint.myNearbyStatus == "connected" ) // only neighbors
+					.map(([endpointId, endpoint]) => endpointId) // extract endpointIds
+				if (neighborIds.indexOf(msgObj.senderId) > -1) {
+					this.state.endpointInfo[endpointId].lastHeardFromAsNeighbor = soundService.getSyncTime();
+				}
+
+				// disconnect if we are asked to
+				if (msgObj.message === "disconnect") {
+					this.disconnectEndpoint(endpointId, {myNearbyStatus: "disconnected"}, true)
+				}
+
 				// extract info about broadcast orginator
 				if(msgObj.message == "alive" && msgObj.originatorId) {
 					
 					if(msgObj.originatorId == this.getMyEnpointId()) {
 						this.showNotification("my alive message came back to me - closed loop!");
+						this.fixLoop()
 					}
 
 					if(!this.state.endpointInfo[msgObj.originatorId]) {
@@ -433,9 +462,6 @@ class NearbyService extends Service {
 
 				// yes, if we haven't seen its uuid yet
 				&& (!this.receivedPayloads[msgObj.uuid]
-
-				// or when it's an alive message (and we are not the originator)
-				|| (msgObj.message == "alive" && msgObj.originatorId != storageService.getDeviceId())
 
 				)) {
 					
@@ -477,6 +503,27 @@ class NearbyService extends Service {
 		);
 	}
 
+	disconnectEndpoint = (endpointId, endpointInfoUpdate = {}, quiet = false) => {
+		this.showNotification("disconnecting endpoint " + endpointId)
+
+		if (!quiet) {
+			this.sendMessageToEndpoint(endpointId, {message: "disconnect"})
+		}
+
+		setTimeout(() => {
+			NearbyConnection.disconnectFromEndpoint(
+				"test",              // A unique identifier for the service
+				endpointId              // ID of the endpoint we wish to disconnect from
+			);
+			this.updateEndpointInfo(endpointId, endpointInfoUpdate);	
+			if(this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2) {
+				this.startDiscovering();	
+				this.startAdvertising();	
+			}	
+		}, (quiet ? 0 : 1000) )
+
+	}	
+
 	// send message to an endpoint
 	sendMessageToEndpoint(endpointId, message) {
 		message.sender = storageService.getDeviceId();
@@ -487,20 +534,18 @@ class NearbyService extends Service {
     		endpointId,    					// ID of the endpoint
     		JSON.stringify(message)  		// A string of bytes to send
 		);
-		this.setReactive({messageLog: this.state.messageLog + "\nme->" + this.state.endpointInfo[endpointId].name + ": " + message.message});
+		this.setReactive({messageLog: this.state.messageLog + "\nme->" + this.state.endpointInfo[endpointId].name + ": " + message.message + " (originator: " + message.originator + ")"});
 	}
 
 	// send message to all connected endpoints, exlude one (usually where it came from)
-	broadcastMessage = (message, excludeId) => {
-		if (!message.uuid) {
-			message.uuid = uuidv1()
-			this.receivedPayloads[message.uuid] = true;
-		}
+	broadcastMessage = (message, excludeId=null, directional=false) => {
+		const common_uuid = uuidv1() // create a common uuid for both directions if necessary
 		// send to connected neighbors
 		Object.entries(this.state.endpointInfo).forEach(([endpointId, value])=>{
 			if(excludeId != endpointId) {
 				if (value.myNearbyStatus === "connected"){
-					this.sendMessageToEndpoint(endpointId, message);
+					const uuid = message.uuid || (directional ? uuidv1() : common_uuid) // directional message has different uuid for each direction
+					this.sendMessageToEndpoint(endpointId, {...message, uuid});
 				}	
 			}
 		})
