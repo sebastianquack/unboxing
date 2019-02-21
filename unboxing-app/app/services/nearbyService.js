@@ -18,6 +18,9 @@ class NearbyService extends Service {
 			discoveryActive: false,			// true if discovery service is active
 			advertisingActive: false,		// true if advertising service is active			
 			endpointInfo: {},				// status of all known endpoints {myNearbyStatus: "discovered" / "connected", meshStatus: "available" / "unknown"}
+			lastHealthCheckSent: 0,  // timestamp of last healthcheck we sent
+			messageCounter: 0,					// count all incoming messages
+			messageLog: ""
 		});
 		this.customCallbacks = {
 			onConnectionEstablished: null, 	// not implemented
@@ -30,7 +33,6 @@ class NearbyService extends Service {
 		this.endpointPingInterval;
 		this.endpointPingIntervalTime = 10000; // rythm of checking enpointInfo and initiating connections
 		this.healthCheckInterval = 10000; // rythm of checking in with connected nodes
-		this.lastHealthCheckSent = 0; // timestamp of last healthcheck we sent
 	}
 
 	debug = (...msg) => {
@@ -47,11 +49,16 @@ class NearbyService extends Service {
 	}
 
 	toggleActive = ()=> {
+		// update state
 		this.setReactive({active: !this.state.active});
 
+		// this is where we are now
 		if(this.state.active) {
 			this.pingEndpoints();
 			this.endpointPingInterval = setInterval(this.pingEndpoints, this.endpointPingIntervalTime);
+			
+			this.startDiscovering();
+			this.startAdvertising();
 		} else {
 			clearInterval(this.endpointPingInterval);
 		}
@@ -64,11 +71,28 @@ class NearbyService extends Service {
 			console.log("ping endpoints");
 		
 			// is it time to send another health check
-			if(soundService.getSyncTime() - this.lastHealthCheckSent > this.healthCheckInterval) {
-				console.log("sending alive message");
+			if(soundService.getSyncTime() - this.state.lastHealthCheckSent > this.healthCheckInterval) {
+				
+				
 				// send a health check message to everyone
-				this.broadcastMessage({message: "alive"});
-				this.lastHealthCheckSent = soundService.getSyncTime();
+				//if(storageService.getDeviceId() == "Blank") {
+
+					if(this.getMyEnpointId()) {
+
+						console.log("sending alive message");
+						this.showNotification("sending alive");
+
+						this.broadcastMessage({
+							message: "alive",
+							originator: storageService.getDeviceId(),
+							originatorId: this.getMyEnpointId()
+						}, this.getMyEnpointId());
+						this.setReactive({lastHealthCheckSent: soundService.getSyncTime()});
+
+					}
+
+				//}
+				
 			}
 			
 
@@ -77,6 +101,7 @@ class NearbyService extends Service {
 
 			Object.keys(this.state.endpointInfo).forEach((endpointId)=>{
 				
+				// decide if we want to connect to a new node
 				if(this.state.endpointInfo[endpointId].myNearbyStatus == "discovered") {
 
 					// if less than 2 connected endpoints and discovered endpoint is not available in mesh, connect
@@ -84,26 +109,56 @@ class NearbyService extends Service {
 						this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2 
 						&& this.state.endpointInfo[endpointId]
 						&& this.state.endpointInfo[endpointId].meshStatus !== "available" 
-						&& connectionCounter < connectionMaxPerPing) {
+						&& connectionCounter < connectionMaxPerPing
+						) {
 
-							this.connectToEndpoint(endpointId);
-							this.updateEndpointInfo(endpointId, {myNearbyStatus: "connecting"});
-							connectionCounter++;
+							if(this.state.endpointInfo[endpointId].name > storageService.getDeviceId()) {
+								this.connectToEndpoint(endpointId);
+								this.updateEndpointInfo(endpointId, {myNearbyStatus: "connecting"});
+								connectionCounter++;	
+							} else {
+								this.showNotification("waiting for " + this.state.endpointInfo[endpointId].name + " to connect");
+							}
 					}
 				}
 
-				if(this.state.endpointInfo[endpointId].myNearbyStatus == "connected") { 
-					
-					// should we be expecting to have heard from this node? (2 x healthCheckInterval)
-					if(soundService.getSyncTime() - this.state.endpointInfo[endpointId].lastHeardFrom > this.healthCheckInterval * 2) {
+				// check alive status of all nodes that are not me
+				if(this.state.endpointInfo[endpointId].name != storageService.getDeviceId()) {
+					if(soundService.getSyncTime() - this.state.endpointInfo[endpointId].lastHeardFrom > this.healthCheckInterval * 4) {
 						// we lost connection
-						this.showNotification("connection lost to " + this.state.endpointInfo[endpointId].name);
+						this.showNotification("havent heard from " + this.state.endpointInfo[endpointId].name);
 						//this.updateEndpointInfo(endpointId, {myNearbyStatus: "lost"});
+
+						/*
+						if(this.state.endpointInfo[endpointId].myNearbyStatus == "connected") {
+							NearbyConnection.disconnectFromEndpoint(
+		  					"test",              // A unique identifier for the service
+		  					endpointId              // ID of the endpoint we wish to disconnect from
+							);
+							this.updateEndpointInfo(endpointId, {myNearbyStatus: "lost", meshStatus: "gone"});
+							if(this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2) {
+    						this.startDiscovering();	
+    						this.startAdvertising();	
+    					}
+						} else {
+							this.updateEndpointInfo(endpointId, {meshStatus: "gone"});	
+						}	*/			
 					}
 				}
 				
 			});
 		}
+	}
+
+	// extracts my endpointId from device info
+	getMyEnpointId() {
+		let myEnpointId = null;
+		Object.entries(this.state.endpointInfo).forEach(([endpointId, value]) => {
+			if(value.name == storageService.getDeviceId()) {
+				myEnpointId = endpointId;
+			}
+		})
+		return myEnpointId;
 	}
 
 	toggleDiscovery = ()=> {
@@ -190,6 +245,13 @@ class NearbyService extends Service {
 		}) => {
 			// Endpoint moved out of range or disconnected
     	this.debug("onEndpointLost", endpointId, endpointName, serviceId)
+    	this.showNotification("onEndpointLost: " + this.state.endpointInfo[endpointId].name);
+    	this.updateEndpointInfo(endpointId, {myNearbyStatus: "nearbyLost"});
+
+    	if(this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2) {
+    		this.startDiscovering();	
+    		this.startAdvertising();	
+    	}
 		});
 
 		// this is fired on both sender's and receiver's ends - regardless of advertisting or discovery
@@ -233,8 +295,7 @@ class NearbyService extends Service {
 				// update local endpointInfo object
 				this.updateEndpointInfo(endpointId, {
 					myNearbyStatus: "connected", 
-					lastHeardFrom: soundService.getSyncTime(),
-					meshStatus: "available"
+					lastHeardFrom: soundService.getSyncTime()
 				});
 				
 				// broadcast endpointInfo object
@@ -243,7 +304,13 @@ class NearbyService extends Service {
 					originator: storageService.getDeviceId(),
 					endpointInfo: this.state.endpointInfo
 				})
+				
 				// possibly turn off discovery here if 2 connections
+				if(this.countEndpointsWithStatus("myNearbyStatus", "connected") >= 2) {
+					this.stopDiscovering();
+					this.stopAdvertising();
+				}
+
 		});
 
 		NearbyConnection.onAdvertisingStarting(({
@@ -313,15 +380,34 @@ class NearbyService extends Service {
 				}
 
 				//this.showNotification("message received from " + endpointId + ": " + bytes)
+				this.setReactive({messageCounter: this.state.messageCounter+1});
 
-				// always update the sender information
+				this.setReactive({messageLog: this.state.messageLog + "\n" + msgObj.originator + "->" + msgObj.sender + ": " + msgObj.message});
+
+				// extract info about direct neighbour
 				if(!this.state.endpointInfo[endpointId]) {
 					this.state.endpointInfo[endpointId] = {};
 				}
 				this.state.endpointInfo[endpointId].name = msgObj.sender;
 				this.state.endpointInfo[endpointId].lastHeardFrom = soundService.getSyncTime();
-				this.setReactive({endpointInfo: this.state.endpointInfo});
+
+				// extract info about broadcast orginator
+				if(msgObj.message == "alive" && msgObj.originatorId) {
+					
+					if(msgObj.originatorId == this.getMyEnpointId()) {
+						this.showNotification("my alive message came back to me - closed loop!");
+					}
+
+					if(!this.state.endpointInfo[msgObj.originatorId]) {
+						this.state.endpointInfo[msgObj.originatorId] = {};
+					}
+					this.state.endpointInfo[msgObj.originatorId].meshStatus = "available";	
+					this.state.endpointInfo[msgObj.originatorId].lastHeardFrom = soundService.getSyncTime();
+				} 
 				
+				// save
+				this.setReactive({endpointInfo: this.state.endpointInfo});
+
 				// tell sender about her own id (and only do this once)
 				if(msgObj.message == "idPingback")	{
 					if(!this.state.endpointInfo[msgObj.endpointId]) {
@@ -330,15 +416,30 @@ class NearbyService extends Service {
 					// set my own name for this id if someone sends me a message with idPingback
 					this.state.endpointInfo[msgObj.endpointId].name = storageService.getDeviceId();
 					this.setReactive({endpointInfo: this.state.endpointInfo});
+				
 				} else {
 					// if this is not a pingback message, do the pingback
-					this.sendMessageToEndpoint(endpointId, {message: "idPingback", endpointId: endpointId});
+					if(msgObj.senderId != endpointId) {  // check if sender's id is the same as what I see
+						this.sendMessageToEndpoint(endpointId, {message: "idPingback", endpointId: endpointId});	
+					}
 				}
 				
-				// check if received for the first time & forward
-				if (msgObj.message != "idPingback" && !this.receivedPayloads[msgObj.uuid]) {
+				// do we want to forward this message?
+				if(
+
+				// no, if it's a pingback message (never forward those)
+				msgObj.message != "idPingback" 
+
+				// yes, if we haven't seen its uuid yet
+				&& (!this.receivedPayloads[msgObj.uuid]
+
+				// or when it's an alive message (and we are not the originator)
+				|| (msgObj.message == "alive" && msgObj.originatorId != storageService.getDeviceId())
+
+				)) {
+					
 					this.receivedPayloads[msgObj.uuid] = true;
-					this.broadcastMessage(msgObj, endpointId) // todo optimize dont send back to sender
+					this.broadcastMessage(msgObj, endpointId) // this is where we forward messaqge to broadcast, excluding sender
 
 					// update message status from received object
 					if (msgObj.message === "endpointInfo") {	
@@ -347,7 +448,7 @@ class NearbyService extends Service {
 							if(!this.state.endpointInfo[key]) {
 								this.state.endpointInfo[key] = {};
 							}
-							this.state.endpointInfo[key].meshStatus = msgObj.endpointInfo[key].meshStatus
+							// this.state.endpointInfo[key].meshStatus = msgObj.endpointInfo[key].meshStatus
 							// just extract and copy names for future reference
 							if(msgObj.endpointInfo[key].name) {
 								this.state.endpointInfo[key].name = msgObj.endpointInfo[key].name
@@ -366,14 +467,7 @@ class NearbyService extends Service {
 		});
 	}
 
-	startDiscovering() {
-		// begin discovery of services
-		NearbyConnection.startDiscovering(
-  	  		"test",
-  	  		strategy
-		);
-	}
-
+	
 	connectToEndpoint(endpointId, serviceId="test") {
 		this.debug("nearby: connecting to ", serviceId, endpointId);
 		NearbyConnection.connectToEndpoint(
@@ -385,12 +479,14 @@ class NearbyService extends Service {
 	// send message to an endpoint
 	sendMessageToEndpoint(endpointId, message) {
 		message.sender = storageService.getDeviceId();
+		message.senderId = this.getMyEnpointId();
 		console.log("sendMessageToEndpoint", endpointId, message);
 		NearbyConnection.sendBytes(
   		  "test",           // A unique identifier for the service
     		endpointId,    					// ID of the endpoint
     		JSON.stringify(message)  		// A string of bytes to send
 		);
+		this.setReactive({messageLog: this.state.messageLog + "\nme->" + this.state.endpointInfo[endpointId].name + ": " + message.message});
 	}
 
 	// send message to all connected endpoints, exlude one (usually where it came from)
@@ -409,14 +505,21 @@ class NearbyService extends Service {
 		})
 	}
 
+	startDiscovering() {
+		// begin discovery of services
+		NearbyConnection.startDiscovering(
+  	  		"test",
+  	  		strategy
+		);
+		this.setReactive({discoveryActive: true});
+	}
+
 	stopDiscovering() {
 		this.debug("nearby: stopping discovery");
 
 		NearbyConnection.stopDiscovering("test");
 		
-		this.setReactive({
-			discoveryActive: false
-		});		
+		this.setReactive({ discoveryActive: false });		
 	}
 
 	startAdvertising() {
@@ -425,6 +528,7 @@ class NearbyService extends Service {
     		"test",
     		strategy
 		);
+		this.setReactive({advertisingActive: true});
 	}
 
 	stopAdvertising() {
@@ -433,9 +537,7 @@ class NearbyService extends Service {
 			NearbyConnection.stopAdvertising(
     			storageService.getDeviceId()
 			);
-			this.setReactive({
-				advertisingActive: false
-			});
+			this.setReactive({ advertisingActive: false });
 		}
 	}
 }
