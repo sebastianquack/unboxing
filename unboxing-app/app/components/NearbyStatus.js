@@ -49,7 +49,7 @@ class NearbyStatus extends React.Component {
     const entriesFlat =  Object // [{endpointId, myNearbyStatus, name, ...}, {...}, ...]
       .entries(endpointInfo)
       .map( ([endpointId, value]) => ({ ...value, endpointId }) )
-      .sort( (elem1, elem2) => elem1.name < elem2.name )
+      .sort( (elem1, elem2) => elem1.name.localeCompare(elem2.name) )
 
     const headerRow = Object
       .entries(columns)
