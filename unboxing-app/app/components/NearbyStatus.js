@@ -42,8 +42,7 @@ class NearbyStatus extends React.Component {
       name: "name",      
       meshStatus: "meshStatus",
       myNearbyStatus: "myNearbyStatus",
-      //lastHealthCheckSent: "checkSent",
-      //lastHeardFrom: "headFrom",
+      lastHeardFrom: "heardFrom",
     }
     
     const entriesFlat =  Object // [{endpointId, myNearbyStatus, name, ...}, {...}, ...]
@@ -103,6 +102,9 @@ class NearbyStatus extends React.Component {
           <Text>Advertising Off/On</Text>         
           <Switch value={this.props.nearbyService.advertisingActive} onValueChange={nearbyService.toggleAdvertising}/>
         </View>
+        <Text>Last health check: {this.props.nearbyService.lastHealthCheckSent}</Text>
+        <Text>Message Counter: {this.props.nearbyService.messageCounter}</Text>
+        <Text>Message Log: {this.props.nearbyService.messageLog}</Text>
         
       </View>
     );
