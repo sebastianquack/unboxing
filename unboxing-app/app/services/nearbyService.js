@@ -238,6 +238,7 @@ class NearbyService extends Service {
 		});
 
 		// Note - Can take up to 3 min to time out
+		// Does not mean much - keeps on receiving messages
 		NearbyConnection.onEndpointLost(({
     		endpointId,             // ID of the endpoint we lost
     		endpointName,           // The name of the remote device we lost
@@ -246,12 +247,12 @@ class NearbyService extends Service {
 			// Endpoint moved out of range or disconnected
     	this.debug("onEndpointLost", endpointId, endpointName, serviceId)
     	this.showNotification("onEndpointLost: " + this.state.endpointInfo[endpointId].name);
-    	this.updateEndpointInfo(endpointId, {myNearbyStatus: "nearbyLost"});
+    	// this.updateEndpointInfo(endpointId, {myNearbyStatus: "nearbyLost"});
 
-    	if(this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2) {
-    		this.startDiscovering();	
-    		this.startAdvertising();	
-    	}
+    	// if(this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2) {
+    	// 	this.startDiscovering();	
+    	// 	this.startAdvertising();	
+    	// }
 		});
 
 		// this is fired on both sender's and receiver's ends - regardless of advertisting or discovery

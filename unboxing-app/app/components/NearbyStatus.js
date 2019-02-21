@@ -59,7 +59,7 @@ class NearbyStatus extends React.Component {
         )
 
     const rows = entriesFlat.map( entry => {
-      rowStyle = (entry.myNearbyStatus === "connected") ? { backgroundColor: "lightgreen" } : {}
+      const rowStyle = (entry.myNearbyStatus === "connected") ? { backgroundColor: "lightgreen" } : {}
       return <View key={entry.endpointId} style={{...rowContainerStyle, ...rowStyle}}>
         {Object.keys(columns).map( key => {
           itemStyle = (this.state.deviceId === entry[key]) ? { fontWeight: "bold" } : {}
