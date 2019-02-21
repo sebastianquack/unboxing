@@ -1,5 +1,5 @@
 import { NetInfo } from 'react-native';
-import Zeroconf from 'react-native-zeroconf';
+//import Zeroconf from 'react-native-zeroconf';
 
 import Service from './Service';
 import { storageService } from './';
@@ -16,11 +16,11 @@ class NetworkService extends Service {
       lastApiResult: ""
 		});
 
-    this.initZeroconf()
+    //this.initZeroconf()
     this.initNetInfo()
 	}
 
-  initZeroconf() {
+  /*initZeroconf() {
     const zeroconf = new Zeroconf();
     zeroconf.scan(type = 'http', protocol = 'tcp', domain = 'local.');
     zeroconf.on('start', () => console.log('Zeorfonf scan has started.'));
@@ -41,7 +41,7 @@ class NetworkService extends Service {
     });
     zeroconf.on('resolved', data => console.log("resolved " + JSON.stringify(data)));
     zeroconf.on('error', data => console.log("error " + JSON.stringify(data)))
-	}  	
+	}*/  	
 	
   setServer(server, save=true) {
 		this.setReactive({ server })

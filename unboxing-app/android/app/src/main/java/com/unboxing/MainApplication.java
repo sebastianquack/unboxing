@@ -4,7 +4,6 @@ import android.app.Application;
 
 import com.facebook.react.ReactApplication;
 import com.horcrux.svg.SvgPackage;
-import com.balthazargronon.RCTZeroconf.ZeroconfReactPackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.sensors.RNSensorsPackage;
 import com.corbt.keepawake.KCKeepAwakePackage;
@@ -32,7 +31,6 @@ public class MainApplication extends Application implements ReactApplication {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
             new SvgPackage(),
-            new ZeroconfReactPackage(),
             new RNSoundPackage(),
             new RNSensorsPackage(),
             new KCKeepAwakePackage(),
