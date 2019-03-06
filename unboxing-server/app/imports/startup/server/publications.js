@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
-import { Challenges, Events, Files, Gestures, Sequences } from '../../collections/';
+import { Challenges, Walks, Places, Events, Files, Gestures, Sequences } from '../../collections/';
 
 
 Meteor.publish('events.all', function (data={}) {
@@ -30,6 +30,17 @@ Meteor.publish('files.all', function (query={}) {
   let options = {}
   return Files.find(query, options)
 });
+
+Meteor.publish('places.all', function (query={}) {
+  let options = {}
+  return Places.find(query, options)
+});
+
+Meteor.publish('walks.all', function (query={}) {
+  let options = {}
+  return Walks.find(query, options)
+});
+
 
 Meteor.publish('gestures.all', function (data) {
   let options = {}
