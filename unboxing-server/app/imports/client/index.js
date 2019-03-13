@@ -4,6 +4,12 @@ import NetworkInfo from './NetworkInfo';
 import ChallengesInfo from './ChallengesInfo';
 import GesturesInfo from './GesturesInfo';
 import GestureDetail from './GestureDetail';
+import PlaceDetail from './PlaceDetail';
+import PlacesInfo from './PlacesInfo';
+
+import WalkDetail from './WalkDetail';
+import WalksInfo from './WalksInfo';
+
 import ImportExport from './ImportExport';
 import SequencesInfo from './SequencesInfo';
 import SequenceDetail from './SequenceDetail';
@@ -21,5 +27,9 @@ export {
   SequencesInfo,
   SequenceDetail,
   SequenceDetailItem,
-  AudioPreview
+  AudioPreview,
+  PlaceDetail,
+  PlacesInfo,
+  WalkDetail,
+  WalksInfo
 }

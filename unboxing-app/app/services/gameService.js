@@ -7,9 +7,12 @@ class GameService extends Service {
 	constructor() {
 		// initialize with reactive vars
 		super("gameService", {
+			gameMode: "manual",			// manual, walk, installation
+			activeWalk: null,
+			pathStep: 0,
 			challengeStatus: "list",	// list <-> navigate <-> prepare <-> play 
 			activeChallenge: null, 		// active challenge saved here
-			debugMode: true					// show debugging info in interface
+			debugMode: true				// show debugging info in interface
 		});
 
 		// not reactive vars
@@ -24,7 +27,28 @@ class GameService extends Service {
 		});
 	}
 
-	// called, when user first challenge
+	// called when admin starts walk
+	setActiveWalk(walk) {
+		this.setReactive({
+			activeWalk: walk,
+			pathStep: 0,
+			gameMode: "walk"
+		});
+	}
+
+	// called by admin to leave walk mode
+	setGameMode(mode) {
+		if(this.state.gameMode == "walk" && mode == "manual") {
+			this.setReactive({
+				activeWalk: null,
+				pathStep: 0,
+				gameMode: "manual"
+			});		
+		}
+	}
+
+
+	// called when user enters challenge
 	setActiveChallenge(challenge) {
 		this.setReactive({
 			challengeStatus: "navigate",
