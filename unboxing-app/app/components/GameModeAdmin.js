@@ -4,6 +4,7 @@ import { Text, View, StyleSheet, TouchableOpacity, Switch, Picker } from 'react-
 import {globalStyles} from '../../config/globalStyles';
 import {gameService} from '../services';
 import {withGameService, withStorageService} from './ServiceConnector';
+import DebugToggle from './DebugToggle';
 
 class GameModeAdmin extends React.Component { 
   constructor(props) {
@@ -44,6 +45,8 @@ class GameModeAdmin extends React.Component {
           <Text>Enter manual mode</Text>
         </TouchableOpacity>
         }
+        <DebugToggle/>
+
       </View>
     );
   }

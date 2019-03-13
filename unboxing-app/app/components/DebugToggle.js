@@ -15,7 +15,6 @@ class DebugToggle extends React.Component {
       <View>
         <View style={{width:"25%"}}>
           <Text>Debugmode Off/On</Text>         
-          <Text>{JSON.stringify(this.props)}</Text>
           <Switch value={this.props.gameService.debugMode} onValueChange={gameService.toggleDebugMode}/>
         </View>
         
