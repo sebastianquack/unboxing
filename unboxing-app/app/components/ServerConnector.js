@@ -18,7 +18,7 @@ class ServerConnector extends React.Component {
   	super(props);
   	this.state = {
 			serverInput: this.props.networkService.server,
-			deviceIdInput: this.props.storageService.deviceId
+			deviceIdInput: this.props.storageService.customDeviceId
   	}
   }
 
@@ -30,6 +30,8 @@ class ServerConnector extends React.Component {
 		const connectionType = this.props.networkService.connectionInfo ? this.props.networkService.connectionInfo.type : null
 		const effectiveConnectionType = this.props.networkService.connectionInfo ? this.props.networkService.connectionInfo.effectiveType: null
 		const lastApiResult = this.props.networkService.lastApiResult
+		const deviceId = storageService.getDeviceId();
+		const imeiDeviceId = storageService.getImeiDeviceId();
   	return (
   		<View>
 				<TextInput
@@ -37,8 +39,16 @@ class ServerConnector extends React.Component {
 					style={{width: 40, height: 40, borderColor: 'gray', borderWidth: 1}}
 					value={this.state.deviceIdInput}
 					onChangeText={(text) => this.setState({deviceIdInput: text})}
-					onSubmitEditing={(e) => storageService.setDeviceId(this.state.deviceIdInput) }
+					onSubmitEditing={(e) => storageService.setCustomDeviceId(this.state.deviceIdInput) }
 				/>				
+				<Text>
+					Current deviceId: {" "}{deviceId}
+				</Text>
+				
+				<Text>
+					IMEI: {" "}
+					<Text>{this.props.networkService.imei} (id: {imeiDeviceId})</Text>
+				</Text>
 				<Text>
 					Connection Type: {" "}
 					<Text style={ (connectionType == "none" ? globalStyles.bad : globalStyles.good) }>{connectionType}</Text>

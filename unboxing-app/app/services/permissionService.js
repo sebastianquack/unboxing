@@ -21,6 +21,10 @@ class PermissionService extends Service {
 
 		this.requestAndroidPermission(
 			PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION);
+
+		this.requestAndroidPermission(
+			PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE);
+
 	}
 
 	requestAndroidPermission = async (permission) => {

@@ -16,16 +16,18 @@ class GameContainer extends React.Component {
   }
 
   render() {
+
+    const content = [
+      this.props.gameService.gameMode == "manual" && !this.props.gameService.activeChallenge && <ChallengeSelector key="1"/>,
+      this.props.gameService.activeChallenge && <ChallengeView key="2"/>
+    ]
+
     return (
       <View>
         <ScreenContainer
-          primaryScreen={this.props.gameService.challengeStatus != "list" ? 
-          <ChallengeView/> : <ChallengeSelector/>}
-          secondaryScreen={<Text>hi</Text>}
+          primaryScreen={content}
         />
-        {this.props.gameService.challengeStatus != "list" ? 
-          <ChallengeView/> : <ChallengeSelector/>
-        }
+
       </View>
     );
   }

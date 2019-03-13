@@ -37,7 +37,7 @@ const sections = [
   {
     name: "GameModeAdmin",
     component:GameModeAdmin,
-    default: false
+    default: true
 
   },
   {
@@ -68,7 +68,7 @@ const sections = [
   {
     name: "NearbyStatus",
     component:NearbyStatus,
-    default: true,
+    default: false,
   },          
 ]
 
@@ -81,7 +81,7 @@ class App extends Component {
     ];
     
     this.state = {
-      adminMenu: false
+      adminMenu: true
     };    
 
     this.initSections()
@@ -145,7 +145,7 @@ class App extends Component {
     return (
       [
         <KeepAwake key="KeepAwake" />,
-        <StatusBar key="StatusBar" translucent backgroundColor="transparent" />,
+        <StatusBar key="StatusBar" translucent backgroundColor="transparent" barStyle="dark-content" />,
         <ServiceConnector key="ServiceConnector">
           <ScrollView contentContainerStyle={styles.container}>
             {this.renderAdminButton()}
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   adminButton: {
     opacity: 0.8,
     padding: 10,
-    backgroundColor:'#eee',
+    backgroundColor:'rgba(200,200,200,0.5)',
     borderRadius: 5,
     position: 'absolute',
     top:30,

@@ -4,6 +4,7 @@ import { Text, View, StyleSheet, TouchableOpacity, Switch, Picker } from 'react-
 import {globalStyles} from '../../config/globalStyles';
 import {gameService} from '../services';
 import {withGameService, withStorageService} from './ServiceConnector';
+import DebugToggle from './DebugToggle';
 
 class GameModeAdmin extends React.Component { 
   constructor(props) {
@@ -11,7 +12,7 @@ class GameModeAdmin extends React.Component {
   }
 
   render() {
-    let walkItems = [<Picker.Item key="none" label={"-"} value={"-"}/>]
+    let walkItems = [<Picker.Item key="none" label={"-"} value={null}/>]
     if(this.props.storageService.collections.walks) {
       walkItems.push(this.props.storageService.collections.walks.filter(w=>w.active).map(w=>
         <Picker.Item key={w._id} label={w.description} value={w}/>));
@@ -20,22 +21,32 @@ class GameModeAdmin extends React.Component {
       <View>
         <Text>gameMode: {this.props.gameService.gameMode}</Text>
         <Text>activeWalk: {this.props.gameService.activeWalk ? this.props.gameService.activeWalk.description : "none"}</Text>
-        <Text>pathStep: {this.props.gameService.pathStep}</Text>
-        <Text>start a new walk:</Text>
+        <Text>walkStatus: {this.props.gameService.walkStatus}</Text>
+        <Text>pathIndex: {this.props.gameService.pathIndex}</Text>
+        <Text>activePlaceReference: {JSON.stringify(this.props.gameService.activePlaceReference)}</Text>
+        <Text>activePlace: {JSON.stringify(this.props.gameService.activePlace)}</Text>
+        <Text>activeChallenge: {JSON.stringify(this.props.gameService.activeChallenge)}</Text>
+        <Text>challengeStatus: {this.props.gameService.challengeStatus}</Text>
+
+        <Text style={{marginTop: 20}}>start a new walk:</Text>
         <Picker
               mode="dropdown"
-              onValueChange={(itemValue, itemIndex) => gameService.setActiveWalk(itemValue)}
+              onValueChange={(itemValue, itemIndex) => {if(itemValue) gameService.setActiveWalk(itemValue) }}
         >
               {walkItems}
         </Picker>
-        <TouchableOpacity
-          style={globalStyles.button}
-          onPress={()=>{
-            gameService.setGameMode("manual");
-          }}
-        >
-        <Text>Enter manual mode</Text>
-      </TouchableOpacity>
+        {this.props.gameService.gameMode != "manual" &&
+          <TouchableOpacity
+            style={globalStyles.button}
+            onPress={()=>{
+              gameService.setGameMode("manual");
+            }}
+          >
+          <Text>Enter manual mode</Text>
+        </TouchableOpacity>
+        }
+        <DebugToggle/>
+
       </View>
     );
   }
