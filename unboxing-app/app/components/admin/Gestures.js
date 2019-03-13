@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Text, View, Switch, StyleSheet, TouchableOpacity, Slider } from 'react-native';
 import compose from 'lodash.flowright'
 
-import {gestureService, sensorService} from '../services'
-import {withGestureService, withSensorService} from './ServiceConnector';
-import {globalStyles} from '../../config/globalStyles';
+import {gestureService, sensorService} from '../../services'
+import {withGestureService, withSensorService} from '../ServiceConnector';
+import {globalStyles} from '../../../config/globalStyles';
 
 class Gestures extends React.Component { 
   constructor(props) {

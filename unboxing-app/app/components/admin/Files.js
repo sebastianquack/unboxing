@@ -4,8 +4,8 @@ import RNFS from 'react-native-fs'
 import path from 'react-native-path'
 import compose from 'lodash.flowright'
 
-import {globalStyles} from '../../config/globalStyles';
-import {withNetworkService, withStorageService} from './ServiceConnector';
+import {globalStyles} from '../../../config/globalStyles';
+import {withNetworkService, withStorageService} from '../ServiceConnector';
 
 folder = RNFS.ExternalStorageDirectoryPath + '/unboxing/files'
 

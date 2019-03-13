@@ -7,10 +7,10 @@ import {
   Switch
 } from 'react-native';
 
-import {globalStyles} from '../../config/globalStyles';
+import {globalStyles} from '../../../config/globalStyles';
 
-import {soundService, networkService} from '../services';
-import {withSoundService} from '../components/ServiceConnector';
+import {soundService, networkService} from '../../services';
+import {withSoundService} from '../ServiceConnector';
 
 const clickFilename = '/misc/click.mp3';
 

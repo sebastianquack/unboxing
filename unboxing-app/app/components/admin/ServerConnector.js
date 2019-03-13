@@ -9,9 +9,9 @@ import {
 
 import compose from 'lodash.flowright'
 
-import {globalStyles} from '../../config/globalStyles';
-import { withNetworkService, withStorageService } from './ServiceConnector';
-import { networkService, storageService } from '../services';
+import {globalStyles} from '../../../config/globalStyles';
+import { withNetworkService, withStorageService } from '../ServiceConnector';
+import { networkService, storageService } from '../../services';
 
 class ServerConnector extends React.Component { 
   constructor(props) {

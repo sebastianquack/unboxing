@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch, Picker } from 'react-native';
 
-import {globalStyles} from '../../config/globalStyles';
-import {gameService} from '../services';
-import {withGameService, withStorageService} from './ServiceConnector';
+import {globalStyles} from '../../../config/globalStyles';
+import {gameService} from '../../services';
+import {withGameService, withStorageService} from '../ServiceConnector';
 import DebugToggle from './DebugToggle';
 
 class GameModeAdmin extends React.Component { 
