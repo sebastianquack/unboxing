@@ -1,4 +1,12 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+
+// 1536 x 2048 pixels, 4:3 ratio (~320 ppi density)
+const {height, width} = Dimensions.get('window');
+
+const dimensions = {
+  screenWidth: width,
+  screenHeight: height,
+}
 
 const globalStyles = StyleSheet.create({
   baseText: {
@@ -34,4 +42,4 @@ const globalStyles = StyleSheet.create({
   }
 });
 
-export {globalStyles};
+export {globalStyles, dimensions};

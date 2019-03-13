@@ -4,6 +4,8 @@ import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-
 import {globalStyles} from '../../config/globalStyles';
 import {withGameService} from './ServiceConnector';
 
+import ScreenContainer from './ScreenContainer'
+
 import ChallengeSelector from './ChallengeSelector';
 import ChallengeView from './ChallengeView';
 
@@ -16,6 +18,11 @@ class GameContainer extends React.Component {
   render() {
     return (
       <View>
+        <ScreenContainer
+          primaryScreen={this.props.gameService.challengeStatus != "list" ? 
+          <ChallengeView/> : <ChallengeSelector/>}
+          secondaryScreen={<Text>hi</Text>}
+        />
         {this.props.gameService.challengeStatus != "list" ? 
           <ChallengeView/> : <ChallengeSelector/>
         }
