@@ -20,7 +20,13 @@ class GameModeAdmin extends React.Component {
       <View>
         <Text>gameMode: {this.props.gameService.gameMode}</Text>
         <Text>activeWalk: {this.props.gameService.activeWalk ? this.props.gameService.activeWalk.description : "none"}</Text>
-        <Text>pathStep: {this.props.gameService.pathStep}</Text>
+        <Text>walkStatus: {this.props.gameService.walkStatus}</Text>
+        <Text>pathIndex: {this.props.gameService.pathIndex}</Text>
+        <Text>activePlaceReference: {JSON.stringify(this.props.gameService.activePlaceReference)}</Text>
+        <Text>activePlace: {JSON.stringify(this.props.gameService.activePlace)}</Text>
+        <Text>activeChallenge: {JSON.stringify(this.props.gameService.activeChallenge)}</Text>
+        <Text>challengeStatus: {this.props.gameService.challengeStatus}</Text>
+
         <Text>start a new walk:</Text>
         <Picker
               mode="dropdown"

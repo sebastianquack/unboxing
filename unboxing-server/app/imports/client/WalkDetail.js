@@ -6,13 +6,19 @@ import { css } from 'emotion'
 
 import { Places } from '../collections'
 
+import cleanJSON from '../helper/both/cleanJSON';
+
 class WalkDetail extends React.Component {
 	constructor(props) {
     	super(props);
+
+      this.state = {
+        JSONValid: ""
+      }
   }
 
   DetailCss = css`
-    width: 40em;
+    width: 60em;
 	  display: inline-block;
 	  background-color: lightgrey;
 	  padding: 1ex 1ex 1ex 1ex;
@@ -44,19 +50,40 @@ class WalkDetail extends React.Component {
     Meteor.call('updateWalk', this.props.walk._id, $set )
   }
 
-	renderInput(attributeName, value) {
+  cleanJSON(string) {
+    let cleanText = string.replace(/<\/?[^>]+(>|$)/g, "");
+    cleanText = cleanText.replace(/&nbsp;/gi,'');
+    return cleanText;
+  }
+
+  checkJSON = (value)=> {
+    cleanText = cleanJSON(value);
+    console.log(cleanText);
+    try {
+      JSON.parse(cleanText);
+      this.setState({JSONValid: "valid"});
+    }
+    catch {
+      this.setState({JSONValid: "error"});
+    }
+    return value;
+  }
+
+	renderInput = (attributeName, value)=> {
     const emptyOption = <option key="empty" value="">&lt;none&gt;</option>;
     switch(attributeName) {
       case "paths":
-      return (<ContentEditable 
-          style={{
-            border: "dotted grey 1px",
-            borderWidth: "0 0 1px 0",
-          }}
-          onChange={ e => this.handleAttributeChange(attributeName, e.target.value) } 
-          html={value + ""}
-          tagName="span"
-        />)
+      return (
+          <ContentEditable 
+            style={{
+              border: "dotted grey 1px",
+              borderWidth: "0 0 1px 0",
+            }}
+            onChange={ e => this.handleAttributeChange(attributeName, this.checkJSON(e.target.value)) } 
+            html={value + ""}
+            tagName="span"
+          />
+        )
       
       case "active":
       case "tutorial":
@@ -104,7 +131,8 @@ class WalkDetail extends React.Component {
 	    return (
 	    	<div className={this.DetailCss}>
 					{Object.entries(this.props.walk).map(this.renderAttribute)}	            
-			 		<button onClick={()=>Meteor.call('removeWalk',this.props.walk._id)}>
+			 		<label key="json-valid"><span>JSON check</span><span>{this.state.JSONValid}</span></label>
+          <button onClick={()=>Meteor.call('removeWalk',this.props.walk._id)}>
 	            	Delete Walk
 	        </button>     
 	    	</div>

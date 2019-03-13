@@ -133,10 +133,10 @@ Meteor.methods({
   'addWalk'() {
     Walks.insert({
       description: "new",
+      tag: "",
       active: true,
       tutorial: true,
       paths: "",
-      tag: "",
     });
   },
   'removeWalk'(id) {

@@ -4,13 +4,20 @@ import { Challenges, Gestures, Sequences, Files, Walks, Places } from '../../col
 import objectHash from 'object-hash'
 import { importExportConfig } from '../../helper/server/importexport';
 
+import cleanJSON from '../../helper/both/cleanJSON';
+
 async function getEverything(req, res) {  
   const challenges = await Challenges.find().fetch();
   const sequences = await Sequences.find().fetch();
   const gestures = await Gestures.find().fetch();
   const files = await Files.find({},{sort: {path: 1}}).fetch();
   const places = await Places.find().fetch();
-  const walks = await Walks.find().fetch();
+  let walks = await Walks.find().fetch();
+
+  // clean json
+  for(let i = 0; i < walks.length; i++) {
+    walks[i].paths = cleanJSON(walks[i].paths);
+  }
 
   const collections = {
     challenges,

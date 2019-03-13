@@ -56,6 +56,7 @@ class NetworkService extends Service {
     this.setReactive({
       imei: imei
     });
+    storageService.updateDeviceId();
   }
 
   getImei = ()=> {

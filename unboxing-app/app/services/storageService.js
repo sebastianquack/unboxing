@@ -72,7 +72,8 @@ class StorageService extends Service {
 			this.setReactive(result)
 			this.writeToFile();
 		} else {
-			await this.loadFromFile();
+			this.showNotification("no data received");
+			//await this.loadFromFile();
 		}
 	}
 
@@ -83,6 +84,7 @@ class StorageService extends Service {
 	setCustomDeviceId(id) {
 		this.setReactive({customDeviceId: id});
 		this.writeToFile();
+		this.updateDeviceId();
 	}
 
 	getImeiDeviceId = () => {
@@ -95,6 +97,10 @@ class StorageService extends Service {
 		} else {
 			return this.state.customDeviceId;
 		}
+	}
+
+	updateDeviceId() {
+		this.setReactive({deviceId: this.getDeviceId()});
 	}
 
 	async loadFromFile() {
@@ -125,6 +131,52 @@ class StorageService extends Service {
 			console.log("error saving collection data to file");
 			console.log(err.message);
 		});
+	}
+
+
+	// called when admin starts walk
+	getActivePath = (walk)=> {
+		console.log("paths");
+		console.log(walk.paths);
+
+		let pathsObj = null;
+		try {
+			pathsObj = JSON.parse(walk.paths);	
+		}
+		catch {
+			console.log("error parsing paths json");
+		}
+
+		if(pathsObj) {
+
+			let activePath = pathsObj[storageService.getDeviceId()];
+			console.log("activePath");
+			console.log(activePath);
+		
+			return activePath;
+		}
+
+		return null;
+	}
+
+	findPlace = (placeShorthand, walkTag)=> {
+
+		for(let i = 0; i < this.state.collections.places.length; i++) {
+			if(this.state.collections.places[i].tag == walkTag && this.state.collections.places[i].shorthand == placeShorthand) {
+				return this.state.collections.places[i];
+			}	
+		}
+		
+		return null;
+	}
+
+	findChallenge(challenge_id) {
+		for(let i = 0; i < this.state.collections.challenges.length; i++) {
+			if(this.state.collections.challenges[i]._id == challenge_id) {
+				return this.state.collections.challenges[i];
+			}
+		}
+		return null;
 	}
 
 	// finds a sequence give its id

@@ -1,6 +1,6 @@
 import Service from './Service';
 
-import {sequenceService, nearbyService, soundService} from './';
+import {sequenceService, nearbyService, soundService, storageService} from './';
 
 class GameService extends Service {
 
@@ -9,7 +9,8 @@ class GameService extends Service {
 		super("gameService", {
 			gameMode: "manual",			// manual, walk, installation
 			activeWalk: null,
-			pathStep: 0,
+			pathIndex: 0,
+			walkStatus: "off",			// off -> ongoing -> ended
 			challengeStatus: "off",		// off <-> navigate <-> prepare <-> play 
 			activeChallenge: null, 		// active challenge saved here
 			debugMode: true				// show debugging info in interface
@@ -27,32 +28,70 @@ class GameService extends Service {
 		});
 	}
 
-	// called when admin starts walk
-	setActiveWalk(walk) {
-		this.setReactive({
-			activeWalk: walk,
-			pathStep: 0,
-			gameMode: "walk"
-		});
-
-		//todo here: select path based on device name
-		//todo here: set active challenge based on first place
-	}
-
-	// called by admin to leave walk mode
-	setGameMode(mode) {
+	// called by admin to change game mode - here: to leave walk mode
+	setGameMode = (mode)=> {
 		if(this.state.gameMode == "walk" && mode == "manual") {
 			this.setReactive({
 				activeWalk: null,
-				pathStep: 0,
+				pathIndex: 0,
 				gameMode: "manual"
 			});		
 		}
 	}
 
+	// called when admin starts walk
+	setActiveWalk = (walk)=> {
+		
+		let activePath = storageService.getActivePath(walk);
+		
+		if(activePath) {
 
-	// called when user enters challenge
-	setActiveChallenge(challenge) {
+			this.setReactive({
+				activeWalk: walk,
+				activePath: activePath,
+				pathIndex: 0,
+				gameMode: "walk"
+			});
+
+			this.setupActivePlace();
+		}
+	}
+
+	// called when user leaves place, moves to next one
+	moveToNextPlaceInWalk = ()=> {
+		this.setReactive({
+			pathIndex: this.status.pathIndex + 1
+		});
+		this.setupActivePlace();
+	}
+
+	setupActivePlace = ()=> {
+		// check if there are still places in path
+		if(this.state.pathIndex >= this.state.activePath.length) {
+			this.showNotification("end of path")
+			this.setReactive({
+				activePlaceReference: null,
+				activePlace: null,
+				activeChallenge: null,
+				walkStatus: "ended"
+			});
+			return;
+		}
+
+		let placeReference = this.state.activePath[this.state.pathIndex];
+		let place = storageService.findPlace(placeReference.place, this.state.activeWalk.tag);
+		this.setReactive({
+			walkStatus: "ongoing",
+			activePlaceReference: placeReference,
+			activePlace: place
+		});
+
+		let challenge = storageService.findChallenge(place.challenge_id);
+		this.setActiveChallenge(challenge);
+	}
+
+	// called when user enters a challenge
+	setActiveChallenge = (challenge)=> {
 		this.setReactive({
 			challengeStatus: this.state.gameMode == "walk" ? "navigate" : "prepare",
 			activeChallenge: challenge
@@ -61,7 +100,7 @@ class GameService extends Service {
 		sequenceService.setSequence(challenge.sequence_id);
 	}
 
-	setActiveChallengeStatus(status) {
+	setActiveChallengeStatus = (status)=> {
 
 		this.setReactive({
 			challengeStatus: status
@@ -106,7 +145,7 @@ class GameService extends Service {
 	}
 
 	// called from TrackSelector when user selects track
-	trackSelect(sequence, track) {
+	trackSelect = (sequence, track)=> {
 		sequenceService.trackSelect(sequence, track)
 	}
 
