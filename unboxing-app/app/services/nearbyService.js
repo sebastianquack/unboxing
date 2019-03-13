@@ -14,7 +14,7 @@ class NearbyService extends Service {
 		// reactive vars
 		super("nearbyService", {
 			active: false,					// general on / off switch for nearby
-			serviceId: null, 				// service id for discovery & advertising
+			serviceId: "default", 				// service id for discovery & advertising
 			discoveryActive: false,			// true if discovery service is active
 			advertisingActive: false,		// true if advertising service is active			
 			endpointInfo: {},				// status of all known endpoints {myNearbyStatus: "discovered" / "connected", meshStatus: "available" / "unknown"}
@@ -37,36 +37,147 @@ class NearbyService extends Service {
 		this.discoveryTimeout = 60000; // time after which entries are deleted from discovered list
 	}
 
+
+  /* Helper functions */
+
 	debug = (...msg) => {
 		// this.showNotification(msg.join(", "));
 		console.log(msg);  
 	}
 
-	// for example count these: ("myNearbyStatus", "connected")
-	countEndpointsWithStatus = (statusKey, statusValue)=> {
-		let r = Object.values(this.state.endpointInfo).filter( (value) => {
-			return (value[statusKey] === statusValue)
-		}).length
-		return r;
-	}
+  // update the endpointInfo object for a specified endpoint, only change the keys in update object
+  updateEndpointInfo(endpointId, update) {
+    let newEndpointInfo = this.state.endpointInfo;
 
-	toggleActive = ()=> {
+    if(!newEndpointInfo[endpointId]) {
+      newEndpointInfo[endpointId] = {};
+    }
+
+    Object.keys(update).forEach((key)=>{
+      newEndpointInfo[endpointId][key] = update[key]; 
+    });
+
+    this.setReactive({endpointInfo: newEndpointInfo});
+  }
+
+  // for example count these: ("myNearbyStatus", "connected")
+  countEndpointsWithStatus = (statusKey, statusValue)=> {
+    let r = Object.values(this.state.endpointInfo).filter( (value) => {
+      return (value[statusKey] === statusValue)
+    }).length
+    return r;
+  }
+
+  // extracts my endpointId from device info
+  getMyEnpointId() {
+    let myEnpointId = null;
+    Object.entries(this.state.endpointInfo).forEach(([endpointId, value]) => {
+      if(value.name == storageService.getDeviceId()) {
+        myEnpointId = endpointId;
+      }
+    })
+    return myEnpointId;
+  }
+
+  // save callbacks set in gameservice
+  setCustomCallbacks(callbacks) {
+    Object.keys(callbacks).forEach((key)=>{
+      this.customCallbacks[key] = callbacks[key];
+    });
+    console.log(this.customCallbacks);
+  }
+
+  // shuffle an array
+  shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+  }
+
+
+
+  /* Starting and Stopping */
+
+	initNearbyWithServiceId = (serviceId)=> {
 		// update state
-		this.setReactive({active: !this.state.active});
+		this.setReactive({
+      active: true,
+      serviceId: serviceId
+    });
 
-		// this is where we are now
-		if(this.state.active) {
-			this.pingEndpoints();
-			this.endpointPingInterval = setInterval(this.pingEndpoints, this.endpointPingIntervalTime);
-			
-			this.startDiscovering();
-			this.startAdvertising();
-		} else {
-			clearInterval(this.endpointPingInterval);
-		}
+    // start heartbeat function
+		this.pingEndpoints();
+		this.endpointPingInterval = setInterval(this.pingEndpoints, this.endpointPingIntervalTime);
 
+    // start advertising and discovery
+		this.startDiscovering(serviceId);
+		this.startAdvertising(serviceId);
 	}
-	
+
+  shutdownNearby() {
+    this.stopDiscovering(this.state.serviceId);
+    this.stopAdvertising(this.state.serviceId);
+    clearInterval(this.endpointPingInterval);
+
+    // disconnect from all endpoints
+    Object.keys(this.state.endpointInfo).forEach((endpointId)=>{
+      this.disconnectEndpoint(endpointId);
+    });
+
+    // update state
+    this.setReactive({
+      serviceId: "default",
+      active: false
+    });
+  }
+
+  startDiscovering(serviceId) {
+    NearbyConnection.startDiscovering(
+          serviceId,
+          strategy
+    );
+    this.setReactive({discoveryActive: true});
+  }
+
+  stopDiscovering(serviceId) {
+    this.debug("nearby: stopping discovery");
+    NearbyConnection.stopDiscovering(serviceId);
+    this.setReactive({ discoveryActive: false });   
+  }
+
+  startAdvertising(serviceId) {
+    NearbyConnection.startAdvertising(
+        storageService.getDeviceId(),
+        serviceId,
+        strategy
+    );
+    this.setReactive({advertisingActive: true});
+  }
+
+  stopAdvertising(serviceId) {
+    if(this.state.advertisingActive) {
+      this.debug("nearby: stopping advertising", storageService.getDeviceId());
+      NearbyConnection.stopAdvertising(serviceId);
+      this.setReactive({ advertisingActive: false });
+    }
+  }
+
+
+  /* periodic heartbeat function that checks in with nearby endpoints */
+  
 	pingEndpoints = ()=> {
 		if(this.state.active) {
 
@@ -74,8 +185,7 @@ class NearbyService extends Service {
 		
 			// is it time to send another health check
 			if(soundService.getSyncTime() - this.state.lastHealthCheckSent > this.healthCheckInterval) {
-				
-				
+								
 				// send a health check message to everyone
 				//if(storageService.getDeviceId() == "2") {
 
@@ -100,27 +210,8 @@ class NearbyService extends Service {
 			let connectionCounter = 0; 
 			const connectionMaxPerPing = 1; // maximum number of connections to initiate at the same time
 
-			function shuffle(array) {
-			  var currentIndex = array.length, temporaryValue, randomIndex;
-
-			  // While there remain elements to shuffle...
-			  while (0 !== currentIndex) {
-
-			    // Pick a remaining element...
-			    randomIndex = Math.floor(Math.random() * currentIndex);
-			    currentIndex -= 1;
-
-			    // And swap it with the current element.
-			    temporaryValue = array[currentIndex];
-			    array[currentIndex] = array[randomIndex];
-			    array[randomIndex] = temporaryValue;
-			  }
-
-			  return array;
-			}
-
 			// shuffle keys to not try the same connection each time
-			let shuffledKeys = shuffle(Object.keys(this.state.endpointInfo));
+			let shuffledKeys = this.shuffle(Object.keys(this.state.endpointInfo));
 
 			shuffledKeys.forEach((endpointId)=>{
 				
@@ -185,84 +276,98 @@ class NearbyService extends Service {
 		}
 	}
 
-	// extracts my endpointId from device info
-	getMyEnpointId() {
-		let myEnpointId = null;
-		Object.entries(this.state.endpointInfo).forEach(([endpointId, value]) => {
-			if(value.name == storageService.getDeviceId()) {
-				myEnpointId = endpointId;
-			}
-		})
-		return myEnpointId;
-	}
 
-	toggleDiscovery = ()=> {
-		if(!this.state.discoveryActive) {
-			this.startDiscovering();
-			this.setReactive({discoveryActive: true});
-		} else {
-			this.stopDiscovering();
-			this.setReactive({discoveryActive: false});
-		}
-	}
+  /* specific actions */
 
-	toggleAdvertising = ()=> {
-		if(!this.state.advertisingActive) {
-			this.startAdvertising();
-			this.setReactive({advertisingActive: true});
-		} else {
-			this.stopAdvertising();
-			this.setReactive({advertisingActive: false});
-		}
-	}
+  connectToEndpoint(endpointId) {
+    this.debug("nearby: connecting to ", serviceId, endpointId);
+    NearbyConnection.connectToEndpoint(
+        this.state.serviceId,         // A unique identifier for the service
+        endpointId
+    );
+    this.updateEndpointInfo(endpointId, {connectionInitTimestamp: soundService.getSyncTime()});
+  }
 
-	fixLoop = (hops) => {
-		
-		hops.push(this.getMyEnpointId()); // add myself to list
-		const availableEndpointsSorted = hops.sort(); // sort alphabetically
-		const responsibleEndpointId = availableEndpointsSorted[0] // take first endpointId in list
-		
-		// am I responsible to solve this?
-		if (responsibleEndpointId === this.getMyEnpointId()) {
-			// disconnect the endpoint next in list
-			const connectedEnpoints = Object.entries(this.state.endpointInfo)
-			.filter( ([endpointId, endpoint]) => endpoint.myNearbyStatus === "connected")
-			.sort( ([endpoint1Id], [endpoint2Id]) => endpoint1Id.localeCompare(endpoint2Id))
+  disconnectEndpoint = (endpointId, endpointInfoUpdate = {}, quiet = false) => {
+    this.showNotification("disconnecting endpoint " + endpointId + " " + (quiet ? "I was told" : "my decision"))
 
-			if(connectedEnpoints.length < 2) {
-				return; 
-			}
+    if (!quiet) {
+      this.sendMessageToEndpoint(endpointId, {message: "disconnect"})
+    }
 
-			const endpointIdToDisconnect = connectedEnpoints[0][0];
+    let serviceId = this.state.serviceId; // save serviceId because of timeout below
 
-			this.showNotification("I need to fix the loop by disconnecting " + endpointIdToDisconnect)
-			this.disconnectEndpoint(endpointIdToDisconnect, {myNearbyStatus: "suspended", meshStatus: "removed"})
-		}
-	}
+    setTimeout(() => {
+      NearbyConnection.disconnectFromEndpoint(
+        serviceId,              // A unique identifier for the service
+        endpointId              // ID of the endpoint we wish to disconnect from
+      );
+      this.updateEndpointInfo(endpointId, endpointInfoUpdate);  
+      if(this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2) {
+        this.startDiscovering();  
+        this.startAdvertising();  
+      } 
+    }, (quiet ? 0 : 1000) )
 
-	setCustomCallbacks(callbacks) {
-		Object.keys(callbacks).forEach((key)=>{
-			this.customCallbacks[key] = callbacks[key];
-		});
-		console.log(this.customCallbacks);
-	}
+  } 
 
-	// update the endpointInfo object for a specified endpoint, only change the keys in update object
-	updateEndpointInfo(endpointId, update) {
-		let newEndpointInfo = this.state.endpointInfo;
+  // send message to an endpoint
+  sendMessageToEndpoint(endpointId, message) {
+    message.sender = storageService.getDeviceId();
+    message.senderId = this.getMyEnpointId();
+    console.log("sendMessageToEndpoint", endpointId, message);
+    NearbyConnection.sendBytes(
+        this.state.serviceId,           // A unique identifier for the service
+        endpointId,             // ID of the endpoint
+        JSON.stringify(message)     // A string of bytes to send
+    );
+    this.setReactive({messageLog: this.state.messageLog + "\nme->" + this.state.endpointInfo[endpointId].name + ": " + message.message + " (originator: " + message.originator + ")"});
+  }
 
-		if(!newEndpointInfo[endpointId]) {
-			newEndpointInfo[endpointId] = {};
-		}
+  // send message to all connected endpoints, exlude one (usually where it came from)
+  broadcastMessage = (message, excludeId=null, directional=false) => {
+    const common_uuid = uuidv1() // create a common uuid for both directions if necessary
+    // send to connected neighbors
+    Object.entries(this.state.endpointInfo).forEach(([endpointId, value])=>{
+      if(excludeId != endpointId) {
+        if (value.myNearbyStatus === "connected"){
+          const uuid = message.uuid || (directional ? uuidv1() : common_uuid) // directional message has different uuid for each direction
+          this.sendMessageToEndpoint(endpointId, {...message, uuid});
+        } 
+      }
+    })
+  }
+	
+  // react to detected connection loop
+  fixLoop = (hops) => {
+    
+    hops.push(this.getMyEnpointId()); // add myself to list
+    const availableEndpointsSorted = hops.sort(); // sort alphabetically
+    const responsibleEndpointId = availableEndpointsSorted[0] // take first endpointId in list
+    
+    // am I responsible to solve this?
+    if (responsibleEndpointId === this.getMyEnpointId()) {
+      // disconnect the endpoint next in list
+      const connectedEnpoints = Object.entries(this.state.endpointInfo)
+      .filter( ([endpointId, endpoint]) => endpoint.myNearbyStatus === "connected")
+      .sort( ([endpoint1Id], [endpoint2Id]) => endpoint1Id.localeCompare(endpoint2Id))
 
-		Object.keys(update).forEach((key)=>{
-			newEndpointInfo[endpointId][key] = update[key];	
-		});
+      if(connectedEnpoints.length < 2) {
+        return; 
+      }
 
-		this.setReactive({endpointInfo: newEndpointInfo});
-	}
+      const endpointIdToDisconnect = connectedEnpoints[0][0];
 
-	setupNearbyCallbacks() {
+      this.showNotification("I need to fix the loop by disconnecting " + endpointIdToDisconnect)
+      this.disconnectEndpoint(endpointIdToDisconnect, {myNearbyStatus: "suspended", meshStatus: "removed"})
+    }
+  }
+
+	
+
+  /* callbacks for nearby events */
+
+  setupNearbyCallbacks() {
 		NearbyConnection.onDiscoveryStarting(({
     		serviceId               // A unique identifier for the service
 		}) => {
@@ -564,100 +669,6 @@ class NearbyService extends Service {
 	    
 			});
 		});
-	}
-
-	
-	connectToEndpoint(endpointId, serviceId="test") {
-		this.debug("nearby: connecting to ", serviceId, endpointId);
-		NearbyConnection.connectToEndpoint(
-    		serviceId,         // A unique identifier for the service
-    		endpointId
-		);
-		this.updateEndpointInfo(endpointId, {connectionInitTimestamp: soundService.getSyncTime()});
-	}
-
-	disconnectEndpoint = (endpointId, endpointInfoUpdate = {}, quiet = false) => {
-		this.showNotification("disconnecting endpoint " + endpointId + " " + (quiet ? "I was told" : "my decision"))
-
-		if (!quiet) {
-			this.sendMessageToEndpoint(endpointId, {message: "disconnect"})
-		}
-
-		setTimeout(() => {
-			NearbyConnection.disconnectFromEndpoint(
-				"test",              // A unique identifier for the service
-				endpointId              // ID of the endpoint we wish to disconnect from
-			);
-			this.updateEndpointInfo(endpointId, endpointInfoUpdate);	
-			if(this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2) {
-				this.startDiscovering();	
-				this.startAdvertising();	
-			}	
-		}, (quiet ? 0 : 1000) )
-
-	}	
-
-	// send message to an endpoint
-	sendMessageToEndpoint(endpointId, message) {
-		message.sender = storageService.getDeviceId();
-		message.senderId = this.getMyEnpointId();
-		console.log("sendMessageToEndpoint", endpointId, message);
-		NearbyConnection.sendBytes(
-  		  "test",           // A unique identifier for the service
-    		endpointId,    					// ID of the endpoint
-    		JSON.stringify(message)  		// A string of bytes to send
-		);
-		this.setReactive({messageLog: this.state.messageLog + "\nme->" + this.state.endpointInfo[endpointId].name + ": " + message.message + " (originator: " + message.originator + ")"});
-	}
-
-	// send message to all connected endpoints, exlude one (usually where it came from)
-	broadcastMessage = (message, excludeId=null, directional=false) => {
-		const common_uuid = uuidv1() // create a common uuid for both directions if necessary
-		// send to connected neighbors
-		Object.entries(this.state.endpointInfo).forEach(([endpointId, value])=>{
-			if(excludeId != endpointId) {
-				if (value.myNearbyStatus === "connected"){
-					const uuid = message.uuid || (directional ? uuidv1() : common_uuid) // directional message has different uuid for each direction
-					this.sendMessageToEndpoint(endpointId, {...message, uuid});
-				}	
-			}
-		})
-	}
-
-	startDiscovering() {
-		// begin discovery of services
-		NearbyConnection.startDiscovering(
-  	  		"test",
-  	  		strategy
-		);
-		this.setReactive({discoveryActive: true});
-	}
-
-	stopDiscovering() {
-		this.debug("nearby: stopping discovery");
-
-		NearbyConnection.stopDiscovering("test");
-		
-		this.setReactive({ discoveryActive: false });		
-	}
-
-	startAdvertising() {
-		NearbyConnection.startAdvertising(
-		    storageService.getDeviceId(),
-    		"test",
-    		strategy
-		);
-		this.setReactive({advertisingActive: true});
-	}
-
-	stopAdvertising() {
-		if(this.state.advertisingActive) {
-			this.debug("nearby: stopping advertising", storageService.getDeviceId());
-			NearbyConnection.stopAdvertising(
-    			storageService.getDeviceId()
-			);
-			this.setReactive({ advertisingActive: false });
-		}
 	}
 }
 

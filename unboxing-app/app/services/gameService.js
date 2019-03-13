@@ -102,6 +102,12 @@ class GameService extends Service {
 		});
 
 		sequenceService.setSequence(challenge.sequence_id);
+
+		//start nearby service with challengeId as serviceId - adding timeout to give time for shutdown
+		setTimeout(()=>{
+			nearbyService.initNearbyWithServiceId(challenge._id);	
+		}, 2000);
+		
 	}
 
 	setActiveChallengeStatus = (status)=> {
@@ -217,6 +223,9 @@ class GameService extends Service {
 
 	leaveChallenge() {
 		sequenceService.stopSequence();
+
+		//stop nearby service
+		nearbyService.shutdownNearby();
 		
 		if(this.state.gameMode == "walk") {
 			this.moveToNextPlaceInWalk();

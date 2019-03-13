@@ -86,19 +86,18 @@ class NearbyStatus extends React.Component {
     return (
       <View>
         <Text>Nearby</Text>
-        <Text style={{fontSize:30, fontWeight: "bold"}}>{this.props.storageService.deviceId}</Text>
+        <Text>deviceId: {this.props.storageService.deviceId}</Text>
+        <Text>serviceId: {this.props.nearbyService.serviceId}</Text>
         { this.renderEndpointInfo(this.props.nearbyService.endpointInfo) }
         <View style={{width:"25%"}}>
           <Text>Active Off/On</Text>         
           <Switch value={this.props.nearbyService.active} onValueChange={nearbyService.toggleActive}/>
         </View>
         <View style={{width:"25%"}}>
-          <Text>Discovery Off/On</Text>         
-          <Switch value={this.props.nearbyService.discoveryActive} onValueChange={nearbyService.toggleDiscovery}/>
+          <Text>Discovery: {this.props.nearbyService.discoveryActive ? "on" : "off"}</Text>
         </View>
         <View style={{width:"25%"}}>
-          <Text>Advertising Off/On</Text>         
-          <Switch value={this.props.nearbyService.advertisingActive} onValueChange={nearbyService.toggleAdvertising}/>
+          <Text>Advertising: {this.props.nearbyService.advertisingActive ? "on" : "off"}</Text>
         </View>
         <Text>Last health check: {this.props.nearbyService.lastHealthCheckSent}</Text>
         <Text>Message Counter: {this.props.nearbyService.messageCounter}</Text>
