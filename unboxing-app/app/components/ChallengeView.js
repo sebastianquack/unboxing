@@ -18,19 +18,23 @@ class ChallengeView extends React.Component {
   }
 
   render() {
+    const place = this.props.gameService.activePlace;
     const challenge = this.props.gameService.activeChallenge;
     const challengeStatus = this.props.gameService.challengeStatus;
+    const sequence = this.props.sequenceService.currentSequence;
+
     return (
       <View>
 
-        <View><Text style={globalStyles.titleText}>{challenge.name}</Text></View>
-        
+        {sequence &&
+          <Text style={globalStyles.titleText}>{sequence.name}</Text>
+        }
+        <Text style={globalStyles.subTitleText}>{challenge.name}</Text>
         
         {challengeStatus == "navigate" &&
           <View>
-            <Text>{challenge.instructions}</Text>
-            <Text style={globalStyles.titleText}>Here's how to get to {challenge.name}</Text>
-            <Text>Navigation placeholder</Text>
+            <Text style={globalStyles.subtitleText}>Navigate to {place.description}. Tap 'I'm here' when you're there.</Text>
+            
             <TouchableOpacity style={styles.button} onPress={()=>{
               gameService.setActiveChallengeStatus("prepare");            
             }}>

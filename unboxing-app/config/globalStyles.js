@@ -9,6 +9,12 @@ const globalStyles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 10,
   },
+  subTitleText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginTop: 15,
+    marginBottom: 10,
+  },
   buttons: {
     flexDirection: 'row',
   },

@@ -27,7 +27,7 @@ class GameModeAdmin extends React.Component {
         <Text>activeChallenge: {JSON.stringify(this.props.gameService.activeChallenge)}</Text>
         <Text>challengeStatus: {this.props.gameService.challengeStatus}</Text>
 
-        <Text>start a new walk:</Text>
+        <Text style={{marginTop: 20}}>start a new walk:</Text>
         <Picker
               mode="dropdown"
               onValueChange={(itemValue, itemIndex) => {if(itemValue) gameService.setActiveWalk(itemValue) }}

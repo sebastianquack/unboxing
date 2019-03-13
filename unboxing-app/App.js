@@ -36,7 +36,7 @@ const sections = [
   {
     name: "GameModeAdmin",
     component:GameModeAdmin,
-    default: false
+    default: true
 
   },
   {
@@ -67,7 +67,7 @@ const sections = [
   {
     name: "NearbyStatus",
     component:NearbyStatus,
-    default: true,
+    default: false,
   },          
 ]
 

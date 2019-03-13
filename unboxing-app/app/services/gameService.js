@@ -35,9 +35,13 @@ class GameService extends Service {
 				activeWalk: null,
 				pathIndex: 0,
 				gameMode: "manual"
-			});		
+			});
+
+			this.leaveChallenge();
 		}
 	}
+
+
 
 	// called when admin starts walk
 	setActiveWalk = (walk)=> {
@@ -60,7 +64,7 @@ class GameService extends Service {
 	// called when user leaves place, moves to next one
 	moveToNextPlaceInWalk = ()=> {
 		this.setReactive({
-			pathIndex: this.status.pathIndex + 1
+			pathIndex: this.state.pathIndex + 1
 		});
 		this.setupActivePlace();
 	}
@@ -213,11 +217,18 @@ class GameService extends Service {
 
 	leaveChallenge() {
 		sequenceService.stopSequence();
-		this.setReactive({
-			challengeStatus: "list",
-			activeChallenge: null
-		});	
+		
+		if(this.state.gameMode == "walk") {
+			this.moveToNextPlaceInWalk();
+		} else {
+			this.setReactive({
+				challengeStatus: "list",
+				activeChallenge: null
+			});	
+		}
+
 	}
+
 }
 
 const gameService = new GameService();
