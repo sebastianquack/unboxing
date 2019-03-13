@@ -3,6 +3,7 @@ package com.unboxing;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import codes.simen.IMEI.IMEI;
 import com.horcrux.svg.SvgPackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import com.sensors.RNSensorsPackage;
@@ -30,6 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new IMEI(),
             new SvgPackage(),
             new RNSoundPackage(),
             new RNSensorsPackage(),

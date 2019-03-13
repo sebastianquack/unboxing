@@ -11,7 +11,7 @@ class GameModeAdmin extends React.Component {
   }
 
   render() {
-    let walkItems = [<Picker.Item key="none" label={"-"} value={"-"}/>]
+    let walkItems = [<Picker.Item key="none" label={"-"} value={null}/>]
     if(this.props.storageService.collections.walks) {
       walkItems.push(this.props.storageService.collections.walks.filter(w=>w.active).map(w=>
         <Picker.Item key={w._id} label={w.description} value={w}/>));
@@ -24,18 +24,20 @@ class GameModeAdmin extends React.Component {
         <Text>start a new walk:</Text>
         <Picker
               mode="dropdown"
-              onValueChange={(itemValue, itemIndex) => gameService.setActiveWalk(itemValue)}
+              onValueChange={(itemValue, itemIndex) => {if(itemValue) gameService.setActiveWalk(itemValue) }}
         >
               {walkItems}
         </Picker>
-        <TouchableOpacity
-          style={globalStyles.button}
-          onPress={()=>{
-            gameService.setGameMode("manual");
-          }}
-        >
-        <Text>Enter manual mode</Text>
-      </TouchableOpacity>
+        {this.props.gameService.gameMode != "manual" &&
+          <TouchableOpacity
+            style={globalStyles.button}
+            onPress={()=>{
+              gameService.setGameMode("manual");
+            }}
+          >
+          <Text>Enter manual mode</Text>
+        </TouchableOpacity>
+        }
       </View>
     );
   }

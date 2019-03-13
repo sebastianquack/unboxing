@@ -6,6 +6,8 @@ import { storageService } from './';
 
 defaultServer = "192.168.1.2"
 
+const IMEI = require('react-native-imei')
+
 class NetworkService extends Service {
 
 	constructor() {
@@ -13,11 +15,17 @@ class NetworkService extends Service {
 		// reactive vars
 		super("networkService", {
       server: defaultServer,
-      lastApiResult: ""
+      lastApiResult: "",
+      imei: ""
 		});
 
     //this.initZeroconf()
     this.initNetInfo()
+
+    setTimeout(()=>{
+      this.setupImei();
+    }, 100);
+    
 	}
 
   /*initZeroconf() {
@@ -42,7 +50,18 @@ class NetworkService extends Service {
     zeroconf.on('resolved', data => console.log("resolved " + JSON.stringify(data)));
     zeroconf.on('error', data => console.log("error " + JSON.stringify(data)))
 	}*/  	
-	
+
+  setupImei = ()=> {
+    const imei = IMEI.getImei();
+    this.setReactive({
+      imei: imei
+    });
+  }
+
+  getImei = ()=> {
+    return this.state.imei;
+  }
+
   setServer(server, save=true) {
 		this.setReactive({ server })
     if(save) {

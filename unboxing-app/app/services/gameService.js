@@ -10,7 +10,7 @@ class GameService extends Service {
 			gameMode: "manual",			// manual, walk, installation
 			activeWalk: null,
 			pathStep: 0,
-			challengeStatus: "list",	// list <-> navigate <-> prepare <-> play 
+			challengeStatus: "off",		// off <-> navigate <-> prepare <-> play 
 			activeChallenge: null, 		// active challenge saved here
 			debugMode: true				// show debugging info in interface
 		});
@@ -34,6 +34,9 @@ class GameService extends Service {
 			pathStep: 0,
 			gameMode: "walk"
 		});
+
+		//todo here: select path based on device name
+		//todo here: set active challenge based on first place
 	}
 
 	// called by admin to leave walk mode
@@ -51,7 +54,7 @@ class GameService extends Service {
 	// called when user enters challenge
 	setActiveChallenge(challenge) {
 		this.setReactive({
-			challengeStatus: "navigate",
+			challengeStatus: this.state.gameMode == "walk" ? "navigate" : "prepare",
 			activeChallenge: challenge
 		});
 

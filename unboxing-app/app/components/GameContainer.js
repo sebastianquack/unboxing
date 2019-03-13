@@ -16,8 +16,12 @@ class GameContainer extends React.Component {
   render() {
     return (
       <View>
-        {this.props.gameService.challengeStatus != "list" ? 
-          <ChallengeView/> : <ChallengeSelector/>
+        {this.props.gameService.gameMode == "manual" && !this.props.gameService.activeChallenge &&
+          <ChallengeSelector/>
+        }
+
+        {this.props.gameService.activeChallenge &&
+          <ChallengeView/>
         }
       </View>
     );
