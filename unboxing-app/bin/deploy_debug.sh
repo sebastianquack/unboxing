@@ -3,14 +3,20 @@
 set -x
 
 ## declare an array variable
-## single digit ids with leading 0, for example "03" 
-declare -a deviceIds=("17" "21") ## You can access them using "${deviceIds[0]}", "${deviceIds[1]}" 
+#declare -a deviceIds=("17") ## You can access them using "${deviceIds[0]}", "${deviceIds[1]}" 
+deviceIds=( "$@" )
 
 cd android
 
 ## loop over deviceIds
 for i in "${deviceIds[@]}"
 do
+   echo $i
+   if [ $i -lt 10 ]
+   then
+     i="0${i}";
+   fi
+
    echo "connecting to device ${i}"
    adb disconnect
    adb connect "192.168.8.1${i}:5555"
@@ -35,6 +41,8 @@ do
    echo "setting up config for debug server"
    adb push ../bin/com.unboxing_preferences.xml /sdcard/com.unboxing_preferences.xml
    adb shell "run-as com.unboxing cp /sdcard/com.unboxing_preferences.xml /data/data/com.unboxing/shared_prefs/com.unboxing_preferences.xml"
+
+   adb shell "mkdir /sdcard/unboxing"   
 
    echo "starting app"
    adb shell am start -n com.unboxing/com.unboxing.MainActivity

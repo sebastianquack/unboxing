@@ -140,7 +140,8 @@ class NearbyService extends Service {
     // update state
     this.setReactive({
       serviceId: "default",
-      active: false
+      active: false,
+      endpointInfo: {} // this completely whipes info about the network!
     });
   }
 
@@ -280,7 +281,7 @@ class NearbyService extends Service {
   /* specific actions */
 
   connectToEndpoint(endpointId) {
-    this.debug("nearby: connecting to ", serviceId, endpointId);
+    this.debug("nearby: connecting to ", this.state.serviceId, endpointId);
     NearbyConnection.connectToEndpoint(
         this.state.serviceId,         // A unique identifier for the service
         endpointId
@@ -304,8 +305,8 @@ class NearbyService extends Service {
       );
       this.updateEndpointInfo(endpointId, endpointInfoUpdate);  
       if(this.countEndpointsWithStatus("myNearbyStatus", "connected") < 2) {
-        this.startDiscovering();  
-        this.startAdvertising();  
+        this.startDiscovering(this.state.serviceId);  
+        this.startAdvertising(this.state.serviceId);  
       } 
     }, (quiet ? 0 : 1000) )
 

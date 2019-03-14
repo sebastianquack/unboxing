@@ -63,6 +63,10 @@ class StorageService extends Service {
 		});
 
 		this.loadFromFile()		
+    setTimeout(()=>{
+      this.showNotification("trying to get everything...");
+      this.updateEverything();
+    }, 1000);
 	}
 
 	// called from ServerConnector component
@@ -115,6 +119,9 @@ class StorageService extends Service {
 				//console.log(stateFromFile);
 				if (!stateFromFile.deviceId) stateFromFile.deviceId = uuidv1()
 				this.setReactive(stateFromFile);
+        if(!this.state.server) {
+          this.setReactive({server: networkService.getDefaultServer()});
+        }
 				networkService.setServer(this.state.server, false); // doesn't need save, just load
 		}
 	}

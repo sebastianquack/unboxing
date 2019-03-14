@@ -63,6 +63,10 @@ class NetworkService extends Service {
     return this.state.imei;
   }
 
+  getDefaultServer = ()=> {
+    return defaultServer;
+  }
+
   setServer(server, save=true) {
 		this.setReactive({ server })
     if(save) {
@@ -107,7 +111,7 @@ class NetworkService extends Service {
       this.setReactive({lastApiResult: "OK"})
 			return responseJson;
 		} catch (error) {
-      console.warn("REST server error: ", error);
+      this.showNotification("REST server error: ", error);
       this.setReactive({lastApiResult: "Error"})
 		}
 	}
