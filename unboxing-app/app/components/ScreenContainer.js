@@ -17,6 +17,16 @@ const secondaryScreenLeft = Math.floor((dimensions.screenWidth - secondaryScreen
 const secondaryScreenHeight = Math.floor(dimensions.screenHeight * 0.235)
 const secondaryScreenTop = Math.floor(dimensions.screenHeight * 0.571)
 
+const statusBarWidth = Math.floor(dimensions.screenWidth * 0.8)
+const statusBarLeft = Math.floor((dimensions.screenWidth - statusBarWidth) / 2)
+const statusBarTop = Math.floor(dimensions.screenHeight * 0.05)
+
+const buttonLeftLeft = Math.floor(dimensions.screenWidth * 0.1)
+const buttonLeftTop = Math.floor(dimensions.screenHeight * 0.7)
+
+const buttonMidLeft = Math.floor(dimensions.screenWidth * 0.4355)
+const buttonMidTop = Math.floor(dimensions.screenHeight * 0.76)
+
 const buttonRightLeft = Math.floor(dimensions.screenWidth * 0.7)
 const buttonRightTop = Math.floor(dimensions.screenHeight * 0.7)
 
@@ -26,7 +36,24 @@ class ScreenContainer extends React.Component {
     this.state = {};
     this.renderPrimaryScreen = this.renderPrimaryScreen.bind(this)
     this.renderSecondaryScreen = this.renderSecondaryScreen.bind(this)
+    this.renderButtonLeft = this.renderButtonLeft.bind(this)
+    this.renderButtonMid = this.renderButtonMid.bind(this)
     this.renderButtonRight = this.renderButtonRight.bind(this)
+    this.renderStatusBar = this.renderStatusBar.bind(this)
+  }
+
+  renderStatusBar() {
+    if (!this.props.statusBar) return null
+      return <View style={{
+        position: 'absolute',
+        left:   statusBarLeft,
+        width:  statusBarWidth,
+        top:    statusBarTop,
+        // backgroundColor: "red",
+        zIndex: 11,
+      }}>
+      {this.props.statusBar}
+    </View>    
   }
 
   renderPrimaryScreen() {
@@ -60,6 +87,17 @@ class ScreenContainer extends React.Component {
     </View>
   }
 
+  renderButtonLeft() {
+    return <View style={{
+        position: 'absolute',
+        left:   buttonLeftLeft,
+        top:    buttonLeftTop,
+        zIndex: 51,
+      }}>
+      {this.props.buttonLeft}
+    </View>
+  }
+
   renderButtonRight() {
     return <View style={{
         position: 'absolute',
@@ -68,6 +106,17 @@ class ScreenContainer extends React.Component {
         zIndex: 51,
       }}>
       {this.props.buttonRight}
+    </View>
+  }
+
+  renderButtonMid() {
+    return <View style={{
+        position: 'absolute',
+        left:   buttonMidLeft,
+        top:    buttonMidTop,
+        zIndex: 51,
+      }}>
+      {this.props.buttonMid}
     </View>
   }
 
@@ -88,6 +137,9 @@ class ScreenContainer extends React.Component {
         </View>
         {this.renderPrimaryScreen()}
         {this.renderSecondaryScreen()}
+        {this.renderStatusBar()}
+        {this.renderButtonLeft()}
+        {this.renderButtonMid()}
         {this.renderButtonRight()}
       </View>
     );
@@ -98,7 +150,9 @@ ScreenContainer.propTypes = {
   primaryScreen: PropTypes.node,
   secondaryScreen: PropTypes.node,
   buttonLeft: PropTypes.node,
+  buttonMid: PropTypes.node,
   buttonRight: PropTypes.node,
+  statusBar: PropTypes.node
 };
 
 export default ScreenContainer;
