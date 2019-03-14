@@ -3,7 +3,7 @@
 set -x
 
 ## declare an array variable
-declare -a deviceIds=("03") ## You can access them using "${deviceIds[0]}", "${deviceIds[1]}" 
+declare -a deviceIds=("30" "21" "17") ## You can access them using "${deviceIds[0]}", "${deviceIds[1]}" 
 
 cd android
 
@@ -22,6 +22,12 @@ do
 
    echo "installing app"
    adb install "./app/build/outputs/apk/release/app-release.apk"
+
+   adb shell pm grant com.unboxing android.permission.SYSTEM_ALERT_WINDOW
+   adb shell pm grant com.unboxing android.permission.ACCESS_COARSE_LOCATION
+   adb shell pm grant com.unboxing android.permission.READ_EXTERNAL_STORAGE
+   adb shell pm grant com.unboxing android.permission.WRITE_EXTERNAL_STORAGE
+   adb shell pm grant com.unboxing android.permission.READ_PHONE_STATE
    
    echo "starting app"
    adb shell am start -n com.unboxing/com.unboxing.MainActivity

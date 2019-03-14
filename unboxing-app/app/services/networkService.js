@@ -4,7 +4,7 @@ import { NetInfo } from 'react-native';
 import Service from './Service';
 import { storageService } from './';
 
-defaultServer = "192.168.1.2"
+defaultServer = "192.168.8.10"
 
 const IMEI = require('react-native-imei')
 

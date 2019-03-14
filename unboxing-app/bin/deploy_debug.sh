@@ -3,6 +3,7 @@
 set -x
 
 ## declare an array variable
+## single digit ids with leading 0, for example "03" 
 declare -a deviceIds=("17" "21") ## You can access them using "${deviceIds[0]}", "${deviceIds[1]}" 
 
 cd android
@@ -22,6 +23,12 @@ do
 
    echo "installing app"
    adb install "./app/build/outputs/apk/debug/app-debug.apk"
+
+   adb shell pm grant com.unboxing android.permission.SYSTEM_ALERT_WINDOW
+   adb shell pm grant com.unboxing android.permission.ACCESS_COARSE_LOCATION
+   adb shell pm grant com.unboxing android.permission.READ_EXTERNAL_STORAGE
+   adb shell pm grant com.unboxing android.permission.WRITE_EXTERNAL_STORAGE
+   adb shell pm grant com.unboxing android.permission.READ_PHONE_STATE
 
    adb shell "run-as com.unboxing mkdir /data/data/com.unboxing/shared_prefs/"
 
