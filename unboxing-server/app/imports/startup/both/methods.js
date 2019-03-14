@@ -60,7 +60,7 @@ Meteor.methods({
         gesture_id: "",
         sensorModulation: "off",
         autoplay: "off",
-        sensorStart: false,
+        sensorStart: true,
       } ], $sort: { startTime: 1 }, $slice: 1000 } } }
     )
   },

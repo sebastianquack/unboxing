@@ -63,7 +63,7 @@ class WalkDetail extends React.Component {
       JSON.parse(cleanText);
       this.setState({JSONValid: "valid"});
     }
-    catch {
+    catch(e) {
       this.setState({JSONValid: "error"});
     }
     return value;
