@@ -9,4 +9,5 @@
     <boolean name="animations_debug" value="false" />
     <boolean name="start_sampling_profiler_on_init" value="false" />
     <boolean name="remote_js_debug" value="false" />
+    <boolean name="reload_on_js_change" value="true" />
 </map>
