@@ -40,6 +40,7 @@ class NearbyStatus extends React.Component {
       meshStatus: "meshStatus",
       myNearbyStatus: "myNearbyStatus",
       lastHeardFrom: "heardFrom",
+      lastHeardFromAsNeighbor: "hfNeighbor",
     }
     
     const entriesFlat =  Object // [{endpointId, myNearbyStatus, name, ...}, {...}, ...]
@@ -101,7 +102,8 @@ class NearbyStatus extends React.Component {
         </View>
         <Text>Last health check: {this.props.nearbyService.lastHealthCheckSent}</Text>
         <Text>Message Counter: {this.props.nearbyService.messageCounter}</Text>
-        <Text>Message Log: {this.props.nearbyService.messageLog}</Text>
+        <Text>Message Log</Text>
+        <Text>{this.props.nearbyService.messageLog}</Text>
         
       </View>
     );

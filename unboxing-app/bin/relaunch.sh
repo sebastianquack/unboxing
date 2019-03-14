@@ -26,5 +26,8 @@ do
 
    echo "starting app"
    adb shell am start -n com.unboxing/com.unboxing.MainActivity
+
+   adb shell settings put system screen_off_timeout 300000
+   
    
 done
