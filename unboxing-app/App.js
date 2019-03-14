@@ -81,7 +81,7 @@ class App extends Component {
     ];
     
     this.state = {
-      adminMenu: true
+      adminMenu: false
     };    
 
     this.initSections()
