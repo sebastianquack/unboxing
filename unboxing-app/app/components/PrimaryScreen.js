@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
@@ -9,26 +10,37 @@ const verticalPadding = Math.floor(dimensions.screenWidth * 0.03)
 
 const imageWidth = dimensions.screenWidth * 0.25
 
+const backgroundGradients = {
+  "passive": {
+    colors: ['#000', '#DF4B47', '#FFCE51'],
+    locations: [0.5, 0.875, 1],
+  },
+  "active": {
+    colors: ['#000', 'rgba(0,175,161,0.5)'],
+    locations: [0.5, 1],
+  },
+}
+
 class PrimaryScreen extends React.Component { 
   constructor(props) {
     super(props);
     this.state = {};
     this.renderBackgroundColor = this.renderBackgroundColor.bind(this)
     this.renderBackgroundFlow   = this.renderBackgroundFlow  .bind(this)
-    this.renderBackgroundContent = this.renderBackgroundContent.bind(this)
-    this.renderForegroundContent = this.renderForegroundContent.bind(this)
+    this.renderMainContent = this.renderMainContent.bind(this)
+    this.renderOverlayContent = this.renderOverlayContent.bind(this)
     this.renderScrollContent = this.renderScrollContent.bind(this)
   }
 
   renderBackgroundColor() {
-    return <View style={{
-      position: "absolute",
-      zIndex: 1,
-      height: "100%",
-      width: "100%",
-      backgroundColor: this.props.backgroundColor,
-    }}>
-    </View>    
+    return <LinearGradient 
+      colors={backgroundGradients[this.props.backgroundColor].colors}
+      locations={backgroundGradients[this.props.backgroundColor].locations}
+      style={{
+        height: "100%",
+        width: "100%",
+      }}
+      ></LinearGradient>
   }
 
   renderBackgroundFlow() {
@@ -44,18 +56,18 @@ class PrimaryScreen extends React.Component {
     </View>        
   }
   
-  renderBackgroundContent() {
+  renderMainContent() {
     return <View style={{
       position: "absolute",
       zIndex: 3,
       height: "100%",
       width: "100%",
     }}>
-      { this.props.backgroundContent }
+      { this.props.mainContent }
     </View>          
   }
 
-  renderForegroundContent() {
+  renderOverlayContent() {
     return <View style={{
       position: "absolute",
       zIndex: 4,
@@ -64,7 +76,7 @@ class PrimaryScreen extends React.Component {
       paddingHorizontal: horizontalPadding,
       paddingVertical: verticalPadding,
     }}>
-      { this.props.foregroundContent }
+      { this.props.overlayContent }
     </View>            
   }
 
@@ -90,18 +102,18 @@ class PrimaryScreen extends React.Component {
     }}>
       { this.props.backgroundColor && this.renderBackgroundColor() }
       { this.props.backgroundFlow && this.renderBackgroundFlow() }
-      { this.props.backgroundContent && this.renderBackgroundContent() }
-      { this.props.foregroundContent && this.renderForegroundContent() }
+      { this.props.mainContent && this.renderMainContent() }
+      { this.props.overlayContent && this.renderoverlayContent() }
       { this.props.scrollContent && this.renderScrollContent() }
     </View>
   }
 }
 
 PrimaryScreen.propTypes = {
-  backgroundColor: PropTypes.string, 
+  backgroundColor: PropTypes.oneOf(Object.keys(backgroundGradients)), 
   backgroundFlow: PropTypes.bool, // switch flow on/off
-  backgroundContent: PropTypes.node,
-  foregroundContent: PropTypes.node,
+  mainContent: PropTypes.node,
+  overlayContent: PropTypes.node,
   scrollContent: PropTypes.node,
 };
 

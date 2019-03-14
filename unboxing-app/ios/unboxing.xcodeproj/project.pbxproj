@@ -43,6 +43,28 @@
 		C757BD5BFFD54661A4B0CE70 /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E061F5112F84C38B8DAEF79 /* libRNSound.a */; };
 		493B48EC0247419987330AB9 /* libRNSVG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 31B856251D1D4599937417DE /* libRNSVG.a */; };
 		48CF30FD3BAD4C3C8DE4AF16 /* libRNSVG-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 53E4006292D6482FAF8F4BCE /* libRNSVG-tvOS.a */; };
+		B0C2D37ADF1A4CCE9FF9B332 /* libBVLinearGradient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E09BFF3C452C4BADB3321C00 /* libBVLinearGradient.a */; };
+		F2F8B7DFCCB848B892872529 /* DINPro-Black.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2B8870DC246E429A94924AA0 /* DINPro-Black.otf */; };
+		798A6604945D4E2C8A21DE82 /* DINPro-BlackItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = B573F39CBF674495901074B1 /* DINPro-BlackItalic.otf */; };
+		4BE74C1AE82246828BB66307 /* DINPro-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 6A4CBB9861194506B4480D03 /* DINPro-Bold.otf */; };
+		119DE6BDC32842889E7F21E5 /* DINPro-BoldItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 77FC74AAAA0144E48941F1D4 /* DINPro-BoldItalic.otf */; };
+		6FFCEC8C0A6648539AFF96E9 /* DINPro-Cond.otf in Resources */ = {isa = PBXBuildFile; fileRef = E4CDF73D09684FA1A2D27FF7 /* DINPro-Cond.otf */; };
+		9F79B650F29046B4AA208E25 /* DINPro-CondBlack.otf in Resources */ = {isa = PBXBuildFile; fileRef = DFDCE80AD43C461D84F2C0D8 /* DINPro-CondBlack.otf */; };
+		845DDF871ADC4594828FF67F /* DINPro-CondBlackIta.otf in Resources */ = {isa = PBXBuildFile; fileRef = 9DB09E61A46E4B41A24BCE7A /* DINPro-CondBlackIta.otf */; };
+		436E5B4BFE3E4950BC86C49C /* DINPro-CondBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = EA5930B4C03F49F8807BBAE0 /* DINPro-CondBold.otf */; };
+		765A90E1A75145CB9497E9FA /* DINPro-CondBoldIta.otf in Resources */ = {isa = PBXBuildFile; fileRef = 479FABC9433749878E105524 /* DINPro-CondBoldIta.otf */; };
+		28EAD8DA498B4E72BBE3251D /* DINPro-CondIta.otf in Resources */ = {isa = PBXBuildFile; fileRef = 1EAA6CC4D49640B3B9010A58 /* DINPro-CondIta.otf */; };
+		B5D4DCCEFBBD4DE486F4E90A /* DINPro-CondLight.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3F15BDCC8371429390AD2376 /* DINPro-CondLight.otf */; };
+		2C4AF4D8D3B241178116901C /* DINPro-CondLightIta.otf in Resources */ = {isa = PBXBuildFile; fileRef = 46351F16C90E4153B322469C /* DINPro-CondLightIta.otf */; };
+		A755446CDA1C4EB1981FC70E /* DINPro-CondMediIta.otf in Resources */ = {isa = PBXBuildFile; fileRef = 088FE6C2955B4F038F148BED /* DINPro-CondMediIta.otf */; };
+		0474BA88032848459B704F26 /* DINPro-CondMedium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 0AA8549349434897A79AEAAB /* DINPro-CondMedium.otf */; };
+		71249DF8CD744C07A08F001F /* DINPro-Italic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 319AA2F3580D469CA4825C8E /* DINPro-Italic.otf */; };
+		552DB48E73174463BC4DA99D /* DINPro-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 2C56B8586B58464DB2AAEBF2 /* DINPro-Light.otf */; };
+		FE0B586023BA4ED5935B215F /* DINPro-LightItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 08B0634701BC4E12A949D9DF /* DINPro-LightItalic.otf */; };
+		99625A4BEB96488A9F1E1D16 /* DINPro-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = FE1D13C1F1E34585BC64494D /* DINPro-Medium.otf */; };
+		850BAE00BFC142909E51EEDA /* DINPro-MediumItalic.otf in Resources */ = {isa = PBXBuildFile; fileRef = 3CCFAD60E0BF4448A5A0C49A /* DINPro-MediumItalic.otf */; };
+		C550FE8AE727487FA4774A7D /* DINPro.otf in Resources */ = {isa = PBXBuildFile; fileRef = B038FC991EEA4EBBAFAC93F8 /* DINPro.otf */; };
+		B543213E9ABC43BCAEC5DDFD /* DINPro-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0C0A3E1DAA3465A9B08049E /* DINPro-Medium.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -359,6 +381,29 @@
 		72518018626C4E7BB049F864 /* RNSVG.xcodeproj */ = {isa = PBXFileReference; name = "RNSVG.xcodeproj"; path = "../node_modules/react-native-svg/ios/RNSVG.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		31B856251D1D4599937417DE /* libRNSVG.a */ = {isa = PBXFileReference; name = "libRNSVG.a"; path = "libRNSVG.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		53E4006292D6482FAF8F4BCE /* libRNSVG-tvOS.a */ = {isa = PBXFileReference; name = "libRNSVG-tvOS.a"; path = "libRNSVG-tvOS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		459BFE2A8F5441BE9BBB03B8 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; name = "BVLinearGradient.xcodeproj"; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		E09BFF3C452C4BADB3321C00 /* libBVLinearGradient.a */ = {isa = PBXFileReference; name = "libBVLinearGradient.a"; path = "libBVLinearGradient.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		2B8870DC246E429A94924AA0 /* DINPro-Black.otf */ = {isa = PBXFileReference; name = "DINPro-Black.otf"; path = "../assets/fonts/DINPro-Black.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B573F39CBF674495901074B1 /* DINPro-BlackItalic.otf */ = {isa = PBXFileReference; name = "DINPro-BlackItalic.otf"; path = "../assets/fonts/DINPro-BlackItalic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		6A4CBB9861194506B4480D03 /* DINPro-Bold.otf */ = {isa = PBXFileReference; name = "DINPro-Bold.otf"; path = "../assets/fonts/DINPro-Bold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		77FC74AAAA0144E48941F1D4 /* DINPro-BoldItalic.otf */ = {isa = PBXFileReference; name = "DINPro-BoldItalic.otf"; path = "../assets/fonts/DINPro-BoldItalic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E4CDF73D09684FA1A2D27FF7 /* DINPro-Cond.otf */ = {isa = PBXFileReference; name = "DINPro-Cond.otf"; path = "../assets/fonts/DINPro-Cond.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		DFDCE80AD43C461D84F2C0D8 /* DINPro-CondBlack.otf */ = {isa = PBXFileReference; name = "DINPro-CondBlack.otf"; path = "../assets/fonts/DINPro-CondBlack.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		9DB09E61A46E4B41A24BCE7A /* DINPro-CondBlackIta.otf */ = {isa = PBXFileReference; name = "DINPro-CondBlackIta.otf"; path = "../assets/fonts/DINPro-CondBlackIta.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EA5930B4C03F49F8807BBAE0 /* DINPro-CondBold.otf */ = {isa = PBXFileReference; name = "DINPro-CondBold.otf"; path = "../assets/fonts/DINPro-CondBold.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		479FABC9433749878E105524 /* DINPro-CondBoldIta.otf */ = {isa = PBXFileReference; name = "DINPro-CondBoldIta.otf"; path = "../assets/fonts/DINPro-CondBoldIta.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1EAA6CC4D49640B3B9010A58 /* DINPro-CondIta.otf */ = {isa = PBXFileReference; name = "DINPro-CondIta.otf"; path = "../assets/fonts/DINPro-CondIta.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3F15BDCC8371429390AD2376 /* DINPro-CondLight.otf */ = {isa = PBXFileReference; name = "DINPro-CondLight.otf"; path = "../assets/fonts/DINPro-CondLight.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		46351F16C90E4153B322469C /* DINPro-CondLightIta.otf */ = {isa = PBXFileReference; name = "DINPro-CondLightIta.otf"; path = "../assets/fonts/DINPro-CondLightIta.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		088FE6C2955B4F038F148BED /* DINPro-CondMediIta.otf */ = {isa = PBXFileReference; name = "DINPro-CondMediIta.otf"; path = "../assets/fonts/DINPro-CondMediIta.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		0AA8549349434897A79AEAAB /* DINPro-CondMedium.otf */ = {isa = PBXFileReference; name = "DINPro-CondMedium.otf"; path = "../assets/fonts/DINPro-CondMedium.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		319AA2F3580D469CA4825C8E /* DINPro-Italic.otf */ = {isa = PBXFileReference; name = "DINPro-Italic.otf"; path = "../assets/fonts/DINPro-Italic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2C56B8586B58464DB2AAEBF2 /* DINPro-Light.otf */ = {isa = PBXFileReference; name = "DINPro-Light.otf"; path = "../assets/fonts/DINPro-Light.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		08B0634701BC4E12A949D9DF /* DINPro-LightItalic.otf */ = {isa = PBXFileReference; name = "DINPro-LightItalic.otf"; path = "../assets/fonts/DINPro-LightItalic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FE1D13C1F1E34585BC64494D /* DINPro-Medium.otf */ = {isa = PBXFileReference; name = "DINPro-Medium.otf"; path = "../assets/fonts/DINPro-Medium.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3CCFAD60E0BF4448A5A0C49A /* DINPro-MediumItalic.otf */ = {isa = PBXFileReference; name = "DINPro-MediumItalic.otf"; path = "../assets/fonts/DINPro-MediumItalic.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		B038FC991EEA4EBBAFAC93F8 /* DINPro.otf */ = {isa = PBXFileReference; name = "DINPro.otf"; path = "../assets/fonts/DINPro.otf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F0C0A3E1DAA3465A9B08049E /* DINPro-Medium.ttf */ = {isa = PBXFileReference; name = "DINPro-Medium.ttf"; path = "../assets/fonts/DINPro-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -391,6 +436,7 @@
 				814DD62178BF4F55BD23A51D /* libRNSensors.a in Frameworks */,
 				C757BD5BFFD54661A4B0CE70 /* libRNSound.a in Frameworks */,
 				493B48EC0247419987330AB9 /* libRNSVG.a in Frameworks */,
+				B0C2D37ADF1A4CCE9FF9B332 /* libBVLinearGradient.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,6 +629,7 @@
 				5324DFA86D1845B09EA5C5CD /* RNSensors.xcodeproj */,
 				E05945B444C24200928609F2 /* RNSound.xcodeproj */,
 				72518018626C4E7BB049F864 /* RNSVG.xcodeproj */,
+				459BFE2A8F5441BE9BBB03B8 /* BVLinearGradient.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -604,6 +651,7 @@
 				00E356EF1AD99517003FC87E /* unboxingTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
+				D2D93BF4E7704332BEAC8D09 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -629,6 +677,35 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
+		};
+		D2D93BF4E7704332BEAC8D09 /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				2B8870DC246E429A94924AA0 /* DINPro-Black.otf */,
+				B573F39CBF674495901074B1 /* DINPro-BlackItalic.otf */,
+				6A4CBB9861194506B4480D03 /* DINPro-Bold.otf */,
+				77FC74AAAA0144E48941F1D4 /* DINPro-BoldItalic.otf */,
+				E4CDF73D09684FA1A2D27FF7 /* DINPro-Cond.otf */,
+				DFDCE80AD43C461D84F2C0D8 /* DINPro-CondBlack.otf */,
+				9DB09E61A46E4B41A24BCE7A /* DINPro-CondBlackIta.otf */,
+				EA5930B4C03F49F8807BBAE0 /* DINPro-CondBold.otf */,
+				479FABC9433749878E105524 /* DINPro-CondBoldIta.otf */,
+				1EAA6CC4D49640B3B9010A58 /* DINPro-CondIta.otf */,
+				3F15BDCC8371429390AD2376 /* DINPro-CondLight.otf */,
+				46351F16C90E4153B322469C /* DINPro-CondLightIta.otf */,
+				088FE6C2955B4F038F148BED /* DINPro-CondMediIta.otf */,
+				0AA8549349434897A79AEAAB /* DINPro-CondMedium.otf */,
+				319AA2F3580D469CA4825C8E /* DINPro-Italic.otf */,
+				2C56B8586B58464DB2AAEBF2 /* DINPro-Light.otf */,
+				08B0634701BC4E12A949D9DF /* DINPro-LightItalic.otf */,
+				FE1D13C1F1E34585BC64494D /* DINPro-Medium.otf */,
+				3CCFAD60E0BF4448A5A0C49A /* DINPro-MediumItalic.otf */,
+				B038FC991EEA4EBBAFAC93F8 /* DINPro.otf */,
+				F0C0A3E1DAA3465A9B08049E /* DINPro-Medium.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -1076,6 +1153,27 @@
 			files = (
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
+				F2F8B7DFCCB848B892872529 /* DINPro-Black.otf in Resources */,
+				798A6604945D4E2C8A21DE82 /* DINPro-BlackItalic.otf in Resources */,
+				4BE74C1AE82246828BB66307 /* DINPro-Bold.otf in Resources */,
+				119DE6BDC32842889E7F21E5 /* DINPro-BoldItalic.otf in Resources */,
+				6FFCEC8C0A6648539AFF96E9 /* DINPro-Cond.otf in Resources */,
+				9F79B650F29046B4AA208E25 /* DINPro-CondBlack.otf in Resources */,
+				845DDF871ADC4594828FF67F /* DINPro-CondBlackIta.otf in Resources */,
+				436E5B4BFE3E4950BC86C49C /* DINPro-CondBold.otf in Resources */,
+				765A90E1A75145CB9497E9FA /* DINPro-CondBoldIta.otf in Resources */,
+				28EAD8DA498B4E72BBE3251D /* DINPro-CondIta.otf in Resources */,
+				B5D4DCCEFBBD4DE486F4E90A /* DINPro-CondLight.otf in Resources */,
+				2C4AF4D8D3B241178116901C /* DINPro-CondLightIta.otf in Resources */,
+				A755446CDA1C4EB1981FC70E /* DINPro-CondMediIta.otf in Resources */,
+				0474BA88032848459B704F26 /* DINPro-CondMedium.otf in Resources */,
+				71249DF8CD744C07A08F001F /* DINPro-Italic.otf in Resources */,
+				552DB48E73174463BC4DA99D /* DINPro-Light.otf in Resources */,
+				FE0B586023BA4ED5935B215F /* DINPro-LightItalic.otf in Resources */,
+				99625A4BEB96488A9F1E1D16 /* DINPro-Medium.otf in Resources */,
+				850BAE00BFC142909E51EEDA /* DINPro-MediumItalic.otf in Resources */,
+				C550FE8AE727487FA4774A7D /* DINPro.otf in Resources */,
+				B543213E9ABC43BCAEC5DDFD /* DINPro-Medium.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1210,6 +1308,7 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/unboxing.app/unboxing";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1218,6 +1317,7 @@
 					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 			};
 			name = Debug;
@@ -1239,6 +1339,7 @@
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/unboxing.app/unboxing";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1247,6 +1348,7 @@
 					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 			};
 			name = Release;
@@ -1274,6 +1376,7 @@
 					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 			};
 			name = Debug;
@@ -1300,6 +1403,7 @@
 					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 			};
 			name = Release;
@@ -1329,6 +1433,7 @@
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1337,6 +1442,7 @@
 					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 			};
 			name = Debug;
@@ -1366,6 +1472,7 @@
 				TVOS_DEPLOYMENT_TARGET = 9.2;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1374,6 +1481,7 @@
 					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 			};
 			name = Release;
@@ -1402,6 +1510,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1410,6 +1519,7 @@
 					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 			};
 			name = Debug;
@@ -1438,6 +1548,7 @@
 				TVOS_DEPLOYMENT_TARGET = 10.1;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1446,6 +1557,7 @@
 					"$(SRCROOT)/../node_modules/react-native-sensors/ios",
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
+					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 				);
 			};
 			name = Release;

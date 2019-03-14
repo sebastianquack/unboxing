@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
+import UIText from './UIText'
 
 const horizontalPadding = Math.floor(dimensions.screenWidth * 0.014)
 const verticalPadding = Math.floor(dimensions.screenWidth * 0.016)
@@ -64,12 +65,10 @@ class SecondaryScreen extends React.Component {
           flex: 1,
           // backgroundColor: "blue",
         }}>
-        <Text style={{ 
-            color: "white", 
-            textAlign: "center" 
-          }}>
+        <UIText caps strong align="center">
           {this.props.instrument}
-        </Text>          
+        </UIText>    
+        <UIText size="s" align="center" caps wide em>Aktuell</UIText>      
       </View>
     </View>
   }

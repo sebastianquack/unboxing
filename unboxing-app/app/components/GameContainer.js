@@ -7,6 +7,7 @@ import {withGameService} from './ServiceConnector';
 import ScreenContainer from './ScreenContainer'
 import PrimaryScreen from './PrimaryScreen'
 import SecondaryScreen from './SecondaryScreen'
+import StatusBar from './StatusBar'
 import Button from './Button'
 
 import ChallengeSelector from './ChallengeSelector';
@@ -29,14 +30,17 @@ class GameContainer extends React.Component {
       <View>
         <ScreenContainer
           primaryScreen = {<PrimaryScreen
-              backgroundColor="#eee"
+              backgroundColor="active"
               // backgroundFlow
-              // backgroundContent = {<Text>Background Content -- DIRIGENT</Text>}
-              // foregroundContent = {<Text>Foreground content</Text>}
+              // mainContent = {<Text>Content</Text>}
+              // overlayContent = {<Text>Overlay Content -- DIRIGENT</Text>}
               scrollContent = { content }
             />}
           secondaryScreen = {<SecondaryScreen type="instrument" instrument="piano" />}
           buttonRight = {<Button text="Play" />}
+          buttonMid = {<Button type="change" />}
+          buttonLeft = {<Button type="home" text="Exit" />}
+          statusBar = {<StatusBar title="Title" description="description" />}
         />
 
       </View>
