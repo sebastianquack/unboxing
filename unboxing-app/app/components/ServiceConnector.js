@@ -12,7 +12,7 @@ import {
 		gestureService,
 		peakService,
 		gameService
-	} from '../services/';
+	} from '../services';
 
 // all services need to be imported above, registered here, get a provider and consumer below
 const services = [ 

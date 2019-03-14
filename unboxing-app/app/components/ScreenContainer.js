@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Image } from 'react-native';
+import { Text, View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
@@ -17,12 +17,16 @@ const secondaryScreenLeft = Math.floor((dimensions.screenWidth - secondaryScreen
 const secondaryScreenHeight = Math.floor(dimensions.screenHeight * 0.235)
 const secondaryScreenTop = Math.floor(dimensions.screenHeight * 0.571)
 
+const buttonRightLeft = Math.floor(dimensions.screenWidth * 0.7)
+const buttonRightTop = Math.floor(dimensions.screenHeight * 0.7)
+
 class ScreenContainer extends React.Component { 
   constructor(props) {
     super(props);
     this.state = {};
     this.renderPrimaryScreen = this.renderPrimaryScreen.bind(this)
     this.renderSecondaryScreen = this.renderSecondaryScreen.bind(this)
+    this.renderButtonRight = this.renderButtonRight.bind(this)
   }
 
   renderPrimaryScreen() {
@@ -35,8 +39,8 @@ class ScreenContainer extends React.Component {
         height: primaryScreenHeight,
         top:    primaryScreenTop,
         zIndex: 10,
-      }}>
-      {this.props.primaryScreen}
+      }} >
+      { this.props.primaryScreen }
     </View>
   }
 
@@ -56,22 +60,35 @@ class ScreenContainer extends React.Component {
     </View>
   }
 
+  renderButtonRight() {
+    return <View style={{
+        position: 'absolute',
+        left:   buttonRightLeft,
+        top:    buttonRightTop,
+        zIndex: 51,
+      }}>
+      {this.props.buttonRight}
+    </View>
+  }
+
   render() {
     const source = this.props.secondaryScreen ? frameSecondaryImg : frameImg
     return (
       <View style={{
-        backgroundColor: '#333'
+        backgroundColor: '#333',
       }}>
-        <Image
-          source={source}
-          style={{
-            width: dimensions.screenWidth, 
-            height: dimensions.screenHeight,
-            zIndex: 50
-          }}
-        />
+        <View pointerEvents="none" style={{zIndex:50}}>
+          <Image
+            source={source}
+            style={{
+              width: dimensions.screenWidth, 
+              height: dimensions.screenHeight,
+            }}
+          />
+        </View>
         {this.renderPrimaryScreen()}
         {this.renderSecondaryScreen()}
+        {this.renderButtonRight()}
       </View>
     );
   }

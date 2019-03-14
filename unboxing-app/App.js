@@ -23,15 +23,15 @@ import {ServiceConnector} from './app/components/ServiceConnector';
 
 import {globalStyles} from './config/globalStyles';
 
-import ServerConnector from './app/components/ServerConnector';
-import Files from './app/components/Files';
-import TimeSync from './app/components/TimeSync';
 import GameContainer from './app/components/GameContainer';
-import NearbyStatus from './app/components/NearbyStatus';
-import Gestures from './app/components/Gestures';
-import SensorInfo from './app/components/SensorInfo';
-import DebugToggle from './app/components/DebugToggle';
-import GameModeAdmin from './app/components/GameModeAdmin';
+import ServerConnector from './app/components/admin/ServerConnector';
+import Files from './app/components/admin/Files';
+import TimeSync from './app/components/admin/TimeSync';
+import NearbyStatus from './app/components/admin/NearbyStatus';
+import Gestures from './app/components/admin/Gestures';
+import SensorInfo from './app/components/admin/SensorInfo';
+import DebugToggle from './app/components/admin/DebugToggle';
+import GameModeAdmin from './app/components/admin/GameModeAdmin';
 
 const sections = [
   {
@@ -81,7 +81,7 @@ class App extends Component {
     ];
     
     this.state = {
-      adminMenu: true
+      adminMenu: false
     };    
 
     this.initSections()

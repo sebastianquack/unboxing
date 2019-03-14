@@ -5,6 +5,9 @@ import {globalStyles} from '../../config/globalStyles';
 import {withGameService} from './ServiceConnector';
 
 import ScreenContainer from './ScreenContainer'
+import PrimaryScreen from './PrimaryScreen'
+import SecondaryScreen from './SecondaryScreen'
+import Button from './Button'
 
 import ChallengeSelector from './ChallengeSelector';
 import ChallengeView from './ChallengeView';
@@ -25,7 +28,15 @@ class GameContainer extends React.Component {
     return (
       <View>
         <ScreenContainer
-          primaryScreen={content}
+          primaryScreen = {<PrimaryScreen
+              backgroundColor="#eee"
+              // backgroundFlow
+              // backgroundContent = {<Text>Background Content -- DIRIGENT</Text>}
+              // foregroundContent = {<Text>Foreground content</Text>}
+              scrollContent = { content }
+            />}
+          secondaryScreen = {<SecondaryScreen type="instrument" instrument="piano" />}
+          buttonRight = {<Button text="Play" />}
         />
 
       </View>

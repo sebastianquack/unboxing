@@ -7,7 +7,6 @@ import {withGameService, withSequenceService} from './ServiceConnector';
 import Sequence from './Sequence';
 import SequenceVisualizer from './SequenceVisualizer';
 import TrackSelector from './TrackSelector';
-import NearbyStatus from './NearbyStatus';
 
 import {gameService, sequenceService} from '../services';
 

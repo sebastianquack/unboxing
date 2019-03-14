@@ -2,9 +2,9 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet } from 'react-native';
 import compose from 'lodash.flowright'
 
-import {globalStyles} from '../../config/globalStyles';
-import {sensorService} from '../services';
-import {withPeakService, withSensorService, withGameService} from './ServiceConnector';
+import {globalStyles} from '../../../config/globalStyles';
+import {sensorService} from '../../services';
+import {withPeakService, withSensorService, withGameService} from '../ServiceConnector';
 
 class SensorInfo extends React.Component { 
   constructor(props) {
