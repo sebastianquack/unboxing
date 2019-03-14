@@ -42,6 +42,36 @@ class SequenceDetailItem extends React.Component {
     $set = {}
     $set[name] = value
     Meteor.call('updateSequenceItem', this.props.item._id, $set )
+
+    if(name == "path") {
+      console.log(value);
+      // for example: "/directory/2_1-16_bass1_00.22.11.01.mp3"
+
+      let regexp = /(\d)(?:_)(.*)(?:_)(.*)(?:_)(\d+)(?:\.)(\d+)(?:\.)(\d+)(?:\.)(\d+)(?:\..{3})/g;
+      var match = regexp.exec(value);
+      console.log(match);
+
+      if(match.length != 8) {
+        alert("filename has wrong format - use 2_1-16_bass1_00.22.11.01.mp3");
+        return;
+      }
+
+      let subframes = match[7]; // 1/80 of 1/25 of a second -> 0.0125 * 0.04 = 0.5 milliseconds
+      let frames = match[6]; // 1/25 of a second = 40 milliseconds
+      let seconds = match[5]; 
+      let minutes = match[4];
+      let track = match[3];
+      let bars = match[2];
+      let movement = match[1];
+
+      let startTime = minutes * 60000 + seconds * 1000 + frames * 40 + subframes * 0.5;
+
+      let name = `${track} ${minutes}.${seconds}.${frames}.${subframes}`; 
+
+      // update startTime and track from filename
+      Meteor.call('updateSequenceItem', this.props.item._id, {startTime: startTime, track: track, name: name} );
+
+    }
   }
 
   renderInput(type, value) {

@@ -24,7 +24,7 @@ class NetworkService extends Service {
 
     setTimeout(()=>{
       this.setupImei();
-    }, 100);
+    }, 1000);
     
 	}
 

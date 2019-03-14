@@ -104,7 +104,7 @@ class StorageService extends Service {
 	}
 
 	async loadFromFile() {
-		let json = await RNFS.readFile(persistentFile, 'utf8').catch((e)=>{
+		let json = await RNFS.readFile(persistentFile, 'utf8').catch((err)=>{
 			this.showNotification("loadFromFile failed: " + err.message)
 			console.log(err.message, err.code)
 		});
