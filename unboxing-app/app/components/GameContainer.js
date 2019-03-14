@@ -4,6 +4,8 @@ import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-
 import {globalStyles} from '../../config/globalStyles';
 import {withGameService} from './ServiceConnector';
 
+import ScreenContainer from './ScreenContainer'
+
 import ChallengeSelector from './ChallengeSelector';
 import ChallengeView from './ChallengeView';
 
@@ -14,15 +16,18 @@ class GameContainer extends React.Component {
   }
 
   render() {
+
+    const content = [
+      this.props.gameService.gameMode == "manual" && !this.props.gameService.activeChallenge && <ChallengeSelector key="1"/>,
+      this.props.gameService.activeChallenge && <ChallengeView key="2"/>
+    ]
+
     return (
       <View>
-        {this.props.gameService.gameMode == "manual" && !this.props.gameService.activeChallenge &&
-          <ChallengeSelector/>
-        }
+        <ScreenContainer
+          primaryScreen={content}
+        />
 
-        {this.props.gameService.activeChallenge &&
-          <ChallengeView/>
-        }
       </View>
     );
   }

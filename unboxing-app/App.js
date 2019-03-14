@@ -12,7 +12,8 @@ import {
   TextInput,
   TouchableOpacity,
   Slider,
-  Switch
+  Switch,
+  StatusBar,
 } from 'react-native';
 import KeepAwake from 'react-native-keep-awake';
 
@@ -131,7 +132,7 @@ class App extends Component {
 
   renderAdminMenu() {
     return (
-      <View>
+      <View {...styles.adminMenu}>
         <Text style={globalStyles.titleText}>Admin</Text>
         <View>
           { this.renderSections() }
@@ -142,17 +143,20 @@ class App extends Component {
   
   render() {
     return (
-      <ServiceConnector>
-        <KeepAwake/>
-        <ScrollView contentContainerStyle={styles.container}>
-          {this.renderAdminButton()}
-          {this.state.adminMenu ?
-            this.renderAdminMenu() 
-          :
-            <GameContainer/> 
-          }
-        </ScrollView>
-      </ServiceConnector>
+      [
+        <KeepAwake key="KeepAwake" />,
+        <StatusBar key="StatusBar" translucent backgroundColor="transparent" barStyle="dark-content" />,
+        <ServiceConnector key="ServiceConnector">
+          <ScrollView contentContainerStyle={styles.container}>
+            {this.renderAdminButton()}
+            {this.state.adminMenu ?
+              this.renderAdminMenu() 
+            :
+              <GameContainer/> 
+            }
+          </ScrollView>
+        </ServiceConnector>
+      ]
     );
   }
 }
@@ -162,13 +166,20 @@ export default App;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F5FCFF',
-    padding: 20
+    backgroundColor: 'white',
+  },
+  adminMenu: {
+    padding: 10,
+    paddingTop: 30,
   },
   adminButton: {
-    marginBottom: 10,
+    opacity: 0.8,
     padding: 10,
-    backgroundColor:'#eee',
-    borderRadius: 5
+    backgroundColor:'rgba(200,200,200,0.5)',
+    borderRadius: 5,
+    position: 'absolute',
+    top:30,
+    right:10,
+    zIndex:100,
   }
 });
