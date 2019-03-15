@@ -2,6 +2,11 @@
 
 set -x
 
+NETWORK_PREFIX="${NETWORK_PREFIX:-192.168.8.1}" # default NETWORK starts with 192.168.8.1
+DEV_HOST="${DEV_HOST:-192.168.8.10}" # default DEV_HOST is 192.168.8.10
+
+echo $DEV_HOST
+
 ## declare an array variable
 #declare -a deviceIds=("17") ## You can access them using "${deviceIds[0]}", "${deviceIds[1]}" 
 deviceIds=( "$@" )
@@ -19,7 +24,7 @@ do
 
    echo "connecting to device ${i}"
    adb disconnect
-   adb connect "192.168.8.1${i}:5555"
+   adb connect "$NETWORK_PREFIX${i}:5555"
 
    echo "stopping app"
    adb shell am force-stop com.unboxing
@@ -38,8 +43,9 @@ do
 
    adb shell "run-as com.unboxing mkdir /data/data/com.unboxing/shared_prefs/"
 
-   echo "setting up config for debug server"
-   adb push ../bin/com.unboxing_preferences.xml /sdcard/com.unboxing_preferences.xml
+   echo "setting up config for debug server at $DEV_HOST"
+   sed -E "s/(<string name=.debug_http_host.>).*(<\/string>)/\1$DEV_HOST:8081\2/" ../bin/com.unboxing_preferences.xml > /tmp/com.unboxing_preferences.xml
+   adb push /tmp/com.unboxing_preferences.xml /sdcard/com.unboxing_preferences.xml
    adb shell "run-as com.unboxing cp /sdcard/com.unboxing_preferences.xml /data/data/com.unboxing/shared_prefs/com.unboxing_preferences.xml"
 
    adb shell "mkdir /sdcard/unboxing"   
