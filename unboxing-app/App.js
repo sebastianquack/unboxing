@@ -68,7 +68,7 @@ const sections = [
   {
     name: "NearbyStatus",
     component:NearbyStatus,
-    default: false,
+    default: true,
   },          
 ]
 
