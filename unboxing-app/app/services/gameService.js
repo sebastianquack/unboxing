@@ -293,6 +293,7 @@ class GameService extends Service {
     this.setReactive({
       statusBarTitle: "Title",
       statusBarSubtitle: "Description",
+      showInstrumentSelector: false
     })
 		
 		if(this.state.gameMode == "walk") {
