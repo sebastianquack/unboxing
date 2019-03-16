@@ -13,7 +13,10 @@ class GameService extends Service {
 			walkStatus: "off",			// off -> ongoing -> ended
 			challengeStatus: "off",		// off <-> navigate <-> prepare <-> play 
 			activeChallenge: null, 		// active challenge saved here
-			debugMode: true				// show debugging info in interface
+			showInstrumentSelector: false, // show the interface selector in the interface
+      statusBarTitle: "Title",
+      statusBarSubtitle: "Description",
+      debugMode: false          // show debugging info in interface
 		});
 
 		// not reactive vars
@@ -40,8 +43,6 @@ class GameService extends Service {
 			this.leaveChallenge();
 		}
 	}
-
-
 
 	// called when admin starts walk
 	setActiveWalk = (walk)=> {
@@ -104,6 +105,11 @@ class GameService extends Service {
 
 		sequenceService.setSequence(challenge.sequence_id);
 
+    this.setReactive({
+      statusBarTitle: sequenceService.getSequenceName(),
+      statusBarSubtitle: challenge.name
+    })
+
 		//start nearby service with challengeId as serviceId - adding timeout to give time for shutdown
 		setTimeout(()=>{
 			nearbyService.initNearbyWithServiceId(challenge._id);	
@@ -158,12 +164,37 @@ class GameService extends Service {
 		return looping;
 	}
 
+  startSequence = () => {
+      this.showNotification("starting sequence...");
+      
+      let nowTime = soundService.getSyncTime();
+      let startTime = nowTime + 2000; // set time for sequence to start
+      sequenceService.startSequence(startTime, true); // set local start flag to true 
+
+      // send start_sequence message to all players connected via nearby
+      nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
+  }
+
+  handleMissedCue() {
+    if(this.state.activeChallenge.item_manual_mode == "assisted") {
+      this.showNotification("too late! skipping sound...");   
+      sequenceService.skipNextItem();
+    }
+  }
+
+
+
+  /* interface actions */
+
 	// called from TrackSelector when user selects track
 	trackSelect = (sequence, track)=> {
-		sequenceService.trackSelect(sequence, track)
+		sequenceService.trackSelect(sequence, track);
+    this.setReactive({
+      showInstrumentSelector: false
+    });
 	}
 
-	// manual start of items - also called by gestures
+	// manual start of items - also called by gestures -- confusing: investigate & rename
 	handlePlayNextItemButton = ()=> {
 
 		// if the sequence isn't running, start the sequence and inform other players
@@ -199,37 +230,70 @@ class GameService extends Service {
 		sequenceService.updateActionInterface();
   }
 
-  startSequence = () => {
-      this.showNotification("starting sequence...");
-			
-      let nowTime = soundService.getSyncTime();
-			let startTime = nowTime + 2000; // set time for sequence to start
-			sequenceService.startSequence(startTime, true); // set local start flag to true 
-
-			// send start_sequence message to all players connected via nearby
-			nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
-  }
-
-  handleMissedCue() {
-  	if(this.state.activeChallenge.item_manual_mode == "assisted") {
-  		this.showNotification("too late! skipping sound...");		
-			sequenceService.skipNextItem();
-		}
-  }
-
+  // confusing - investigate & rename?
   handleSkipButton() {
   	sequenceService.skipNextItem();
   }
 
+  // confusing - investigate & rename?
   handleStopButton() {
    	sequenceService.stopCurrentSound();
   }
 
+  // big right button on game container
+  handlePlayButton = ()=> {
+    switch(this.state.challengeStatus) {
+      case "navigate":
+        this.setActiveChallengeStatus("prepare");            
+        break;
+      case "prepare":
+        this.setActiveChallengeStatus("play");            
+        break;
+      default:
+        this.showNotification("no current function");
+    }
+  }
+
+  // center button for instrument selection
+  handleMidButton = ()=> {
+    if(this.state.challengeStatus == "prepare" || this.state.challengeStatus == "play") {
+      this.setReactive({
+        showInstrumentSelector: !this.state.showInstrumentSelector
+      });  
+    } else {
+      this.showNotification("no current function");
+    }
+  }
+
+  // big left button on game container
+  handleBackButton = ()=> {
+    switch(this.state.challengeStatus) {
+      case "play":
+        this.backToLobby();
+        break;
+      case "prepare":
+        this.leaveChallenge();
+        break;
+      default:
+        this.showNotification("no current function");
+    }
+  }
+
+  backToLobby() {
+    sequenceService.cancelItemsAndSounds()
+    this.setActiveChallengeStatus("prepare");
+  }
+  
 	leaveChallenge() {
 		sequenceService.stopSequence();
 
 		//stop nearby service
 		nearbyService.shutdownNearby();
+
+    this.setReactive({
+      statusBarTitle: "Title",
+      statusBarSubtitle: "Description",
+    })
 		
 		if(this.state.gameMode == "walk") {
 			this.moveToNextPlaceInWalk();

@@ -13,8 +13,10 @@ import Button from './Button'
 import ChallengeSelector from './ChallengeSelector';
 import ChallengeView from './ChallengeView';
 
+import {gameService} from '../services';
+
 class GameContainer extends React.Component { 
-  constructor(props) {
+  constructor(props) { 
     super(props);
     this.state = {};
   }
@@ -37,10 +39,10 @@ class GameContainer extends React.Component {
               scrollContent = { content }
             />}
           secondaryScreen = {<SecondaryScreen type="instrument" instrument="piano" />}
-          buttonRight = {<Button text="Play" />}
-          buttonMid = {<Button type="change" />}
-          buttonLeft = {<Button type="home" text="Exit" />}
-          statusBar = {<StatusBar title="Title" description="description" />}
+          buttonRight = {<Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/>}
+          buttonMid = {<Button type="change" onPress={()=>{gameService.handleMidButton()}} />}
+          buttonLeft = {<Button type="home" text="Back" onPress={()=>{gameService.handleBackButton()}}/>}
+          statusBar = {<StatusBar title={this.props.gameService.statusBarTitle} description={this.props.gameService.statusBarSubtitle} />}
         />
 
       </View>
