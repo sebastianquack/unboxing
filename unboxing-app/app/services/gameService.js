@@ -97,9 +97,10 @@ class GameService extends Service {
 	// called when user enters a challenge
 	setActiveChallenge = (challenge)=> {
 		this.setReactive({
-			challengeStatus: this.state.gameMode == "walk" ? "navigate" : "prepare",
 			activeChallenge: challenge
 		});
+
+    this.setActiveChallengeStatus(this.state.gameMode == "walk" ? "navigate" : "prepare");
 
 		sequenceService.setSequence(challenge.sequence_id);
 
@@ -107,8 +108,29 @@ class GameService extends Service {
 		setTimeout(()=>{
 			nearbyService.initNearbyWithServiceId(challenge._id);	
 		}, 2000);
-		
+
+    this.activateNearbyCallbacks();
 	}
+
+  activateNearbyCallbacks() {
+    nearbyService.setCustomCallbacks({
+      onConnectionEstablished: () => {
+        // todo
+      },
+      onMessageReceived: (message) => {
+        
+        // if this is start sequence message
+        if(message.message == "start_sequence") {
+
+          // if we haven't started and are ready to play
+          if(sequenceService.getControlStatus() == "ready")  {
+            sequenceService.startSequence(message.startTime, false); // just start sequence, not item started locally
+          }
+        }
+      },
+      // todo: onConnectionLost
+    });   
+  }
 
 	setActiveChallengeStatus = (status)=> {
 
@@ -116,27 +138,9 @@ class GameService extends Service {
 			challengeStatus: status
 		});
 
-		if(status == "prepare") {
-			nearbyService.setCustomCallbacks({
-				onConnectionEstablished: () => {
-					// todo
-				},
-				onMessageReceived: (message) => {
-					console.log("message received: ", message.message);
-
-					// if this is start sequence message
-					if(message.message == "start_sequence") {
-
-						// if we haven't started and are ready to play
-						if(sequenceService.getControlStatus() == "ready")  {
-							sequenceService.startSequence(message.startTime, false); // just start sequence, not item started locally
-						}
-					}
-				},
-				// todo: onConnectionLost
-			});
-		}
-
+    if(status == "prepare") {
+      this.activateNearbyCallbacks();
+    }
 	}
 
 	getActiveChallenge = ()=> {
@@ -196,11 +200,11 @@ class GameService extends Service {
   }
 
   startSequence = () => {
-			let nowTime = soundService.getSyncTime();
+      this.showNotification("starting sequence...");
+			
+      let nowTime = soundService.getSyncTime();
 			let startTime = nowTime + 2000; // set time for sequence to start
 			sequenceService.startSequence(startTime, true); // set local start flag to true 
-
-			this.showNotification("starting sequence...");
 
 			// send start_sequence message to all players connected via nearby
 			nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices

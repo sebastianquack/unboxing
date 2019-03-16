@@ -415,6 +415,7 @@ class SequenceService extends Service {
     });
 
   	console.log("started sequence at", this.state.loopStartedAt);
+    this.showNotification("sequence started");
   	this.localStart = localStart;
 
 		this.setupNextSequenceItem();
