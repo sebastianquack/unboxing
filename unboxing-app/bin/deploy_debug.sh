@@ -5,8 +5,6 @@ set -x
 NETWORK_PREFIX="${NETWORK_PREFIX:-192.168.8.1}" # default NETWORK starts with 192.168.8.1
 DEV_HOST="${DEV_HOST:-192.168.8.10}" # default DEV_HOST is 192.168.8.10
 
-echo $DEV_HOST
-
 ## declare an array variable
 #declare -a deviceIds=("17") ## You can access them using "${deviceIds[0]}", "${deviceIds[1]}" 
 deviceIds=( "$@" )
