@@ -44,6 +44,8 @@ class GameService extends Service {
 		}
 	}
 
+  /** game mode management **/
+
 	// called when admin starts walk
 	setActiveWalk = (walk)=> {
 		
@@ -61,6 +63,9 @@ class GameService extends Service {
 			this.setupActivePlace();
 		}
 	}
+
+
+  /** walks and places **/
 
 	// called when user leaves place, moves to next one
 	moveToNextPlaceInWalk = ()=> {
@@ -95,6 +100,9 @@ class GameService extends Service {
 		this.setActiveChallenge(challenge);
 	}
 
+
+  /** challenges **/
+
 	// called when user enters a challenge
 	setActiveChallenge = (challenge)=> {
 		this.setReactive({
@@ -117,6 +125,29 @@ class GameService extends Service {
 
     this.activateNearbyCallbacks();
 	}
+
+  leaveChallenge() {
+    sequenceService.stopSequence();
+
+    //stop nearby service
+    nearbyService.shutdownNearby();
+
+    this.setReactive({
+      statusBarTitle: "Title",
+      statusBarSubtitle: "Description",
+      showInstrumentSelector: false
+    })
+    
+    if(this.state.gameMode == "walk") {
+      this.moveToNextPlaceInWalk();
+    } else {
+      this.setReactive({
+        challengeStatus: "list",
+        activeChallenge: null
+      }); 
+    }
+
+  }
 
   activateNearbyCallbacks() {
     nearbyService.setCustomCallbacks({
@@ -164,6 +195,9 @@ class GameService extends Service {
 		return looping;
 	}
 
+
+  /** sequences **/
+
   startSequence = () => {
       this.showNotification("starting sequence...");
       
@@ -181,18 +215,6 @@ class GameService extends Service {
       sequenceService.skipNextItem();
     }
   }
-
-
-
-  /* interface actions */
-
-	// called from TrackSelector when user selects track
-	trackSelect = (sequence, track)=> {
-		sequenceService.trackSelect(sequence, track);
-    this.setReactive({
-      showInstrumentSelector: false
-    });
-	}
 
 	// manual start of items - also called by gestures -- confusing: investigate & rename
 	handlePlayNextItemButton = ()=> {
@@ -240,6 +262,14 @@ class GameService extends Service {
    	sequenceService.stopCurrentSound();
   }
 
+
+  /** interface actions **/
+
+  // called from TrackSelector when user selects track
+  trackSelect = (sequence, track)=> {
+    sequenceService.trackSelect(sequence, track);
+  }
+
   // big right button on game container
   handlePlayButton = ()=> {
     switch(this.state.challengeStatus) {
@@ -279,33 +309,18 @@ class GameService extends Service {
     }
   }
 
+  // center button to close instrument selection modal
+  handleCloseModal = ()=> {
+    this.setReactive({
+      showInstrumentSelector: false
+    });
+  }
+
   backToLobby() {
     sequenceService.cancelItemsAndSounds()
     this.setActiveChallengeStatus("prepare");
   }
   
-	leaveChallenge() {
-		sequenceService.stopSequence();
-
-		//stop nearby service
-		nearbyService.shutdownNearby();
-
-    this.setReactive({
-      statusBarTitle: "Title",
-      statusBarSubtitle: "Description",
-      showInstrumentSelector: false
-    })
-		
-		if(this.state.gameMode == "walk") {
-			this.moveToNextPlaceInWalk();
-		} else {
-			this.setReactive({
-				challengeStatus: "list",
-				activeChallenge: null
-			});	
-		}
-
-	}
 
 }
 

@@ -21,8 +21,7 @@ class ChallengeView extends React.Component {
     const challenge = this.props.gameService.activeChallenge;
     const challengeStatus = this.props.gameService.challengeStatus;
     const sequence = this.props.sequenceService.currentSequence;
-    const showInstrumentSelector = this.props.gameService.showInstrumentSelector;
-
+    
     return (
       <View>
         
@@ -32,7 +31,7 @@ class ChallengeView extends React.Component {
           </View>
         }
 
-        {challengeStatus == "prepare" && !showInstrumentSelector &&       
+        {challengeStatus == "prepare" &&       
           <View>
             <Text>{challenge.instructions}</Text>
             <SequenceVisualizer 
@@ -45,15 +44,9 @@ class ChallengeView extends React.Component {
           </View>
         }
         
-        {challengeStatus == "play" && !showInstrumentSelector &&       
+        {challengeStatus == "play" &&       
           <View>
             <Sequence/>
-          </View>
-        }
-
-        {challengeStatus != "navigate" && showInstrumentSelector &&
-          <View>
-            <TrackSelector sequence={this.props.sequenceService.currentSequence}/>
           </View>
         }
                   

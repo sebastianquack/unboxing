@@ -12,6 +12,11 @@ const primaryScreenLeft = Math.floor((dimensions.screenWidth - primaryScreenWidt
 const primaryScreenHeight = Math.floor(dimensions.screenHeight * 0.59)
 const primaryScreenTop = Math.floor(dimensions.screenHeight * 0.035)
 
+const modalWidth = Math.floor(dimensions.screenWidth)
+const modalTop = Math.floor(dimensions.screenHeight * 0.1)
+const modalLeft = Math.floor((dimensions.screenWidth - modalWidth) / 2)
+const modalHeight = Math.floor(dimensions.screenHeight * 0.9)
+
 const secondaryScreenWidth = Math.floor(dimensions.screenWidth * 0.25)
 const secondaryScreenLeft = Math.floor((dimensions.screenWidth - secondaryScreenWidth) / 2)
 const secondaryScreenHeight = Math.floor(dimensions.screenHeight * 0.235)
@@ -29,6 +34,9 @@ const buttonMidTop = Math.floor(dimensions.screenHeight * 0.76)
 
 const buttonRightLeft = Math.floor(dimensions.screenWidth * 0.7)
 const buttonRightTop = Math.floor(dimensions.screenHeight * 0.7)
+
+const buttonModalLeft = Math.floor(dimensions.screenWidth * 0.4)
+const buttonModalTop = Math.floor(dimensions.screenHeight * 0.8)
 
 class ScreenContainer extends React.Component { 
   constructor(props) {
@@ -50,10 +58,25 @@ class ScreenContainer extends React.Component {
         width:  statusBarWidth,
         top:    statusBarTop,
         // backgroundColor: "red",
-        zIndex: 11,
+        zIndex: 12,
       }}>
       {this.props.statusBar}
     </View>    
+  }
+
+  renderModal() {
+    if (!this.props.modalContent) return null
+    return <View style={{
+        position: 'absolute',
+        left:   modalLeft,
+        width:  modalWidth,
+        top:    modalTop,
+        height: modalHeight,
+        backgroundColor: "#000",
+        zIndex: 11,
+      }}>
+      { this.props.modalContent }
+    </View>
   }
 
   renderPrimaryScreen() {
@@ -120,27 +143,45 @@ class ScreenContainer extends React.Component {
     </View>
   }
 
+  renderButtonModal() {
+    if (!this.props.buttonModal) return null;
+    return <View style={{
+        position: 'absolute',
+        left:   buttonModalLeft,
+        top:    buttonModalTop,
+        zIndex: 51,
+      }}>
+      {this.props.buttonModal}
+    </View>
+  }
+
   render() {
     const source = this.props.secondaryScreen ? frameSecondaryImg : frameImg
     return (
       <View style={{
-        backgroundColor: '#333',
-      }}>
-        <View pointerEvents="none" style={{zIndex:50}}>
-          <Image
-            source={source}
-            style={{
-              width: dimensions.screenWidth, 
-              height: dimensions.screenHeight,
-            }}
-          />
-        </View>
-        {this.renderPrimaryScreen()}
-        {this.renderSecondaryScreen()}
+          backgroundColor: '#000',
+          width: dimensions.screenWidth, 
+          height: dimensions.screenHeight,
+        }}>
+        {!this.props.modalContent &&
+          <View pointerEvents="none" style={{zIndex:50}}>
+            <Image
+              source={source}
+              style={{
+                width: dimensions.screenWidth, 
+                height: dimensions.screenHeight,
+              }}
+            />
+           </View> 
+        }
+        {!this.props.modalContent && this.renderPrimaryScreen()}
+        {!this.props.modalContent && this.renderSecondaryScreen()}
+        {!this.props.modalContent && this.renderButtonLeft()}
+        {!this.props.modalContent && this.renderButtonMid()}
+        {!this.props.modalContent && this.renderButtonRight()}
+        {this.renderModal()}
+        {this.renderButtonModal()}
         {this.renderStatusBar()}
-        {this.renderButtonLeft()}
-        {this.renderButtonMid()}
-        {this.renderButtonRight()}
       </View>
     );
   }
@@ -152,7 +193,8 @@ ScreenContainer.propTypes = {
   buttonLeft: PropTypes.node,
   buttonMid: PropTypes.node,
   buttonRight: PropTypes.node,
-  statusBar: PropTypes.node
+  statusBar: PropTypes.node,
+  buttonModal: PropTypes.node
 };
 
 export default ScreenContainer;

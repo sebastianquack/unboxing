@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
-import {withGameService} from './ServiceConnector';
+
+import {withGameService, withSequenceService} from './ServiceConnector';
+import {gameService, sequenceService} from '../services';
 
 import ScreenContainer from './ScreenContainer'
 import PrimaryScreen from './PrimaryScreen'
@@ -12,8 +14,9 @@ import Button from './Button'
 
 import ChallengeSelector from './ChallengeSelector';
 import ChallengeView from './ChallengeView';
+import TrackSelector from './TrackSelector';
 
-import {gameService} from '../services';
+
 
 class GameContainer extends React.Component { 
   constructor(props) { 
@@ -27,6 +30,12 @@ class GameContainer extends React.Component {
       this.props.gameService.gameMode == "manual" && !this.props.gameService.activeChallenge && <ChallengeSelector key="1"/>,
       this.props.gameService.activeChallenge && <ChallengeView key="2"/>
     ]
+
+    const modalContent = this.props.gameService.showInstrumentSelector ? 
+      <TrackSelector sequence={this.props.sequenceService.currentSequence}/> : null
+    
+    const buttonModal = this.props.gameService.showInstrumentSelector ? 
+      <Button type="wide" text="Auswählen" onPress={()=>{gameService.handleCloseModal()}}/> : null
 
     return (
       <View>
@@ -43,6 +52,8 @@ class GameContainer extends React.Component {
           buttonMid = {<Button type="change" onPress={()=>{gameService.handleMidButton()}} />}
           buttonLeft = {<Button type="home" text="Back" onPress={()=>{gameService.handleBackButton()}}/>}
           statusBar = {<StatusBar title={this.props.gameService.statusBarTitle} description={this.props.gameService.statusBarSubtitle} />}
+          modalContent = {modalContent}      
+          buttonModal = {buttonModal}    
         />
 
       </View>
@@ -50,4 +61,4 @@ class GameContainer extends React.Component {
   }
 }
 
-export default withGameService(GameContainer);
+export default withGameService(withSequenceService(GameContainer));
