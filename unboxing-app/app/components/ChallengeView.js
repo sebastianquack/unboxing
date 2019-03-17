@@ -21,61 +21,32 @@ class ChallengeView extends React.Component {
     const challenge = this.props.gameService.activeChallenge;
     const challengeStatus = this.props.gameService.challengeStatus;
     const sequence = this.props.sequenceService.currentSequence;
-
+    
     return (
       <View>
-
-        {sequence &&
-          <Text style={globalStyles.titleText}>{sequence.name}</Text>
-        }
-        <Text style={globalStyles.subTitleText}>{challenge.name}</Text>
         
         {challengeStatus == "navigate" &&
           <View>
-            <Text style={globalStyles.subtitleText}>Navigate to {place.description}. Tap 'I'm here' when you're there.</Text>
-            
-            <TouchableOpacity style={styles.button} onPress={()=>{
-              gameService.setActiveChallengeStatus("prepare");            
-            }}>
-              <Text>I'm here!</Text>
-            </TouchableOpacity>
+            <Text style={globalStyles.subtitleText}>Navigate to {place.description}. Tap 'Play' when you're there.</Text>
           </View>
         }
 
-        {challengeStatus == "prepare" &&        
+        {challengeStatus == "prepare" &&       
           <View>
             <Text>{challenge.instructions}</Text>
-              <SequenceVisualizer 
-                sequence={this.props.sequenceService.currentSequence}
-                track={this.props.sequenceService.currentTrack}
-                item={this.props.sequenceService.currentItem}
-                controlStatus={this.props.sequenceService.controlStatus}
-                currentTime={this.props.sequenceService.sequenceTimeVisualizer}
-              />
-            <Text style={globalStyles.titleText}>Select your instrument!</Text>
-            <TrackSelector sequence={this.props.sequenceService.currentSequence}/>
-            <TouchableOpacity style={styles.button} onPress={()=>{
-              gameService.setActiveChallengeStatus("play");            
-            }}>
-              <Text>ready to play</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={()=>{
-              gameService.leaveChallenge();
-            }}>
-              <Text>stop challenge and leave</Text>
-            </TouchableOpacity>
+            <SequenceVisualizer 
+              sequence={this.props.sequenceService.currentSequence}
+              track={this.props.sequenceService.currentTrack}
+              item={this.props.sequenceService.currentItem}
+              controlStatus={this.props.sequenceService.controlStatus}
+              currentTime={this.props.sequenceService.sequenceTimeVisualizer}
+            />
           </View>
         }
         
-        {challengeStatus == "play" &&        
+        {challengeStatus == "play" &&       
           <View>
             <Sequence/>
-            <TouchableOpacity style={styles.button} onPress={()=>{
-              sequenceService.cancelItemsAndSounds()
-              gameService.setActiveChallengeStatus("prepare");
-            }}>
-              <Text>switch instrument or leave</Text>
-            </TouchableOpacity>
           </View>
         }
                   

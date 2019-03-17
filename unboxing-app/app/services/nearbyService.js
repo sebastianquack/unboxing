@@ -610,6 +610,10 @@ class NearbyService extends Service {
 				//this.showNotification("message received from " + endpointId + ": " + bytes)
 				this.setReactive({messageCounter: this.state.messageCounter+1});
 
+        if(msgObj.message == "start_sequence") {
+          this.writeToMessageLog(JSON.stringify(msgObj));  
+        }
+
         if(this.aliveDebug) {
           this.writeToMessageLog(msgObj.originator + "->" + msgObj.sender + "->me: " + msgObj.message + " uuid:" + (msgObj.uuid ? "..."+msgObj.uuid.substr(-3) : "-" ));  
         }

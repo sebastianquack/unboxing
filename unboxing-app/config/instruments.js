@@ -1,0 +1,18 @@
+export default loadInstrumentIcons = () => {return { 
+  "piano":       { image: require('../assets/img/instruments/Piano.png'),   video: require('../assets/video/instruments/Piano.mov') },
+  "flute":       { image: require('../assets/img/instruments/Flute.png'),   video: require('../assets/video/instruments/Flute.mov') },
+  "oboe 1":      { image: require('../assets/img/instruments/Oboe.png'),    video: require('../assets/video/instruments/Oboe.mov') },
+  "oboe 2":      { image: require('../assets/img/instruments/Oboe.png'),    video: require('../assets/video/instruments/Oboe.mov') },
+  "bassoon 1":   { image: require('../assets/img/instruments/Fagott.png'),  video: require('../assets/video/instruments/Fagott.mov') },
+  "bassoon 2":   { image: require('../assets/img/instruments/Fagott.png'),  video: require('../assets/video/instruments/Fagott.mov') },
+  "horn 1":      { image: require('../assets/img/instruments/Horn.png'),    video: require('../assets/video/instruments/Horn.mov') },
+  "horn 2":      { image: require('../assets/img/instruments/Horn.png'),    video: require('../assets/video/instruments/Horn.mov') },
+  "trumpet 1":   { image: require('../assets/img/instruments/Trompete.png'),video: require('../assets/video/instruments/Trompete.mov') },
+  "trumpet 2":   { image: require('../assets/img/instruments/Trompete.png'),video: require('../assets/video/instruments/Trompete.mov') },
+  "timpani":     { image: require('../assets/img/instruments/Pauke.png'),   video: require('../assets/video/instruments/Pauke.mov') },
+  "violin 1":    { image: require('../assets/img/instruments/Violine.png'), video: require('../assets/video/instruments/Violine.mov') },
+  "violin 2":    { image: require('../assets/img/instruments/Violine.png'), video: require('../assets/video/instruments/Violine.mov') },
+  "viola":       { image: require('../assets/img/instruments/Viola.png'),   video: require('../assets/video/instruments/Viola.mov') },
+  "cello":       { image: require('../assets/img/instruments/Cello.png'),   video: require('../assets/video/instruments/Cello.mov') },
+  "bass":        { image: require('../assets/img/instruments/Cello.png'),   video: require('../assets/video/instruments/Kontrabass.mov') },
+}}

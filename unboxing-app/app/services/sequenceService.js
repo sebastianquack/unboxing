@@ -41,6 +41,13 @@ class SequenceService extends Service {
 		return this.state.controlStatus;
 	}
 
+  getSequenceName = ()=> {
+    if(this.state.currentSequence) {
+      return this.state.currentSequence.name;
+    }
+    return null;
+  }
+
 	// return the first item of a specified track in the current Sequence
 	firstItemInTrack = (track)=> {
 		let items = this.state.currentSequence.items;
@@ -415,6 +422,7 @@ class SequenceService extends Service {
     });
 
   	console.log("started sequence at", this.state.loopStartedAt);
+    this.showNotification("sequence started");
   	this.localStart = localStart;
 
 		this.setupNextSequenceItem();

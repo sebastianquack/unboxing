@@ -4,6 +4,7 @@ import Video from 'react-native-video';
 import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
+import loadInstrumentIcons from '../../config/instruments'
 import UIText from './UIText'
 
 const horizontalPadding = Math.floor(dimensions.screenWidth * 0.014)
@@ -11,24 +12,7 @@ const verticalPadding = Math.floor(dimensions.screenWidth * 0.016)
 
 const imageWidth = dimensions.screenWidth * 0.25
 
-const instruments = { 
-  "piano":       { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Piano.mov') },
-  "flute":       { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Flute.mov') },
-  "oboe 1":      { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Oboe.mov') },
-  "oboe 2":      { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Oboe.mov') },
-  "bassoon 1":   { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Fagott.mov') },
-  "bassoon 2":   { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Fagott.mov') },
-  "horn 1":      { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Horn.mov') },
-  "horn 2":      { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Horn.mov') },
-  "trumpet 1":   { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Trompete.mov') },
-  "trumpet 2":   { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Trompete.mov') },
-  "timpani":     { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Pauke.mov') },
-  "violin 1":    { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Violine.mov') },
-  "violin 2":    { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Violine.mov') },
-  "viola":       { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Viola.mov') },
-  "cello":       { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Cello.mov') },
-  "double bass": { image: require('../../assets/img/piano.png'), video: require('../../assets/video/Kontrabass.mov') },
-}
+const instruments = loadInstrumentIcons();
 
 class SecondaryScreen extends React.Component { 
   constructor(props) {
@@ -53,7 +37,7 @@ class SecondaryScreen extends React.Component {
           flex: 2,
           // backgroundColor: "red"
         }}>
-        <Video 
+        {this.props.instrument && <Video 
           source={instruments[this.props.instrument].video} 
           repeat
           muted
@@ -62,7 +46,7 @@ class SecondaryScreen extends React.Component {
             height: "100%",
             width: "100%"
           }}
-        />
+        />}
       </View>      
       <View style={{
           flex: 1,
@@ -71,7 +55,7 @@ class SecondaryScreen extends React.Component {
         <UIText caps strong align="center">
           {this.props.instrument}
         </UIText>    
-        <UIText size="s" align="center" caps wide em>Aktuell</UIText>      
+        <UIText size="s" align="center" caps wide em>{this.props.instrument ? "Aktuell" : "Select Instrument"}</UIText>      
       </View>
     </View>
   }
