@@ -47,6 +47,7 @@ class GameContainer extends React.Component {
     switch(this.props.gameService.challengeStatus) {
       case "navigate": 
         buttonRight = <Button text="Check In" onPress={()=>{gameService.handlePlayButton()}}/>; break;
+        // todo: add place image in secondar screen here
         break;
       
       case "prepare": 

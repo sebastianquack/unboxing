@@ -19,7 +19,8 @@ class GameService extends Service {
 			showInstrumentSelector: false, // show the interface selector in the interface
       statusBarTitle: defaultStatusBarTitle,
       statusBarSubtitle: defaultStatusBarSubtitle,
-      debugMode: false          // show debugging info in interface
+      debugMode: false,          // show debugging info in interface
+      infoStream: [{title: "title", content: "some instructions for the player"}, {title: "title", content: "some more instructions for the player"}]
 		});
 
 		// not reactive vars
