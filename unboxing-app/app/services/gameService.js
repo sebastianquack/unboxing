@@ -2,6 +2,9 @@ import Service from './Service';
 
 import {sequenceService, nearbyService, soundService, storageService} from './';
 
+const defaultStatusBarTitle = "Unboxing Mozart";
+const defaultStatusBarSubtitle = "Development Version - Testing"
+
 class GameService extends Service {
 
 	constructor() {
@@ -14,8 +17,8 @@ class GameService extends Service {
 			challengeStatus: "off",		// off <-> navigate <-> prepare <-> play 
 			activeChallenge: null, 		// active challenge saved here
 			showInstrumentSelector: false, // show the interface selector in the interface
-      statusBarTitle: "Title",
-      statusBarSubtitle: "Description",
+      statusBarTitle: defaultStatusBarTitle,
+      statusBarSubtitle: defaultStatusBarSubtitle,
       debugMode: false          // show debugging info in interface
 		});
 
@@ -83,7 +86,8 @@ class GameService extends Service {
 				activePlaceReference: null,
 				activePlace: null,
 				activeChallenge: null,
-				walkStatus: "ended"
+				walkStatus: "ended",
+        challengeStatus: "off"
 			});
 			return;
 		}
@@ -133,8 +137,8 @@ class GameService extends Service {
     nearbyService.shutdownNearby();
 
     this.setReactive({
-      statusBarTitle: "Title",
-      statusBarSubtitle: "Description",
+      statusBarTitle: defaultStatusBarTitle,
+      statusBarSubtitle: defaultStatusBarSubtitle,
       showInstrumentSelector: false
     })
     

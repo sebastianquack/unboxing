@@ -39,6 +39,30 @@ class GameContainer extends React.Component {
 
     const instrumentName = this.props.sequenceService.currentTrack ? this.props.sequenceService.currentTrack.name : null
 
+    let secondaryScreen = null;
+    let buttonLeft = null;
+    let buttonMid = null;
+    let buttonRight = null;
+
+    switch(this.props.gameService.challengeStatus) {
+      case "navigate": 
+        buttonRight = <Button text="Check In" onPress={()=>{gameService.handlePlayButton()}}/>; break;
+        break;
+      
+      case "prepare": 
+        buttonLeft = <Button type="home" text="Exit" onPress={()=>{gameService.handleBackButton()}}/>;
+        buttonRight = <Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/>;
+        secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
+        buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
+        break;
+
+      case "play":
+        buttonLeft = <Button type="home" text="Back" onPress={()=>{gameService.handleBackButton()}}/>;
+        secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
+        buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
+        break;
+    }
+
     return (
       <View>
         <ScreenContainer
@@ -49,10 +73,10 @@ class GameContainer extends React.Component {
               // overlayContent = {<Text>Overlay Content -- DIRIGENT</Text>}
               scrollContent = { content }
             />}
-          secondaryScreen = {<SecondaryScreen type="instrument" instrument={instrumentName} />}
-          buttonRight = {<Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/>}
-          buttonMid = {<Button type="change" onPress={()=>{gameService.handleMidButton()}} />}
-          buttonLeft = {<Button type="home" text="Back" onPress={()=>{gameService.handleBackButton()}}/>}
+          secondaryScreen = {secondaryScreen}
+          buttonRight = {buttonRight}
+          buttonMid = {buttonMid}
+          buttonLeft = {buttonLeft}
           statusBar = {<StatusBar title={this.props.gameService.statusBarTitle} description={this.props.gameService.statusBarSubtitle} />}
           modalContent = {modalContent}      
           buttonModal = {buttonModal}    
