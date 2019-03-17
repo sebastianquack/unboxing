@@ -3,6 +3,7 @@ import { View, StyleSheet, Image } from 'react-native';
 import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
+import loadInstrumentIcons from '../../config/instruments'
 import UIText from './UIText'
 
 const horizontalPadding = Math.floor(dimensions.screenWidth * 0.014)
@@ -10,24 +11,7 @@ const verticalPadding = Math.floor(dimensions.screenWidth * 0.016)
 
 const imageWidth = dimensions.screenWidth * 0.25
 
-const instruments = { 
-  "piano": { image: require('../../assets/img/piano.png') },
-  "flute": { image: require('../../assets/img/piano.png') },
-  "oboe 1": { image: require('../../assets/img/piano.png') },
-  "oboe 2": { image: require('../../assets/img/piano.png') },
-  "bassoon 1": { image: require('../../assets/img/piano.png') },
-  "bassoon 2": { image: require('../../assets/img/piano.png') },
-  "horn 1": { image: require('../../assets/img/piano.png') },
-  "horn 2": { image: require('../../assets/img/piano.png') },
-  "trumpet 1": { image: require('../../assets/img/piano.png') },
-  "trumpet 2": { image: require('../../assets/img/piano.png') },
-  "timpani": { image: require('../../assets/img/piano.png') },
-  "violin 1": { image: require('../../assets/img/piano.png') },
-  "violin 2": { image: require('../../assets/img/piano.png') },
-  "viola": { image: require('../../assets/img/piano.png') },
-  "cello": { image: require('../../assets/img/piano.png') },
-  "double bass": { image: require('../../assets/img/piano.png') },
-}
+const instruments = loadInstrumentIcons();
 
 class SecondaryScreen extends React.Component { 
   constructor(props) {
@@ -52,14 +36,16 @@ class SecondaryScreen extends React.Component {
           flex: 2,
           // backgroundColor: "red"
         }}>
-        <Image 
-          source={instruments[this.props.instrument].image} 
-          resizeMode="contain"
-          style={{
-            height: "100%",
-            width: "100%"
-          }}
-        />
+        {this.props.instrument && instruments[this.props.instrument] &&
+          <Image 
+            source={instruments[this.props.instrument].image} 
+            resizeMode="contain"
+            style={{
+              height: "100%",
+              width: "100%"
+            }}
+          />
+        }
       </View>      
       <View style={{
           flex: 1,
@@ -68,7 +54,7 @@ class SecondaryScreen extends React.Component {
         <UIText caps strong align="center">
           {this.props.instrument}
         </UIText>    
-        <UIText size="s" align="center" caps wide em>Aktuell</UIText>      
+        <UIText size="s" align="center" caps wide em>{this.props.instrument ? "Aktuell" : "Select Instrument"}</UIText>      
       </View>
     </View>
   }

@@ -37,6 +37,8 @@ class GameContainer extends React.Component {
     const buttonModal = this.props.gameService.showInstrumentSelector ? 
       <Button type="wide" text="Auswählen" onPress={()=>{gameService.handleCloseModal()}}/> : null
 
+    const instrumentName = this.props.sequenceService.currentTrack ? this.props.sequenceService.currentTrack.name : null
+
     return (
       <View>
         <ScreenContainer
@@ -47,7 +49,7 @@ class GameContainer extends React.Component {
               // overlayContent = {<Text>Overlay Content -- DIRIGENT</Text>}
               scrollContent = { content }
             />}
-          secondaryScreen = {<SecondaryScreen type="instrument" instrument="piano" />}
+          secondaryScreen = {<SecondaryScreen type="instrument" instrument={instrumentName} />}
           buttonRight = {<Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/>}
           buttonMid = {<Button type="change" onPress={()=>{gameService.handleMidButton()}} />}
           buttonLeft = {<Button type="home" text="Back" onPress={()=>{gameService.handleBackButton()}}/>}
