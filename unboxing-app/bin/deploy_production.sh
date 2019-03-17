@@ -2,6 +2,8 @@
 
 set -x
 
+NETWORK_PREFIX="${NETWORK_PREFIX:-192.168.8.1}" # default NETWORK starts with 192.168.8.1
+
 ## declare an array variable
 ##declare -a deviceIds=("30" "21" "17") ## You can access them using "${deviceIds[0]}", "${deviceIds[1]}" 
 deviceIds=( "$@" )
@@ -19,7 +21,7 @@ do
 
    echo "connecting to device ${i}"
    adb disconnect
-   adb connect "192.168.8.1${i}:5555"
+   adb connect "$NETWORK_PREFIX${i}:5555"
 
    echo "stopping app"
    adb shell am force-stop com.unboxing
