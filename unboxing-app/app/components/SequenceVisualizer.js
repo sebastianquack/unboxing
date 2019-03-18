@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { bindCallback } from 'rxjs';
 
 import UIText from './UIText'
-import {globalStyles} from '../../config/globalStyles';
+import {globalStyles, colors} from '../../config/globalStyles';
 
 const labelsWidth = 150
 const visibleRange = 5000
@@ -95,6 +95,8 @@ class SequenceVisualizer extends React.Component {
 
   renderHeaderTrack = (track) => {
     // const backgroundColor = ( !this.props.track || this.props.track.name == track.name ? track.color : "transparent" )
+    const active = this.props.track ? ( this.props.track.name == track.name ) : false
+
     return (
       <View style={{
           ...styles.track, 
@@ -102,7 +104,7 @@ class SequenceVisualizer extends React.Component {
           // backgroundColor,
         }} key={track.name}>
         <View>
-          <UIText size="s" caps style={{color: 'rgb(90,85,80)', opacity: 0.8}}>
+          <UIText size="s" caps em={active} color={"rgba(90,85,80,0.8)"}>
             {track.name}
           </UIText>
         </View>
@@ -129,11 +131,14 @@ class SequenceVisualizer extends React.Component {
     const widthPercentage = 100 * item.duration / sequenceDuration
 
     const backgroundColor = ( !this.props.track || this.props.track.name == track.name ? track.color : styles.bodyTrackItem.backgroundColor )
+    const active = this.props.track ? ( this.props.track.name == track.name ) : false
+    const activeStyle = active ? styles.bodyTrackItem__active : {}
 
     return (
       <View key={item._id} style={{
           ...styles.bodyTrackItem, 
-          backgroundColor,
+          ...activeStyle,
+          // backgroundColor,
           width: widthPercentage+"%", 
           left: leftPercentage+"%",
         }}>
@@ -212,15 +217,17 @@ class SequenceVisualizer extends React.Component {
                   transform: [{ translateX: this.state.scrollX }]
                 }}>
                 {tracks.map(this.renderBodyTrack)}
-                {this.renderIndicator()}
+                {/*this.renderIndicator()*/}
               </Animated.View>
             </View>
           </View>
-          <UIText size="s">ctime {this.props.currentTime}</UIText>
-          <UIText size="s">durat {this.props.sequence.custom_duration || this.props.sequence.duration}</UIText>
-          <UIText size="s">loopc {this.props.loopCounter}</UIText>
-          <UIText size="s">cowid {this.state.containerWidth}</UIText>
-          <UIText size="s">sqwid {this.state.sequenceWidth}</UIText>
+          {/*<View style={{opacity:0.5}}>
+            <UIText size="s">ctime {this.props.currentTime}</UIText>
+            <UIText size="s">durat {this.props.sequence.custom_duration || this.props.sequence.duration}</UIText>
+            <UIText size="s">loopc {this.props.loopCounter}</UIText>
+            <UIText size="s">cowid {this.state.containerWidth}</UIText>
+            <UIText size="s">sqwid {this.state.sequenceWidth}</UIText>
+            </View>*/}
         </View>
       );
     } else {
@@ -263,23 +270,29 @@ const styles = StyleSheet.create({
   track: {
     height: 30,
     justifyContent: "center",
+    marginVertical: 2,
   },
   headerTrack: {
     paddingHorizontal: 8,
     color: "white",
   },
   bodyTrackItem: {
-    backgroundColor: '#aaa',
+    backgroundColor: 'transparent',
     height: "100%",
     justifyContent: "center",
-    borderRadius: 0,
+    borderRadius: 3,
+    borderColor: "#333",
+    borderWidth: 2,
     position: "absolute",
     paddingHorizontal: 8,
     overflow: "hidden",
   },
+  bodyTrackItem__active: {
+    borderColor: colors.turquoise,
+  },
   bodyTrackItem__actionItem: {
-    borderRadius: 20,
-    backgroundColor: 'yellow',
+    borderRadius: 3,
+    backgroundColor: colors.turquoise,
     padding: 4,
   }, 
   bodyTrackItemText: {

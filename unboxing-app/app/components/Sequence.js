@@ -84,7 +84,6 @@ class Sequence extends React.Component {
           nextUserAction={this.props.sequenceService.nextUserAction}
           loopCounter={this.props.sequenceService.loopCounter}
         />
-          <View><Text style={{fontSize: 30}}>{this.props.sequenceService.nextActionMessage}</Text></View>
 
           {this.props.sequenceService.showPlayItemButton && this.props.gameService.debugMode &&
               <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>

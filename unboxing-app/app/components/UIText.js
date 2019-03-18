@@ -49,6 +49,9 @@ class UIText extends React.Component {
     // add em style
     if (this.props.em) style = { ...style, ...emStyle }    
 
+    // color
+    if (!this.props.em && this.props.color) style = { ...style, color: this.props.color }    
+
     // add lettert spacing
     const spacingStyle = this.props.wide ? "wide" : "normal"
     const capsStyle = this.props.caps ? "caps" : "nocaps"
@@ -83,6 +86,7 @@ UIText.propTypes = {
   strong: PropTypes.bool, // bold
   caps: PropTypes.bool, // capitalized
   wide: PropTypes.bool, // larger letter-spacing
+  color: PropTypes.string, // custom color
   style: PropTypes.object // provide custom styles
 };
 
