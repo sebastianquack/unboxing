@@ -244,10 +244,8 @@ class SequenceService extends Service {
 
 					if(nextStartTime < currentEndTime + 100) {
 						if(!this.autoPlayNextItem()) {
-							this.setReactive({
-								nextActionMessage: this.state.nextActionMessage +
-								" also prepare to play your next sound with the start gesture!"
-							});	
+							this.setActionMessage(this.state.nextActionMessage +
+								" also prepare to play your next sound with the start gesture!");	
 							this.activateNextUserAction();
 						}
 					}
@@ -284,7 +282,7 @@ class SequenceService extends Service {
 		if(this.state.controlStatus == "idle") {
 			if(this.state.currentSequence) {
 				if(this.state.currentSequence.endedFlag) {
-					this.setReactive({nextActionMessage: "sequence ended"})
+					this.setActionMessage("sequence ended")
 					this.deactivateUserAction();
 				}	
 			}
