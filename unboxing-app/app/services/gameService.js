@@ -20,7 +20,7 @@ class GameService extends Service {
       statusBarTitle: defaultStatusBarTitle,
       statusBarSubtitle: defaultStatusBarSubtitle,
       debugMode: false,          // show debugging info in interface
-      infoStream: [{title: "title", content: "some instructions for the player"}, {title: "title", content: "some more instructions for the player"}]
+      infoStream: []
 		});
 
 		// not reactive vars
@@ -105,7 +105,6 @@ class GameService extends Service {
 		this.setActiveChallenge(challenge);
 	}
 
-
   /** challenges **/
 
 	// called when user enters a challenge
@@ -152,6 +151,8 @@ class GameService extends Service {
       }); 
     }
 
+    this.initInfoStream();
+
   }
 
   activateNearbyCallbacks() {
@@ -183,11 +184,17 @@ class GameService extends Service {
     if(status == "prepare") {
       this.activateNearbyCallbacks();
     }
+
+    this.initInfoStream();
 	}
 
 	getActiveChallenge = ()=> {
 		return this.state.activeChallenge;
 	}
+
+  getChallengeStatus = ()=> {
+    return this.state.challengeStatus;
+  }
 
 	isChallengeLooping = ()=> {
 		let looping = false;
@@ -326,6 +333,41 @@ class GameService extends Service {
     this.setActiveChallengeStatus("prepare");
   }
   
+
+  /** info stream management **/
+
+  clearInfoStream = ()=> {
+    this.setReactive({
+      infoStream: []
+    });
+  }
+
+  addItemToInfoStream = (title, content) => {
+    let infoStream = this.state.infoStream;
+    infoStream.push({title: title, content: content});
+    this.setReactive({
+      infoStream: infoStream
+    });
+  }
+
+  initInfoStream = ()=> {
+    this.clearInfoStream();    
+    if(!this.state.activeChallenge) return;
+
+    switch(this.state.challengeStatus) {
+      case "navigate":
+        this.addItemToInfoStream("navigation", "go to the place marked on the map.");
+        this.addItemToInfoStream("navigation", "press check in when you're there!");
+        break;
+      case "prepare":
+        this.addItemToInfoStream("welcome", "welcome to this passage. select your instrument and press play to start playing!");
+        break;
+      case "play":
+        sequenceService.updateActionInterface();
+        break;
+    }
+  }
+
 
 }
 

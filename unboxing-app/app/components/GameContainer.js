@@ -15,8 +15,7 @@ import Button from './Button'
 import ChallengeSelector from './ChallengeSelector';
 import ChallengeView from './ChallengeView';
 import TrackSelector from './TrackSelector';
-
-
+import {InfoStream} from './InfoStream';
 
 class GameContainer extends React.Component { 
   constructor(props) { 
@@ -26,33 +25,41 @@ class GameContainer extends React.Component {
 
   render() {
 
-    const content = [
-      this.props.gameService.gameMode == "manual" && !this.props.gameService.activeChallenge && <ChallengeSelector key="1"/>,
-      this.props.gameService.activeChallenge && <ChallengeView key="2"/>
-    ]
-
-    const modalContent = this.props.gameService.showInstrumentSelector ? 
-      <TrackSelector sequence={this.props.sequenceService.currentSequence}/> : null
-    
-    const buttonModal = this.props.gameService.showInstrumentSelector ? 
-      <Button type="wide" text="Auswählen" onPress={()=>{gameService.handleCloseModal()}}/> : null
-
-    const instrumentName = this.props.sequenceService.currentTrack ? this.props.sequenceService.currentTrack.name : null
-
+    let mainContent = null; 
+    let scrollContent = null;
+    let infoStreamContent = null;
     let secondaryScreen = null;
     let buttonLeft = null;
     let buttonMid = null;
     let buttonRight = null;
+    let modalContent = null;
+    let buttonModal = null;
 
+    // configure content
+    if(this.props.gameService.gameMode == "manual" && !this.props.gameService.activeChallenge) {
+      scrollContent = <ChallengeSelector/>
+    } else {
+      mainContent = <ChallengeView/>        
+    }
+        
+    // configure modal
+    if(this.props.gameService.showInstrumentSelector) {
+        modalContent = <TrackSelector sequence={this.props.sequenceService.currentSequence}/>
+        buttonModal = <Button type="wide" text="Auswählen" onPress={()=>{gameService.handleCloseModal()}}/>
+    }
+    
+    // configure secondary screen and buttons
+    const instrumentName = this.props.sequenceService.currentTrack ? this.props.sequenceService.currentTrack.name : null
+    
     switch(this.props.gameService.challengeStatus) {
       case "navigate": 
         buttonRight = <Button text="Check In" onPress={()=>{gameService.handlePlayButton()}}/>; break;
-        // todo: add place image in secondar screen here
+        // todo: add place image in secondary screen here
         break;
       
       case "prepare": 
         buttonLeft = <Button type="home" text="Exit" onPress={()=>{gameService.handleBackButton()}}/>;
-        buttonRight = <Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/>;
+        buttonRight = instrumentName ? <Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/> : null;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
         buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
         break;
@@ -70,9 +77,10 @@ class GameContainer extends React.Component {
           primaryScreen = {<PrimaryScreen
               backgroundColor="active"
               // backgroundFlow
-              // mainContent = {<Text>Content</Text>}
+              mainContent = { mainContent }
               // overlayContent = {<Text>Overlay Content -- DIRIGENT</Text>}
-              scrollContent = { content }
+              scrollContent = { scrollContent }
+              infoStreamContent = { this.props.gameService.infoStream.length ? <InfoStream/> : null }
             />}
           secondaryScreen = {secondaryScreen}
           buttonRight = {buttonRight}

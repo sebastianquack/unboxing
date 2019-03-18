@@ -34,6 +34,7 @@ const emStyle = {
 
 const strongStyle = {
   fontWeight: "bold",
+  fontFamily: "DINPro-Bold",
 }
 
 class UIText extends React.Component { 

@@ -64,7 +64,7 @@ class StorageService extends Service {
 
 		this.loadFromFile()		
     setTimeout(()=>{
-      this.showNotification("trying to get everything...");
+      //this.showNotification("trying to get everything...");
       this.updateEverything();
     }, 1000);
 	}
@@ -76,7 +76,7 @@ class StorageService extends Service {
 			this.setReactive(result)
 			this.writeToFile();
 		} else {
-			this.showNotification("no data received");
+			//this.showNotification("no data received");
 			//await this.loadFromFile();
 		}
 	}

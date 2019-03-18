@@ -184,6 +184,11 @@ class SequenceService extends Service {
 
 	setActionMessage = (msg)=> {
 		this.setReactive({nextActionMessage: msg});
+    
+    if(gameService.getChallengeStatus() == "play") { // filter out action messages unless in pay mode
+      gameService.clearInfoStream();
+      gameService.addItemToInfoStream("info", msg);  
+    }
 	}
 
 	// analyse current state and display appropriate action message

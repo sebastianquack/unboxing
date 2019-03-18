@@ -9,7 +9,8 @@ const dimensions = {
 }
 
 const colors = {
-  turquoise: "#00AFA1"
+  turquoise: "#00AFA1",
+  warmWhite: "#F3DFD4"
 }
 
 const globalStyles = StyleSheet.create({
