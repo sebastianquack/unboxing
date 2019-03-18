@@ -15,8 +15,7 @@ import Button from './Button'
 import ChallengeSelector from './ChallengeSelector';
 import ChallengeView from './ChallengeView';
 import TrackSelector from './TrackSelector';
-
-
+import {InfoStream} from './InfoStream';
 
 class GameContainer extends React.Component { 
   constructor(props) { 
@@ -26,18 +25,51 @@ class GameContainer extends React.Component {
 
   render() {
 
-    const content = [
-      this.props.gameService.gameMode == "manual" && !this.props.gameService.activeChallenge && <ChallengeSelector key="1"/>,
-      this.props.gameService.activeChallenge && <ChallengeView key="2"/>
-    ]
+    let mainContent = null; 
+    let scrollContent = null;
+    let infoStreamContent = null;
+    let secondaryScreen = null;
+    let buttonLeft = null;
+    let buttonMid = null;
+    let buttonRight = null;
+    let modalContent = null;
+    let buttonModal = null;
 
-    const modalContent = this.props.gameService.showInstrumentSelector ? 
-      <TrackSelector sequence={this.props.sequenceService.currentSequence}/> : null
+    // configure content
+    if(this.props.gameService.gameMode == "manual" && !this.props.gameService.activeChallenge) {
+      scrollContent = <ChallengeSelector/>
+    } else {
+      mainContent = <ChallengeView/>        
+    }
+        
+    // configure modal
+    if(this.props.gameService.showInstrumentSelector) {
+        modalContent = <TrackSelector sequence={this.props.sequenceService.currentSequence}/>
+        buttonModal = <Button type="wide" text="Auswählen" onPress={()=>{gameService.handleCloseModal()}}/>
+    }
     
-    const buttonModal = this.props.gameService.showInstrumentSelector ? 
-      <Button type="wide" text="Auswählen" onPress={()=>{gameService.handleCloseModal()}}/> : null
-
+    // configure secondary screen and buttons
     const instrumentName = this.props.sequenceService.currentTrack ? this.props.sequenceService.currentTrack.name : null
+    
+    switch(this.props.gameService.challengeStatus) {
+      case "navigate": 
+        buttonRight = <Button text="Check In" onPress={()=>{gameService.handlePlayButton()}}/>; break;
+        // todo: add place image in secondary screen here
+        break;
+      
+      case "prepare": 
+        buttonLeft = <Button type="home" text="Exit" onPress={()=>{gameService.handleBackButton()}}/>;
+        buttonRight = instrumentName ? <Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/> : null;
+        secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
+        buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
+        break;
+
+      case "play":
+        buttonLeft = <Button type="home" text="Back" onPress={()=>{gameService.handleBackButton()}}/>;
+        secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
+        buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
+        break;
+    }
 
     return (
       <View>
@@ -45,14 +77,15 @@ class GameContainer extends React.Component {
           primaryScreen = {<PrimaryScreen
               backgroundColor="active"
               // backgroundFlow
-              // mainContent = {<Text>Content</Text>}
+              mainContent = { mainContent }
               // overlayContent = {<Text>Overlay Content -- DIRIGENT</Text>}
-              scrollContent = { content }
+              scrollContent = { scrollContent }
+              infoStreamContent = { this.props.gameService.infoStream.length ? <InfoStream/> : null }
             />}
-          secondaryScreen = {<SecondaryScreen type="instrument" instrument={instrumentName} />}
-          buttonRight = {<Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/>}
-          buttonMid = {<Button type="change" onPress={()=>{gameService.handleMidButton()}} />}
-          buttonLeft = {<Button type="home" text="Back" onPress={()=>{gameService.handleBackButton()}}/>}
+          secondaryScreen = {secondaryScreen}
+          buttonRight = {buttonRight}
+          buttonMid = {buttonMid}
+          buttonLeft = {buttonLeft}
           statusBar = {<StatusBar title={this.props.gameService.statusBarTitle} description={this.props.gameService.statusBarSubtitle} />}
           modalContent = {modalContent}      
           buttonModal = {buttonModal}    

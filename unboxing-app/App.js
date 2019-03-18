@@ -32,6 +32,7 @@ import Gestures from './app/components/admin/Gestures';
 import SensorInfo from './app/components/admin/SensorInfo';
 import DebugToggle from './app/components/admin/DebugToggle';
 import GameModeAdmin from './app/components/admin/GameModeAdmin';
+import SequenceAdmin from './app/components/admin/SequenceAdmin';
 
 const sections = [
   {
@@ -48,6 +49,11 @@ const sections = [
   {
     name: "TimeSync",
     component:TimeSync,
+    default: false,
+  },
+  {
+    name: "SequenceAdmin",
+    component:SequenceAdmin,
     default: false,
   },
   {

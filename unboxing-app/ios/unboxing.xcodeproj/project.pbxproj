@@ -66,6 +66,24 @@
 		C550FE8AE727487FA4774A7D /* DINPro.otf in Resources */ = {isa = PBXBuildFile; fileRef = B038FC991EEA4EBBAFAC93F8 /* DINPro.otf */; };
 		B543213E9ABC43BCAEC5DDFD /* DINPro-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F0C0A3E1DAA3465A9B08049E /* DINPro-Medium.ttf */; };
 		52955AC42BEB43119C17F789 /* libRCTVideo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3D01FA38B48341AF8F671F3B /* libRCTVideo.a */; };
+		A5BD3C66AF8444629E0FDBA5 /* DINPro-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DFB07002FDB04E398F2FC957 /* DINPro-Black.ttf */; };
+		AC25C6BB5BE84FA1BE150086 /* DINPro-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 173568F5C3D4461FB560C811 /* DINPro-BlackItalic.ttf */; };
+		A1F2493B10D34E0D86FE3752 /* DINPro-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 432421A475E943CA8EF2A9C5 /* DINPro-Bold.ttf */; };
+		1E015F346DB442628C052DCF /* DINPro-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8D8727979DCD470EBFF8B055 /* DINPro-BoldItalic.ttf */; };
+		76D392D6EA274E59A5E02E17 /* DINPro-CondensedBlack.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 35DE8628CF074A7AA62FF257 /* DINPro-CondensedBlack.ttf */; };
+		80F2318694C9429CB227DAFD /* DINPro-CondensedBlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 580772AF3E6C425F9141CF98 /* DINPro-CondensedBlackItalic.ttf */; };
+		5D2D821DB1E44832AECF9F4D /* DINPro-CondensedBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FD18A6A5A5348D4A9CBF5F4 /* DINPro-CondensedBold.ttf */; };
+		23B35465039F492C8DC592D2 /* DINPro-CondensedBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CCDF6F8C34F84DD88988AE0C /* DINPro-CondensedBoldItalic.ttf */; };
+		DB0BD536A8B3498EB6C66025 /* DINPro-CondensedItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5AF5D071082C4A18A12E3386 /* DINPro-CondensedItalic.ttf */; };
+		51ECA824466A437FADB81681 /* DINPro-CondensedLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 013A3D4DCF23454185392D67 /* DINPro-CondensedLight.ttf */; };
+		68EEEF9C02F449C6A5276D45 /* DINPro-CondensedLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CA8EB4C0456D4629BF15C39D /* DINPro-CondensedLightItalic.ttf */; };
+		244419D914844D61A2C0D9B2 /* DINPro-CondensedMedium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4440594BC8D04BCEB76F01BC /* DINPro-CondensedMedium.ttf */; };
+		3E5789D3AE974132BC2FA499 /* DINPro-CondensedMediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D5091330ABB64B1CAE4D8179 /* DINPro-CondensedMediumItalic.ttf */; };
+		9B6E4B1D5FFF4C59959289C6 /* DINPro-CondensedRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E95581752CC8450597CB57C9 /* DINPro-CondensedRegular.ttf */; };
+		06916365DA3C4FB48A34E8BE /* DINPro-Italic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EF1D09DA3B5B45BDBB937191 /* DINPro-Italic.ttf */; };
+		A1A5BB55D5284BC59592528D /* DINPro-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F06A5C38173343D0A9C2E4EB /* DINPro-Light.ttf */; };
+		84AD4B26D3ED446C9E0B72EA /* DINPro-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27FE5E9341C64908BB8C8E3C /* DINPro-LightItalic.ttf */; };
+		82879E18AC3C41309C216901 /* DINPro-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FEC32E4D8794FA2927D5685 /* DINPro-MediumItalic.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -407,6 +425,24 @@
 		F0C0A3E1DAA3465A9B08049E /* DINPro-Medium.ttf */ = {isa = PBXFileReference; name = "DINPro-Medium.ttf"; path = "../assets/fonts/DINPro-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		59D46DD717F24C90A1726B77 /* RCTVideo.xcodeproj */ = {isa = PBXFileReference; name = "RCTVideo.xcodeproj"; path = "../node_modules/react-native-video/ios/RCTVideo.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		3D01FA38B48341AF8F671F3B /* libRCTVideo.a */ = {isa = PBXFileReference; name = "libRCTVideo.a"; path = "libRCTVideo.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		DFB07002FDB04E398F2FC957 /* DINPro-Black.ttf */ = {isa = PBXFileReference; name = "DINPro-Black.ttf"; path = "../assets/fonts/DINPro-Black.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		173568F5C3D4461FB560C811 /* DINPro-BlackItalic.ttf */ = {isa = PBXFileReference; name = "DINPro-BlackItalic.ttf"; path = "../assets/fonts/DINPro-BlackItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		432421A475E943CA8EF2A9C5 /* DINPro-Bold.ttf */ = {isa = PBXFileReference; name = "DINPro-Bold.ttf"; path = "../assets/fonts/DINPro-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8D8727979DCD470EBFF8B055 /* DINPro-BoldItalic.ttf */ = {isa = PBXFileReference; name = "DINPro-BoldItalic.ttf"; path = "../assets/fonts/DINPro-BoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		35DE8628CF074A7AA62FF257 /* DINPro-CondensedBlack.ttf */ = {isa = PBXFileReference; name = "DINPro-CondensedBlack.ttf"; path = "../assets/fonts/DINPro-CondensedBlack.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		580772AF3E6C425F9141CF98 /* DINPro-CondensedBlackItalic.ttf */ = {isa = PBXFileReference; name = "DINPro-CondensedBlackItalic.ttf"; path = "../assets/fonts/DINPro-CondensedBlackItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8FD18A6A5A5348D4A9CBF5F4 /* DINPro-CondensedBold.ttf */ = {isa = PBXFileReference; name = "DINPro-CondensedBold.ttf"; path = "../assets/fonts/DINPro-CondensedBold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		CCDF6F8C34F84DD88988AE0C /* DINPro-CondensedBoldItalic.ttf */ = {isa = PBXFileReference; name = "DINPro-CondensedBoldItalic.ttf"; path = "../assets/fonts/DINPro-CondensedBoldItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		5AF5D071082C4A18A12E3386 /* DINPro-CondensedItalic.ttf */ = {isa = PBXFileReference; name = "DINPro-CondensedItalic.ttf"; path = "../assets/fonts/DINPro-CondensedItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		013A3D4DCF23454185392D67 /* DINPro-CondensedLight.ttf */ = {isa = PBXFileReference; name = "DINPro-CondensedLight.ttf"; path = "../assets/fonts/DINPro-CondensedLight.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		CA8EB4C0456D4629BF15C39D /* DINPro-CondensedLightItalic.ttf */ = {isa = PBXFileReference; name = "DINPro-CondensedLightItalic.ttf"; path = "../assets/fonts/DINPro-CondensedLightItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4440594BC8D04BCEB76F01BC /* DINPro-CondensedMedium.ttf */ = {isa = PBXFileReference; name = "DINPro-CondensedMedium.ttf"; path = "../assets/fonts/DINPro-CondensedMedium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D5091330ABB64B1CAE4D8179 /* DINPro-CondensedMediumItalic.ttf */ = {isa = PBXFileReference; name = "DINPro-CondensedMediumItalic.ttf"; path = "../assets/fonts/DINPro-CondensedMediumItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E95581752CC8450597CB57C9 /* DINPro-CondensedRegular.ttf */ = {isa = PBXFileReference; name = "DINPro-CondensedRegular.ttf"; path = "../assets/fonts/DINPro-CondensedRegular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		EF1D09DA3B5B45BDBB937191 /* DINPro-Italic.ttf */ = {isa = PBXFileReference; name = "DINPro-Italic.ttf"; path = "../assets/fonts/DINPro-Italic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F06A5C38173343D0A9C2E4EB /* DINPro-Light.ttf */ = {isa = PBXFileReference; name = "DINPro-Light.ttf"; path = "../assets/fonts/DINPro-Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		27FE5E9341C64908BB8C8E3C /* DINPro-LightItalic.ttf */ = {isa = PBXFileReference; name = "DINPro-LightItalic.ttf"; path = "../assets/fonts/DINPro-LightItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1FEC32E4D8794FA2927D5685 /* DINPro-MediumItalic.ttf */ = {isa = PBXFileReference; name = "DINPro-MediumItalic.ttf"; path = "../assets/fonts/DINPro-MediumItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -707,6 +743,24 @@
 				3CCFAD60E0BF4448A5A0C49A /* DINPro-MediumItalic.otf */,
 				B038FC991EEA4EBBAFAC93F8 /* DINPro.otf */,
 				F0C0A3E1DAA3465A9B08049E /* DINPro-Medium.ttf */,
+				DFB07002FDB04E398F2FC957 /* DINPro-Black.ttf */,
+				173568F5C3D4461FB560C811 /* DINPro-BlackItalic.ttf */,
+				432421A475E943CA8EF2A9C5 /* DINPro-Bold.ttf */,
+				8D8727979DCD470EBFF8B055 /* DINPro-BoldItalic.ttf */,
+				35DE8628CF074A7AA62FF257 /* DINPro-CondensedBlack.ttf */,
+				580772AF3E6C425F9141CF98 /* DINPro-CondensedBlackItalic.ttf */,
+				8FD18A6A5A5348D4A9CBF5F4 /* DINPro-CondensedBold.ttf */,
+				CCDF6F8C34F84DD88988AE0C /* DINPro-CondensedBoldItalic.ttf */,
+				5AF5D071082C4A18A12E3386 /* DINPro-CondensedItalic.ttf */,
+				013A3D4DCF23454185392D67 /* DINPro-CondensedLight.ttf */,
+				CA8EB4C0456D4629BF15C39D /* DINPro-CondensedLightItalic.ttf */,
+				4440594BC8D04BCEB76F01BC /* DINPro-CondensedMedium.ttf */,
+				D5091330ABB64B1CAE4D8179 /* DINPro-CondensedMediumItalic.ttf */,
+				E95581752CC8450597CB57C9 /* DINPro-CondensedRegular.ttf */,
+				EF1D09DA3B5B45BDBB937191 /* DINPro-Italic.ttf */,
+				F06A5C38173343D0A9C2E4EB /* DINPro-Light.ttf */,
+				27FE5E9341C64908BB8C8E3C /* DINPro-LightItalic.ttf */,
+				1FEC32E4D8794FA2927D5685 /* DINPro-MediumItalic.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1179,6 +1233,24 @@
 				850BAE00BFC142909E51EEDA /* DINPro-MediumItalic.otf in Resources */,
 				C550FE8AE727487FA4774A7D /* DINPro.otf in Resources */,
 				B543213E9ABC43BCAEC5DDFD /* DINPro-Medium.ttf in Resources */,
+				A5BD3C66AF8444629E0FDBA5 /* DINPro-Black.ttf in Resources */,
+				AC25C6BB5BE84FA1BE150086 /* DINPro-BlackItalic.ttf in Resources */,
+				A1F2493B10D34E0D86FE3752 /* DINPro-Bold.ttf in Resources */,
+				1E015F346DB442628C052DCF /* DINPro-BoldItalic.ttf in Resources */,
+				76D392D6EA274E59A5E02E17 /* DINPro-CondensedBlack.ttf in Resources */,
+				80F2318694C9429CB227DAFD /* DINPro-CondensedBlackItalic.ttf in Resources */,
+				5D2D821DB1E44832AECF9F4D /* DINPro-CondensedBold.ttf in Resources */,
+				23B35465039F492C8DC592D2 /* DINPro-CondensedBoldItalic.ttf in Resources */,
+				DB0BD536A8B3498EB6C66025 /* DINPro-CondensedItalic.ttf in Resources */,
+				51ECA824466A437FADB81681 /* DINPro-CondensedLight.ttf in Resources */,
+				68EEEF9C02F449C6A5276D45 /* DINPro-CondensedLightItalic.ttf in Resources */,
+				244419D914844D61A2C0D9B2 /* DINPro-CondensedMedium.ttf in Resources */,
+				3E5789D3AE974132BC2FA499 /* DINPro-CondensedMediumItalic.ttf in Resources */,
+				9B6E4B1D5FFF4C59959289C6 /* DINPro-CondensedRegular.ttf in Resources */,
+				06916365DA3C4FB48A34E8BE /* DINPro-Italic.ttf in Resources */,
+				A1A5BB55D5284BC59592528D /* DINPro-Light.ttf in Resources */,
+				84AD4B26D3ED446C9E0B72EA /* DINPro-LightItalic.ttf in Resources */,
+				82879E18AC3C41309C216901 /* DINPro-MediumItalic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

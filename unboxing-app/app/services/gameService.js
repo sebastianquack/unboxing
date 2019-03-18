@@ -2,6 +2,9 @@ import Service from './Service';
 
 import {sequenceService, nearbyService, soundService, storageService} from './';
 
+const defaultStatusBarTitle = "Unboxing Mozart";
+const defaultStatusBarSubtitle = "Development Version - Testing"
+
 class GameService extends Service {
 
 	constructor() {
@@ -14,9 +17,10 @@ class GameService extends Service {
 			challengeStatus: "off",		// off <-> navigate <-> prepare <-> play 
 			activeChallenge: null, 		// active challenge saved here
 			showInstrumentSelector: false, // show the interface selector in the interface
-      statusBarTitle: "Title",
-      statusBarSubtitle: "Description",
-      debugMode: false          // show debugging info in interface
+      statusBarTitle: defaultStatusBarTitle,
+      statusBarSubtitle: defaultStatusBarSubtitle,
+      debugMode: false,          // show debugging info in interface
+      infoStream: []
 		});
 
 		// not reactive vars
@@ -83,7 +87,8 @@ class GameService extends Service {
 				activePlaceReference: null,
 				activePlace: null,
 				activeChallenge: null,
-				walkStatus: "ended"
+				walkStatus: "ended",
+        challengeStatus: "off"
 			});
 			return;
 		}
@@ -99,7 +104,6 @@ class GameService extends Service {
 		let challenge = storageService.findChallenge(place.challenge_id);
 		this.setActiveChallenge(challenge);
 	}
-
 
   /** challenges **/
 
@@ -133,8 +137,8 @@ class GameService extends Service {
     nearbyService.shutdownNearby();
 
     this.setReactive({
-      statusBarTitle: "Title",
-      statusBarSubtitle: "Description",
+      statusBarTitle: defaultStatusBarTitle,
+      statusBarSubtitle: defaultStatusBarSubtitle,
       showInstrumentSelector: false
     })
     
@@ -146,6 +150,8 @@ class GameService extends Service {
         activeChallenge: null
       }); 
     }
+
+    this.initInfoStream();
 
   }
 
@@ -178,11 +184,17 @@ class GameService extends Service {
     if(status == "prepare") {
       this.activateNearbyCallbacks();
     }
+
+    this.initInfoStream();
 	}
 
 	getActiveChallenge = ()=> {
 		return this.state.activeChallenge;
 	}
+
+  getChallengeStatus = ()=> {
+    return this.state.challengeStatus;
+  }
 
 	isChallengeLooping = ()=> {
 		let looping = false;
@@ -321,6 +333,41 @@ class GameService extends Service {
     this.setActiveChallengeStatus("prepare");
   }
   
+
+  /** info stream management **/
+
+  clearInfoStream = ()=> {
+    this.setReactive({
+      infoStream: []
+    });
+  }
+
+  addItemToInfoStream = (title, content) => {
+    let infoStream = this.state.infoStream;
+    infoStream.push({title: title, content: content});
+    this.setReactive({
+      infoStream: infoStream
+    });
+  }
+
+  initInfoStream = ()=> {
+    this.clearInfoStream();    
+    if(!this.state.activeChallenge) return;
+
+    switch(this.state.challengeStatus) {
+      case "navigate":
+        this.addItemToInfoStream("navigation", "go to the place marked on the map.");
+        this.addItemToInfoStream("navigation", "press check in when you're there!");
+        break;
+      case "prepare":
+        this.addItemToInfoStream("welcome", "welcome to this passage. select your instrument and press play to start playing!");
+        break;
+      case "play":
+        sequenceService.updateActionInterface();
+        break;
+    }
+  }
+
 
 }
 

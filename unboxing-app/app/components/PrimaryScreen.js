@@ -93,6 +93,21 @@ class PrimaryScreen extends React.Component {
     </ScrollView>
   }
 
+  renderInfoStream() {
+    return <ScrollView pointer-events="auto" style={{
+      position: "absolute",
+      zIndex: 6,
+      width: "100%",
+      height: "100%",
+      paddingHorizontal: horizontalPadding,
+      paddingVertical: verticalPadding,      
+    }}
+      contentContainerStyle={{flex: 1, justifyContent: 'flex-end'}} // so that info starts at bottom of screen
+    >
+      { this.props.infoStreamContent }
+    </ScrollView>
+  }
+
   render() {
     return <View style={{
       height: "100%",
@@ -105,6 +120,7 @@ class PrimaryScreen extends React.Component {
       { this.props.mainContent && this.renderMainContent() }
       { this.props.overlayContent && this.renderoverlayContent() }
       { this.props.scrollContent && this.renderScrollContent() }
+      { this.props.infoStreamContent && this.renderInfoStream() }
     </View>
   }
 }

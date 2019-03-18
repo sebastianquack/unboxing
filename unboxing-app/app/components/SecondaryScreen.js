@@ -52,9 +52,11 @@ class SecondaryScreen extends React.Component {
           flex: 1,
           // backgroundColor: "blue",
         }}>
-        <UIText caps strong align="center">
-          {this.props.instrument}
-        </UIText>    
+        {this.props.instrument &&
+          <UIText caps strong align="center">
+            {this.props.instrument}
+          </UIText>    
+        }
         <UIText size="s" align="center" caps wide em>{this.props.instrument ? "Aktuell" : "Select Instrument"}</UIText>      
       </View>
     </View>
