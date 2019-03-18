@@ -1,39 +1,114 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, Dimensions } from 'react-native';
-import {globalStyles} from '../../config/globalStyles';
+import { Text, View, StyleSheet, ScrollView, Animated, Easing } from 'react-native';
+import PropTypes from 'prop-types';
 import { bindCallback } from 'rxjs';
+
+import UIText from './UIText'
+import {globalStyles} from '../../config/globalStyles';
+
+const labelsWidth = 150
+const visibleRange = 5000
+const speed = 1
 
 class SequenceVisualizer extends React.Component { 
   constructor(props) {
     super(props);
     
     this.state = {
+      scrollX: new Animated.Value(0)
     };
+
+    this.manageAnimation = this.manageAnimation.bind(this)
     
   }
 
   componentDidMount() {
+    //setTimeout( ()=>{
+    //  Animated.loop(Animated.timing(this.state.scrollX, {
+    //    toValue: -this.state.sequenceWidth,
+    //    duration: 5000,
+    //    easing: Easing.linear,
+    //    useNativeDriver: true
+    //  })).start();
+    //}, 1000)
+    this.manageAnimation(null, this.props.controlStatus)
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    this.manageAnimation(prevProps)
   }
 
   componentWillUnmount() {
+    this.state.scrollX.stopAnimation()
+  }
+
+  setWidth = (event) => {
+    const containerWidth = event.nativeEvent.layout.width
+    this.setState({
+      containerWidth,
+      sequenceWidth: containerWidth * speed
+    })
+  }
+
+  manageAnimation(prevProps) {
+    if (/*prevControlStatus === controlStatus ||*/ !this.props.controlStatus || !this.props.sequence || !this.state.sequenceWidth) return
+
+    // // reset loop with loopCounter
+    // if (prevProps.loopCounter !== this.props.loopCounter && this.props.loopCounter > 1) {
+    //  this.isRunning = false
+    //  this.state.scrollX.stopAnimation()
+    //}
+
+    // reset loop with currentTime
+    if (prevProps.currentTime > this.props.currentTime) {
+      this.isRunning = false
+      this.state.scrollX.stopAnimation()
+      console.log("animation reset loop")
+    }
+
+    if (this.props.controlStatus === "playing" && !this.isRunning) {
+      this.isRunning = true
+      const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
+      const startTime = !this.props.currentTime && this.props.loopCounter === 0 ? -2000 : this.props.currentTime || 0
+
+      const fullAnimationDuration = sequenceDuration * (this.state.sequenceWidth / this.state.containerWidth)
+      const animationDuration = fullAnimationDuration * ( (sequenceDuration-startTime) / sequenceDuration) * (1/speed)
+      const startValue = Math.round((-startTime/sequenceDuration) * this.state.sequenceWidth)
+      console.log(`starting animation currentTime ${this.props.currentTime}ms startTime ${startTime}ms sequenceDuration ${sequenceDuration}`)
+      console.log(`starting animation from ${startValue}px (${startTime}ms), duration ${animationDuration/1000}s`)
+      this.state.scrollX.stopAnimation()
+      this.setState({
+        scrollX: new Animated.Value(startValue)
+      },()=>{
+        Animated.timing(this.state.scrollX, {
+          toValue: -this.state.sequenceWidth,
+          duration: animationDuration,
+          easing: Easing.linear,
+          useNativeDriver: true
+        }).start();
+      });
+    } else if (this.props.controlStatus !== "playing" && this.isRunning ) {
+      this,isRunning = false
+      this.state.scrollX.stopAnimation()
+    }
   }
 
   renderHeaderTrack = (track) => {
-    const backgroundColor = ( !this.props.track || this.props.track.name == track.name ? track.color : "transparent" )
+    // const backgroundColor = ( !this.props.track || this.props.track.name == track.name ? track.color : "transparent" )
     return (
       <View style={{
           ...styles.track, 
           ...styles.headerTrack, 
-          backgroundColor,
+          // backgroundColor,
         }} key={track.name}>
         <View>
-          <Text>
+          <UIText size="s" caps style={{color: 'rgb(90,85,80)', opacity: 0.8}}>
             {track.name}
-          </Text>
+          </UIText>
         </View>
       </View>
     )
-  } 
+  }
 
   renderBodyTrack = (track) => {
     // items belonging to this track
@@ -46,7 +121,7 @@ class SequenceVisualizer extends React.Component {
         { actionItem.startTime && this.renderActionItem(actionItem) }
       </View>
     )
-  }   
+  }
 
   renderBodyTrackItem = (item, track) => {
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
@@ -121,16 +196,31 @@ class SequenceVisualizer extends React.Component {
 
     if(tracks) {
       return (
-        <View> 
+        <View>
           <View style={styles.container}>
             <View style={styles.header}>
               {tracks.map(this.renderHeaderTrack)}
             </View>
-            <View style={styles.body}>
-              {tracks.map(this.renderBodyTrack)}
-              {this.renderIndicator()}
+            <View 
+              style={styles.body} 
+              onLayout={ this.setWidth }
+              >
+              <Animated.View style={{  
+                  ...styles.body, 
+                  width: this.state.sequenceWidth,
+                  // marginRight: this.state.containerWidth,
+                  transform: [{ translateX: this.state.scrollX }]
+                }}>
+                {tracks.map(this.renderBodyTrack)}
+                {this.renderIndicator()}
+              </Animated.View>
             </View>
           </View>
+          <UIText size="s">ctime {this.props.currentTime}</UIText>
+          <UIText size="s">durat {this.props.sequence.custom_duration || this.props.sequence.duration}</UIText>
+          <UIText size="s">loopc {this.props.loopCounter}</UIText>
+          <UIText size="s">cowid {this.state.containerWidth}</UIText>
+          <UIText size="s">sqwid {this.state.sequenceWidth}</UIText>
         </View>
       );
     } else {
@@ -141,21 +231,33 @@ class SequenceVisualizer extends React.Component {
 
 export default SequenceVisualizer;
 
+SequenceVisualizer.propTypes = {
+  sequence: PropTypes.object,
+  track: PropTypes.object,
+  item: PropTypes.object,
+  controlStatus: PropTypes.oneOf("playing", "ready", "idle", "loading"),
+  currentTime: PropTypes.number,
+  nextUserAction: PropTypes.object,
+  loopCounter: PropTypes.number,
+};
+
 const styles = StyleSheet.create({
+  scrollContainer: {
+    width: "100%",
+  },
   container: {
+    paddingTop: "10%",
     flexDirection: "row",
-    borderStyle: "solid",
-    borderColor: "black",
-    borderWidth: 1,
   },
   header: {
-    backgroundColor: '#aaa',
-    borderStyle: "solid",
-    borderColor: "black",
-    borderRightWidth: 1,    
+    backgroundColor: 'transparent',
+    width: labelsWidth,
+    borderRightWidth: 1,
+    borderColor: '#333',
+    zIndex: 1,
   },  
   body: {
-    backgroundColor: '#ddd',
+    backgroundColor: 'transparent',
     flex: 1,
   },
   track: {
@@ -164,14 +266,16 @@ const styles = StyleSheet.create({
   },
   headerTrack: {
     paddingHorizontal: 8,
+    color: "white",
   },
   bodyTrackItem: {
-    backgroundColor: '#bbb',
+    backgroundColor: '#aaa',
     height: "100%",
     justifyContent: "center",
     borderRadius: 0,
     position: "absolute",
     paddingHorizontal: 8,
+    overflow: "hidden",
   },
   bodyTrackItem__actionItem: {
     borderRadius: 20,
