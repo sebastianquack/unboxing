@@ -19,6 +19,7 @@ class SequenceService extends Service {
 			showPlayItemButton: false, // should play button be shown
 			beatTickActive: false, // should beat be played on the beat
 			nextUserAction: {}, // information about the next user action such as gesture start/end time
+			isLooping: null,
 			loopCounter: 0,
 			sequenceTimeVisualizer: 0,
 			endedFlag: false // set to true when sequence ended
@@ -122,14 +123,23 @@ class SequenceService extends Service {
         currentTimeInSequence + this.state.currentSequence.custom_duration
     });      
     
-    //console.log("beat update - currentTimeInSequence", currentTimeInSequence);
+		//console.log("beat update - currentTimeInSequence", currentTimeInSequence);
+		// check if sequence should end
+		if (!this.state.isLooping) {
+			const sequenceEndsAt = this.state.playbackStartedAt + this.state.currentSequence.custom_duration
+			if (currentTime >= sequenceEndsAt) {
+				this.stopSequence(false)
+				return
+			}
+		}
+		
 
 		// beat calculations
 		const durationOfBeat = (60000 / this.state.currentSequence.bpm);
 		const currentBeatInSequence = Math.floor(currentTimeInSequence / durationOfBeat);
 		const timeOfThisBeat = this.state.loopStartedAt + (currentBeatInSequence * durationOfBeat);
 
-		// determine next startime to count down to
+		// determine next item startime to count down to
 		let startTime = null;
     if(this.state.nextItem) {
     	startTime = this.state.nextItem.startTime;
@@ -425,7 +435,8 @@ class SequenceService extends Service {
 		this.setReactive({
 		 	controlStatus: "playing",
 		 	playbackStartedAt: time,
-	    loopStartedAt: time
+			loopStartedAt: time,
+			isLooping: gameService.isChallengeLooping()
     });
 
   	console.log("started sequence at", this.state.loopStartedAt);
@@ -473,19 +484,17 @@ class SequenceService extends Service {
 
     	console.log("currentTimeInPlayback", currentTimeInPlayback);
     	
-    	// figure out what loop we are on
-    	this.setReactive({loopCounter: Math.floor(currentTimeInPlayback / this.state.currentSequence.custom_duration)});
-
-    	if(this.state.loopCounter < 0) {
-    		this.setReactive({loopCounter: 0});
-    	}
-    	
-    	console.log("loopCounter", this.state.loopCounter);
+			// figure out what loop we are on
+			let loopCounter = Math.floor(currentTimeInPlayback / this.state.currentSequence.custom_duration)
+    	if(loopCounter < 0) loopCounter: 0
 
     	this.setReactive({
+				loopCounter,
 			  loopStartedAt: this.state.playbackStartedAt + (this.state.loopCounter * this.state.currentSequence.custom_duration)
-  		});
+			});
+			console.log("loopCounter", this.state.loopCounter);
   		console.log("new loopStartedAt", this.state.loopStartedAt);
+
 
   		// figure out what time inside the sequence we are on
     	const currentTimeInSequence = currentTime - this.state.loopStartedAt;
@@ -549,7 +558,7 @@ class SequenceService extends Service {
 				}
 				
     	} else {
-    		this.stopSequence();
+    		//this.stopSequence();
     	}
 
     	this.updateActionInterface();
@@ -606,26 +615,42 @@ class SequenceService extends Service {
 	}
 	
 	// stops sequence playback and sound
-	stopSequence() {
+	stopSequence( clear = true ) {
 			soundService.stopAllSounds();
 			this.deactivateUserAction();
 
-	    this.setReactive({
-	    	controlStatus: "idle",
-	    	currentSequence: null,
-	    	currentTrack: null,
-				nextItem: null,
-				scheduledItem: null,
-	    	currentItem: null,
-				playbackStartedAt: null,	    	
-	    	loopStartedAt: null,
-				showPlayItemButton: false,
-				beatsToNextItem: "",
-				loopCounter: 0,
-				sequenceTimeVisualizer: 0,
-				endedFlag: true,
-				nextUserAction: {}
-	    });
+			if (clear) {
+				this.setReactive({
+					controlStatus: "idle",
+					currentSequence: null,
+					currentTrack: null,
+					nextItem: null,
+					scheduledItem: null,
+					currentItem: null,
+					playbackStartedAt: null,	    	
+					loopStartedAt: null,
+					showPlayItemButton: false,
+					beatsToNextItem: "",
+					loopCounter: 0,
+					sequenceTimeVisualizer: 0,
+					endedFlag: true,
+					nextUserAction: {}
+				});
+			} else {
+				this.setReactive({
+					controlStatus: "idle",
+					nextItem: null,
+					scheduledItem: null,
+					currentItem: null,
+					playbackStartedAt: null,	    	
+					loopStartedAt: null,
+					beatsToNextItem: "",
+					loopCounter: 0,
+					sequenceTimeVisualizer: 0,
+					endedFlag: true,
+					nextUserAction: {}
+				});				
+			}
 
 	    if(this.beatTimeout) {
 	    	clearTimeout(this.beatTimeout);
