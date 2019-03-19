@@ -24,9 +24,12 @@ class Sequence extends React.Component {
 
  SequenceDetailCss = css`
     display: inline-block;
-    background-color: lightgrey;
+    background-color: white;
     padding: 1em 1ex 1em 1ex;
     border-radius: 1em 1em 0 0;
+    border-color: grey;
+    border-style: solid;
+    border-width: 1px 1px 0 1px;
     margin-bottom: 0;
     label {
       &:first-child {
@@ -170,6 +173,7 @@ export default withTracker(props => {
 const tracksCSS = css`
 width: 90%;
 position: relative;
+background-color: white;
 .tracks_list {
   padding-left: 0;
   margin-bottom: 5em;
@@ -180,9 +184,9 @@ position: relative;
       line-height: ${trackHeight + unit};
     }
     border: 1px grey solid;
-    border-width: 0 0 1px 0;
+    border-width: 0 0 1px 1px;
     &:first-of-type {
-      border-width: 1px 0 1px 0;
+      border-width: 1px 0 1px 1px;
     }
     &:last-of-type {
       &, .title {
