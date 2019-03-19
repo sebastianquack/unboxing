@@ -57,7 +57,7 @@ class SecondaryScreen extends React.Component {
             {this.props.instrument}
           </UIText>    
         }
-        <UIText size="s" align="center" caps wide em>{this.props.instrument ? "Aktuell" : "Select Instrument"}</UIText>      
+        <UIText size="s" align="center" caps wide em>{this.props.instrument ? "Aktuell" : "Your Instrument"}</UIText>      
       </View>
     </View>
   }

@@ -19,8 +19,8 @@ class StatusBar extends React.Component {
       <View className="firstSection" style={{
           flexDirection: "column" 
         }}>
-        <UIText size="m" em caps wide >{this.props.title}</UIText>
-        <UIText size="s" em caps>{this.props.description}</UIText>
+        <UIText size="m" em caps>{this.props.title}</UIText>
+        <UIText size="s" em caps style={{color: "#fff"}}>{this.props.description}</UIText>
       </View>
 
     </View>

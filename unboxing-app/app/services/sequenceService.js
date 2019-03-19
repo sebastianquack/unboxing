@@ -48,6 +48,10 @@ class SequenceService extends Service {
     return null;
   }
 
+  getCurrentTrackName = ()=> {
+    return this.state.currentTrack ? this.state.currentTrack.name : null;
+  }
+
 	// return the first item of a specified track in the current Sequence
 	firstItemInTrack = (track)=> {
 		let items = this.state.currentSequence.items;

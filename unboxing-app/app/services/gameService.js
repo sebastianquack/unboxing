@@ -342,9 +342,9 @@ class GameService extends Service {
     });
   }
 
-  addItemToInfoStream = (title, content) => {
+  addItemToInfoStream = (title, content, video=false) => {
     let infoStream = this.state.infoStream;
-    infoStream.push({title: title, content: content});
+    infoStream.push({title: title, content: content, video: video});
     this.setReactive({
       infoStream: infoStream
     });
@@ -360,7 +360,13 @@ class GameService extends Service {
         this.addItemToInfoStream("navigation", "press check in when you're there!");
         break;
       case "prepare":
-        this.addItemToInfoStream("welcome", "welcome to this passage. select your instrument and press play to start playing!");
+        this.addItemToInfoStream("welcome", "welcome to this passage. here's a video about it! (placeholder)", true);
+        if(!sequenceService.getCurrentTrackName()) {
+          this.addItemToInfoStream("how to play", "select your instrument, then press play to start playing");   
+        } else {
+          this.addItemToInfoStream("how to play", "press play to start playing!");   
+        }
+        
         break;
       case "play":
         sequenceService.updateActionInterface();
