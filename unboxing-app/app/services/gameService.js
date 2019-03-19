@@ -50,7 +50,20 @@ class GameService extends Service {
 
   /** game mode management **/
 
-	// called when admin starts walk
+	// for navigation testing
+  setupMinimalWalk(place) {
+    
+    this.setReactive({
+        activeWalk: {tag: place.tag},
+        activePath: [{place: place.shorthand, time: 0}],
+        pathIndex: 0,
+        gameMode: "walk"
+      });
+    this.setupActivePlace();
+  }
+
+
+  // called when admin starts walk
 	setActiveWalk = (walk)=> {
 		
 		let activePath = storageService.getActivePath(walk);

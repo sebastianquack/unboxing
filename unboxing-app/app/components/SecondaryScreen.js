@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
 import loadInstrumentIcons from '../../config/instruments'
+import loadNavigationAssets from '../../config/navigationAssets'
 import UIText from './UIText'
 
 const horizontalPadding = Math.floor(dimensions.screenWidth * 0.014)
@@ -13,13 +14,14 @@ const verticalPadding = Math.floor(dimensions.screenWidth * 0.016)
 const imageWidth = dimensions.screenWidth * 0.25
 
 const instruments = loadInstrumentIcons();
+const navigationAssets = loadNavigationAssets();
 
 class SecondaryScreen extends React.Component { 
   constructor(props) {
     super(props);
     this.state = {};
     this.renderInstrument = this.renderInstrument.bind(this)
-    this.renderPhoto = this.renderPhoto.bind(this)
+    this.renderNavigation = this.renderNavigation.bind(this)
   }
 
   renderInstrument() {
@@ -62,25 +64,28 @@ class SecondaryScreen extends React.Component {
     </View>
   }
 
-  renderPhoto() { // TODO
+  renderNavigation() { // TODO
     return <Image
-        source={this.props.photoSource}
-        style={{}}
+        source={navigationAssets[this.props.target].image}
+        style={{
+          height: "100%",
+          width: "100%"
+        }}
       />
   }
 
   render() {
     const type = this.props.type
     if (type === "instrument") return this.renderInstrument()
-    else if (type === "photo") return this.renderPhoto()
+    else if (type === "navigation") return this.renderNavigation()
     else return null
   }
 }
 
 SecondaryScreen.propTypes = {
-  type: PropTypes.oneOf(['instrument', 'photo']),
+  type: PropTypes.oneOf(['instrument', 'navigation']),
   instrument: PropTypes.oneOf(Object.keys(instruments)),
-  photoSource: PropTypes.string // path of photo
+  target: PropTypes.string // code of navigation target
 };
 
 export default SecondaryScreen;
