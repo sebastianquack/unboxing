@@ -5,6 +5,7 @@ import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
 import {SequenceDetailItem} from './';
+import { inputTransform, inputType } from '../helper/both/input';
 
 const trackTitleWidth = 7
 const trackHeight = 2
@@ -48,28 +49,27 @@ class Sequence extends React.Component {
   handleAttributeChange = (attributeName, value) => {
     $set = {}
     $set[attributeName] = value
+    console.log($set)
     Meteor.call('updateSequence', this.props.sequence._id, $set )
   }
 
   renderInput(attributeName, value) {
     const emptyOption = <option key="empty" value="">&lt;none&gt;</option>;
     switch(attributeName) {
+      case "duration":
+        return <span>{value}</span>
+        break;
       default:
-        const inputType = typeof(value) == "number" ? "number" : "text"
-        const inputTransform = (value) => {
-          let transformed = inputType == "number" ? parseInt(value) : value
-          if (transformed === NaN) transformed = value
-          return transformed
-        }
         return (<ContentEditable 
           style={{
             border: "dotted grey 1px",
             borderWidth: "0 0 1px 0",
             fontWeight: "bold"
           }}
-          onChange={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.value)) } 
           onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
+          onBlur={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.innerHTML, inputType(value))) }
           html={value + ""}
+          title={ inputType(value) }
           tagName="span"
         />)
     }
