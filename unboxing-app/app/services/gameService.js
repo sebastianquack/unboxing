@@ -50,7 +50,20 @@ class GameService extends Service {
 
   /** game mode management **/
 
-	// called when admin starts walk
+	// for navigation testing
+  setupMinimalWalk(place) {
+    
+    this.setReactive({
+        activeWalk: {tag: place.tag},
+        activePath: [{place: place.shorthand, time: 0}],
+        pathIndex: 0,
+        gameMode: "walk"
+      });
+    this.setupActivePlace();
+  }
+
+
+  // called when admin starts walk
 	setActiveWalk = (walk)=> {
 		
 		let activePath = storageService.getActivePath(walk);
@@ -82,7 +95,6 @@ class GameService extends Service {
 	setupActivePlace = ()=> {
 		// check if there are still places in path
 		if(this.state.pathIndex >= this.state.activePath.length) {
-			this.showNotification("end of path")
 			this.setReactive({
 				activePlaceReference: null,
 				activePlace: null,
@@ -90,6 +102,7 @@ class GameService extends Service {
 				walkStatus: "ended",
         challengeStatus: "off"
 			});
+      this.initInfoStream();
 			return;
 		}
 
@@ -352,8 +365,16 @@ class GameService extends Service {
 
   initInfoStream = ()=> {
     this.clearInfoStream();    
-    if(!this.state.activeChallenge) return;
+    
+    // special case - end of walk - todo: add before walk here?
+    if(!this.state.activeChallenge) {
+      if(this.state.challengeStatus == "off") {
+        this.addItemToInfoStream("navigation", "you are at the end of your path. please give back the device"); 
+      }
+      return;
+    }  
 
+    // there is an active challenge
     switch(this.state.challengeStatus) {
       case "navigate":
         this.addItemToInfoStream("navigation", "go to the place marked on the map.");

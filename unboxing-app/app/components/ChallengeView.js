@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 import {withGameService, withSequenceService} from './ServiceConnector';
@@ -9,6 +9,9 @@ import SequenceVisualizer from './SequenceVisualizer';
 import TrackSelector from './TrackSelector';
 
 import {gameService, sequenceService} from '../services';
+
+import loadNavigationAssets from '../../config/navigationAssets'
+const navigationAssets = loadNavigationAssets();
 
 class ChallengeView extends React.Component { 
   constructor(props) {
@@ -27,7 +30,13 @@ class ChallengeView extends React.Component {
         
         {challengeStatus == "navigate" &&
           <View>
-            {/*<Text style={globalStyles.subtitleText}>Navigate to {place.description}. Tap 'Play' when you're there.</Text>*/}
+              <Image
+                source={navigationAssets.default.navigation}
+                style={{
+                  height: "100%",
+                  width: "100%"
+                }}
+              />
           </View>
         }
 

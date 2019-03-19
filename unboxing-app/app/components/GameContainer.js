@@ -55,8 +55,8 @@ class GameContainer extends React.Component {
     
     switch(this.props.gameService.challengeStatus) {
       case "navigate": 
-        buttonRight = <Button text="Check In" onPress={()=>{gameService.handlePlayButton()}}/>; break;
-        // todo: add place image in secondary screen here
+        buttonRight = <Button text="Check In" onPress={()=>{gameService.handlePlayButton()}}/>; 
+        secondaryScreen = <SecondaryScreen type="navigation" target="default" />;
         break;
       
       case "prepare": 
@@ -66,7 +66,7 @@ class GameContainer extends React.Component {
         buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
         overlayContent = <ConnectionIndicator current={this.props.nearbyService.numConnections + 1} max={this.props.sequenceService.currentSequence.tracks.length} />;
         break;
-
+ 
       case "play":
         buttonLeft = <Button type="home" text="Back" onPress={()=>{gameService.handleBackButton()}}/>;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;

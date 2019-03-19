@@ -1,5 +1,5 @@
-export default loadInstrumentIcons = () => {return { 
-  "piano":       { image: require('../assets/img/instruments/Piano.png'),   video: require('../assets/video/instruments/Piano.mov') },
+export default loadNavigationAssets = () => {return { 
+  "piano":       { image: require('../assets/img/instruments/Piano.png'), videoPath: '../assets/video/instruments/Piano.mov',   video: require('../assets/video/instruments/Piano.mov') },
   "flute":       { image: require('../assets/img/instruments/Flute.png'),   video: require('../assets/video/instruments/Flute.mov') },
   "oboe1":      { image: require('../assets/img/instruments/Oboe.png'),    video: require('../assets/video/instruments/Oboe.mov') },
   "oboe2":      { image: require('../assets/img/instruments/Oboe.png'),    video: require('../assets/video/instruments/Oboe.mov') },

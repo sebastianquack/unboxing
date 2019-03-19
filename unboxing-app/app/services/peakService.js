@@ -11,12 +11,24 @@ class PeakService extends Service {
 		// reactive vars
 		super(serviceName, {
 			bpm: 0,
+      peakMode: "gyr"
 		});
 
 		this.sensorReceiverHandle = null;
 
-		this.isUp = y => y > 0.55
-		this.isDown = y => y < -0.75
+		this.isUp = data => {
+      switch(this.state.peakMode) {
+        case "acc": return (data.acc.x > 0.55)
+        case "gyr": return (data.gyr.y > 8.0)
+      }
+    }
+
+		this.isDown = data => {
+      switch(this.state.peakMode) {
+        case "acc": return (data.acc.x < -0.75)
+        case "gyr": return (data.gyr.z > 8.0)
+      }
+    }
 
 		this.peakDistMillisMin = 150
 		this.peakDistMillisMax = 2000
@@ -41,17 +53,25 @@ class PeakService extends Service {
 		this.sensorReceiverHandle = sensorService.registerReceiver(this.handleSensorDataForRecognition)
 	}
 
+  togglePeakMode = () => {
+    if(this.state.peakMode == "acc") {
+      this.setReactive({peakMode: "gyr"});
+    } else {
+      this.setReactive({peakMode: "acc"});
+    }
+  }
+
 	// handle incoming sensor data for recognition
 	handleSensorDataForRecognition = (data) => {
 		//console.log("sensor data received", data)
-		const y = data.acc.y
-		const x = data.acc.x
+		//const y = data.acc.y
+		// const x = data.acc.x
 		// detect Up and set start time
-		if (this.isUp(x)) {
+		if (this.isUp(data)) {
 			this.peakStartTime = soundService.getSyncTime()
 		}
 		// detect down if in time
-		if (this.isDown(x)) {
+		if (this.isDown(data)) {
 			if (this.peakStartTime && this.peakStartTime + this.peakDistMillisMin < soundService.getSyncTime()) {
 				this.setReactive({
 					deltaUpDown: soundService.getSyncTime() - this.peakStartTime
@@ -75,8 +95,8 @@ class PeakService extends Service {
 		}
 
 		this.setReactive({
-			isUp: this.isUp(x),
-			isDown: this.isDown(x),
+			isUp: this.isUp(data),
+			isDown: this.isDown(data),
 			startTime: this.peakStartTime,
 			isFacingDown: this.isFacingDown
 		})

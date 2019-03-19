@@ -42,7 +42,7 @@ class GameModeAdmin extends React.Component {
               gameService.setGameMode("manual");
             }}
           >
-          <Text>Enter manual mode</Text>
+          <Text>Reset to manual mode</Text>
         </TouchableOpacity>
         }
         <DebugToggle/>
