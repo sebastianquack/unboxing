@@ -73,7 +73,7 @@ class UIText extends React.Component {
     let text = this.props.children
 
     // capitalize
-    if (this.props.caps && text) text = text.toUpperCase()
+    if (this.props.caps && text && text.toUpperCase) text = text.toUpperCase()
 
     return <Text style={style}>{ text }</Text>
   }

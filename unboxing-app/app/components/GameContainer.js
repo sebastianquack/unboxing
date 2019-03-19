@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
-import {withGameService, withSequenceService} from './ServiceConnector';
+import {withGameService, withSequenceService, withNearbyService} from './ServiceConnector';
 import {gameService, sequenceService} from '../services';
 
 import ScreenContainer from './ScreenContainer'
@@ -11,6 +11,7 @@ import PrimaryScreen from './PrimaryScreen'
 import SecondaryScreen from './SecondaryScreen'
 import StatusBar from './StatusBar'
 import Button from './Button'
+import ConnectionIndicator from './ConnectionIndicator'
 
 import ChallengeSelector from './ChallengeSelector';
 import ChallengeView from './ChallengeView';
@@ -28,6 +29,7 @@ class GameContainer extends React.Component {
     let mainContent = null; 
     let scrollContent = null;
     let infoStreamContent = null;
+    let overlayContent = null;
     let secondaryScreen = null;
     let buttonLeft = null;
     let buttonMid = null;
@@ -62,6 +64,7 @@ class GameContainer extends React.Component {
         buttonRight = instrumentName ? <Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/> : null;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
         buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
+        overlayContent = <ConnectionIndicator current={this.props.nearbyService.numConnections + 1} max={this.props.sequenceService.currentSequence.tracks.length} />;
         break;
 
       case "play":
@@ -78,7 +81,7 @@ class GameContainer extends React.Component {
               backgroundColor="active"
               // backgroundFlow
               mainContent = { mainContent }
-              // overlayContent = {<Text>Overlay Content -- DIRIGENT</Text>}
+              overlayContent = { overlayContent }
               scrollContent = { scrollContent }
               infoStreamContent = { this.props.gameService.infoStream.length ? <InfoStream/> : null }
             />}
@@ -96,4 +99,4 @@ class GameContainer extends React.Component {
   }
 }
 
-export default withGameService(withSequenceService(GameContainer));
+export default withNearbyService(withGameService(withSequenceService(GameContainer)));

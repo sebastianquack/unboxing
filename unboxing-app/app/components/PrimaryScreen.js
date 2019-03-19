@@ -75,6 +75,9 @@ class PrimaryScreen extends React.Component {
       width: "100%",
       paddingHorizontal: horizontalPadding,
       paddingVertical: verticalPadding,
+      flex: 1,
+      justifyContent: 'flex-end',
+      alignItems: 'flex-end'
     }}>
       { this.props.overlayContent }
     </View>            
@@ -118,7 +121,7 @@ class PrimaryScreen extends React.Component {
       { this.props.backgroundColor && this.renderBackgroundColor() }
       { this.props.backgroundFlow && this.renderBackgroundFlow() }
       { this.props.mainContent && this.renderMainContent() }
-      { this.props.overlayContent && this.renderoverlayContent() }
+      { this.props.overlayContent && this.renderOverlayContent() }
       { this.props.scrollContent && this.renderScrollContent() }
       { this.props.infoStreamContent && this.renderInfoStream() }
     </View>

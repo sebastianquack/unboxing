@@ -27,19 +27,19 @@ class ChallengeView extends React.Component {
         
         {challengeStatus == "navigate" &&
           <View>
-            <Text style={globalStyles.subtitleText}>Navigate to {place.description}. Tap 'Play' when you're there.</Text>
+            {/*<Text style={globalStyles.subtitleText}>Navigate to {place.description}. Tap 'Play' when you're there.</Text>*/}
           </View>
         }
 
         {challengeStatus == "prepare" &&       
           <View>
-            <SequenceVisualizer 
+            {/*<SequenceVisualizer 
               sequence={this.props.sequenceService.currentSequence}
               track={this.props.sequenceService.currentTrack}
               item={this.props.sequenceService.currentItem}
               controlStatus={this.props.sequenceService.controlStatus}
               currentTime={this.props.sequenceService.sequenceTimeVisualizer}
-            />
+            >*/}
           </View>
         }
         

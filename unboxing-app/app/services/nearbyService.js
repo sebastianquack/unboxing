@@ -20,7 +20,8 @@ class NearbyService extends Service {
 			endpointInfo: {},				// status of all known endpoints {myNearbyStatus: "discovered" / "connected", meshStatus: "available" / "unknown"}
 			lastHealthCheckSent: 0,  // timestamp of last healthcheck we sent
 			messageCounter: 0,					// count all incoming messages
-			messageLog: "poin"
+			messageLog: "** start log **",
+      numConnections: 0         // for interface
 		});
 		this.customCallbacks = {
 			onConnectionEstablished: null, 	// not implemented
@@ -64,6 +65,8 @@ class NearbyService extends Service {
     });
 
     this.setReactive({endpointInfo: newEndpointInfo});
+
+    this.setReactive({numConnections: this.countEndpointsWithStatus("myNearbyStatus", "connected")});
   }
 
   // for example count these: ("myNearbyStatus", "connected")
