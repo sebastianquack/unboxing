@@ -48,7 +48,7 @@ class SecondaryScreen extends React.Component {
             height: "100%",
             width: "100%"
           }}
-          onError={()=>{ToastAndroid.showWithGravity(this.videoError, ToastAndroid.SHORT, ToastAndroid.CENTER);}}
+          onError={()=>{ToastAndroid.showWithGravity(JSON.stringify(this.videoError), ToastAndroid.SHORT, ToastAndroid.CENTER);}}
         />}
       </View>      
       <View style={{
