@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, ToastAndroid } from 'react-native';
 import Video from 'react-native-video';
 import PropTypes from 'prop-types';
 
@@ -48,6 +48,7 @@ class SecondaryScreen extends React.Component {
             height: "100%",
             width: "100%"
           }}
+          onError={()=>{ToastAndroid.showWithGravity(this.videoError, ToastAndroid.SHORT, ToastAndroid.CENTER);}}
         />}
       </View>      
       <View style={{
