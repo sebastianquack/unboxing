@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, Switch } from 'react-native';
 import compose from 'lodash.flowright'
 
 import {globalStyles} from '../../../config/globalStyles';
-import {sensorService} from '../../services';
+import {sensorService, peakService} from '../../services';
 import {withPeakService, withSensorService, withGameService} from '../ServiceConnector';
 
 class SensorInfo extends React.Component { 
@@ -56,6 +56,10 @@ class SensorInfo extends React.Component {
       <View style={styles.info}>
         <Text style={globalStyles.titleText}>Sensor Info</Text>
         {this.renderSensorData(this.props.sensorService.data)}
+        <View style={{width:"25%"}}>
+          <Text>peakMode acc/gyr</Text>         
+          <Switch value={this.props.peakService.peakMode == "acc"} onValueChange={peakService.togglePeakMode}/>
+        </View>
         <Text>Sample Rate: { this.props.sensorService.sampleRate }</Text>
         <Text>isUp: { this.props.peakService.isUp ? "up" : "" }</Text>
         <Text>isDown: { this.props.peakService.isDown ? "down" : "" }</Text>
