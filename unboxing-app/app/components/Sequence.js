@@ -69,8 +69,6 @@ class Sequence extends React.Component {
     }
   }
 
-  
-
   render() {
 
     return (
@@ -80,9 +78,10 @@ class Sequence extends React.Component {
           track={this.props.sequenceService.currentTrack}
           item={this.props.sequenceService.currentItem}
           controlStatus={this.props.sequenceService.controlStatus}
-          currentTime={this.props.sequenceService.sequenceTimeVisualizer}
           nextUserAction={this.props.sequenceService.nextUserAction}
-          loopCounter={this.props.sequenceService.loopCounter}
+          isLooping = {this.props.sequenceService.isLooping}
+          playbackStartedAt={this.props.sequenceService.playbackStartedAt}
+          magnification
         />
 
           {this.props.sequenceService.showPlayItemButton && this.props.gameService.debugMode &&

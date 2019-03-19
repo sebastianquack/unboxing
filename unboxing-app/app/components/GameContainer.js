@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
-import {withGameService, withSequenceService, withNearbyService} from './ServiceConnector';
+import {withGameService, withSequenceService, withNearbyService, withPeakService} from './ServiceConnector';
 import {gameService, sequenceService} from '../services';
 
 import ScreenContainer from './ScreenContainer'
@@ -78,7 +78,7 @@ class GameContainer extends React.Component {
       <View>
         <ScreenContainer
           primaryScreen = {<PrimaryScreen
-              backgroundColor="active"
+              backgroundColor={this.props.peakService.isDown ? "active" : "passive" }
               // backgroundFlow
               mainContent = { mainContent }
               overlayContent = { overlayContent }
@@ -99,4 +99,4 @@ class GameContainer extends React.Component {
   }
 }
 
-export default withNearbyService(withGameService(withSequenceService(GameContainer)));
+export default withPeakService(withNearbyService(withGameService(withSequenceService(GameContainer))));

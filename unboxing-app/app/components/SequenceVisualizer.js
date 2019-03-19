@@ -6,11 +6,12 @@ import { bindCallback } from 'rxjs';
 import UIText from './UIText'
 import {globalStyles, colors} from '../../config/globalStyles';
 
+import {soundService} from '../services';
+
 const labelsWidth = 150
 const visibleRange = 5000
-const speed = 1
 
-class SequenceVisualizer extends React.Component { 
+class SequenceVisualizer extends React.PureComponent { 
   constructor(props) {
     super(props);
     
@@ -18,8 +19,10 @@ class SequenceVisualizer extends React.Component {
       scrollX: new Animated.Value(0)
     };
 
+    this.speed = props.magnification ? 2 : 1
+
     this.manageAnimation = this.manageAnimation.bind(this)
-    
+    this.handleAnimationEnded = this.handleAnimationEnded.bind(this)
   }
 
   componentDidMount() {
@@ -46,7 +49,7 @@ class SequenceVisualizer extends React.Component {
     const containerWidth = event.nativeEvent.layout.width
     this.setState({
       containerWidth,
-      sequenceWidth: containerWidth * speed
+      sequenceWidth: containerWidth * this.speed
     })
   }
 
@@ -59,22 +62,33 @@ class SequenceVisualizer extends React.Component {
     //  this.state.scrollX.stopAnimation()
     //}
 
-    // reset loop with currentTime
-    if (prevProps.currentTime > this.props.currentTime) {
-      this.isRunning = false
-      this.state.scrollX.stopAnimation()
-      console.log("animation reset loop")
-    }
+    console.log("anim VISU", this.props.controlStatus, this.props.playbackStartedAt)
 
     if (this.props.controlStatus === "playing" && !this.isRunning) {
-      this.isRunning = true
-      const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
-      const startTime = !this.props.currentTime && this.props.loopCounter === 0 ? -2000 : this.props.currentTime || 0
 
-      const fullAnimationDuration = sequenceDuration * (this.state.sequenceWidth / this.state.containerWidth)
-      const animationDuration = fullAnimationDuration * ( (sequenceDuration-startTime) / sequenceDuration) * (1/speed)
+      console.log(this.props)
+
+      this.isRunning = true
+      const nowTime = soundService.getSyncTime()
+      const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
+
+      // at which relative time in the sequence are we?
+      // step 1) in units of sequenceDuration
+      const positionRelativeTotal = (nowTime - this.props.playbackStartedAt) / sequenceDuration
+      // step 2) positionRelativeTotal = loops comma relativePosition
+      const currentLoop = positionRelativeTotal > 0 ? Math.floor(positionRelativeTotal) : 0
+      const positionRelative = positionRelativeTotal - currentLoop
+      // step 3) substract loops and convert to time
+      const startTime = positionRelative * sequenceDuration
+      // map the time to an X value
       const startValue = Math.round((-startTime/sequenceDuration) * this.state.sequenceWidth)
-      console.log(`starting animation currentTime ${this.props.currentTime}ms startTime ${startTime}ms sequenceDuration ${sequenceDuration}`)
+
+      // how long does it take to scroll the full sequence from beninning to end?
+      const fullAnimationDuration = sequenceDuration * (this.state.sequenceWidth / this.state.containerWidth)
+      // how long does it take to scroll the remaining part of the sequence?
+      const animationDuration = fullAnimationDuration * ( (sequenceDuration-startTime) / sequenceDuration) * (1/this.speed)
+
+      console.log(`starting animation at startTime ${startTime}ms of sequenceDuration ${sequenceDuration}`)
       console.log(`starting animation from ${startValue}px (${startTime}ms), duration ${animationDuration/1000}s`)
       this.state.scrollX.stopAnimation()
       this.setState({
@@ -84,12 +98,24 @@ class SequenceVisualizer extends React.Component {
           toValue: -this.state.sequenceWidth,
           duration: animationDuration,
           easing: Easing.linear,
-          useNativeDriver: true
-        }).start();
+          useNativeDriver: true,
+          isInteraction: false,
+        }).start(this.handleAnimationEnded);
       });
+      // setTimeout(()=>{console.log("anime timeout")}, animationDuration)
     } else if (this.props.controlStatus !== "playing" && this.isRunning ) {
       this,isRunning = false
       this.state.scrollX.stopAnimation()
+    }
+  }
+
+  handleAnimationEnded() {
+    console.log("animation ended")
+    this.isRunning = false
+    // reset loop
+    if (this.props.isLooping) {
+      console.log("animation reset loop")      
+      this.manageAnimation()
     }
   }
 
@@ -221,13 +247,14 @@ class SequenceVisualizer extends React.Component {
               </Animated.View>
             </View>
           </View>
-          {/*<View style={{opacity:0.5}}>
-            <UIText size="s">ctime {this.props.currentTime}</UIText>
-            <UIText size="s">durat {this.props.sequence.custom_duration || this.props.sequence.duration}</UIText>
-            <UIText size="s">loopc {this.props.loopCounter}</UIText>
-            <UIText size="s">cowid {this.state.containerWidth}</UIText>
-            <UIText size="s">sqwid {this.state.sequenceWidth}</UIText>
-            </View>*/}
+          <View style={{opacity:0.5}}>
+            {/*<UIText size="m">ctime {this.props.currentTime}</UIText>
+            <UIText size="m">starAt {((this.props.playbackStartedAt)/1000)}</UIText>
+            <UIText size="m">loopAt {((this.props.loopStartedAt)/1000)}</UIText>
+            <UIText size="m">diff.. {((this.props.loopStartedAt-this.props.playbackStartedAt)/1000)}</UIText>
+            <UIText size="m">sLengh {this.props.sequence.custom_duration/1000}</UIText>
+              */}
+            </View>
         </View>
       );
     } else {
@@ -242,9 +269,13 @@ SequenceVisualizer.propTypes = {
   sequence: PropTypes.object,
   track: PropTypes.object,
   item: PropTypes.object,
+  magnification: PropTypes.bool,
   controlStatus: PropTypes.oneOf("playing", "ready", "idle", "loading"),
-  currentTime: PropTypes.number,
   nextUserAction: PropTypes.object,
+  playbackStartedAt: PropTypes.number,
+  loopStartedAt: PropTypes.number,
+
+  currentTime: PropTypes.number,
   loopCounter: PropTypes.number,
 };
 
