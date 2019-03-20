@@ -9,7 +9,8 @@ import {globalStyles, colors} from '../../config/globalStyles';
 import {soundService} from '../services';
 
 const labelsWidth = 150
-const visibleRange = 5000
+
+const doAnim = true // useful for debugging
 
 class SequenceVisualizer extends React.PureComponent { 
   constructor(props) {
@@ -19,7 +20,7 @@ class SequenceVisualizer extends React.PureComponent {
       scrollX: new Animated.Value(0)
     };
 
-    this.speed = props.magnification ? 2 : 1
+    this.speed = props.magnification && doAnim ? 2 : 1
 
     this.manageAnimation = this.manageAnimation.bind(this)
     this.handleAnimationEnded = this.handleAnimationEnded.bind(this)
@@ -34,11 +35,11 @@ class SequenceVisualizer extends React.PureComponent {
     //    useNativeDriver: true
     //  })).start();
     //}, 1000)
-    this.manageAnimation(null, this.props.controlStatus)
+    if (doAnim) this.manageAnimation(null, this.props.controlStatus)
   }
 
   componentDidUpdate(prevProps, prevState) {
-    this.manageAnimation(prevProps)
+    if (doAnim) this.manageAnimation(prevProps)
   }
 
   componentWillUnmount() {
@@ -61,8 +62,6 @@ class SequenceVisualizer extends React.PureComponent {
     //  this.isRunning = false
     //  this.state.scrollX.stopAnimation()
     //}
-
-    console.log("anim VISU", this.props.controlStatus, this.props.playbackStartedAt)
 
     if (this.props.controlStatus === "playing" && !this.isRunning) {
 
@@ -180,12 +179,10 @@ class SequenceVisualizer extends React.PureComponent {
     let leftPercentage = 100 * item.startTime / sequenceDuration
     const widthPercentage = 100 * item.duration / sequenceDuration
 
-    if(item.startTime < 0 && this.props.loopCounter > 0) {
+    if(item.startTime < 0 && this.props.loopCounter >= 0) {
       leftPercentage += 100;  
     }
     
-    console.log("RENDER action item", item, this.props.loopCounter)
-
     return (
       <View key={item._id} style={{
           ...styles.bodyTrackItem, 
@@ -193,9 +190,9 @@ class SequenceVisualizer extends React.PureComponent {
           width: widthPercentage+"%", 
           left: leftPercentage+"%",
         }}>
-        <Text style={styles.bodyTrackItemText}>
+        {/*<Text style={styles.bodyTrackItemText}>
           { item.type }
-        </Text>    
+        </Text> */}   
       </View>
     )
   }
@@ -243,7 +240,7 @@ class SequenceVisualizer extends React.PureComponent {
                   transform: [{ translateX: this.state.scrollX }]
                 }}>
                 {tracks.map(this.renderBodyTrack)}
-                {/*this.renderIndicator()*/}
+                { !doAnim && this.renderIndicator()}
               </Animated.View>
             </View>
           </View>
@@ -324,6 +321,8 @@ const styles = StyleSheet.create({
   bodyTrackItem__actionItem: {
     borderRadius: 3,
     backgroundColor: colors.turquoise,
+    borderColor: colors.turquoise,
+    borderWidth: 1,
     padding: 4,
   }, 
   bodyTrackItemText: {

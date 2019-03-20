@@ -75,7 +75,8 @@ class SequenceService extends Service {
 	}
 
 	sequenceStartingLocally = ()=> {
-		return this.localStart && this.state.loopCounter == 0;
+		console.log("sequenceStartingLocally", this.localStart, this.state.loopCounter)
+		return this.localStart && this.state.loopCounter == 0 && (this.state.playbackStartedAt > soundService.getSyncTime());
 	}
 
 	// check if next item should be autoplayed
@@ -274,7 +275,7 @@ class SequenceService extends Service {
 				// next sound has been scheduled
 				if(this.state.scheduledItem) {
 					if(this.autoPlayItem(this.state.scheduledItem) // only show this if the item is being autoplayed
-						&& !(this.state.scheduledItem.startTime == 0 && this.sequenceStartingLocally())) { 
+					&& !(this.state.scheduledItem.startTime == 0 && this.sequenceStartingLocally())) { 
 						this.setActionMessage("wait for your next sound to start playing automatically");	
 						this.deactivateUserAction();
 					} else {
@@ -313,7 +314,7 @@ class SequenceService extends Service {
 			let obj = { type: null };
 
 			// update Gesture listening
-			if (this.state.nextItem.sensorStart) {
+			if (this.state.nextItem.autoplay==="off") {
 				obj = { type: "peak" };
 				peakService.waitForStart(() => {
 					gameService.handlePlayNextItemButton()
@@ -407,7 +408,7 @@ class SequenceService extends Service {
 						gestureService.stopWaitingForGesture()
 					});
 				}
-				if(firstItem.sensorStart) {
+				if(firstItem.autoplay==="off") {
 					peakService.waitForStart(() => {
 						gameService.handlePlayNextItemButton()
 						peakService.stopWaitingForStart()
@@ -439,9 +440,9 @@ class SequenceService extends Service {
 			isLooping: gameService.isChallengeLooping()
     });
 
-  	console.log("started sequence at", this.state.loopStartedAt);
+  	console.log("started sequence at", this.state.loopStartedAt, "localStart:", localStart);
     this.showNotification("sequence started");
-  	this.localStart = localStart;
+		this.localStart = localStart;
 
 		this.setupNextSequenceItem();
 		this.doBeatUpdate();
@@ -486,7 +487,7 @@ class SequenceService extends Service {
     	
 			// figure out what loop we are on
 			let loopCounter = Math.floor(currentTimeInPlayback / this.state.currentSequence.custom_duration)
-    	if(loopCounter < 0) loopCounter: 0
+    	if(loopCounter < 0) loopCounter = 0
 
     	this.setReactive({
 				loopCounter,
@@ -540,7 +541,9 @@ class SequenceService extends Service {
     	if(nextItem) {
     		this.setReactive({
     			nextItem: nextItem
-    		});
+				});
+				
+				console.log("SPECIAL CASE?",this.state.controlStatus, this.sequenceStartingLocally(),  this.state.nextItem.startTime == 0)
     	
     		// schedule sound for item, if necessary
 				if(this.state.controlStatus == "playing" && (
@@ -651,6 +654,8 @@ class SequenceService extends Service {
 					nextUserAction: {}
 				});				
 			}
+
+			this.localStart = false
 
 	    if(this.beatTimeout) {
 	    	clearTimeout(this.beatTimeout);

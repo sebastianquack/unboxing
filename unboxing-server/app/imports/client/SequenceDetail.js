@@ -7,7 +7,7 @@ import { css } from 'emotion'
 import {SequenceDetailItem} from './';
 import { inputTransform, inputType } from '../helper/both/input';
 
-const trackTitleWidth = 7
+const trackTitleWidth = 6
 const trackHeight = 2
 const unit = "rem"
 
@@ -196,10 +196,11 @@ background-color: white;
     .title {
       box-sizing: border-box;
       display: inline-block;
-      padding: 0 1ex;
-      width: 7em;
+      padding: 0 1ex 0 1em;
+      width: ${trackTitleWidth + unit};
       border: gray solid;
-      border-width: 0 1px 0 0;
+      border-width: 0 1px 1px 0;
+      font-family: monospace;
     }
   }
 }

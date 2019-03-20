@@ -62,7 +62,9 @@ class PrimaryScreen extends React.Component {
       zIndex: 3,
       height: "100%",
       width: "100%",
-    }}>
+      paddingHorizontal: horizontalPadding,
+      paddingVertical: verticalPadding,
+      }}>
       { this.props.mainContent }
     </View>          
   }

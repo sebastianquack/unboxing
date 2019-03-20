@@ -17,7 +17,6 @@ class Files extends React.Component {
     this.state = {
       localFiles : {}
     };
-    this.fileStaus = this.fileStatus.bind(this)
     this.updateFileInfo = this.updateFileInfo.bind(this)
     this.downloadFile = this.downloadFile.bind(this)
     this.renderFile = this.renderFile.bind(this)
@@ -103,13 +102,22 @@ class Files extends React.Component {
     });       
   }
 
+  updateFilesInfoAndDownload = async () => {
+    const ok = await this.updateFilesInfo()
+    if (!ok) {
+      await this.downloadFiles()
+    }
+  }
+
 
   updateFilesInfo = async () => {
     for (let file of this.props.storageService.collections.files) {
       console.log("checking " + file.path)
       await this.updateFileInfo(file)
     }
-    this.downloadFiles()
+    const all_ok = Object.values(this.state.localFiles).findIndex( file => (this.fileStatus(file) != "OK")) === -1
+    console.log(all_ok ? "all files are okay" : "some files are missing or not okay")
+    return all_ok
   }
 
   downloadFiles = async (file) => {
@@ -123,7 +131,7 @@ class Files extends React.Component {
   }
 
   handleUpdate = () => {
-    this.updateFilesInfo()
+    this.updateFilesInfoAndDownload()
   }
 
   handleDelete = () => {

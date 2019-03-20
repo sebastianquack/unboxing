@@ -79,8 +79,10 @@ class Sequence extends React.Component {
           item={this.props.sequenceService.currentItem}
           controlStatus={this.props.sequenceService.controlStatus}
           nextUserAction={this.props.sequenceService.nextUserAction}
+          loopCounter = {this.props.sequenceService.loopCounter}
           isLooping = {this.props.sequenceService.isLooping}
           playbackStartedAt={this.props.sequenceService.playbackStartedAt}
+          currentTime={this.props.sequenceService.sequenceTimeVisualizer}
           magnification
         />
 

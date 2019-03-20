@@ -57,10 +57,10 @@ Meteor.methods({
         startTime: 0,
         track: "default",
         path: "",
-        gesture_id: "",
+        //gesture_id: "",
         sensorModulation: "off",
         autoplay: "off",
-        sensorStart: true,
+        //sensorStart: true,
       } ], $sort: { startTime: 1 }, $slice: 1000 } } }
     )
   },

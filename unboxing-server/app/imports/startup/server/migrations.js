@@ -38,7 +38,25 @@ Migrations.add({
   }
 });
 
-const version = 4;
+Migrations.add({
+  version: 5,
+  name: 'remove sensorStart and gesture_id from items',
+  up: function() {
+    // mongo > 3.6: Sequences.update({}, {$unset: {"items.$[].sensorStart":""}},{multi:true} );
+    Sequences.find().forEach(sequence => {
+      for (let item of sequence.items) {
+        delete item.sensorStart
+        delete item.gesture_id
+        if (item.autoplay === "first") item.autoplay === "off"
+      }
+      Sequences.update(sequence._id, {$set:{ items: sequence.items}})
+    })
+  },
+  down: function() {}
+});
+
+
+const version = 5;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);
