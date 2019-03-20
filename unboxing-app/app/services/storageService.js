@@ -83,7 +83,12 @@ class StorageService extends Service {
 
 	setServer(address) {
 		this.setReactive({server: address});
+    this.writeToFile();
 	}
+
+  getServer = () => {
+    return this.state.server;
+  }
 
 	setCustomDeviceId(id) {
 		this.setReactive({customDeviceId: id});

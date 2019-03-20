@@ -11,7 +11,8 @@ import {
 		storageService,
 		gestureService,
 		peakService,
-		gameService
+		gameService,
+    relayService
 	} from '../services';
 
 // all services need to be imported above, registered here, get a provider and consumer below
@@ -25,7 +26,8 @@ const services = [
 		storageService,
 		gestureService,
 		peakService,
-		gameService
+		gameService,
+    relayService,
 	]
 
 // create a context for each service
@@ -95,18 +97,21 @@ class ServiceConnector extends React.Component {
 	render() {
 			return (
 			// here we nest all providers so they can be individually consumed
-			<SingleServiceProvider serviceName="soundService">
-				<SingleServiceProvider serviceName="sequenceService">
-					<SingleServiceProvider serviceName="nearbyService">
-						<SingleServiceProvider serviceName="sensorService">
-							<SingleServiceProvider serviceName="permissionService">
-								<SingleServiceProvider serviceName="networkService">
-									<SingleServiceProvider serviceName="storageService">
-										<SingleServiceProvider serviceName="gestureService">
-											<SingleServiceProvider serviceName="peakService">
-												<SingleServiceProvider serviceName="gameService">
-													{this.props.children}
-												</SingleServiceProvider>
+			
+      <SingleServiceProvider serviceName="relayService">
+        <SingleServiceProvider serviceName="soundService">
+  				<SingleServiceProvider serviceName="sequenceService">
+  					<SingleServiceProvider serviceName="nearbyService">
+  						<SingleServiceProvider serviceName="sensorService">
+  							<SingleServiceProvider serviceName="permissionService">
+  								<SingleServiceProvider serviceName="networkService">
+  									<SingleServiceProvider serviceName="storageService">
+  										<SingleServiceProvider serviceName="gestureService">
+  											<SingleServiceProvider serviceName="peakService">
+  												<SingleServiceProvider serviceName="gameService">
+													 {this.props.children}
+												  </SingleServiceProvider>
+                        </SingleServiceProvider>
 											</SingleServiceProvider>
 										</SingleServiceProvider>
 									</SingleServiceProvider>
@@ -220,6 +225,17 @@ function withGameService(Component) {
   };
 }
 
+function withRelayService(Component) {
+  return function ComponentWithService(props) {
+    return (
+      <serviceContexts.relayService.Consumer>
+        { value => <Component {...props} relayService={value} /> }
+      </serviceContexts.relayService.Consumer>
+    );
+  };
+}
+
+
 export { ServiceConnector, 
 	withSoundService, 
 	withSequenceService, 
@@ -230,5 +246,6 @@ export { ServiceConnector,
 	withStorageService, 
 	withGestureService, 
 	withPeakService, 
-	withGameService
+	withGameService,
+  withRelayService,
 };

@@ -64,7 +64,7 @@ class GameContainer extends React.Component {
         buttonRight = instrumentName ? <Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/> : null;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
         buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
-        overlayContent = <ConnectionIndicator current={this.props.nearbyService.numConnections + 1} max={this.props.sequenceService.currentSequence.tracks.length} />;
+        overlayContent = <ConnectionIndicator current={this.props.nearbyService.numMeshParticipants} max={this.props.sequenceService.currentSequence ? this.props.sequenceService.currentSequence.tracks.length : 0} />;
         break;
  
       case "play":

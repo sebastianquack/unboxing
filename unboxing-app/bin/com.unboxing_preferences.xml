@@ -2,7 +2,7 @@
 <map>
     <boolean name="js_dev_mode_debug" value="true" />
     <string name="sampling_profiler_sample_interval">1000</string>
-    <string name="debug_http_host">192.168.8.10:8081</string>
+    <string name="debug_http_host"></string>
     <boolean name="js_bundle_deltas" value="true" />
     <boolean name="js_minify_debug" value="false" />
     <boolean name="js_bundle_deltas_cpp" value="false" />

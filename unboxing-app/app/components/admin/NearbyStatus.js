@@ -39,6 +39,7 @@ class NearbyStatus extends React.Component {
       name: "name",      
       meshStatus: "meshStatus",
       myNearbyStatus: "myNearbyStatus",
+      connectionAttempts: "cAttempts",
       lastHeardFrom: "heardFrom",
       lastHeardFromAsNeighbor: "hfNeighbor",
     }
@@ -90,6 +91,7 @@ class NearbyStatus extends React.Component {
         <Text>deviceId: {this.props.storageService.deviceId}</Text>
         <Text>serviceId: {this.props.nearbyService.serviceId}</Text>
         { this.renderEndpointInfo(this.props.nearbyService.endpointInfo) }
+        <Text>numMeshParticipants: {this.props.nearbyService.numMeshParticipants}</Text>
         <View style={{width:"25%"}}>
           <Text>Active Off/On</Text>         
           <Switch value={this.props.nearbyService.active} onValueChange={nearbyService.toggleActive}/>
@@ -102,7 +104,7 @@ class NearbyStatus extends React.Component {
         </View>
         <Text>Last health check: {this.props.nearbyService.lastHealthCheckSent}</Text>
         <Text>Message Counter: {this.props.nearbyService.messageCounter}</Text>
-        <Text>Message Log</Text>
+        <Text>{"\n"}Message Log{"\n"}</Text>
         <Text>{this.props.nearbyService.messageLog}</Text>
         
       </View>

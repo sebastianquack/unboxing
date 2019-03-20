@@ -1,6 +1,6 @@
 import Service from './Service';
 
-import {sequenceService, nearbyService, soundService, storageService} from './';
+import {sequenceService, nearbyService, soundService, storageService, relayService} from './';
 
 const defaultStatusBarTitle = "Unboxing Mozart";
 const defaultStatusBarSubtitle = "Development Version - Testing"
@@ -136,18 +136,25 @@ class GameService extends Service {
     })
 
 		//start nearby service with challengeId as serviceId - adding timeout to give time for shutdown
-		setTimeout(()=>{
+		/*setTimeout(()=>{
 			nearbyService.initNearbyWithServiceId(challenge._id);	
-		}, 2000);
+		}, 2000);*/
 
-    this.activateNearbyCallbacks();
+    //this.activateNearbyCallbacks();
+    
+    //relayService.joinRoom(challenge._id);
+    relayService.emitMessage("hello");
+    this.activateRelayCallbacks();
 	}
 
   leaveChallenge() {
+
+    relayService.emitMessage("bye");
+
     sequenceService.stopSequence();
 
     //stop nearby service
-    nearbyService.shutdownNearby();
+    //nearbyService.shutdownNearby();
 
     this.setReactive({
       statusBarTitle: defaultStatusBarTitle,
@@ -168,24 +175,30 @@ class GameService extends Service {
 
   }
 
-  activateNearbyCallbacks() {
+  onMessageReceived = (message) => {
+    this.showNotification(JSON.stringify(message));
+
+    // if this is start sequence message
+    if(message.message == "start_sequence") {
+
+      // if we haven't started and are ready to play
+      if(sequenceService.getControlStatus() == "ready")  {
+        sequenceService.startSequence(message.startTime, false); // just start sequence, not item started locally
+      }
+    }
+  }
+
+  activateNearbyCallbacks = () => {
     nearbyService.setCustomCallbacks({
       onConnectionEstablished: () => {
         // todo
       },
-      onMessageReceived: (message) => {
-        
-        // if this is start sequence message
-        if(message.message == "start_sequence") {
-
-          // if we haven't started and are ready to play
-          if(sequenceService.getControlStatus() == "ready")  {
-            sequenceService.startSequence(message.startTime, false); // just start sequence, not item started locally
-          }
-        }
-      },
-      // todo: onConnectionLost
+      onMessageReceived: this.onMessageReceived
     });   
+  }
+
+  activateRelayCallbacks() {
+    relayService.listenForMessages(this.onMessageReceived);
   }
 
 	setActiveChallengeStatus = (status)=> {
@@ -195,7 +208,8 @@ class GameService extends Service {
 		});
 
     if(status == "prepare") {
-      this.activateNearbyCallbacks();
+      //this.activateNearbyCallbacks();
+      this.activateRelayCallbacks();
     }
 
     this.initInfoStream();
