@@ -32,6 +32,9 @@ class SequenceService extends Service {
 		// bind
 		this.activateNextUserAction = this.activateNextUserAction.bind(this)
 		this.deactivateUserAction = this.deactivateUserAction.bind(this)
+		this.startSequence = this.startSequence.bind(this)
+		this.stopSequence = this.stopSequence.bind(this)
+		this.resetSequence = this.resetSequence.bind(this)
 	}
 
 
@@ -129,7 +132,7 @@ class SequenceService extends Service {
 		if (!this.state.isLooping) {
 			const sequenceEndsAt = this.state.playbackStartedAt + this.state.currentSequence.custom_duration
 			if (currentTime >= sequenceEndsAt) {
-				this.stopSequence(false)
+				this.resetSequence()
 				return
 			}
 		}
@@ -441,7 +444,7 @@ class SequenceService extends Service {
     });
 
   	console.log("started sequence at", this.state.loopStartedAt, "localStart:", localStart);
-    this.showNotification("sequence started");
+    // this.showNotification("sequence started");
 		this.localStart = localStart;
 
 		this.setupNextSequenceItem();
@@ -617,51 +620,64 @@ class SequenceService extends Service {
 	  soundService.stopAllSounds();
 	}
 	
-	// stops sequence playback and sound
-	stopSequence( clear = true ) {
-			soundService.stopAllSounds();
-			this.deactivateUserAction();
+	// stops sequence playback and sound and clears sequence
+	stopSequence() {
+		soundService.stopAllSounds();
+		this.deactivateUserAction();
 
-			if (clear) {
-				this.setReactive({
-					controlStatus: "idle",
-					currentSequence: null,
-					currentTrack: null,
-					nextItem: null,
-					scheduledItem: null,
-					currentItem: null,
-					playbackStartedAt: null,	    	
-					loopStartedAt: null,
-					showPlayItemButton: false,
-					beatsToNextItem: "",
-					loopCounter: 0,
-					sequenceTimeVisualizer: 0,
-					endedFlag: true,
-					nextUserAction: {}
-				});
-			} else {
-				this.setReactive({
-					controlStatus: "idle",
-					nextItem: null,
-					scheduledItem: null,
-					currentItem: null,
-					playbackStartedAt: null,	    	
-					loopStartedAt: null,
-					beatsToNextItem: "",
-					loopCounter: 0,
-					sequenceTimeVisualizer: 0,
-					endedFlag: true,
-					nextUserAction: {}
-				});				
-			}
+		this.setReactive({
+			controlStatus: "idle",
+			currentSequence: null,
+			currentTrack: null,
+			nextItem: null,
+			scheduledItem: null,
+			currentItem: null,
+			playbackStartedAt: null,	    	
+			loopStartedAt: null,
+			showPlayItemButton: false,
+			beatsToNextItem: "",
+			loopCounter: 0,
+			sequenceTimeVisualizer: 0,
+			endedFlag: true,
+			nextUserAction: {}
+		});
 
-			this.localStart = false
+		this.localStart = false
 
-	    if(this.beatTimeout) {
-	    	clearTimeout(this.beatTimeout);
-	    	this.beatTimeout = null
-	    }
-  	}
+		if(this.beatTimeout) {
+			clearTimeout(this.beatTimeout);
+			this.beatTimeout = null
+		}
+	}
+		
+	// stops playing and puts existing sequence back to ready state
+	resetSequence() {
+		console.log("reset sequence")
+
+		soundService.stopAllSounds();
+		this.deactivateUserAction();
+
+		this.setReactive({
+			controlStatus: "ready",
+			nextItem: null,
+			scheduledItem: null,
+			currentItem: null,
+			playbackStartedAt: null,	    	
+			loopStartedAt: null,
+			beatsToNextItem: "",
+			loopCounter: 0,
+			sequenceTimeVisualizer: 0,
+			endedFlag: true,
+			nextUserAction: {}
+		});				
+
+		this.localStart = false
+
+		if(this.beatTimeout) {
+			clearTimeout(this.beatTimeout);
+			this.beatTimeout = null
+		}
+	}		
 
 }
 

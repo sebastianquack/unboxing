@@ -99,6 +99,16 @@ class SequenceAdmin extends React.Component {
                 <Text>Start Sequence</Text>
             </TouchableOpacity>
           }
+          {controlStatus == "playing" &&
+            <TouchableOpacity style={styles.button} onPress={sequenceService.resetSequence}>
+                <Text>Reset Sequence</Text>
+            </TouchableOpacity>
+          }          
+          {(controlStatus == "ready" || controlStatus == "playing") &&
+            <TouchableOpacity style={styles.button} onPress={() => gameService.startSequenceRemotely()}>
+              <Text>Start Sequence Remotely</Text>
+            </TouchableOpacity>
+          }          
       </View>
     )
   }
