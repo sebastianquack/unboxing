@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import { Text, View, Image, ScrollView } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 
@@ -9,6 +9,8 @@ const horizontalPadding = Math.floor(dimensions.screenWidth * 0.04)
 const verticalPadding = Math.floor(dimensions.screenWidth * 0.03)
 
 const imageWidth = dimensions.screenWidth * 0.25
+
+const shadeImg = require('../../assets/img/shade.png')
 
 const backgroundGradients = {
   "passive": {
@@ -113,6 +115,20 @@ class PrimaryScreen extends React.Component {
     </ScrollView>
   }
 
+  renderShade() {
+    return <View pointerEvents="none" style={{
+      position: "absolute",
+      zIndex: 7,
+      width: "100%",
+      height: "100%",
+      opacity: 0.5
+      }}>
+      <Image resizeMode="contain" source={shadeImg} style={{
+        width: "100%",
+      }} />
+    </View>
+  }
+
   render() {
     return <View style={{
       height: "100%",
@@ -126,6 +142,7 @@ class PrimaryScreen extends React.Component {
       { this.props.overlayContent && this.renderOverlayContent() }
       { this.props.scrollContent && this.renderScrollContent() }
       { this.props.infoStreamContent && this.renderInfoStream() }
+      { this.renderShade() }
     </View>
   }
 }

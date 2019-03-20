@@ -291,8 +291,8 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: 'transparent',
     width: labelsWidth,
-    borderRightWidth: 1,
-    borderColor: '#333',
+    borderRightWidth: 2,
+    borderColor: colors.turquoise,
     zIndex: 1,
   },  
   body: {
