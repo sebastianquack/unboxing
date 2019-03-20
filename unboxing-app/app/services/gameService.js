@@ -176,15 +176,11 @@ class GameService extends Service {
   }
 
   onMessageReceived = (message) => {
-    this.showNotification(JSON.stringify(message));
-
+    this.showNotification(JSON.stringify(message.message));
+        
     // if this is start sequence message
-    if(message.message == "start_sequence") {
-
-      // if we haven't started and are ready to play
-      if(sequenceService.getControlStatus() == "ready")  {
-        sequenceService.startSequence(message.startTime, false); // just start sequence, not item started locally
-      }
+    if(message.message.message == "start_sequence") {
+      this.startSequenceRemotely(message.message.startTime)
     }
   }
 
@@ -245,7 +241,34 @@ class GameService extends Service {
       sequenceService.startSequence(startTime, true); // set local start flag to true 
 
       // send start_sequence message to all players connected via nearby
-      nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
+      //nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
+      relayService.emitMessage({message: "start_sequence", startTime: startTime});
+  }
+
+  startSequenceRemotely = startAt => {
+    let nowTime = soundService.getSyncTime();
+    const startTime = startAt || nowTime
+
+    // should this request restart the sequence?
+    // yes, if sequence has already started and the remote time is an earlier time
+    if (
+        sequenceService.state.controlStatus === "playing"
+        // && sequenceService.state.playbackStartedAt > nowTime
+        && startTime < sequenceService.state.playbackStartedAt
+      ) {
+      console.log("startSequenceRemotely: restarting sequence")
+      sequenceService.resetSequence()
+      sequenceService.startSequence(startTime)
+    }
+    // should this request start the sequence?
+    // yes, if sequence is ready to play
+    else if (sequenceService.state.controlStatus === "ready") {
+      console.log("startSequenceRemotely: starting sequence")
+      sequenceService.startSequence(startTime, false)
+    } else {
+      console.log("startSequenceRemotely: ignored, time diff:", startTime, sequenceService.state.playbackStartedAt)
+    }
+    return null
   }
 
   handleMissedCue() {

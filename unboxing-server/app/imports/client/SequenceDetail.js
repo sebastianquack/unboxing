@@ -5,8 +5,9 @@ import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
 import {SequenceDetailItem} from './';
+import { inputTransform, inputType } from '../helper/both/input';
 
-const trackTitleWidth = 7
+const trackTitleWidth = 6
 const trackHeight = 2
 const unit = "rem"
 
@@ -23,9 +24,12 @@ class Sequence extends React.Component {
 
  SequenceDetailCss = css`
     display: inline-block;
-    background-color: lightgrey;
+    background-color: white;
     padding: 1em 1ex 1em 1ex;
     border-radius: 1em 1em 0 0;
+    border-color: grey;
+    border-style: solid;
+    border-width: 1px 1px 0 1px;
     margin-bottom: 0;
     label {
       &:first-child {
@@ -48,28 +52,27 @@ class Sequence extends React.Component {
   handleAttributeChange = (attributeName, value) => {
     $set = {}
     $set[attributeName] = value
+    console.log($set)
     Meteor.call('updateSequence', this.props.sequence._id, $set )
   }
 
   renderInput(attributeName, value) {
     const emptyOption = <option key="empty" value="">&lt;none&gt;</option>;
     switch(attributeName) {
+      case "duration":
+        return <span>{value}</span>
+        break;
       default:
-        const inputType = typeof(value) == "number" ? "number" : "text"
-        const inputTransform = (value) => {
-          let transformed = inputType == "number" ? parseInt(value) : value
-          if (transformed === NaN) transformed = value
-          return transformed
-        }
         return (<ContentEditable 
           style={{
             border: "dotted grey 1px",
             borderWidth: "0 0 1px 0",
             fontWeight: "bold"
           }}
-          onChange={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.value)) } 
           onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
+          onBlur={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.innerHTML, inputType(value))) }
           html={value + ""}
+          title={ inputType(value) }
           tagName="span"
         />)
     }
@@ -170,6 +173,7 @@ export default withTracker(props => {
 const tracksCSS = css`
 width: 90%;
 position: relative;
+background-color: white;
 .tracks_list {
   padding-left: 0;
   margin-bottom: 5em;
@@ -180,9 +184,9 @@ position: relative;
       line-height: ${trackHeight + unit};
     }
     border: 1px grey solid;
-    border-width: 0 0 1px 0;
+    border-width: 0 0 1px 1px;
     &:first-of-type {
-      border-width: 1px 0 1px 0;
+      border-width: 1px 0 1px 1px;
     }
     &:last-of-type {
       &, .title {
@@ -192,10 +196,11 @@ position: relative;
     .title {
       box-sizing: border-box;
       display: inline-block;
-      padding: 0 1ex;
-      width: 7em;
+      padding: 0 1ex 0 1em;
+      width: ${trackTitleWidth + unit};
       border: gray solid;
-      border-width: 0 1px 0 0;
+      border-width: 0 1px 1px 0;
+      font-family: monospace;
     }
   }
 }

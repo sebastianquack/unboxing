@@ -132,7 +132,7 @@ class SoundSevice extends Service {
 
 		var newSound = new Sound(filename, Sound.MAIN_BUNDLE, (error) => {
 		  if (error) {
-		    console.log('aborting, failed to load sound ' + filename, error);
+		    this.showNotification('aborting, failed to load sound ' + filename, error);
 		    return;
 		  }
 		  // loaded successfully

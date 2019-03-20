@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion'
 
 import { Sequences } from '../collections'
-
+import { inputTransform, inputType } from '../helper/both/input';
 
 class ChallengeDetail extends React.Component {
 	constructor(props) {
@@ -67,21 +67,16 @@ class ChallengeDetail extends React.Component {
             onChange={ e => this.handleAttributeChange(attributeName, !this.props.challenge[attributeName])} />
         	);      
       default:
-        const inputType = typeof(value) == "number" ? "number" : "text"
-        const inputTransform = (value) => {
-          let transformed = inputType == "number" ? parseInt(value) : value
-          if (transformed === NaN) transformed = value
-          return transformed
-        }
         return (<ContentEditable 
           style={{
             border: "dotted grey 1px",
             borderWidth: "0 0 1px 0",
             fontWeight: "bold"
           }}
-          onChange={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.value)) } 
+          onBlur={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.innerHTML, inputType(value))) }
           onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
           html={value + ""}
+          title={ inputType(value) }
           tagName="span"
         />)
     }

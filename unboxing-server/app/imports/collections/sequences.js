@@ -79,7 +79,7 @@ updateTracksDuration = (userId, doc) => {
     $set: { duration }
   } )
   // set cutom duration to duration if nothing is specified
-  if (!doc.custom_duration || doc.custom_duration === 0 || doc.duration > doc.custom_duration ) {
+  if (!doc.custom_duration || doc.custom_duration === 0 || typeof doc.custom_duration !== "number" || doc.duration > doc.custom_duration ) {
     Sequences.direct.update({_id: doc._id},{
       $set: { custom_duration: duration }
     } )    

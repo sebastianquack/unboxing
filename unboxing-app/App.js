@@ -87,7 +87,8 @@ class App extends Component {
     ];
     
     this.state = {
-      adminMenu: false
+      adminMenu: false,
+      adminTranslucent: false,
     };    
 
     this.initSections()
@@ -137,13 +138,17 @@ class App extends Component {
   }
 
   renderAdminMenu() {
+    const conditionalStyles = this.state.adminTranslucent ? styles.adminMenu__translucent : {}
     return (
-      <View {...styles.adminMenu}>
-        <Text style={globalStyles.titleText}>Admin</Text>
+      <ScrollView {...styles.adminMenu} {...conditionalStyles}>
+        <Text style={globalStyles.titleText}>Admin
+        </Text>
+        <Text style={{fontSize: 16}}>translucent</Text>
+          <Switch value={this.state.adminTranslucent} onValueChange={value => this.setState({adminTranslucent: value})}/>                
         <View>
           { this.renderSections() }
         </View>        
-      </View>
+      </ScrollView>
     );
   }
   
@@ -153,14 +158,13 @@ class App extends Component {
         <KeepAwake key="KeepAwake" />,
         <StatusBar key="StatusBar" translucent backgroundColor="transparent" barStyle="dark-content" />,
         <ServiceConnector key="ServiceConnector">
-          <ScrollView contentContainerStyle={styles.container}>
-            {this.renderAdminButton()}
-            {this.state.adminMenu ?
+          <View {...styles.container}>
+            { (this.state.adminMenu && this.state.adminTranslucent || !this.state.adminMenu) && <GameContainer/> }
+            {this.state.adminMenu &&
               this.renderAdminMenu() 
-            :
-              <GameContainer/> 
             }
-          </ScrollView>
+            {this.renderAdminButton()}
+          </View>
         </ServiceConnector>
       ]
     );
@@ -172,12 +176,21 @@ export default App;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    width: "100%",
+    height: "100%",
   },
   adminMenu: {
+    position: 'absolute',
+    zIndex: 99,
+    width: "100%",
+    height: "100%",
+    backgroundColor: "white",
     padding: 10,
     paddingTop: 30,
   },
+  adminMenu__translucent: {
+    backgroundColor: 'rgba(200,200,200,0.5)'
+  },  
   adminButton: {
     opacity: 0.8,
     padding: 10,

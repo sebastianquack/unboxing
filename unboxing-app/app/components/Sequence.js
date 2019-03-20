@@ -69,21 +69,11 @@ class Sequence extends React.Component {
     }
   }
 
-  
-
   render() {
 
     return (
       <View> 
-        <SequenceVisualizer 
-          sequence={this.props.sequenceService.currentSequence}
-          track={this.props.sequenceService.currentTrack}
-          item={this.props.sequenceService.currentItem}
-          controlStatus={this.props.sequenceService.controlStatus}
-          currentTime={this.props.sequenceService.sequenceTimeVisualizer}
-          nextUserAction={this.props.sequenceService.nextUserAction}
-          loopCounter={this.props.sequenceService.loopCounter}
-        />
+        <SequenceVisualizer magnification />
 
           {this.props.sequenceService.showPlayItemButton && this.props.gameService.debugMode &&
               <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>

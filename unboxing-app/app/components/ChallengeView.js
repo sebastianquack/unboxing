@@ -41,14 +41,8 @@ class ChallengeView extends React.Component {
         }
 
         {challengeStatus == "prepare" &&       
-          <View>
-            {/*<SequenceVisualizer 
-              sequence={this.props.sequenceService.currentSequence}
-              track={this.props.sequenceService.currentTrack}
-              item={this.props.sequenceService.currentItem}
-              controlStatus={this.props.sequenceService.controlStatus}
-              currentTime={this.props.sequenceService.sequenceTimeVisualizer}
-            >*/}
+          <View style={{opacity:0.4}}>
+            <SequenceVisualizer />
           </View>
         }
         
