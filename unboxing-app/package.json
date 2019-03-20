@@ -27,6 +27,7 @@
     "react-native-sound": "0.10.4",
     "react-native-svg": "^8.0.8",
     "react-native-video": "^4.4.0",
+    "recompose": "^0.30.0",
     "rxjs": "^6.3.2",
     "undux": "^5.0.0-alpha.15",
     "uuid": "^3.2.1"

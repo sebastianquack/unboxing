@@ -73,18 +73,7 @@ class Sequence extends React.Component {
 
     return (
       <View> 
-        <SequenceVisualizer 
-          sequence={this.props.sequenceService.currentSequence}
-          track={this.props.sequenceService.currentTrack}
-          item={this.props.sequenceService.currentItem}
-          controlStatus={this.props.sequenceService.controlStatus}
-          nextUserAction={this.props.sequenceService.nextUserAction}
-          loopCounter = {this.props.sequenceService.loopCounter}
-          isLooping = {this.props.sequenceService.isLooping}
-          playbackStartedAt={this.props.sequenceService.playbackStartedAt}
-          currentTime={this.props.sequenceService.sequenceTimeVisualizer}
-          magnification
-        />
+        <SequenceVisualizer magnification />
 
           {this.props.sequenceService.showPlayItemButton && this.props.gameService.debugMode &&
               <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>

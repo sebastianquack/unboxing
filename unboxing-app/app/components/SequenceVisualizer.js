@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, ScrollView, Animated, Easing } from 'react-native';
 import PropTypes from 'prop-types';
-import { bindCallback } from 'rxjs';
+import { compose, mapProps } from 'recompose';
 
 import UIText from './UIText'
 import {globalStyles, colors} from '../../config/globalStyles';
 
 import {soundService} from '../services';
+import {withSequenceService} from './ServiceConnector';
 
 const labelsWidth = 150
 
@@ -27,14 +28,7 @@ class SequenceVisualizer extends React.PureComponent {
   }
 
   componentDidMount() {
-    //setTimeout( ()=>{
-    //  Animated.loop(Animated.timing(this.state.scrollX, {
-    //    toValue: -this.state.sequenceWidth,
-    //    duration: 5000,
-    //    easing: Easing.linear,
-    //    useNativeDriver: true
-    //  })).start();
-    //}, 1000)
+    console.log("PROPS",this.props)
     if (doAnim) this.manageAnimation(null, this.props.controlStatus)
   }
 
@@ -260,20 +254,30 @@ class SequenceVisualizer extends React.PureComponent {
   }
 }
 
-export default SequenceVisualizer;
+export default compose(
+  withSequenceService,
+  mapProps((props) => {
+    return {
+      // renamed
+      sequence:     props.sequenceService.currentSequence,
+      track:        props.sequenceService.currentTrack,
+      item:         props.sequenceService.currentItem,
+      currentTime:  props.sequenceService.sequenceTimeVisualizer,
+
+      // not renamed
+      controlStatus:  props.sequenceService.controlStatus,
+      nextUserAction: props.sequenceService.nextUserAction,
+      loopCounter :   props.sequenceService.loopCounter,
+      isLooping :     props.sequenceService.isLooping,
+      playbackStartedAt:props.sequenceService.playbackStartedAt,      
+
+      ...props,
+    };
+  })
+)(SequenceVisualizer);
 
 SequenceVisualizer.propTypes = {
-  sequence: PropTypes.object,
-  track: PropTypes.object,
-  item: PropTypes.object,
   magnification: PropTypes.bool,
-  controlStatus: PropTypes.oneOf("playing", "ready", "idle", "loading"),
-  nextUserAction: PropTypes.object,
-  playbackStartedAt: PropTypes.number,
-  loopStartedAt: PropTypes.number,
-
-  currentTime: PropTypes.number,
-  loopCounter: PropTypes.number,
 };
 
 const styles = StyleSheet.create({
