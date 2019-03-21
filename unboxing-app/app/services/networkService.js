@@ -160,7 +160,7 @@ class NetworkService extends Service {
       options.body = JSON.stringify(data)
     }
 		try {
-			console.log(`API request ${method}`, options.body)
+			console.log(`API request ${method}`)
 			let response = await fetch(
         `http://${this.state.server}:3000/api/${method}.json`,
         options

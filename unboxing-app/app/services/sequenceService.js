@@ -392,8 +392,10 @@ class SequenceService extends Service {
 
   	// if sequence is already running - just this.setupNextSequenceItem(); and quit
   	if(this.state.controlStatus == "playing") {
-  		this.setupNextSequenceItem();
-  		return;
+			this.cancelItemsAndSounds()
+			this.setupNextSequenceItem();
+			this.updateActionInterface();
+			return
   	}
 
   	// vvvvv from here on we assume that sequence has not started yet vvvvv
@@ -546,8 +548,6 @@ class SequenceService extends Service {
     			nextItem: nextItem
 				});
 				
-				console.log("SPECIAL CASE?",this.state.controlStatus, this.sequenceStartingLocally(),  this.state.nextItem.startTime == 0)
-    	
     		// schedule sound for item, if necessary
 				if(this.state.controlStatus == "playing" && (
 								this.autoPlayNextItem() || 
@@ -579,7 +579,10 @@ class SequenceService extends Service {
 
 	// call sound service to schedule sound for next item, set callback to setup next item after playback
 	scheduleSoundForNextItem(targetTime) {
-		if (!this.state.nextItem) return
+		if (!this.state.nextItem) {
+			console.log("scheduleSoundForNextItem: nothing to schedule")
+			return
+		}
 		soundService.scheduleSound(this.state.nextItem.path, targetTime, {
 			onPlayStart: () => {
 				this.setReactive({
@@ -602,7 +605,7 @@ class SequenceService extends Service {
 
 	stopCurrentSound() {
 		if(this.state.currentItem) {
-			console.log(this.state.currentItem);
+			console.log("stopping", this.state.currentItem);
 			soundService.stopSound(this.state.currentItem.path);
 			this.setReactive({currentItem: null});
 			this.setupNextSequenceItem();

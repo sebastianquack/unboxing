@@ -28,7 +28,6 @@ class SequenceVisualizer extends React.PureComponent {
   }
 
   componentDidMount() {
-    console.log("PROPS",this.props)
     if (doAnim) this.manageAnimation(null, this.props.controlStatus)
   }
 
@@ -58,8 +57,6 @@ class SequenceVisualizer extends React.PureComponent {
     //}
 
     if (this.props.controlStatus === "playing" && !this.isRunning) {
-
-      console.log(this.props)
 
       this.isRunning = true
       const nowTime = soundService.getSyncTime()
