@@ -64,7 +64,7 @@ class GameContainer extends React.Component {
         buttonRight = instrumentName ? <Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/> : null;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
         buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
-        overlayContent = <ConnectionIndicator current={this.props.nearbyService.numMeshParticipants} max={this.props.sequenceService.currentSequence ? this.props.sequenceService.currentSequence.tracks.length : 0} />;
+        overlayContent = <ConnectionIndicator current={this.props.gameService.numChallengeParticipants} max={this.props.sequenceService.currentSequence ? this.props.sequenceService.currentSequence.tracks.length : 0} />;
         break;
  
       case "play":
@@ -78,7 +78,7 @@ class GameContainer extends React.Component {
       <View>
         <ScreenContainer
           primaryScreen = {<PrimaryScreen
-              backgroundColor={this.props.peakService.isDown ? "active" : "passive" }
+              backgroundColor={this.props.peakService.isUp ? "passive" : "active" }
               // backgroundFlow
               mainContent = { mainContent }
               overlayContent = { overlayContent }

@@ -19,19 +19,19 @@ class PeakService extends Service {
 		this.isUp = data => {
       switch(this.state.peakMode) {
         case "acc": return (data.acc.x > 0.55)
-        case "gyr": return (data.gyr.y > 8.0)
+        case "gyr": return (data.gyr.y > 7.0) && (data.gyr.z < 5.0)
       }
     }
 
 		this.isDown = data => {
       switch(this.state.peakMode) {
         case "acc": return (data.acc.x < -0.75)
-        case "gyr": return (data.gyr.z > 8.0)
+        case "gyr": return (data.gyr.y < 2.0)
       }
     }
 
 		this.peakDistMillisMin = 150
-		this.peakDistMillisMax = 2000
+		this.peakDistMillisMax = 5000
 		this.peakStartTime = null
 
 		this.facingDown = false // for stop gesture
@@ -83,6 +83,7 @@ class PeakService extends Service {
 			}
 		}
 
+    // for stop gesture
 		if(this.checkIfFacingDown(data)) {
 			if(!this.isFacingDown) {
 				this.faceDownDetected();

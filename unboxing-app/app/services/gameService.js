@@ -20,7 +20,8 @@ class GameService extends Service {
       statusBarTitle: defaultStatusBarTitle,
       statusBarSubtitle: defaultStatusBarSubtitle,
       debugMode: false,          // show debugging info in interface
-      infoStream: []
+      infoStream: [],
+      numChallengeParticipants: 1 // number of people in the challenge
 		});
 
 		// not reactive vars
@@ -143,13 +144,13 @@ class GameService extends Service {
     //this.activateNearbyCallbacks();
     
     //relayService.joinRoom(challenge._id);
-    relayService.emitMessage("hello");
+    relayService.emitMessage({code: "joinChallenge", challengeId: challenge._id, deviceId: storageService.getDeviceId()});
     this.activateRelayCallbacks();
 	}
 
   leaveChallenge() {
 
-    relayService.emitMessage("bye");
+    relayService.emitMessage({code: "leaveChallenge", challengeId: challenge._id, deviceId: storageService.getDeviceId()});
 
     sequenceService.stopSequence();
 
@@ -175,12 +176,12 @@ class GameService extends Service {
 
   }
 
-  onMessageReceived = (message) => {
-    this.showNotification(JSON.stringify(message.message));
+  onMessageReceived = (msgObj) => {
+    this.showNotification(JSON.stringify(msgObj));
         
     // if this is start sequence message
-    if(message.message.message == "start_sequence") {
-      this.startSequenceRemotely(message.message.startTime)
+    if(msgObj.code == "start_sequence") {
+      this.startSequenceRemotely(msgObj.startTime)
     }
   }
 
@@ -242,7 +243,7 @@ class GameService extends Service {
 
       // send start_sequence message to all players connected via nearby
       //nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
-      relayService.emitMessage({message: "start_sequence", startTime: startTime});
+      relayService.emitMessage({code: "start_sequence", startTime: startTime});
   }
 
   startSequenceRemotely = startAt => {

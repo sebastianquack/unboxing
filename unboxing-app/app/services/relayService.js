@@ -16,10 +16,9 @@ class RelayService extends Service {
   constructor() {
     // initialize with reactive vars
     super("relayService", {
-      currentRoomId: "default"
     });
 
-    this.port = 3000;
+    this.port = 3005;
     setTimeout(()=>{
       this.init(); 
     }, 1000);
@@ -37,26 +36,17 @@ class RelayService extends Service {
 
   init = () => {
     this.socket = openSocket(this.getUrl());
+    
     this.socket.on('disconnect', ()=>{
       this.debug("socket disconnect");
     });
+    
     this.socket.on('connect', ()=>{
       this.debug("socket connect");
     });
 
     this.socket.on('reconnect_attempt', () => {
       this.debug("reconnect_attempt");
-      this.socket.io.opts.query = {
-        currentRoomId: this.state.currentRoomId
-      };
-    });
-  }
-
-  // socket.io api
-
-  setCurrentRoomId = (id)=> {
-    this.setReactive({
-      currentRoomId: id
     });
   }
 
@@ -64,25 +54,14 @@ class RelayService extends Service {
     return this.socket.connected;
   }
 
-  joinRoom(room:string) {
-    this.setCurrentRoomId(room);
-    this.socket.emit('joinRoom', room); // ask server to put us in a room
-  }
-
   listenForMessages(callback) {
     this.socket.on('message', callback);
   }
 
   emitMessage(msg) {
-    this.socket.emit('message', {message: msg, room: this.state.currentRoomId});
+    this.socket.emit('message', msg);
   }
 
-  leaveRoom(room:string) {
-    this.setCurrentRoomId(null);
-    this.socket.off('message');
-    this.socket.emit('leaveRoom', room); // ask server to remove us from a room
-  }
-  
 }
 
 const relayService = new RelayService();
