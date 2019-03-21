@@ -2,7 +2,7 @@ import { NetInfo } from 'react-native';
 //import Zeroconf from 'react-native-zeroconf';
 
 import Service from './Service';
-import { storageService } from './';
+import { storageService, soundService } from './';
 
 defaultServer = "192.168.8.10"
 
@@ -16,7 +16,8 @@ class NetworkService extends Service {
 		super("networkService", {
       server: defaultServer,
       lastApiResult: "",
-      imei: ""
+      imei: "",
+      timeSyncStatus: "not synced"
 		});
 
     //this.initZeroconf()
@@ -25,6 +26,10 @@ class NetworkService extends Service {
     setTimeout(()=>{
       this.setupImei();
     }, 1000);
+
+    setTimeout(()=>{
+      this.doTimeSync()
+    }, 2000);
     
 	}
 
@@ -86,6 +91,61 @@ class NetworkService extends Service {
       'connectionChange',
       handleConnectivityChange
     );
+  }
+
+  async measureDelta(callback) {
+    let sendTimeStamp = (new Date()).getTime();
+    const result = await this.apiRequest('getTime').catch((e)=>console.log(err.message, err.code));
+    if(result) {
+      let serverTime = result.time;
+      let receiveTimeStamp = (new Date()).getTime();
+      let latency = (receiveTimeStamp - sendTimeStamp) / 2.0;
+      let delta = receiveTimeStamp - (serverTime + latency);
+      callback({latency: latency, delta: delta});
+    }
+  }
+
+  doTimeSync() {
+    this.setReactive({timeSyncStatus: "syncing"})
+    this.avgTimeDeltas((delta)=>{
+      soundService.setDelta(delta);
+      this.setReactive({timeSyncStatus: "synced"})
+      // alert("Time sync completed");
+    });
+  }
+
+  avgTimeDeltas(callback) {
+    let deltas = [];
+    let timeout = 800;
+    let num = 25;
+  
+    // send num requests to server, save deltas
+    console.log("starting measurement of time deltas");
+    for(let i = 0; i < num; i++) {
+      
+      setTimeout(()=>{
+        this.measureDelta((delta)=>{
+          deltas.push(delta)
+          if(i == num - 1) {
+            console.log("measurement complete");
+            console.log(JSON.stringify(deltas));
+            console.log("sorting by latency");
+            deltas.sort(function(a, b){return a.latency - b.latency});
+            console.log(JSON.stringify(deltas));
+            console.log("calculating average delta for fastest half of reponses:");
+            let sum = 0;
+            let counter = 0;
+            for(let j = 0; j < deltas.length / 2.0; j++) {
+              sum += deltas[j].delta;
+              counter++;
+            }
+            let avg = sum / counter;
+            console.log("result: " + avg);
+            callback(avg);
+          }
+        });  
+      }, i * timeout); 
+    }  
   }
 
 	apiRequest = async (method, data = null) => {
