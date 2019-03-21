@@ -50,12 +50,17 @@ function init(io) {
       }
 
       if(msg.code == "leaveChallenge") {
-         if(msg.deviceId && msg.challengeId) {
+         if(msg.deviceId) {
             delete deviceMap[msg.deviceId];
+         }
+
+         if(msg.challengeId) {
+            
             updateDeviceMap(socket, msg.challengeId);
             if(countParticipants(msg.challengeId) == 0) {
               challengeState[msg.challengeId].sequenceControlStatus = "idle";  
             }
+          
           } 
       }
 

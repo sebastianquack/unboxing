@@ -150,8 +150,9 @@ class GameService extends Service {
 
   leaveChallenge() {
 
-    relayService.emitMessage({code: "leaveChallenge", challengeId: this.state.activeChallenge._id, deviceId: storageService.getDeviceId()});
-
+    
+    relayService.emitMessage({code: "leaveChallenge", challengeId: this.state.activeChallenge ? this.state.activeChallenge._id : null, deviceId: storageService.getDeviceId()});  
+    
     sequenceService.stopSequence();
 
     //stop nearby service

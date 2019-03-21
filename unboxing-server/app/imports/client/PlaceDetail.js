@@ -4,8 +4,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import { css } from 'emotion'
 
-import { Challenges } from '../collections'
-
+import { Challenges, Sequences } from '../collections'
 
 class PlaceDetail extends React.Component {
 	constructor(props) {
@@ -42,6 +41,15 @@ class PlaceDetail extends React.Component {
     Meteor.call('updatePlace', this.props.place._id, $set )
   }
 
+  getSequenceName = (id)=> {
+    let s = Sequences.findOne({_id: id});
+    console.log(s);
+    if(s) {
+      return s.name;
+    }
+    return null;
+  }
+
 	renderInput(attributeName, value) {
     const emptyOption = <option key="empty" value="">&lt;none&gt;</option>;
     switch(attributeName) {
@@ -49,7 +57,7 @@ class PlaceDetail extends React.Component {
         return (
           <select value={value} onChange={ e => this.handleAttributeChange(attributeName, e.target.value) }>
             {emptyOption}
-            {this.props.ready && this.props.challenges.map( s => <option key={s._id} value={s._id}>{s.name}</option>)}      
+            {this.props.ready && this.props.challenges.map( c => <option key={c._id} value={c._id}>{c.name} {this.getSequenceName(c.sequence_id)}</option>)}      
           </select>
         );        
       default:
