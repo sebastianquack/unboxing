@@ -14,7 +14,9 @@ function updateChallengeMap(socket, challengeId) {
       numParticipants++;
     }
   }
-  socket.broadcast.emit('message', {code: "challengeParticipantUpdate", challengeId: challengeId, numParticipants: numParticipants})
+  let msgObj = {code: "challengeParticipantUpdate", challengeId: challengeId, numParticipants: numParticipants};
+  socket.emit('message', msgObj);
+  socket.broadcast.emit('message', msgObj);
 }
 
 function init(io) {

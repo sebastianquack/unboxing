@@ -150,7 +150,7 @@ class GameService extends Service {
 
   leaveChallenge() {
 
-    relayService.emitMessage({code: "leaveChallenge", challengeId: challenge._id, deviceId: storageService.getDeviceId()});
+    relayService.emitMessage({code: "leaveChallenge", challengeId: this.state.activeChallenge._id, deviceId: storageService.getDeviceId()});
 
     sequenceService.stopSequence();
 
@@ -177,7 +177,15 @@ class GameService extends Service {
   }
 
   onMessageReceived = (msgObj) => {
-    this.showNotification(JSON.stringify(msgObj));
+    //this.showNotification(JSON.stringify(msgObj));
+
+    if(msgObj.code == "challengeParticipantUpdate") {
+      if(this.state.activeChallenge) {
+        if(msgObj.challengeId == this.state.activeChallenge._id) {
+          this.setReactive({numChallengeParticipants: msgObj.numParticipants})
+        }  
+      }
+    }
         
     // if this is start sequence message
     if(msgObj.code == "start_sequence") {
