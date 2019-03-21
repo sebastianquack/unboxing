@@ -496,7 +496,7 @@ class SequenceService extends Service {
 
     	this.setReactive({
 				loopCounter,
-			  loopStartedAt: this.state.playbackStartedAt + (this.state.loopCounter * this.state.currentSequence.custom_duration)
+			  loopStartedAt: this.state.playbackStartedAt + (loopCounter * this.state.currentSequence.custom_duration)
 			});
 			console.log("loopCounter", this.state.loopCounter);
   		console.log("new loopStartedAt", this.state.loopStartedAt);
