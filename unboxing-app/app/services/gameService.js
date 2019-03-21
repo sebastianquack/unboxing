@@ -263,7 +263,7 @@ class GameService extends Service {
 
   startSequenceRemotely = startAt => {
     let nowTime = soundService.getSyncTime();
-    const startTime = startAt || nowTime
+    const startTime = startAt || (nowTime - 1000)
 
     // should this request restart the sequence?
     // yes, if sequence has already started and the remote time is an earlier time
@@ -272,9 +272,8 @@ class GameService extends Service {
         // && sequenceService.state.playbackStartedAt > nowTime
         && startTime < sequenceService.state.playbackStartedAt
       ) {
-      console.log("startSequenceRemotely: restarting sequence")
-      sequenceService.resetSequence()
-      sequenceService.startSequence(startTime)
+      console.log("startSequenceRemotely: shifting timing")
+      sequenceService.shiftSequenceToNewStartTime(startTime);
     }
     // should this request start the sequence?
     // yes, if sequence is ready to play

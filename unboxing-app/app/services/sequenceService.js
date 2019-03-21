@@ -649,6 +649,17 @@ class SequenceService extends Service {
 			this.beatTimeout = null
 		}
 	}
+
+  // shifts sequence to new start time
+  shiftSequenceToNewStartTime = (startTime) => {
+      //this.resetSequence()
+      //this.startSequence(startTime)
+
+      this.setReactive({
+        playbackStartedAt: startTime
+      });
+      this.setupNextSequenceItem();
+  }
 		
 	// stops playing and puts existing sequence back to ready state
 	resetSequence() {
