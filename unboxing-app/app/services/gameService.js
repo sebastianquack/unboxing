@@ -188,8 +188,12 @@ class GameService extends Service {
     }
         
     // if this is start sequence message
-    if(msgObj.code == "start_sequence") {
-      this.startSequenceRemotely(msgObj.startTime)
+    if(msgObj.code == "startSequence") {
+      if(this.state.activeChallenge) {
+        if(msgObj.challengeId == this.state.activeChallenge._id) {
+          this.startSequenceRemotely(msgObj.startTime)  
+        }  
+      }
     }
   }
 
@@ -243,15 +247,18 @@ class GameService extends Service {
   /** sequences **/
 
   startSequence = () => {
-      this.showNotification("starting sequence...");
-      
-      let nowTime = soundService.getSyncTime();
-      let startTime = nowTime + 2000; // set time for sequence to start
-      sequenceService.startSequence(startTime, true); // set local start flag to true 
 
-      // send start_sequence message to all players connected via nearby
-      //nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
-      relayService.emitMessage({code: "start_sequence", startTime: startTime});
+      if(this.state.challengeStatus == "play") {
+        this.showNotification("starting sequence...");
+        
+        let nowTime = soundService.getSyncTime();
+        let startTime = nowTime + 2000; // set time for sequence to start
+        sequenceService.startSequence(startTime, true); // set local start flag to true 
+
+        // send start_sequence message to all players connected via nearby
+        //nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
+        relayService.emitMessage({code: "startSequence", challengeId: this.state.activeChallenge._id, startTime: startTime});  
+      }
   }
 
   startSequenceRemotely = startAt => {
