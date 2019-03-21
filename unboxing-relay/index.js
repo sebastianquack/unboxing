@@ -5,16 +5,24 @@ server = app.listen(process.env.PORT || 3005);
 
 const io = require('socket.io')(server);
 
-let challengeMap = {}; // {deviceId: {challengeId: }}
+let deviceMap = {}; // {deviceId: {challengeId: }} -- used to store where devices are
+let challengeState = {} // {challengeId: {sequenceControlStatus: startTime: }}
 
-function updateChallengeMap(socket, challengeId) {
+function countParticipants(challengeId) {
   let numParticipants = 0;
-  for(let deviceId in challengeMap) {
-    if(challengeMap[deviceId] == challengeId) {
+  for(let deviceId in deviceMap) {
+    if(deviceMap[deviceId] == challengeId) {
       numParticipants++;
     }
   }
-  socket.broadcast.emit('message', {code: "challengeParticipantUpdate", challengeId: challengeId, numParticipants: numParticipants})
+  return numParticipants;
+}
+
+function updateDeviceMap(socket, challengeId) {
+  let numParticipants = countParticipants(challengeId);
+  let msgObj = {code: "challengeParticipantUpdate", challengeId: challengeId, numParticipants: numParticipants};
+  socket.emit('message', msgObj);
+  socket.broadcast.emit('message', msgObj);
 }
 
 function init(io) {
@@ -30,19 +38,41 @@ function init(io) {
 
       if(msg.code == "joinChallenge") {
         if(msg.challengeId && msg.deviceId) {
-          challengeMap[msg.deviceId] = msg.challengeId;
-          updateChallengeMap(socket, msg.challengeId);
+          deviceMap[msg.deviceId] = msg.challengeId;
+          updateDeviceMap(socket, msg.challengeId);
+
+          if(challengeState[msg.challengeId]) {
+            if(challengeState[msg.challengeId].sequenceControlStatus == "playing") {
+              socket.emit('message', {code: "startSequence", challengeId: msg.challengeId, startTime: challengeState[msg.challengeId].startTime});  
+            }
+          }
         }
       }
 
       if(msg.code == "leaveChallenge") {
          if(msg.deviceId && msg.challengeId) {
-            delete challengeMap[msg.deviceId];
-            updateChallengeMap(socket, msg.challengeId);
+            delete deviceMap[msg.deviceId];
+            updateDeviceMap(socket, msg.challengeId);
+            if(countParticipants(msg.challengeId) == 0) {
+              challengeState[msg.challengeId].sequenceControlStatus = "idle";  
+            }
           } 
       }
 
-      console.log(JSON.stringify(challengeMap));
+      console.log(JSON.stringify(deviceMap));
+
+      if(msg.code == "startSequence") {
+        if(msg.challengeId) {
+          if(!challengeState[msg.challengeId]) {
+            challengeState[msg.challengeId] = {};
+          }
+          if(challengeState[msg.challengeId].sequenceControlStatus != "playing") {
+            challengeState[msg.challengeId].sequenceControlStatus = "playing";
+            challengeState[msg.challengeId].startTime = msg.startTime;
+          }
+          console.log(JSON.stringify(challengeState));
+        }
+      }
 
       socket.broadcast.emit('message', msg);  
 
