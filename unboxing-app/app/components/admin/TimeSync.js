@@ -10,7 +10,7 @@ import {
 import {globalStyles} from '../../../config/globalStyles';
 
 import {soundService, networkService} from '../../services';
-import {withSoundService} from '../ServiceConnector';
+import {withSoundService, withNetworkService} from '../ServiceConnector';
 
 const clickFilename = '/misc/click.mp3';
 
@@ -29,10 +29,7 @@ class TimeSync extends React.Component {
   // time sync controls
   handleSyncPress() {
     console.log("sync button pressed, calling server");
-    avgTimeDeltas((delta)=>{
-      soundService.setDelta(delta);
-      alert("Time sync completed");
-    });
+    networkService.doTimeSync()
   }
 
   handleTestClickSwitch(value) {
@@ -62,6 +59,7 @@ class TimeSync extends React.Component {
   render() {
   	return (
   		<View>
+        <Text>Sync status: {this.props.networkService.timeSyncStatus}</Text>
         <Text>Time delta: {this.props.soundService.delta}</Text>
         
         <View style={globalStyles.buttons}>
@@ -85,52 +83,9 @@ class TimeSync extends React.Component {
   }
 }
 
-async function measureDelta(callback) {
-  let sendTimeStamp = (new Date()).getTime();
-  const result = await networkService.apiRequest('getTime').catch((e)=>console.log(err.message, err.code));
-  console.log(result);
-  if(result) {
-    let serverTime = result.time;
-    let receiveTimeStamp = (new Date()).getTime();
-    let latency = (receiveTimeStamp - sendTimeStamp) / 2.0;
-    let delta = receiveTimeStamp - (serverTime + latency);
-    callback({latency: latency, delta: delta});
-  }
-}
 
-function avgTimeDeltas(callback) {
-  let deltas = [];
-  let timeout = 800;
-  let num = 40;
 
-  // send num requests to server, save deltas
-  console.log("starting measurement of time deltas");
-  for(let i = 0; i < num; i++) {
-    
-    setTimeout(()=>{
-      measureDelta((delta)=>{
-        deltas.push(delta)
-        if(i == num - 1) {
-          console.log("measurement complete");
-          console.log(JSON.stringify(deltas));
-          console.log("sorting by latency");
-          deltas.sort(function(a, b){return a.latency - b.latency});
-          console.log(JSON.stringify(deltas));
-          console.log("calculating average delta for fastest half of reponses:");
-          let sum = 0;
-          let counter = 0;
-          for(let j = 0; j < deltas.length / 2.0; j++) {
-            sum += deltas[j].delta;
-            counter++;
-          }
-          let avg = sum / counter;
-          console.log("result: " + avg);
-          callback(avg);
-        }
-      });  
-    }, i * timeout); 
-  }  
-}
 
-export default withSoundService(TimeSync);
+
+export default withNetworkService(withSoundService(TimeSync));
 //export default TimeSync
