@@ -158,9 +158,9 @@ class SequenceVisualizer extends React.PureComponent {
           width: widthPercentage+"%", 
           left: leftPercentage+"%",
         }}>
-        <Text style={styles.bodyTrackItemText}>
+        {/*<Text style={styles.bodyTrackItemText}>
           { item.name }
-        </Text>    
+        </Text>*/}
       </View>
     )
   }
