@@ -168,7 +168,7 @@ class SoundSevice extends Service {
 	}*/
 
 	// schedule playback of preloaded soundfile
-	scheduleSound(soundfile, targetTime, callbacks={}) {
+	scheduleSound(soundfile, targetTime, callbacks={}, startSilent=false) {
 
 		// find sound index of a ready version for this sound
 		let indices = this.findSoundIndices(soundfile, "ready");
@@ -177,7 +177,7 @@ class SoundSevice extends Service {
 			console.log("no ready sound found - attempting to load a new version");
 			this.preloadSoundfile(soundfile, ()=>{
 					console.log("finished loading duplicate sound, setting index to last sound loaded")
-					this.scheduleSound(soundfile, targetTime, callbacks);
+					this.scheduleSound(soundfile, targetTime, callbacks, startSilent);
 				}, true); // allow duplicates			
 
 			return;
@@ -187,12 +187,12 @@ class SoundSevice extends Service {
     const timeToRunStartingLoop = targetTime - this.getSyncTime();
 
     this.schedulingIntervals.push(setTimeout(()=>{
-			this.runStartingLoop(indices[0], targetTime, callbacks);
+			this.runStartingLoop(indices[0], targetTime, callbacks, startSilent);
     }, timeToRunStartingLoop - 34)); // set timeout to a bit less to allow for loop
   }
 
   // run loop for preloaded, scheduled sound at index to playback precisely at target time
-  runStartingLoop(index, targetTime, callbacks) {
+  runStartingLoop(index, targetTime, callbacks, startSilent=false) {
 		const loopStartTime = this.getSyncTime(); // get the synchronized time
 		this.sounds[index].status = "starting";
 		let targetSoundStartTime = targetTime + 34; // aim for a bit later to allow for loop to be precise
@@ -211,12 +211,12 @@ class SoundSevice extends Service {
 		if(now - loopStartTime >= loopCutoff) {
 			console.log("aborting playback - loop cutoff exceeded");
 		} else {
-			this.playSound(index, callbacks);	
+			this.playSound(index, callbacks, startSilent);	
 		}
 	}
 
   // finally, initiate playback of sound and call callback on comepletion
-	playSound(index, callbacks) {
+	playSound(index, callbacks, startSilent=false) {
 		if(!this.sounds[index]) return;
 
 		// check if sound is ready to play? maybe not necessary
@@ -227,7 +227,7 @@ class SoundSevice extends Service {
 		console.log("starting to play " + JSON.stringify(this.sounds[index]));
 		this.sounds[index].status = "playing";
 		
-		this.sounds[index].soundObj.setVolume(0.3).play((success) => {
+		this.sounds[index].soundObj.setVolume(startSilent ? 0.0 : 0.3).play((success) => {
 		  	this.sounds[index].status = "ready";
 		  	if (success) {
 		    	console.log('successfully finished playing at', this.getSyncTime());
