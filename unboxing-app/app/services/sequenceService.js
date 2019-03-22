@@ -647,6 +647,9 @@ class SequenceService extends Service {
         this.currentItemInfo = this.scheduledItemInfo;
         this.currentItemInfo.realStartTime = soundService.getSyncTime();
         this.scheduledItemInfo = {};
+        if(this.currentItemInfo.approved) {
+          soundService.setVolumeFor(this.state.currentItem.path, 0.3);
+        }
 				this.setupNextSequenceItem();
 			},
 			onPlayEnd: () => {
@@ -654,8 +657,8 @@ class SequenceService extends Service {
 				this.setReactive({currentItem: null});
 				this.setupNextSequenceItem();
 				this.updateActionInterface();
-			}
-		});
+			},
+		}, this.isGuitarHeroMode());  // startSilent
 		this.setReactive({
 			scheduledItem: this.state.nextItem,
 			nextItem: null,
@@ -666,6 +669,7 @@ class SequenceService extends Service {
   approveScheduledOrCurrentItem() {
     if(this.state.currentItem) {
       this.currentItemInfo.approved = true;
+      soundService.setVolumeFor(this.state.currentItem.path, 0.3);
     } else {
       if(this.state.scheduledItem) {
         this.scheduledItemInfo.approved = true;
