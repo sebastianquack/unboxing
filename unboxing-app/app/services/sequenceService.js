@@ -77,9 +77,11 @@ class SequenceService extends Service {
 
   guitarHeroStartTimeAbsolute = ()=> {
     if(this.state.currentItem) {
-      return this.getStartTimeAbsolute(this.state.currentItem);   
+      console.log("using currentItemInfo");
+      return this.currentItemInfo.realStartTime;   
     } 
     if(this.state.scheduledItem) {
+      console.log("using scheduledItem");
       return this.getStartTimeAbsolute(this.state.scheduledItem);   
     }
   } 
@@ -163,7 +165,7 @@ class SequenceService extends Service {
     if(this.state.currentItem && this.currentItemInfo.realStartTime && this.isGuitarHeroMode()) {
       let runningSince = soundService.getSyncTime() - this.currentItemInfo.realStartTime;
       console.log("runningSince: " + runningSince);
-      if(runningSince > 100 && !this.currentItemInfo.approved) {
+      if(runningSince > gameService.getGuitarHeroThreshold().post && !this.currentItemInfo.approved) {
         gameService.handleMissedGuitarHeroCue();
       } 
     }
@@ -346,7 +348,7 @@ class SequenceService extends Service {
 		
     if(this.isGuitarHeroMode() && this.state.scheduledItem || this.state.currentItem) {
       const startTimeInSequence = this.state.currentItem ? this.state.currentItem.startTime : this.state.scheduledItem.startTime
-      const startTime = startTimeInSequence - (gameService.assistanceThreshold / 2); //smaller threshhold for gh
+      const startTime = startTimeInSequence - gameService.guitarHeroThreshold.pre
       const stopTime = startTimeInSequence
       
       let obj = { type: null };
@@ -356,9 +358,7 @@ class SequenceService extends Service {
       peakService.waitForStart(() => {
         gameService.handlePlayNextItemButton()
         peakService.stopWaitingForStart()
-        //this.deactivateUserAction()
       })  
-      
       
       this.setReactive({
         nextUserAction: {

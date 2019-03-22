@@ -28,6 +28,7 @@ class GameService extends Service {
 		this.discoveryTimeout;
 
 		this.assistanceThreshold = 2000;
+    this.guitarHeroThreshold = {pre: 2000, post: 2000}
 	}
 
 	toggleDebugMode = ()=> {
@@ -233,6 +234,10 @@ class GameService extends Service {
 		return looping;
 	}
 
+  getGuitarHeroThreshold = () => {
+    return this.guitarHeroThreshold
+  }
+ 
 
   /** sequences **/
 
@@ -309,11 +314,14 @@ class GameService extends Service {
         
         let difference = now - officialTime;
 				
+        console.log("handlePlayNextItemButton with difference: " + difference);
+        console.log(sequenceService.state.currentItem);
+
         if(this.state.activeChallenge.item_manual_mode == "guitar hero") {
-            if(difference <= -this.assistanceThreshold) {
-              this.showNotification("guitar hero: too early! try again");    
+            if(difference <= -this.guitarHeroThreshold.pre) {
+              this.showNotification("guitar hero: too early!");    
             }
-            if(difference > -this.assistanceThreshold && difference <= 100) {
+            if(difference > -this.guitarHeroThreshold.pre && difference <= this.guitarHeroThreshold.post) {
               this.showNotification("guitar hero: good!");   
               sequenceService.approveScheduledOrCurrentItem();
             }
