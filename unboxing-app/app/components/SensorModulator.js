@@ -26,7 +26,7 @@ class SensorModulator extends React.Component {
             maxValue={1}
             onValueChange={value=>soundService.setVolume(value)}
             sensorTranslate={(data, props)=>{
-              let sensorValue = data.gyr.y;
+              let sensorValue = -data.gyr.x; // left lower volume, right higher volume
               if(sensorValue > 5) sensorValue = 5;
               if(sensorValue < -5) sensorValue = -5;
               let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;

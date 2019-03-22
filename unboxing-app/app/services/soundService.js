@@ -311,7 +311,7 @@ class SoundSevice extends Service {
 		  			sound.soundObj.setVolume(v);	
 		  		}
 				});
-		    console.log("setting reactive volume to " + v);          
+		    //console.log("setting reactive volume to " + v);          
 		    this.setReactive({volume: v});
 		  }
 		}
