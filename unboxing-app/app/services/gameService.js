@@ -376,7 +376,7 @@ class GameService extends Service {
         this.setActiveChallengeStatus("play");            
         break;
       default:
-        this.showNotification("no current function");
+        //this.showNotification("no current function");
     }
   }
 
@@ -410,6 +410,7 @@ class GameService extends Service {
     this.setReactive({
       showInstrumentSelector: false
     });
+    this.handlePlayButton();
   }
 
   backToLobby() {

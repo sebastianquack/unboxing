@@ -644,11 +644,11 @@ class SequenceService extends Service {
 					scheduledItem: null,
 					currentItem: this.state.scheduledItem
 				});
-        this.currentItemInfo = this.scheduledItemInfo;
+        this.currentItemInfo.approved = this.scheduledItemInfo.approved;
         this.currentItemInfo.realStartTime = soundService.getSyncTime();
         this.scheduledItemInfo = {};
         if(this.currentItemInfo.approved) {
-          soundService.setVolumeFor(this.state.currentItem.path, 0.3);
+          this.turnOnVolumeCurrentItem();
         }
 				this.setupNextSequenceItem();
 			},
@@ -665,11 +665,23 @@ class SequenceService extends Service {
 		});
 	}
 
+  turnOnVolumeCurrentItem() {
+    if(this.state.currentItem) {
+      soundService.setVolumeFor(this.state.currentItem.path, 0.3);
+    }
+    setTimeout(()=>{
+      // make sure volume isn't turned off again by starting sound
+      if(this.state.currentItem) {
+        soundService.setVolumeFor(this.state.currentItem.path, 0.3);   
+      }
+    }, 100);
+  }
+
   // approve the next item
   approveScheduledOrCurrentItem() {
     if(this.state.currentItem) {
       this.currentItemInfo.approved = true;
-      soundService.setVolumeFor(this.state.currentItem.path, 0.3);
+      this.turnOnVolumeCurrentItem();
     } else {
       if(this.state.scheduledItem) {
         this.scheduledItemInfo.approved = true;
