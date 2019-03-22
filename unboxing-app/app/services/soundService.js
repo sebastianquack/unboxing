@@ -273,7 +273,8 @@ class SoundSevice extends Service {
 		indices.forEach(index=>{
 			if(this.sounds[index].status == "playing") {
 				if(this.sounds[index].soundObj) {
-					this.sounds[index].soundObj.stop();
+          this.sounds[index].soundObj.stop(); // this weirdly tries to playback sound again
+          this.sounds[index].soundObj.setVolume(0.0); // fix to prevent restart
 				}
 				this.sounds[index].onPlayEnd = undefined;
 				this.sounds[index].onPlayStart = undefined;

@@ -135,15 +135,7 @@ class GameService extends Service {
       statusBarTitle: sequenceService.getSequenceName(),
       statusBarSubtitle: challenge.name
     })
-
-		//start nearby service with challengeId as serviceId - adding timeout to give time for shutdown
-		/*setTimeout(()=>{
-			nearbyService.initNearbyWithServiceId(challenge._id);	
-		}, 2000);*/
-
-    //this.activateNearbyCallbacks();
     
-    //relayService.joinRoom(challenge._id);
     relayService.emitMessage({code: "joinChallenge", challengeId: challenge._id, deviceId: storageService.getDeviceId()});
     this.activateRelayCallbacks();
 	}
@@ -154,9 +146,6 @@ class GameService extends Service {
     relayService.emitMessage({code: "leaveChallenge", challengeId: this.state.activeChallenge ? this.state.activeChallenge._id : null, deviceId: storageService.getDeviceId()});  
     
     sequenceService.stopSequence();
-
-    //stop nearby service
-    //nearbyService.shutdownNearby();
 
     this.setReactive({
       statusBarTitle: defaultStatusBarTitle,
@@ -257,7 +246,6 @@ class GameService extends Service {
         sequenceService.startSequence(startTime, true); // set local start flag to true 
 
         // send start_sequence message to all players connected via nearby
-        //nearbyService.broadcastMessage({message: "start_sequence", startTime: startTime}); // broadcast time to all connected devices
         relayService.emitMessage({code: "startSequence", challengeId: this.state.activeChallenge._id, startTime: startTime});  
       }
   }
@@ -294,6 +282,12 @@ class GameService extends Service {
     }
   }
 
+  handleMissedGuitarHeroCue() {
+    this.showNotification("guitar hero too late!");
+    console.log("guitar hero missed cue");
+    sequenceService.stopCurrentSound();
+  }
+
 	// manual start of items - also called by gestures -- confusing: investigate & rename
 	handlePlayNextItemButton = ()=> {
 
@@ -305,25 +299,41 @@ class GameService extends Service {
 			if(sequenceService.getControlStatus() == "playing") {
 				
 				let now = soundService.getSyncTime();
-				// compare with item's official start time
-				let officialTime = sequenceService.getNextItemStartTimeAbsolute();
-				let difference = now - officialTime;
 				
-				if(this.state.activeChallenge.item_manual_mode == "assisted") {
-					if(difference <= -this.assistanceThreshold) {
-						this.showNotification("too early! try again");		
-					}
-					if(difference > -this.assistanceThreshold && difference <= 0) {
-						this.showNotification("good!");		
-						sequenceService.scheduleSoundForNextItem(officialTime); 			
-					}
-					if(difference > 0) {
-						this.showNotification("too late! skipping sound...");		
-						sequenceService.skipNextItem();
-					}
-				} else {
-					sequenceService.scheduleSoundForNextItem(now); 		
-				}		
+        // compare with next item's official start time
+        let officialTime = sequenceService.getNextItemStartTimeAbsolute();
+
+        if(this.state.activeChallenge.item_manual_mode == "guitar hero") {
+          officialTime = sequenceService.guitarHeroStartTimeAbsolute();
+        }  
+        
+        let difference = now - officialTime;
+				
+        if(this.state.activeChallenge.item_manual_mode == "guitar hero") {
+            if(difference <= -this.assistanceThreshold) {
+              this.showNotification("guitar hero: too early! try again");    
+            }
+            if(difference > -this.assistanceThreshold && difference <= 100) {
+              this.showNotification("guitar hero: good!");   
+              sequenceService.approveScheduledOrCurrentItem();
+            }
+        } else {
+  				if(this.state.activeChallenge.item_manual_mode == "assisted") {
+  					if(difference <= -this.assistanceThreshold) {
+  						this.showNotification("too early! try again");		
+  					}
+  					if(difference > -this.assistanceThreshold && difference <= 0) {
+              this.showNotification("good!");		
+  					  sequenceService.scheduleSoundForNextItem(officialTime); 			
+  					}
+  					if(difference > 0) {
+  						this.showNotification("too late! skipping sound...");		
+  						sequenceService.skipNextItem();
+  					}
+  				} else {
+  					sequenceService.scheduleSoundForNextItem(now); 		
+  				}
+        }		
 			}	
 		}
 

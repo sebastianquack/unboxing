@@ -159,10 +159,12 @@ class NetworkService extends Service {
       options.method = 'POST'
       options.body = JSON.stringify(data)
     }
+    let port = this.state.server == "unboxing.sebquack.perseus.uberspace.de" ? 80 : 3000;
+    
 		try {
 			console.log(`API request ${method}`)
 			let response = await fetch(
-        `http://${this.state.server}:3000/api/${method}.json`,
+        `http://${this.state.server}:${port}/api/${method}.json`,
         options
 			);
 			//console.log("response", response)

@@ -23,6 +23,7 @@ do
    echo "stopping app"
    adb shell am force-stop com.unboxing
 
+   
    adb shell input keyevent 82
 
    echo "starting app"

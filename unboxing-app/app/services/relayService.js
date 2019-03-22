@@ -46,7 +46,7 @@ class RelayService extends Service {
     });
 
     this.socket.on('reconnect_attempt', () => {
-      this.debug("reconnect_attempt");
+      //this.debug("reconnect_attempt");
     });
   }
 

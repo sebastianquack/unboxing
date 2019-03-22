@@ -55,7 +55,7 @@ class ChallengeDetail extends React.Component {
       case "item_manual_mode": 
           return (
           <select value={value} onChange={ e => this.handleAttributeChange(attributeName, e.target.value) }>
-            {["assisted", "free"].map((o)=>{return <option key={o} value={o}>{o}</option>})}
+            {["assisted", "guitar hero", "free"].map((o)=>{return <option key={o} value={o}>{o}</option>})}
           </select>
         );          
       case "sequence_loop":
