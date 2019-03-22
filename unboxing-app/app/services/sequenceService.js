@@ -349,7 +349,7 @@ class SequenceService extends Service {
     if(this.isGuitarHeroMode() && this.state.scheduledItem || this.state.currentItem) {
       const startTimeInSequence = this.state.currentItem ? this.state.currentItem.startTime : this.state.scheduledItem.startTime
       const startTime = startTimeInSequence - gameService.guitarHeroThreshold.pre
-      const stopTime = startTimeInSequence
+      const stopTime = startTimeInSequence + gameService.guitarHeroThreshold.post
       
       let obj = { type: null };
 
@@ -357,7 +357,8 @@ class SequenceService extends Service {
       obj = { type: "peak" };
       peakService.waitForStart(() => {
         gameService.handlePlayNextItemButton()
-        peakService.stopWaitingForStart()
+				peakService.stopWaitingForStart()
+				this.deactivateUserAction()
       })  
       
       this.setReactive({
@@ -647,9 +648,6 @@ class SequenceService extends Service {
         this.currentItemInfo = this.scheduledItemInfo;
         this.currentItemInfo.realStartTime = soundService.getSyncTime();
         this.scheduledItemInfo = {};
-        if(this.currentItemInfo.approved) {
-          soundService.setVolumeFor(this.state.currentItem.path, 0.3);
-        }
 				this.setupNextSequenceItem();
 			},
 			onPlayEnd: () => {
@@ -657,8 +655,8 @@ class SequenceService extends Service {
 				this.setReactive({currentItem: null});
 				this.setupNextSequenceItem();
 				this.updateActionInterface();
-			},
-		}, this.isGuitarHeroMode());  // startSilent
+			}
+		});
 		this.setReactive({
 			scheduledItem: this.state.nextItem,
 			nextItem: null,
@@ -669,7 +667,6 @@ class SequenceService extends Service {
   approveScheduledOrCurrentItem() {
     if(this.state.currentItem) {
       this.currentItemInfo.approved = true;
-      soundService.setVolumeFor(this.state.currentItem.path, 0.3);
     } else {
       if(this.state.scheduledItem) {
         this.scheduledItemInfo.approved = true;
