@@ -262,7 +262,7 @@ class SequenceService extends Service {
 					this.activateNextUserAction();
 					
 				} else {
-					this.setActionMessage(endedMessage + "you don't have anything to play at the beginning of this sequence. wait for another player to start the sequence, then join at the right moment!");
+					this.setActionMessage(endedMessage + "anyone of you can start the sequence with their gesture");
 					this.deactivateUserAction();
 				}
 			} else {
@@ -480,7 +480,7 @@ class SequenceService extends Service {
 		const firstItem = this.firstItemInTrack(track.name);
 		console.log(firstItem);
 		if(firstItem) {
-			if(firstItem.startTime == 0) {				
+			//if(firstItem.startTime == 0) {				
 				
 				if(firstItem.gesture_id) {
 					gestureService.waitForGesture(firstItem.gesture_id, () => {
@@ -494,7 +494,7 @@ class SequenceService extends Service {
 					peakService.stopWaitingForStart()
 				})	
 				
-			}
+			//}
 		}
 
 		this.updateActionInterface();
@@ -643,26 +643,30 @@ class SequenceService extends Service {
 		
 
 	// call sound service to schedule sound for next item, set callback to setup next item after playback
-	scheduleSoundForNextItem(targetTime) {
+	scheduleSoundForNextItem = (targetTime) => {
 		if (!this.state.nextItem) {
 			console.log("scheduleSoundForNextItem: nothing to schedule")
 			return
 		}
-		soundService.scheduleSound(this.state.nextItem.path, targetTime, {
+    soundService.scheduleSound(this.state.nextItem.path, targetTime, {
 			onPlayStart: () => {
         this.setReactive({currentItem: this.state.scheduledItem});
         this.setReactive({scheduledItem: null});
         this.currentItemInfo.approved = this.scheduledItemInfo.approved;
+        this.currentItemInfo.targetTime = targetTime;
         this.currentItemInfo.realStartTime = soundService.getSyncTime();
         this.scheduledItemInfo = {};
         if(this.currentItemInfo.approved) {
           this.turnOnVolumeCurrentItem();
         }
-				this.setupNextSequenceItem();
+        this.setupNextSequenceItem();  
 			},
 			onPlayEnd: () => {
-        //this.currentItemInfo = {};
-				//this.setReactive({currentItem: null}); -- this sometimes removes new current item
+        // make sure we are not deleting a newer item that is now in place
+        if(targetTime == this.currentItemInfo.targetTime) {
+          this.currentItemInfo = {};
+          this.setReactive({currentItem: null});
+        }
         this.setupNextSequenceItem();
 			},
 		}, this.isGuitarHeroMode());  // startSilent
