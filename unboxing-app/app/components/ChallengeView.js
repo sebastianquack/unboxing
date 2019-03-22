@@ -49,7 +49,7 @@ class ChallengeView extends React.Component {
         {challengeStatus == "play" &&       
           <View>
             <SequenceVisualizer magnification />
-            <SensorModulator mode={"volume tilt"/*this.props.sequenceService.currentItem ? this.props.sequenceService.currentItem.sensorModulation : ""*/}/>
+            <SensorModulator mode={"volume tilt"} item={this.props.sequenceService.currentItem}/>
           </View>
         }
                   

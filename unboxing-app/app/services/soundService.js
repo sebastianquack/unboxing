@@ -226,7 +226,7 @@ class SoundSevice extends Service {
 
 		console.log("starting to play " + JSON.stringify(this.sounds[index]));
 		this.sounds[index].status = "playing";
-		
+    
 		this.sounds[index].soundObj.setVolume(startSilent ? 0.0 : 0.3).play((success) => {
 		  	this.sounds[index].status = "ready";
 		  	if (success) {
@@ -283,10 +283,11 @@ class SoundSevice extends Service {
 		});
 	}
 
-	setVolumeFor(filename, v) {
+	setVolumeFor(filename, v, onlyWhilePlaying=false) {
 		let indices = this.findSoundIndices(filename);
 		indices.forEach((index)=>{
-			if(this.sounds[index].soundObj) {
+			if( (this.sounds[index].soundObj && !onlyWhilePlaying)
+          || (this.sounds[index].soundObj && onlyWhilePlaying && this.sounds[index].status == "playing")) {
 				this.sounds[index].soundObj.setVolume(v);
 			}
 		});
@@ -296,7 +297,7 @@ class SoundSevice extends Service {
 		let indices = this.findSoundIndices(filename);
 		indices.forEach((index)=>{
 			if(this.sounds[index].soundObj) {
-				if(this.sounds[index] == "playing" && sound.soundObj.isPlaying()) {
+				if(this.sounds[index].status == "playing" && sound.soundObj.isPlaying()) {
 					this.sounds[index].soundObj.setSpeed(s);
 				}
 			}

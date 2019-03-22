@@ -236,7 +236,6 @@ class SequenceService extends Service {
 
 	setActionMessage = (msg)=> {
 		this.setReactive({nextActionMessage: msg});
-    console.log(msg);
     
     if(gameService.getChallengeStatus() == "play") { // filter out action messages unless in pay mode
       gameService.clearInfoStream();
@@ -247,8 +246,8 @@ class SequenceService extends Service {
 	// analyse current state and display appropriate action message
 	// called on every beat and at special events (setupNextSequenceItem, sound ended)
 	updateActionInterface = ()=> {
-		console.log("updateActionInterface");
-    console.log(this.state.currentItem);
+		//console.log("updateActionInterface");
+    //console.log(this.state.currentItem);
 
     // sequence has ended
     let endedMessage = this.state.endedFlag ? "play again? " : ""
@@ -311,9 +310,6 @@ class SequenceService extends Service {
 				}
 			
 			}	else { // currently not playing
-
-        console.log("foo");
-        console.log(this.state.currentItem);
 
 				// deactivate stop gesture
 				peakService.stopWaitingForStop();
@@ -675,6 +671,10 @@ class SequenceService extends Service {
 			nextItem: null,
 		});
 	}
+
+  getCurrentItemInfo() {
+    return this.currentItemInfo;
+  }
 
   turnOnVolumeCurrentItem() {
     if(this.state.currentItem) {
