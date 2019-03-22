@@ -126,6 +126,9 @@ class SequenceService extends Service {
     return c.item_manual_mode == "guitar hero";
   }
 
+
+
+
 	/** UPDATES ON EVERY BEAT **/
 
 
@@ -149,7 +152,9 @@ class SequenceService extends Service {
 		if (!this.state.isLooping) {
 			const sequenceEndsAt = this.state.playbackStartedAt + this.state.currentSequence.custom_duration
 			if (currentTime >= sequenceEndsAt) {
-				this.resetSequence()
+				this.resetSequence();
+        this.resetTrack();
+        this.updateActionInterface();
 				return
 			}
 		}
@@ -222,6 +227,7 @@ class SequenceService extends Service {
 	}
 
 
+
 	/** INTERFACE UPDATES **/
 
 	togglePlayButton = (value)=> {
@@ -241,25 +247,29 @@ class SequenceService extends Service {
 	// called on every beat and at special events (setupNextSequenceItem, sound ended)
 	updateActionInterface = ()=> {
 		//console.log("updateActionInterface");
+    console.log(this.state.currentSequence);
 
+    // sequence has ended
+    let endedMessage = this.state.endedFlag ? "end of sequence. restart? " : ""
+    
 		// sequence hasn't started yet
 		if(this.state.controlStatus == "ready" && this.state.currentTrack) {
 			const firstItem = this.firstItemInTrack(this.state.currentTrack.name);
 			if(firstItem) {
 				if(firstItem.startTime == 0) {				
-					this.setActionMessage("your part is right at the beginning of this sequence. perform the start gesture to start the sequence for everyone here!");
+					this.setActionMessage(endedMessage + "your part is right at the beginning of this sequence. perform the start gesture to start the sequence for everyone here!");
 					this.activateNextUserAction();
 					
 				} else {
-					this.setActionMessage("you don't have anything to play at the beginning of this sequence. wait for another player to start the sequence, then join at the right moment!");
+					this.setActionMessage(endedMessage + "you don't have anything to play at the beginning of this sequence. wait for another player to start the sequence, then join at the right moment!");
 					this.deactivateUserAction();
 				}
 			} else {
-				this.setActionMessage("your instrument has nothing to play in this sequence");
+				this.setActionMessage(endedMessage + "your instrument has nothing to play in this sequence");
 				this.deactivateUserAction();
 			}
 		}
-		
+
 		// sequence is playing
 		if(this.state.controlStatus == "playing") {
 
@@ -331,16 +341,6 @@ class SequenceService extends Service {
 			}		
 		}
 
-		// sequence has ended
-		if(this.state.controlStatus == "idle") {
-			if(this.state.currentSequence) {
-				if(this.state.currentSequence.endedFlag) {
-					this.setActionMessage("sequence ended")
-					this.deactivateUserAction();
-				}	
-			}
-		}
-		
 	}
 
   // turns on peakservice and sets up target shape for sequence visualiser
@@ -449,6 +449,13 @@ class SequenceService extends Service {
 		}
 		
 	}
+
+  // on coming back to a sequence
+  resetTrack() {
+    if(this.state.currentTrack) {
+      this.trackSelect(this.state.currentTrack);
+    }
+  }
 
 	// invoked from track selector component
 	trackSelect = (track)=> {
@@ -749,9 +756,6 @@ class SequenceService extends Service {
 
   // shifts sequence to new start time
   shiftSequenceToNewStartTime = (startTime) => {
-      //this.resetSequence()
-      //this.startSequence(startTime)
-
       this.setReactive({
         playbackStartedAt: startTime
       });

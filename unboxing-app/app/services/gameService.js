@@ -208,8 +208,11 @@ class GameService extends Service {
 		});
 
     if(status == "prepare") {
-      //this.activateNearbyCallbacks();
       this.activateRelayCallbacks();
+    }
+
+    if(status == "play") {
+      sequenceService.resetTrack();
     }
 
     this.initInfoStream();
@@ -373,7 +376,7 @@ class GameService extends Service {
         this.setActiveChallengeStatus("prepare");            
         break;
       case "prepare":
-        this.setActiveChallengeStatus("play");            
+        this.setActiveChallengeStatus("play");
         break;
       default:
         //this.showNotification("no current function");
