@@ -28,7 +28,7 @@ class GameService extends Service {
 		this.discoveryTimeout;
 
 		this.assistanceThreshold = 2000;
-    this.guitarHeroThreshold = {pre: 2000, post: 2000}
+    this.guitarHeroThreshold = {pre: 1000, post: 1000}
 	}
 
 	toggleDebugMode = ()=> {

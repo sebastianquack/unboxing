@@ -124,6 +124,14 @@ class App extends Component {
     </View>)
   }
 
+  renderBuildInfo = () => {
+    if (__DEV__) {
+      return <Text style={{color: "orange"}}>Development build</Text>
+    } else {
+      return <Text style={{color: "green"}}>Production build</Text>
+    }
+  }
+
   renderAdminButton = ()=>{
     return (
       <TouchableOpacity 
@@ -148,6 +156,7 @@ class App extends Component {
         <View>
           { this.renderSections() }
         </View>        
+        { this.renderBuildInfo() }
       </ScrollView>
     );
   }

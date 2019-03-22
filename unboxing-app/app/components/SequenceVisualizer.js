@@ -81,6 +81,7 @@ class SequenceVisualizer extends React.PureComponent {
       console.log(`starting animation at startTime ${startTime}ms of sequenceDuration ${sequenceDuration}`)
       console.log(`starting animation from ${startValue}px (${startTime}ms), duration ${animationDuration/1000}s`)
       this.state.scrollX.stopAnimation()
+      
       this.setState({
         scrollX: new Animated.Value(startValue)
       },()=>{
@@ -92,10 +93,33 @@ class SequenceVisualizer extends React.PureComponent {
           isInteraction: false,
         }).start(this.handleAnimationEnded);
       });
+
+      this.setState({
+        pulsate: new Animated.Value(0)
+      },()=>{
+        Animated.loop(
+          Animated.sequence([
+            Animated.timing(this.state.pulsate, {
+              toValue: 1,
+              duration: 0.5 * 60000 / this.props.sequence.bpm,
+              useNativeDriver: true,
+              isInteraction: false,
+              }),
+            Animated.timing(this.state.pulsate, {
+              toValue: 0.1,
+              duration: 0.5 * 60000 / this.props.sequence.bpm,
+              useNativeDriver: true,
+              isInteraction: false,
+              })              
+          ])
+        ).start()
+      });
+
       // setTimeout(()=>{console.log("anime timeout")}, animationDuration)
     } else if (this.props.controlStatus !== "playing" && this.isRunning ) {
       this,isRunning = false
       this.state.scrollX.stopAnimation()
+      this.state.pulsate.stopAnimation()
     }
   }
 
@@ -175,16 +199,17 @@ class SequenceVisualizer extends React.PureComponent {
     }
     
     return (
-      <View key={item._id} style={{
+      <Animated.View key={item._id} style={{
           ...styles.bodyTrackItem, 
           ...styles.bodyTrackItem__actionItem,
           width: widthPercentage+"%", 
           left: leftPercentage+"%",
+          opacity: this.state.pulsate
         }}>
         {/*<Text style={styles.bodyTrackItemText}>
           { item.type }
         </Text> */}   
-      </View>
+      </Animated.View>
     )
   }
 
@@ -220,6 +245,12 @@ class SequenceVisualizer extends React.PureComponent {
             <View style={styles.header}>
               {tracks.map(this.renderHeaderTrack)}
             </View>
+            <View style={{ // indicator
+              backgroundColor: colors.turquoise,
+              width: 2,
+              opacity: 0.7, //this.props.nextUserAction.type ? this.state.pulsate : 0.7,
+              height: "100%",
+            }} />
             <View 
               style={styles.body} 
               onLayout={ this.setWidth }
@@ -288,8 +319,6 @@ const styles = StyleSheet.create({
   header: {
     backgroundColor: 'transparent',
     width: labelsWidth,
-    borderRightWidth: 2,
-    borderColor: colors.turquoise,
     zIndex: 1,
   },  
   body: {
