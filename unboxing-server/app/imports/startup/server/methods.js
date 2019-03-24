@@ -162,9 +162,11 @@ Meteor.methods({
     const collections = Object.keys(json)
     console.log("received entries import", collections)
 
-    for (collection in importExportConfig.collections) {
+    let ie_collections = {...importExportConfig.collections, ...importExportConfigTranslationsOnly.collections};
+
+    for (collection in ie_collections) {
       if (json[collection]) {
-        const Coll = importExportConfig.collections[collection]
+        const Coll = ie_collections[collection];
         console.log("replacing collection: " + collection)
         await Coll.rawCollection().remove({}, {multi:true})
         for (let entry of json[collection]) {
