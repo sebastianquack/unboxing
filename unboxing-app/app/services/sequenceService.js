@@ -685,7 +685,7 @@ class SequenceService extends Service {
       if(this.state.currentItem) {
         soundService.setVolumeFor(this.state.currentItem.path, 0.3);   
       }
-    }, 100);*/
+    }, 1000);*/
   }
 
   // approve the next item
