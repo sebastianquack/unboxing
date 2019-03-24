@@ -127,7 +127,7 @@ class SequenceVisualizer extends React.PureComponent {
 
       // setTimeout(()=>{console.log("anime timeout")}, animationDuration)
     } else if (this.props.controlStatus !== "playing" && this.isRunning ) {
-      this,isRunning = false
+      this.isRunning = false
       this.state.scrollX.stopAnimation()
       this.state.pulsate.stopAnimation()
     }

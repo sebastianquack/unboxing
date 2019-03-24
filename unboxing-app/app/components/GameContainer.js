@@ -13,7 +13,6 @@ import StatusBar from './StatusBar'
 import Button from './Button'
 import ConnectionIndicator from './ConnectionIndicator'
 
-import ChallengeSelector from './ChallengeSelector';
 import ChallengeView from './ChallengeView';
 import TrackSelector from './TrackSelector';
 import {InfoStream} from './InfoStream';
@@ -38,9 +37,7 @@ class GameContainer extends React.Component {
     let buttonModal = null;
 
     // configure content
-    if(this.props.gameService.gameMode == "manual" && !this.props.gameService.activeChallenge) {
-      scrollContent = <ChallengeSelector/>
-    } else {
+    if(this.props.gameService.activeChallenge) {
       mainContent = <ChallengeView/>        
     }
         

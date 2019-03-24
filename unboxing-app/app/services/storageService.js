@@ -202,6 +202,14 @@ class StorageService extends Service {
 		return null;
 	}
 
+  getSequenceNameFromChallenge(challenge) {
+    let s = this.findSequence(challenge.sequence_id);
+    if(s) {
+      return s.name
+    }
+    return "sequence not found";
+  }
+
   setLanguage(code) {
     this.setReactive({language: code});
   }

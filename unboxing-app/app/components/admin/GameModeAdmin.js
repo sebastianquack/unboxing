@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch, Picker } from 'react-native';
 
 import {globalStyles} from '../../../config/globalStyles';
-import {gameService} from '../../services';
+import {gameService, storageService} from '../../services';
 import {withGameService, withStorageService} from '../ServiceConnector';
 import DebugToggle from './DebugToggle';
 
@@ -17,6 +17,17 @@ class GameModeAdmin extends React.Component {
       walkItems.push(this.props.storageService.collections.walks.filter(w=>w.active).map(w=>
         <Picker.Item key={w._id} label={w.description} value={w}/>));
     }
+    let placeItems = [<Picker.Item key="none" label={"-"} value={null}/>]
+    if(this.props.storageService.collections.places) {
+      placeItems.push(this.props.storageService.collections.places.map(p=>
+        <Picker.Item key={p._id} label={p.description} value={p}/>));
+    }
+    let challengeItems = [<Picker.Item key="none" label={"-"} value={null}/>]
+    if(this.props.storageService.collections.challenges) {
+      challengeItems.push(this.props.storageService.collections.challenges.map(c=>
+        <Picker.Item key={c._id} label={c.name + " " + storageService.getSequenceNameFromChallenge(c)} value={c}/>));
+    }
+    
     return (
       <View>
         <Text>gameMode: {this.props.gameService.gameMode}</Text>
@@ -28,25 +39,39 @@ class GameModeAdmin extends React.Component {
         <Text>activeChallenge: {JSON.stringify(this.props.gameService.activeChallenge)}</Text>
         <Text>challengeStatus: {this.props.gameService.challengeStatus}</Text>
 
-        <Text style={{marginTop: 20}}>start a new walk:</Text>
+        <Text style={{marginTop: 20}}>start a walk:</Text>
         <Picker
               mode="dropdown"
-              onValueChange={(itemValue, itemIndex) => {if(itemValue) gameService.setActiveWalk(itemValue) }}
+              onValueChange={(itemValue, itemIndex) => {if(itemValue) {
+                gameService.setActiveWalk(itemValue) 
+                this.props.adminClose();
+              }}}
         >
               {walkItems}
         </Picker>
-        {this.props.gameService.gameMode != "manual" &&
-          <TouchableOpacity
-            style={globalStyles.button}
-            onPress={()=>{
-              gameService.setGameMode("manual");
-            }}
-          >
-          <Text>Reset to manual mode</Text>
-        </TouchableOpacity>
-        }
+        <Text style={{marginTop: 20}}>navigate to a place:</Text>
+        <Picker
+              mode="dropdown"
+              onValueChange={(itemValue, itemIndex) => {if(itemValue) {
+                gameService.setGameMode("manual");                
+                gameService.setupMinimalWalk(itemValue) 
+                this.props.adminClose();
+              }}}
+        >
+              {placeItems}
+        </Picker>
+        <Text style={{marginTop: 20}}>jump to a challenge:</Text>
+        <Picker
+              mode="dropdown"
+              onValueChange={(itemValue, itemIndex) => {if(itemValue) {
+                gameService.setGameMode("manual");                
+                gameService.setActiveChallenge(itemValue) 
+                this.props.adminClose();
+              }}}
+        >
+              {challengeItems}
+        </Picker>
         <DebugToggle/>
-
       </View>
     );
   }

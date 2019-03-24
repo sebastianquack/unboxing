@@ -121,7 +121,7 @@ class App extends Component {
   renderSections = () => {
     return sections.map(section => <View key={section.name} style={{borderTopWidth: 2, borderStyle:"dotted"}}>
       {this.renderSectionSwitch(section.name)}
-      {this.showSection(section.name) && <View><section.component /></View>}
+      {this.showSection(section.name) && <View><section.component adminClose={()=>this.setState({adminMenu: false})}/></View>}
     </View>)
   }
 
