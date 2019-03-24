@@ -21,7 +21,7 @@ class GesturesInfo extends React.Component {
     const listItems = this.props.gestures.map(this.li)
 
     return <div className="GesturesInfo">
-    <h3>Gestures</h3>
+    
       <ul>
       {listItems}
       </ul>

@@ -16,6 +16,9 @@ import SequenceDetail from './SequenceDetail';
 import SequenceDetailItem from './SequenceDetailItem';
 import AudioPreview from './AudioPreview';
 
+import TranslationDetail from './TranslationDetail';
+import TranslationsInfo from './TranslationsInfo';
+
 export {
   FilesInfo,
   EventsInfo,
@@ -31,5 +34,7 @@ export {
   PlaceDetail,
   PlacesInfo,
   WalkDetail,
-  WalksInfo
+  WalksInfo,
+  TranslationDetail,
+  TranslationsInfo
 }

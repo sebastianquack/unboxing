@@ -2,14 +2,13 @@ import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { css } from 'emotion'
 
-import Walks from '../collections/walks';
-import WalkDetail from './WalkDetail';
+import Translations from '../collections/translations';
+import TranslationDetail from './TranslationDetail';
 
-class WalksInfo extends React.Component {
+class TranslationsInfo extends React.Component {
   constructor(props) {
     super(props);
   }
-
 
   InfoCss = css`
     ul {
@@ -23,27 +22,28 @@ class WalksInfo extends React.Component {
 	`  
 
   handleAdd() {
-    Meteor.call("addWalk");
+    Meteor.call("addTranslation");
   }
 
-  li(c) {
+  li(t) {
     return (
-      <li key={c._id}>
-        <WalkDetail walk={c} />
+      <li key={t._id}>
+        <TranslationDetail translation={t} />
       </li>
     );
   }
 
   render() {
-    const listItems = this.props.walks.map(this.li);
+    const listItems = this.props.translations.map(this.li);
 
     return (
       <div  className={this.InfoCss}>
+        
           <ul>
             {listItems}
           </ul>
           <button onClick={this.handleAdd}>
-            Add Walk
+            Add Translation
           </button>
         </div>
     );
@@ -51,11 +51,10 @@ class WalksInfo extends React.Component {
 }
 
 export default withTracker(props => {
-  Meteor.subscribe('walks.all');
-  const walks = Walks.find().fetch();
-  console.log(walks);
-
+  Meteor.subscribe('translations.all');
+  const translations = Translations.find().fetch();
+  
   return {
-    walks
+    translations
   };
-})(WalksInfo);
+})(TranslationsInfo);

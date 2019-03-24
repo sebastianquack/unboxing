@@ -39,7 +39,7 @@ class PlacesInfo extends React.Component {
 
     return (
       <div  className={this.PlacesInfoCss}>
-        <h3>Places</h3>
+        
           <ul>
             {listItems}
           </ul>

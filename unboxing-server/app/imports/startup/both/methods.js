@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random'
 
 import Events from '../../collections/events';
-import { Challenges, Gestures, Sequences, Places, Walks } from '../../collections/';
+import { Challenges, Gestures, Sequences, Places, Walks, Translations } from '../../collections/';
 
 Meteor.methods({
   'addGesture'(data) {
@@ -145,6 +145,21 @@ Meteor.methods({
   },
   'updateWalk'(id,$set) {
     Walks.update({_id: id}, {$set})
+  },
+
+  'addTranslation'() {
+    Translations.insert({
+      key: "",
+      content_en: "",
+      content_de: "",
+    });
+  },
+  'removeTranslation'(id) {
+    console.log("remove translation", id);
+    Translations.remove(id);
+  },
+  'updateTranslation'(id,$set) {
+    Translations.update({_id: id}, {$set})
   },
   
 });

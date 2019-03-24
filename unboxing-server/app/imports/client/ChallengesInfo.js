@@ -39,7 +39,7 @@ class ChallengesInfo extends React.Component {
 
     return (
       <div  className={this.ChallengesInfoCss}>
-        <h3>Challenges</h3>
+        
           <ul>
             {listItems}
           </ul>

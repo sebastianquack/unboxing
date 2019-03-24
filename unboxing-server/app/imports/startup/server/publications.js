@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
-import { Challenges, Walks, Places, Events, Files, Gestures, Sequences } from '../../collections/';
+import { Challenges, Walks, Places, Events, Files, Gestures, Sequences, Translations } from '../../collections/';
 
 
 Meteor.publish('events.all', function (data={}) {
@@ -55,5 +55,11 @@ Meteor.publish('gestures.active', function (data) {
 Meteor.publish('sequences.all', function (data) {
   let options = {}
   return Sequences.find({}, options)
+});
+
+
+Meteor.publish('translations.all', function (data) {
+  let options = {}
+  return Translations.find({}, options)
 });
 

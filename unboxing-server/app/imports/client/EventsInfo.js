@@ -16,7 +16,7 @@ class EventsInfo extends React.Component {
       </li>)
 
     return <div className="EventsInfo">
-    <h3>Recent Events</h3>
+    
       <tt>
         <ul>
           {listItems}

@@ -25,7 +25,7 @@ class SequencesInfo extends React.Component {
     const listItems = this.props.sequences.map(this.li)
 
     return <div className="SequencesInfo">
-    <h3>Sequences</h3>
+    
       <button onClick={this.handleAdd}>
         Add Sequence
       </button>

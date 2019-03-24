@@ -19,7 +19,7 @@ class NetworkInfo extends React.Component {
 
     return (
       <div className="NetworkInfo">
-        <h3>Network</h3>
+        
           <p>
             Data version: {this.props.version}
           </p>

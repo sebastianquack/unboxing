@@ -17,7 +17,7 @@ class FilesInfo extends React.Component {
 
     return (
       <div className="FilesInfo">
-        <h3>Files <button onClick={this.handleReload}>Reload</button></h3>
+        <button onClick={this.handleReload}>Reload</button>
         <tt>
           <ul>
           {listItems}
