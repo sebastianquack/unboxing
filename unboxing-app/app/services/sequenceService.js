@@ -348,7 +348,7 @@ class SequenceService extends Service {
     if(this.isGuitarHeroMode() && this.state.scheduledItem || this.state.currentItem) {
       const startTimeInSequence = this.state.currentItem ? this.state.currentItem.startTime : this.state.scheduledItem.startTime
       const startTime = startTimeInSequence - gameService.guitarHeroThreshold.pre
-      const stopTime = startTimeInSequence
+      const stopTime = startTimeInSequence + gameService.guitarHeroThreshold.post
       
       let obj = { type: null };
 
@@ -356,7 +356,8 @@ class SequenceService extends Service {
       obj = { type: "peak" };
       peakService.waitForStart(() => {
         gameService.handlePlayNextItemButton()
-        peakService.stopWaitingForStart()
+				peakService.stopWaitingForStart()
+				this.deactivateUserAction()
       })  
       
       this.setReactive({
