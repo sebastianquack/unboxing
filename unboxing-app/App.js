@@ -33,6 +33,7 @@ import SensorInfo from './app/components/admin/SensorInfo';
 import DebugToggle from './app/components/admin/DebugToggle';
 import GameModeAdmin from './app/components/admin/GameModeAdmin';
 import SequenceAdmin from './app/components/admin/SequenceAdmin';
+import LanguageSelector from './app/components/admin/LanguageSelector';
 
 const sections = [
   {
@@ -154,6 +155,7 @@ class App extends Component {
         <Text style={{fontSize: 16}}>translucent</Text>
           <Switch value={this.state.adminTranslucent} onValueChange={value => this.setState({adminTranslucent: value})}/>                
         <View>
+        <LanguageSelector/>
           { this.renderSections() }
         </View>        
         { this.renderBuildInfo() }
