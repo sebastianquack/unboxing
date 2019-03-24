@@ -9,7 +9,8 @@ class ImportExport extends React.Component {
     this.state = {
       path: null,
       hostname: null,
-      filename: null
+      filename: null,
+      filenameTranslations: null
     }
     this.clicked = false
   }
@@ -24,14 +25,29 @@ class ImportExport extends React.Component {
         })
       }
     })
+
+    Meteor.call('translationsExportJSONmeta', null, (err,result) => {
+      if (err) {
+        console.warn(err)
+      } else {
+        this.setState({...result}, () => {
+          this.setFilename(undefined, "unboxing_translation")
+        })
+      }
+    })
   }
 
-  setFilename = (callback) => {
+  setFilename = (callback, customPrefix="unboxing_data") => {
     const hostname = this.state.hostname || ""
     const date = dateFormat(new Date(), "yyyy-mm-dd-HH-MM")
-    const prefix = "unboxing_data"
+    const prefix = customPrefix
     const filename = [prefix, hostname, date].join("_") + ".json"
-    this.setState({filename}, callback)
+    if(prefix == "unboxing_translation") {
+      this.setState({filenameTranslations: filename}, callback)  
+    } else {
+      this.setState({filename}, callback)  
+    }
+    
   }
 
   ImportExportCss = css`
@@ -81,6 +97,8 @@ class ImportExport extends React.Component {
       <div  className={this.ImportExportCss}>
         <a href={this.state.path} download={this.state.filename} onClick={this.handleOnClick}>
           Export JSON</a>
+        <a style={{marginLeft: "5px"}} href={this.state.translationsPath} download={this.state.filenameTranslations} onClick={this.handleOnClick}>
+          Export Translations JSON</a>
         <hr />
         <span className="link">
           Import JSON (from json file): <input type="file" onChange={this.handleImport}/></span>

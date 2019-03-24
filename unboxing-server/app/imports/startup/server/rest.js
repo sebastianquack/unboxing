@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor'
 
 import { Challenges, Gestures, Sequences, Files, Walks, Places, Translations } from '../../collections/';
 import objectHash from 'object-hash'
-import { importExportConfig } from '../../helper/server/importexport';
+import { importExportConfig, importExportConfigTranslationsOnly } from '../../helper/server/importexport';
 
 import cleanJSON from '../../helper/both/cleanJSON';
 
@@ -70,9 +70,22 @@ async function getDataJSON(req, res) {
   res.status(200).json(collections);  
 }
 
+// export just translations
+async function getTranslationsJSON(req, res) {
+
+  const collections = {}
+  for (collection in importExportConfigTranslationsOnly.collections) {
+    collections[collection] = await importExportConfigTranslationsOnly.collections[collection].find().fetch();
+  }
+
+  res.status(200).json(collections);  
+}
+
+
 export {
   getEverything,
   getTime,
   addGesture,
-  getDataJSON
+  getDataJSON,
+  getTranslationsJSON
 }

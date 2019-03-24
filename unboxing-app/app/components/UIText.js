@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import {globalStyles, colors} from '../../config/globalStyles';
 
 const fontSizes = {
+  xxl: 64,
   xl: 32,
   l: 24,
   m: 19,

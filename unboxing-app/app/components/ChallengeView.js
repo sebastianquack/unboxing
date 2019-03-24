@@ -26,7 +26,7 @@ class ChallengeView extends React.Component {
     const sequence = this.props.sequenceService.currentSequence;
     
     return (
-      <View>
+      <View> 
         
         {challengeStatus == "navigate" &&
           <View>

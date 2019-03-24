@@ -4,7 +4,7 @@ import os from 'os';
 import Events from '../../collections/events';
 import { Challenges, Gestures, Sequences } from '../../collections/';
 
-import {importExportConfig} from '../../helper/server/importexport'
+import {importExportConfig, importExportConfigTranslationsOnly} from '../../helper/server/importexport'
 import { updateFiles } from '../../helper/server/files';
 
 function createChallenge(uuid) {
@@ -149,6 +149,12 @@ Meteor.methods({
   'dataExportJSONmeta'() {
     return {
       path: importExportConfig.path,
+      hostname: os.hostname(),
+    }
+  },
+  'translationsExportJSONmeta'() {
+    return {
+      translationsPath: importExportConfigTranslationsOnly.path,
       hostname: os.hostname(),
     }
   },

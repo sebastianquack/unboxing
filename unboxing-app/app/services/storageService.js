@@ -216,11 +216,13 @@ class StorageService extends Service {
 
   // return tanslated string for its key
   t(key) {
-    for(let i = 0; i < this.state.collections.translations.length; i++) {
-      if(this.state.collections.translations[i].key == key) {
-        return this.state.collections.translations[i]["content_" + this.state.language];
+    if(this.state.collections.translations) {
+      for(let i = 0; i < this.state.collections.translations.length; i++) {
+        if(this.state.collections.translations[i].key == key) {
+          return this.state.collections.translations[i]["content_" + this.state.language];
+        }
       }
-    }
+    } 
     return "translation missing";
   }
 

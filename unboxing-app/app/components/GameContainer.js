@@ -4,7 +4,7 @@ import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-
 import {globalStyles} from '../../config/globalStyles';
 
 import {withGameService, withSequenceService, withNearbyService, withPeakService} from './ServiceConnector';
-import {gameService, sequenceService} from '../services';
+import {gameService, sequenceService, storageService} from '../services';
 
 import ScreenContainer from './ScreenContainer'
 import PrimaryScreen from './PrimaryScreen'
@@ -16,6 +16,7 @@ import ConnectionIndicator from './ConnectionIndicator'
 import ChallengeView from './ChallengeView';
 import TrackSelector from './TrackSelector';
 import {InfoStream} from './InfoStream';
+import Welcome from './Welcome';
 
 class GameContainer extends React.Component { 
   constructor(props) { 
@@ -25,6 +26,7 @@ class GameContainer extends React.Component {
 
   render() {
 
+    let statusBar = null;
     let mainContent = null; 
     let scrollContent = null;
     let infoStreamContent = null;
@@ -38,7 +40,14 @@ class GameContainer extends React.Component {
 
     // configure content
     if(this.props.gameService.activeChallenge) {
+      statusBar = <StatusBar title={this.props.gameService.statusBarTitle} description={this.props.gameService.statusBarSubtitle} />
       mainContent = <ChallengeView/>        
+    } else {
+      mainContent = <Welcome
+        supertitle={storageService.t("main-title-super")}
+        title={storageService.t("main-title")}
+        subtitle={storageService.t("main-title-sub")}
+      />
     }
         
     // configure modal
@@ -86,7 +95,7 @@ class GameContainer extends React.Component {
           buttonRight = {buttonRight}
           buttonMid = {buttonMid}
           buttonLeft = {buttonLeft}
-          statusBar = {<StatusBar title={this.props.gameService.statusBarTitle} description={this.props.gameService.statusBarSubtitle} />}
+          statusBar = {statusBar}
           modalContent = {modalContent}      
           buttonModal = {buttonModal}    
         />
