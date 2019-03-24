@@ -43,7 +43,8 @@ class GameService extends Service {
 			this.setReactive({
 				activeWalk: null,
 				pathIndex: 0,
-				gameMode: "manual"
+				gameMode: "manual",
+        walkStatus: "off"
 			});
 
 			this.leaveChallenge();

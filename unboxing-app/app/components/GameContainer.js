@@ -43,11 +43,13 @@ class GameContainer extends React.Component {
       statusBar = <StatusBar title={this.props.gameService.statusBarTitle} description={this.props.gameService.statusBarSubtitle} />
       mainContent = <ChallengeView/>        
     } else {
-      mainContent = <Welcome
-        supertitle={storageService.t("main-title-super")}
-        title={storageService.t("main-title")}
-        subtitle={storageService.t("main-title-sub")}
-      />
+      if(this.props.gameService.walkStatus != "ended") {
+        mainContent = <Welcome
+          supertitle={storageService.t("main-title-super")}
+          title={storageService.t("main-title")}
+          subtitle={storageService.t("main-title-sub")}
+        />
+      }
     }
         
     // configure modal
