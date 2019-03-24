@@ -9,6 +9,25 @@ import { Translations } from '../collections'
 class TranslationDetail extends React.Component {
 	constructor(props) {
     	super(props);
+      
+      this.inputRefs = {};
+      Object.keys(this.props.translation).forEach((key)=>{
+        if(key != "_id") {
+          this.inputRefs[key] = React.createRef();  
+        }
+      })
+
+      this.handleAttributeChange = this.handleAttributeChange.bind(this);
+      this.renderInput = this.renderInput.bind(this);
+      this.renderAttribute = this.renderAttribute.bind(this);
+      this.focusInput = this.focusInput.bind(this);
+
+      // focus after creation
+      setTimeout(()=>{
+        if(this.props.translation.key == "") {
+          this.focusInput("key");  
+        }
+      }, 100);
   }
 
   DetailCss = css`
@@ -29,8 +48,8 @@ class TranslationDetail extends React.Component {
         vertical-align: top;
 	      display: inline-block;
 	    }
-      span:last-child {
-        width: 75%;
+      input:last-child {
+        width: 70%;
       }
 	  }
     button {
@@ -41,10 +60,14 @@ class TranslationDetail extends React.Component {
   handleAttributeChange = (attributeName, value) => {
     $set = {}
     $set[attributeName] = value
-    Meteor.call('updateTranslation', this.props.translation._id, $set )
+    Meteor.call('updateTranslation', this.props.translation._id, $set, ()=>{ this.focusInput(attributeName) } )    
   }
 
-	renderInput(attributeName, value) {
+  focusInput(attributeName) {
+    this.inputRefs[attributeName].current.focus();
+  }
+
+	renderInput = (attributeName, value) => {
     switch(attributeName) {
     	default:
         const inputType = typeof(value) == "number" ? "number" : "text"
@@ -53,16 +76,17 @@ class TranslationDetail extends React.Component {
           if (transformed === NaN) transformed = value
           return transformed
         }
-        return (<ContentEditable 
+        
+        return (<input
+          type="text"
+          ref={this.inputRefs[attributeName]}
           style={{
             border: "dotted grey 1px",
             borderWidth: "0 0 1px 0",
             fontWeight: "bold"
           }}
-          onChange={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.value)) } 
-          onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
-          html={value + ""}
-          tagName="span"
+          onChange={ e => this.handleAttributeChange(attributeName, e.target.value) } 
+          value={value + ""}
         />)
     }
   }

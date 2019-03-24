@@ -8,6 +8,8 @@ import loadInstrumentIcons from '../../config/instruments'
 import loadNavigationAssets from '../../config/navigationAssets'
 import UIText from './UIText'
 
+import {storageService} from '../services';
+
 const horizontalPadding = Math.floor(dimensions.screenWidth * 0.014)
 const verticalPadding = Math.floor(dimensions.screenWidth * 0.016)
 
@@ -60,7 +62,7 @@ class SecondaryScreen extends React.Component {
             {this.props.instrument}
           </UIText>    
         }
-        <UIText size="s" align="center" caps wide em>{this.props.instrument ? "Aktuell" : "Your Instrument"}</UIText>      
+        <UIText size="s" align="center" caps wide em>{this.props.instrument ? storageService.t("current") : storageService.t("your instrument")}</UIText>      
       </View>
     </View>
   }
