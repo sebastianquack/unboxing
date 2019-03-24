@@ -196,7 +196,7 @@ class GestureService extends Service {
 	}
 
 	stopRecognition = () => {
-		console.log("stop gesture recognition")
+		//console.log("stop gesture recognition")
 		this.setReactive({
 			isRecognizing: false
 		})

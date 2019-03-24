@@ -5,7 +5,7 @@ import { Accelerometer } from 'react-native-sensors';
 import AttributeSlider from './AttributeSlider';
 import AttributeNavigator from './AttributeNavigator';
 
-import {soundService, gameService} from '../services';
+import {soundService, gameService, sequenceService} from '../services';
 import {withSoundService} from '../components/ServiceConnector';
 
 class SensorModulator extends React.Component { 
@@ -24,9 +24,14 @@ class SensorModulator extends React.Component {
             value={this.props.soundService.volume}
             minValue={0.1}
             maxValue={1}
-            onValueChange={value=>soundService.setVolume(value)}
+            onValueChange={(value)=>{
+              let info = sequenceService.getCurrentItemInfo();
+              if(info.approved) {
+                soundService.setVolumeFor(this.props.item ? this.props.item.path : "", value, true)
+              }  
+            }}
             sensorTranslate={(data, props)=>{
-              let sensorValue = data.gyr.y;
+              let sensorValue = -data.gyr.x; // left lower volume, right higher volume
               if(sensorValue > 5) sensorValue = 5;
               if(sensorValue < -5) sensorValue = -5;
               let result = (((sensorValue + 5.0) / 10.0) * (props.maxValue - props.minValue)) + props.minValue;

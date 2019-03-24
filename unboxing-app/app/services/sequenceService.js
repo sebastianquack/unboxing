@@ -154,8 +154,8 @@ class SequenceService extends Service {
 			if (currentTime >= sequenceEndsAt) {
 				this.resetSequence();
         this.resetTrack();
-        this.updateActionInterface();
-				return
+        this.updateActionInterface(); 
+        return
 			}
 		}
 		
@@ -187,7 +187,7 @@ class SequenceService extends Service {
 	    
 	    // calculate this in beats
 			const beatsToNextItem = Math.floor(timeToNextItem / durationOfBeat) - 1;
-      console.log("beatsToNextItem: " + beatsToNextItem);
+      //console.log("beatsToNextItem: " + beatsToNextItem);
 
 			// check if beats should be shown
 			if(beatsToNextItem > 0 && !this.state.currentItem && !this.autoPlayNextItem()) {
@@ -247,10 +247,10 @@ class SequenceService extends Service {
 	// called on every beat and at special events (setupNextSequenceItem, sound ended)
 	updateActionInterface = ()=> {
 		//console.log("updateActionInterface");
-    console.log(this.state.currentSequence);
+    //console.log(this.state.currentItem);
 
     // sequence has ended
-    let endedMessage = this.state.endedFlag ? "end of sequence. restart? " : ""
+    let endedMessage = this.state.endedFlag ? "play again? " : ""
     
 		// sequence hasn't started yet
 		if(this.state.controlStatus == "ready" && this.state.currentTrack) {
@@ -261,7 +261,7 @@ class SequenceService extends Service {
 					this.activateNextUserAction();
 					
 				} else {
-					this.setActionMessage(endedMessage + "you don't have anything to play at the beginning of this sequence. wait for another player to start the sequence, then join at the right moment!");
+					this.setActionMessage(endedMessage + "anyone of you can start the sequence with their gesture");
 					this.deactivateUserAction();
 				}
 			} else {
@@ -281,13 +281,13 @@ class SequenceService extends Service {
 				});				
 				
         if(this.currentItemInfo.approved || !this.isGuitarHeroMode()) {
-          if(this.state.currentItem.sensorModulation == "off") {
-            this.setActionMessage("you're playing! try to point your instrument in a good direction!"); 
+          //if(this.state.currentItem.sensorModulation == "off") {
+            this.setActionMessage("you're playing! tilt left for pp, tilt right for ff"); 
             this.deactivateUserAction();
-          } else {
+          /*} else {
             this.setActionMessage("you're playing! see how you can modulate the sound..."); 
             this.deactivateUserAction();
-          }  
+          }*/  
         }
 
 				// check if the start time of the next item is directly after end of current item
@@ -308,7 +308,6 @@ class SequenceService extends Service {
 						}
 					}
 				}
-
 			
 			}	else { // currently not playing
 
@@ -478,7 +477,7 @@ class SequenceService extends Service {
 		const firstItem = this.firstItemInTrack(track.name);
 		console.log(firstItem);
 		if(firstItem) {
-			if(firstItem.startTime == 0) {				
+			//if(firstItem.startTime == 0) {				
 				
 				if(firstItem.gesture_id) {
 					gestureService.waitForGesture(firstItem.gesture_id, () => {
@@ -486,13 +485,13 @@ class SequenceService extends Service {
 						gestureService.stopWaitingForGesture()
 					});
 				}
-				if(firstItem.autoplay==="off") {
-					peakService.waitForStart(() => {
-						gameService.handlePlayNextItemButton()
-						peakService.stopWaitingForStart()
-					})	
-				}
-			}
+				
+				peakService.waitForStart(() => {
+					gameService.handlePlayNextItemButton()
+					peakService.stopWaitingForStart()
+				})	
+				
+			//}
 		}
 
 		this.updateActionInterface();
@@ -641,48 +640,53 @@ class SequenceService extends Service {
 		
 
 	// call sound service to schedule sound for next item, set callback to setup next item after playback
-	scheduleSoundForNextItem(targetTime) {
+	scheduleSoundForNextItem = (targetTime) => {
 		if (!this.state.nextItem) {
 			console.log("scheduleSoundForNextItem: nothing to schedule")
 			return
 		}
-		soundService.scheduleSound(this.state.nextItem.path, targetTime, {
+    soundService.scheduleSound(this.state.nextItem.path, targetTime, {
 			onPlayStart: () => {
-        this.setReactive({
-					scheduledItem: null,
-					currentItem: this.state.scheduledItem
-				});
+        this.setReactive({currentItem: this.state.scheduledItem});
+        this.setReactive({scheduledItem: null});
         this.currentItemInfo.approved = this.scheduledItemInfo.approved;
+        this.currentItemInfo.targetTime = targetTime;
         this.currentItemInfo.realStartTime = soundService.getSyncTime();
         this.scheduledItemInfo = {};
         if(this.currentItemInfo.approved) {
           this.turnOnVolumeCurrentItem();
         }
-				this.setupNextSequenceItem();
+        this.setupNextSequenceItem();  
 			},
 			onPlayEnd: () => {
-        this.currentItemInfo = {};
-				this.setReactive({currentItem: null});
-				this.setupNextSequenceItem();
-				this.updateActionInterface();
-			}
-		});
+        // make sure we are not deleting a newer item that is now in place
+        if(targetTime == this.currentItemInfo.targetTime) {
+          this.currentItemInfo = {};
+          this.setReactive({currentItem: null});
+        }
+        this.setupNextSequenceItem();
+			},
+		}, this.isGuitarHeroMode());  // startSilent
 		this.setReactive({
 			scheduledItem: this.state.nextItem,
 			nextItem: null,
 		});
 	}
 
+  getCurrentItemInfo() {
+    return this.currentItemInfo;
+  }
+
   turnOnVolumeCurrentItem() {
     if(this.state.currentItem) {
       soundService.setVolumeFor(this.state.currentItem.path, 0.3);
     }
-    setTimeout(()=>{
+    /*setTimeout(()=>{
       // make sure volume isn't turned off again by starting sound
       if(this.state.currentItem) {
         soundService.setVolumeFor(this.state.currentItem.path, 0.3);   
       }
-    }, 100);
+    }, 100);*/
   }
 
   // approve the next item

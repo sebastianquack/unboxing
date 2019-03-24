@@ -19,7 +19,7 @@ class PeakService extends Service {
 		this.isUp = data => {
       switch(this.state.peakMode) {
         case "acc": return (data.acc.x > 0.55)
-        case "gyr": return (data.gyr.y > 7.0) && (data.gyr.z < 5.0)
+        case "gyr": return (data.gyr.y > 6.0) && (data.gyr.z < 5.0)
       }
     }
 

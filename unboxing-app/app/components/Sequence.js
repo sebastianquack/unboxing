@@ -1,3 +1,6 @@
+
+/**** this component is abandoned - not in use ****/
+
 import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 import compose from 'lodash.flowright'

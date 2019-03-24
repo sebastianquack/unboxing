@@ -4,9 +4,9 @@ import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-
 import {globalStyles} from '../../config/globalStyles';
 import {withGameService, withSequenceService} from './ServiceConnector';
 
-import Sequence from './Sequence';
 import SequenceVisualizer from './SequenceVisualizer';
 import TrackSelector from './TrackSelector';
+import SensorModulator from './SensorModulator';
 
 import {gameService, sequenceService} from '../services';
 
@@ -48,7 +48,8 @@ class ChallengeView extends React.Component {
         
         {challengeStatus == "play" &&       
           <View>
-            <Sequence/>
+            <SequenceVisualizer magnification />
+            <SensorModulator mode={"volume tilt"} item={this.props.sequenceService.currentItem}/>
           </View>
         }
                   

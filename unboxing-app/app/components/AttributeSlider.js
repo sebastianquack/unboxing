@@ -69,26 +69,29 @@ class AttributeSlider extends React.Component {
   }
 
   render() {
-
-    return (
-      <View style={{borderWidth: 1, borderColor: "#aaa", margin: 10, padding: 10}}>
-        <Text>{this.props.attributeName}: {this.state.value}</Text>
-        <Slider
-          style={{width: 400, margin: 20}}
-          minimumValue={this.props.minValue}
-          maximumValue={this.props.maxValue}
-          value={this.props.value}
-          onValueChange={value => {
-            this.props.onValueChange(Math.round(value * 100) / 100);
-          }}
-        />
-        {/*<View style={{flexDirection: 'row'}}>
-          <Text>Sensor Control Active</Text>
-          <Switch value={this.state.sensorControl} onValueChange={this.handleSwitch} />
-        </View>*/}
-        {this.renderDebugInfo()}
-      </View>
-    );
+    if(this.props.showSlider) {
+      return (
+        <View style={{borderWidth: 1, borderColor: "#aaa", margin: 10, padding: 10}}>
+          <Text>{this.props.attributeName}: {this.state.value}</Text>
+          <Slider
+            style={{width: 400, margin: 20}}
+            minimumValue={this.props.minValue}
+            maximumValue={this.props.maxValue}
+            value={this.props.value}
+            onValueChange={value => {
+              this.props.onValueChange(Math.round(value * 100) / 100);
+            }}
+          />
+          {/*<View style={{flexDirection: 'row'}}>
+            <Text>Sensor Control Active</Text>
+            <Switch value={this.state.sensorControl} onValueChange={this.handleSwitch} />
+          </View>*/}
+          {this.renderDebugInfo()}
+        </View>
+      );
+    } else {
+      return null
+    }
   }
 }
 
