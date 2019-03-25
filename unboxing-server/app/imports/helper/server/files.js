@@ -88,14 +88,15 @@ async function updateFiles(callback=false) {
       callback(output)
     }
 
-    if (changed) {
-      makeArchive()
+    const zipPath = global.files_dir + "/files.zip"
+    if (changed || ! fs.existsSync(zipPath)) {
+      makeArchive(zipPath)
     }
 
   })
 }
 
-function makeArchive() {
+function makeArchive(zipPath) {
   var zip = new AdmZip();
 
   console.log("creating zip archive")
@@ -115,7 +116,7 @@ function makeArchive() {
       zip.addLocalFile(file, dirRelative);
     }
 
-    zip.writeZip(global.files_dir + "/files.zip");
+    zip.writeZip(zipPath);
 
   })
 }
