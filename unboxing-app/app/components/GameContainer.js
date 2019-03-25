@@ -17,6 +17,7 @@ import ChallengeView from './ChallengeView';
 import TrackSelector from './TrackSelector';
 import {InfoStream} from './InfoStream';
 import Welcome from './Welcome';
+import SensorModulator from './SensorModulator';
 
 class GameContainer extends React.Component { 
   constructor(props) { 
@@ -79,6 +80,9 @@ class GameContainer extends React.Component {
         break;
 
       case "tutorial":
+        if(this.props.gameService.tutorialStatus == "step-2") {
+          mainContent = <SensorModulator mode={"volume tilt"} item={{path: gameService.getPracticeSoundFile()}}/>     
+        }
         buttonRight = this.props.gameService.tutorialStatus == "complete" ?
           <Button text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/> : null;  
         break;

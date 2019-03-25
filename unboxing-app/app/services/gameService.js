@@ -2,6 +2,9 @@ import Service from './Service';
 
 import {sequenceService, soundService, storageService, relayService, peakService} from './';
 
+import loadNavigationAssets from '../../config/instruments'
+const instruments = loadNavigationAssets();
+
 const defaultStatusBarTitle = "Unboxing Mozart";
 const defaultStatusBarSubtitle = "Development Version - Testing"
 
@@ -496,7 +499,7 @@ class GameService extends Service {
         this.addItemToInfoStream("navigation", "press check in when you're there!");
         break;
       case "tutorial": 
-        this.manageTutorial();
+        this.updateTutorial();
         break
       case "prepare":
         if(this.firstPlaceInTutorial()) {
@@ -525,17 +528,20 @@ class GameService extends Service {
   
   }
 
-  manageTutorial = ()=> {
+  updateTutorial = ()=> {
     switch(this.state.tutorialStatus) {
       case "step-1":
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-1"));  
-        this.activatePeakTutorial("step-2");
+        this.preloadPracticeSound();
+        this.activatePeakTutorial(()=>{
+          this.playPracticeSound("step-2");
+        });
         break;
       case "step-2":
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-2"));  
-        setTimeout(()=>{
-          this.activatePeakTutorial("complete");  
-        }, 100);
+        this.activatePeakTutorial(()=>{
+          this.playPracticeSound("complete");
+        });
         break;
       case "complete":
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-complete"));
@@ -543,11 +549,33 @@ class GameService extends Service {
     }
   }
 
-  activatePeakTutorial = (resultStatus)=> {
+  getPracticeSoundFile = () => {
+    return instruments[this.state.activePath.startInstrument].practiceSoundPath; 
+  }
+
+  preloadPracticeSound = () => {
+    soundService.preloadSoundfiles([this.getPracticeSoundFile()], ()=>{
+      //console.warn("practice sound loaded");
+    }); 
+  }
+
+  playPracticeSound = (endStatus) => {
+    let soundFile = instruments[this.state.activePath.startInstrument].practiceSoundPath
+    soundService.scheduleSound(this.getPracticeSoundFile(), soundService.getSyncTime(), {
+      onPlayStart: ()=>{
+        this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-playing-1"));
+      },
+      onPlayEnd: ()=>{
+        this.setReactive({tutorialStatus: endStatus});
+        this.updateTutorial();
+      }
+    });
+  }
+
+  activatePeakTutorial = (callback)=> {
     peakService.waitForStart(() => {
         peakService.stopWaitingForStart()
-        this.setReactive({tutorialStatus: resultStatus});
-        this.manageTutorial();
+        callback();
     });  
   }
 
