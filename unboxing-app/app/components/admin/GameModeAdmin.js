@@ -31,8 +31,9 @@ class GameModeAdmin extends React.Component {
     return (
       <View>
         <Text>gameMode: {this.props.gameService.gameMode}</Text>
-        <Text>activeWalk: {this.props.gameService.activeWalk ? this.props.gameService.activeWalk.description : "none"}</Text>
+        <Text>activeWalk: {this.props.gameService.activeWalk ? JSON.stringify(this.props.gameService.activeWalk) : "none"}</Text>
         <Text>walkStatus: {this.props.gameService.walkStatus}</Text>
+        <Text>tutorialStatus: {this.props.gameService.tutorialStatus}</Text>
         <Text>pathIndex: {this.props.gameService.pathIndex}</Text>
         <Text>activePlaceReference: {JSON.stringify(this.props.gameService.activePlaceReference)}</Text>
         <Text>activePlace: {JSON.stringify(this.props.gameService.activePlace)}</Text>
@@ -49,11 +50,19 @@ class GameModeAdmin extends React.Component {
         >
               {walkItems}
         </Picker>
+        <TouchableOpacity 
+          style={globalStyles.button}
+          onPress={()=>{
+            if(this.props.storageService.collections.places.length >= 2) {
+              gameService.setupTutorialWalk()
+              this.props.adminClose();  
+            }
+          }}><Text>Test Tutorial</Text>
+        </TouchableOpacity>
         <Text style={{marginTop: 20}}>navigate to a place:</Text>
         <Picker
               mode="dropdown"
               onValueChange={(itemValue, itemIndex) => {if(itemValue) {
-                gameService.setGameMode("manual");                
                 gameService.setupMinimalWalk(itemValue) 
                 this.props.adminClose();
               }}}

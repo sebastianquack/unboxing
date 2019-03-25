@@ -120,20 +120,20 @@ class SequenceAdmin extends React.Component {
         <Text>nextActionMessage: {this.props.sequenceService.nextActionMessage}</Text>
 
           {this.props.sequenceService.showPlayItemButton && this.props.gameService.debugMode &&
-              <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItemButton}>
+              <TouchableOpacity style={styles.bigButton} onPress={gameService.handlePlayNextItem}>
                   <Text>Play</Text>
               </TouchableOpacity>
           }
 
           {this.props.gameService.debugMode && this.props.sequenceService.nextItem && this.state.timeToNextItem < 0 &&
-            <TouchableOpacity style={styles.bigButton} onPress={gameService.handleSkipButton}>
+            <TouchableOpacity style={styles.bigButton} onPress={gameService.handleSkipItem}>
                   <Text>Skip</Text>
             </TouchableOpacity>
           }
 
           {this.props.sequenceService.currentItem && this.props.gameService.debugMode &&
             <View>
-              <TouchableOpacity style={styles.bigButton} onPress={gameService.handleStopButton}>
+              <TouchableOpacity style={styles.bigButton} onPress={gameService.handleStopItem}>
                   <Text>Stop</Text>
               </TouchableOpacity>
             </View>

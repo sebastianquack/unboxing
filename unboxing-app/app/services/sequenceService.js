@@ -277,7 +277,7 @@ class SequenceService extends Service {
 
 				// activate stop gesture
 				peakService.waitForStop(() => {
-					gameService.handleStopButton()
+					gameService.handleStopItem()
 				});				
 				
         if(this.currentItemInfo.approved || !this.isGuitarHeroMode()) {
@@ -355,7 +355,7 @@ class SequenceService extends Service {
       // update Gesture listening
       obj = { type: "peak" };
       peakService.waitForStart(() => {
-        gameService.handlePlayNextItemButton()
+        gameService.handlePlayNextItem()
 				peakService.stopWaitingForStart()
 				this.deactivateUserAction()
       })  
@@ -382,10 +382,9 @@ class SequenceService extends Service {
 
 			// update Gesture listening
 			if (this.state.nextItem.autoplay==="off") {
-        console.log("setting up peakService");
 				obj = { type: "peak" };
 				peakService.waitForStart(() => {
-					gameService.handlePlayNextItemButton()
+					gameService.handlePlayNextItem()
 					peakService.stopWaitingForStart()
 					this.deactivateUserAction()
 				})	
@@ -394,7 +393,7 @@ class SequenceService extends Service {
 				obj = { type: "gesture" };
 				gestureService.waitForGesture(nextItem.gesture_id, () => {
 					gestureService.stopWaitingForGesture()
-					gameService.handlePlayNextItemButton()
+					gameService.handlePlayNextItem()
 					this.deactivateUserAction()
 				})
 			}
@@ -457,6 +456,14 @@ class SequenceService extends Service {
     }
   }
 
+  trackSelectByName(trackName) {
+    this.state.currentSequence.tracks.forEach((track)=>{
+      if(track.name == trackName) {
+        this.trackSelect(track);
+      }
+    })
+  }
+
 	// invoked from track selector component
 	trackSelect = (track)=> {
 		
@@ -481,13 +488,13 @@ class SequenceService extends Service {
 				
 				if(firstItem.gesture_id) {
 					gestureService.waitForGesture(firstItem.gesture_id, () => {
-						gameService.handlePlayNextItemButton()
+						gameService.handlePlayNextItem()
 						gestureService.stopWaitingForGesture()
 					});
 				}
 				
 				peakService.waitForStart(() => {
-					gameService.handlePlayNextItemButton()
+					gameService.handlePlayNextItem()
 					peakService.stopWaitingForStart()
 				})	
 				

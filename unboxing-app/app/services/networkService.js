@@ -173,7 +173,7 @@ class NetworkService extends Service {
       this.setReactive({lastApiResult: "OK"})
 			return responseJson;
 		} catch (error) {
-      this.showNotification("REST server error: ", error);
+      console.warn("REST server error: ", error);
       this.setReactive({lastApiResult: "Error"})
 		}
 	}

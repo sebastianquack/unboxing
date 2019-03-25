@@ -183,6 +183,13 @@ class StorageService extends Service {
 		return null;
 	}
 
+  getPlaceAtIndex = (index) => {
+    if(index < this.state.collections.places.length) {
+      return this.state.collections.places[index];  
+    }
+    return null;
+  }
+
 	findChallenge(challenge_id) {
 		for(let i = 0; i < this.state.collections.challenges.length; i++) {
 			if(this.state.collections.challenges[i]._id == challenge_id) {
@@ -223,7 +230,7 @@ class StorageService extends Service {
         }
       }
     } 
-    return "translation missing";
+    return "[" + key + "]";
   }
 
 }

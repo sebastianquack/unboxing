@@ -39,7 +39,7 @@ const sections = [
   {
     name: "GameModeAdmin",
     component:GameModeAdmin,
-    default: false
+    default: true
 
   },
   {

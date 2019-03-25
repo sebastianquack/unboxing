@@ -20,6 +20,7 @@ class ChallengeView extends React.Component {
   }
 
   render() {
+    const walkStatus = this.props.gameService.walkStatus;
     const place = this.props.gameService.activePlace;
     const challenge = this.props.gameService.activeChallenge;
     const challengeStatus = this.props.gameService.challengeStatus;
@@ -28,7 +29,7 @@ class ChallengeView extends React.Component {
     return (
       <View> 
         
-        {challengeStatus == "navigate" &&
+        {challengeStatus == "navigate" && walkStatus == "ongoing" &&
           <View>
               <Image
                 source={navigationAssets.default.navigation}

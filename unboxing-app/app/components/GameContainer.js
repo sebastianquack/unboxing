@@ -43,7 +43,7 @@ class GameContainer extends React.Component {
       statusBar = <StatusBar title={this.props.gameService.statusBarTitle} description={this.props.gameService.statusBarSubtitle} />
       mainContent = <ChallengeView/>        
     } else {
-      if(this.props.gameService.walkStatus != "ended") {
+      if(this.props.gameService.walkStatus != "ended" && this.props.gameService.walkStatus != "tutorial-intro") {
         mainContent = <Welcome
           supertitle={storageService.t("main-title-super")}
           title={storageService.t("main-title")}
@@ -51,7 +51,18 @@ class GameContainer extends React.Component {
         />
       }
     }
-        
+
+    // special case: tutorial
+    if(
+      this.props.gameService.walkStatus == "tutorial-intro" || 
+      this.props.gameService.challengeStatus == "tutorial") {
+      secondaryScreen = this.props.gameService.activePath.startInstrument ? <SecondaryScreen type="instrument" instrument={this.props.gameService.activePath.startInstrument} /> : null;
+    }  
+
+    if(this.props.gameService.walkStatus == "tutorial-intro") {
+      buttonRight = <Button text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>;
+    }
+    
     // configure modal
     if(this.props.gameService.showInstrumentSelector) {
         modalContent = <TrackSelector sequence={this.props.sequenceService.currentSequence}/>
@@ -63,22 +74,31 @@ class GameContainer extends React.Component {
     
     switch(this.props.gameService.challengeStatus) {
       case "navigate": 
-        buttonRight = <Button text="Check In" onPress={()=>{gameService.handlePlayButton()}}/>; 
+        buttonRight = <Button text="Check In" onPress={()=>{gameService.handleRightButton()}}/>; 
         secondaryScreen = <SecondaryScreen type="navigation" target="default" />;
+        break;
+
+      case "tutorial":
+        buttonRight = this.props.gameService.tutorialStatus == "complete" ?
+          <Button text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/> : null;  
         break;
       
       case "prepare": 
-        buttonLeft = <Button type="home" text="Exit" onPress={()=>{gameService.handleBackButton()}}/>;
-        buttonRight = instrumentName ? <Button text="Play" onPress={()=>{gameService.handlePlayButton()}}/> : null;
+        buttonLeft = <Button type="home" text="Exit" onPress={()=>{gameService.handleLeftButton()}}/>;
+        buttonRight = instrumentName ? <Button text="Play" onPress={()=>{gameService.handleRightButton()}}/> : null;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
-        buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
+        if(!(this.props.gameService.activeWalk.tutorial && this.props.gameService.pathIndex == 0)) {
+          buttonMid = <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;  
+        }
         overlayContent = <ConnectionIndicator current={this.props.gameService.numChallengeParticipants} max={this.props.sequenceService.currentSequence ? this.props.sequenceService.currentSequence.tracks.length : 0} />;
         break;
  
       case "play":
-        buttonLeft = <Button type="home" text="Back" onPress={()=>{gameService.handleBackButton()}}/>;
+        buttonLeft = <Button type="home" text="Back" onPress={()=>{gameService.handleLeftButton()}}/>;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
-        buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
+        if(!(this.props.gameService.activeWalk.tutorial && this.props.gameService.pathIndex == 0)) {
+          buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
+        }
         break;
     }
 
