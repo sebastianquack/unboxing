@@ -10,7 +10,8 @@ class ImportExport extends React.Component {
       path: null,
       hostname: null,
       filename: null,
-      filenameTranslations: null
+      filenameTranslations: null,
+      filenameFilesArchive: null,
     }
     this.clicked = false
   }
@@ -31,23 +32,28 @@ class ImportExport extends React.Component {
         console.warn(err)
       } else {
         this.setState({...result}, () => {
-          this.setFilename(undefined, "unboxing_translation")
+          this.setFilename(undefined, "unboxing_translation", "filenameTranslations")
         })
       }
     })
+
+    Meteor.call('filesArchiveExportJSONmeta', null, (err,result) => {
+      if (err) {
+        console.warn(err)
+      } else {
+        this.setState({...result}, () => {
+          this.setFilename(undefined, "unboxing_files", "filenameFilesArchive", ".zip")
+        })
+      }
+    })    
   }
 
-  setFilename = (callback, customPrefix="unboxing_data") => {
+  setFilename = (callback, customPrefix="unboxing_data", stateVar="filename", extension = ".json") => {
     const hostname = this.state.hostname || ""
     const date = dateFormat(new Date(), "yyyy-mm-dd-HH-MM")
     const prefix = customPrefix
-    const filename = [prefix, hostname, date].join("_") + ".json"
-    if(prefix == "unboxing_translation") {
-      this.setState({filenameTranslations: filename}, callback)  
-    } else {
-      this.setState({filename}, callback)  
-    }
-    
+    const filename = [prefix, hostname, date].join("_") + extension
+    this.setState({[stateVar]: filename}, callback)  
   }
 
   ImportExportCss = css`
@@ -96,9 +102,14 @@ class ImportExport extends React.Component {
     return (
       <div  className={this.ImportExportCss}>
         <a href={this.state.path} download={this.state.filename} onClick={this.handleOnClick}>
-          Export JSON</a>
+          Export JSON
+        </a>
         <a style={{marginLeft: "5px"}} href={this.state.translationsPath} download={this.state.filenameTranslations} onClick={this.handleOnClick}>
-          Export Translations JSON</a>
+          Export Translations JSON
+        </a>
+        <a style={{marginLeft: "5px"}} href={this.state.filesArchivePath} download={this.state.filenameFilesArchive} onClick={this.handleOnClick}>
+          Export Files
+        </a>          
         <hr />
         <span className="link">
           Import JSON (from json file): <input type="file" onChange={this.handleImport}/></span>

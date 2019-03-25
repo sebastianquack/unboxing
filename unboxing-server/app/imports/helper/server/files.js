@@ -1,15 +1,18 @@
 import recursive from "recursive-readdir";
 import path from 'path';
 import fs from 'fs';
+import AdmZip from 'adm-zip';
+
 import Files from '../../collections/files';
+
+const filesFilter = (file) => (['.mp3','.wav','.aiff','.m4a','.MP3','.apk','.mp4','.png'].indexOf(path.extname(file)) > -1)
 
 function readFiles(callback=false) {
   console.log("reading files")
 
-
   recursive(global.files_dir, function (err, files) {
     // filter files
-    const validFiles = files.filter((file) => (['.mp3','.wav','.aiff','.m4a','.MP3','.apk','.mp4','.png'].indexOf(path.extname(file)) > -1))
+    const validFiles = files.filter(filesFilter)
 
     // init
     let output = []
@@ -42,10 +45,11 @@ function readFiles(callback=false) {
 
 }
 
-function updateFiles(callback=false) {
+async function updateFiles(callback=false) {
 
-  readFiles(async function(fs_files) {
+  await readFiles(async function(fs_files) {
     const db_files = Files.find().fetch()
+    let changed = false
  
     // remove deleted files from collection
     for (let f_db of db_files) {
@@ -55,6 +59,7 @@ function updateFiles(callback=false) {
       if (!db_is_in_fs) {
         console.log("removing ", f_db)
         Files.remove({path:f_db.path, size:f_db.size})
+        changed = true
       }
     }
 
@@ -66,6 +71,7 @@ function updateFiles(callback=false) {
       if (!fs_is_in_db) {
         console.log("adding ", f_fs)
         Files.insert(f_fs)
+        changed = true
       }
     }
 
@@ -74,14 +80,49 @@ function updateFiles(callback=false) {
       const url_path = getUrlPath(file.path)
       if (url_path !== file.url_path) {
         Files.update(file._id, {$set: {url_path}})
+        changed = true
       }
     })
 
     if (callback) {
       callback(output)
-    }    
+    }
+
+    const zipPath = global.files_dir + "/files.zip"
+    if (changed || ! fs.existsSync(zipPath)) {
+      makeArchive(zipPath)
+    }
+
   })
 }
+
+function makeArchive(zipPath) {
+  var zip = new AdmZip();
+
+  console.log("creating zip archive")
+  recursive(global.files_dir, function (err, files) {
+    // filter files
+    const validFiles = files.filter(filesFilter)
+
+    // loop files
+    let index = 0;
+    for (let file of validFiles) {
+
+      const p = path.parse(file);
+      const dirRelative = p.dir.substr(global.files_dir.length);
+      const fs_relative_path = dirRelative+'/'+p.base
+
+      // console.log("adding " + fs_relative_path + " to zip ")
+      zip.addLocalFile(file, dirRelative);
+    }
+
+    zip.writeZip(zipPath);
+
+  })
+}
+
+
+/********* helpers ***********/
 
 function filesEqual(file1, file2) {
   const result = (

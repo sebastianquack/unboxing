@@ -6,6 +6,7 @@
   },
   "dependencies": {
     "@babel/runtime": "^7.0.0-beta.36",
+    "adm-zip": "^0.4.13",
     "body-parser": "^1.18.3",
     "bonjour": "^3.5.0",
     "color": "^3.0.0",

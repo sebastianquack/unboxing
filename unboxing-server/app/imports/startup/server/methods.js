@@ -158,6 +158,12 @@ Meteor.methods({
       hostname: os.hostname(),
     }
   },
+  'filesArchiveExportJSONmeta'() {
+    return {
+      filesArchivePath: global.files_uri_path+'/files.zip',
+      hostname: os.hostname(),
+    }
+  },  
   async 'importEntries'(json) {
     const collections = Object.keys(json)
     console.log("received entries import", collections)
