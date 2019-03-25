@@ -534,13 +534,13 @@ class GameService extends Service {
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-1"));  
         this.preloadPracticeSound();
         this.activatePeakTutorial(()=>{
-          this.playPracticeSound("step-2");
+          this.playPracticeSound(storageService.t("tutorial-instructions-playing-1"), "step-2");
         });
         break;
       case "step-2":
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-2"));  
         this.activatePeakTutorial(()=>{
-          this.playPracticeSound("complete");
+          this.playPracticeSound(storageService.t("tutorial-instructions-playing-2"), "complete");
         });
         break;
       case "complete":
@@ -559,11 +559,11 @@ class GameService extends Service {
     }); 
   }
 
-  playPracticeSound = (endStatus) => {
+  playPracticeSound = (playInstructions, endStatus) => {
     let soundFile = instruments[this.state.activePath.startInstrument].practiceSoundPath
     soundService.scheduleSound(this.getPracticeSoundFile(), soundService.getSyncTime(), {
       onPlayStart: ()=>{
-        this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-playing-1"));
+        this.addItemToInfoStream(storageService.t("tutorial"), playInstructions);
       },
       onPlayEnd: ()=>{
         this.setReactive({tutorialStatus: endStatus});
