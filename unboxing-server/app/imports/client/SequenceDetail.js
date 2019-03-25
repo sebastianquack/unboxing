@@ -43,6 +43,7 @@ class Sequence extends React.Component {
       span {
         min-width: 10em;
         display: inline-block;
+        min-height: 1em;
       }
       select, span {
         margin-left: 1ex;

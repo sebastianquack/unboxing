@@ -34,6 +34,7 @@ class WalkDetail extends React.Component {
         width: 25%;
         vertical-align: top;
 	      display: inline-block;
+        min-height: 1em;
 	    }
       span:last-child {
         width: 75%;

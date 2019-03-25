@@ -29,6 +29,7 @@ class ChallengeDetail extends React.Component {
         width: 50%;
         vertical-align: top;
 	      display: inline-block;
+        min-height: 1em;
 	    }
 	  }
     button {
