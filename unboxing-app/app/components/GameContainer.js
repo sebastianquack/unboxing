@@ -87,7 +87,7 @@ class GameContainer extends React.Component {
         buttonLeft = <Button type="home" text="Exit" onPress={()=>{gameService.handleLeftButton()}}/>;
         buttonRight = instrumentName ? <Button text="Play" onPress={()=>{gameService.handleRightButton()}}/> : null;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
-        if(!(this.props.gameService.activeWalk.tutorial && this.props.gameService.pathIndex == 0)) {
+        if(!gameService.firstPlaceInTutorial()) {
           buttonMid = <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;  
         }
         overlayContent = <ConnectionIndicator current={this.props.gameService.numChallengeParticipants} max={this.props.sequenceService.currentSequence ? this.props.sequenceService.currentSequence.tracks.length : 0} />;
@@ -96,7 +96,7 @@ class GameContainer extends React.Component {
       case "play":
         buttonLeft = <Button type="home" text="Back" onPress={()=>{gameService.handleLeftButton()}}/>;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
-        if(!(this.props.gameService.activeWalk.tutorial && this.props.gameService.pathIndex == 0)) {
+        if(!gameService.firstPlaceInTutorial()) {
           buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
         }
         break;

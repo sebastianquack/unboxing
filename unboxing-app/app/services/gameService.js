@@ -145,7 +145,10 @@ class GameService extends Service {
 		this.setActiveChallenge(challenge);
 	}
 
-
+  firstPlaceInTutorial = ()=> {
+    if(!this.state.activeWalk) return false;
+    return (this.state.activeWalk.tutorial && this.state.pathIndex == 0);
+  }
 
   /** challenges **/
 
@@ -496,18 +499,18 @@ class GameService extends Service {
         this.manageTutorial();
         break
       case "prepare":
-        if(!(this.state.activeWalk.tutorial && this.state.pathIndex == 0)) {
+        if(this.firstPlaceInTutorial()) {
+          this.addItemToInfoStream("welcome", "welcome to this passage. press play to start playing!");
+          if(this.state.tutorialStatus == "first-play") {
+            this.addItemToInfoStream("did you know?", "you will find vidoes about each passage", true);
+          }
+        } else {
           this.addItemToInfoStream("welcome", "welcome to this passage. here's a video about it! (placeholder)", true);
           if(!sequenceService.getCurrentTrackName()) {
             this.addItemToInfoStream("how to play", "select your instrument, then press play to start playing");   
           } else {
             this.addItemToInfoStream("how to play", "press play to start playing!");   
           }  
-        } else {
-          this.addItemToInfoStream("welcome", "welcome to this passage. press play to start playing!");
-          if(this.state.tutorialStatus == "first-play") {
-            this.addItemToInfoStream("did you know?", "you will find vidoes about each passage", true);
-          }
         }
         break;
       case "play":

@@ -64,6 +64,7 @@ class GameModeAdmin extends React.Component {
               mode="dropdown"
               onValueChange={(itemValue, itemIndex) => {if(itemValue) {
                 gameService.setupMinimalWalk(itemValue) 
+                gameService.initInfoStream();
                 this.props.adminClose();
               }}}
         >
@@ -75,6 +76,7 @@ class GameModeAdmin extends React.Component {
               onValueChange={(itemValue, itemIndex) => {if(itemValue) {
                 gameService.setGameMode("manual");                
                 gameService.setActiveChallenge(itemValue) 
+                gameService.initInfoStream();
                 this.props.adminClose();
               }}}
         >
