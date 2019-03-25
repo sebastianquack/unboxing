@@ -109,7 +109,7 @@ class Sequence extends React.Component {
     const trackInfo = this.props.sequence.tracks.find( t => t.name == d.track)
     const color = trackInfo ? trackInfo.color : "white"
     const row = this.props.sequence.tracks.findIndex( t => t.name == d.track)
-    const top = `calc(${row} * (${trackHeight+unit} + 1px}))`
+    const top = "calc(" +  row + " * (" + trackHeight + unit + " + 1px))";
     //console.log(d.startTime, this.props.sequence.duration)
     //const left = 'calc(' + trackTitleWidth + unit + ' + (' + (100*d.startTime/this.props.sequence.duration) + '% ) - ' + trackTitleWidth + unit + ')'
     const ratio = d.startTime/this.props.sequence.duration || 0
