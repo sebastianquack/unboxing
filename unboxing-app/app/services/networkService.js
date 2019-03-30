@@ -2,7 +2,7 @@ import { NetInfo } from 'react-native';
 //import Zeroconf from 'react-native-zeroconf';
 
 import Service from './Service';
-import { storageService, soundService } from './';
+import { storageService, soundService, relayService } from './';
 
 defaultServer = "192.168.8.10"
 
@@ -77,6 +77,7 @@ class NetworkService extends Service {
     if(save) {
       storageService.setServer(server);  
     }
+    relayService.restart()
   }	
 
   initNetInfo = () => {

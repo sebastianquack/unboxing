@@ -2,7 +2,7 @@
 import Service from './Service';
 import {storageService} from './';
 
-import openSocket from 'socket.io-client';
+import io from 'socket.io-client';
 
 // https://stackoverflow.com/questions/53638667/unrecognized-websocket-connection-options-agent-permessagedeflate-pfx
 console.ignoredYellowBox = ['Remote debugger'];
@@ -16,6 +16,7 @@ class RelayService extends Service {
   constructor() {
     // initialize with reactive vars
     super("relayService", {
+      connected: false,
     });
 
     this.port = 3005;
@@ -34,18 +35,26 @@ class RelayService extends Service {
     return relayUrl;
   }
 
+  restart = () => {
+    this.socket.close()
+    this.init()
+  }
+
   init = () => {
-    this.socket = openSocket(this.getUrl());
+    this.socket = io(this.getUrl());
     
     this.socket.on('disconnect', ()=>{
       this.debug("socket disconnect");
+      this.setReactive({connected: false})
     });
     
     this.socket.on('connect', ()=>{
+      this.setReactive({connected: true})
       this.debug("socket connect");
     });
 
     this.socket.on('reconnect_attempt', () => {
+      this.setReactive({connected: false})
       //this.debug("reconnect_attempt");
     });
   }

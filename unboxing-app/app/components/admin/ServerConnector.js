@@ -10,7 +10,7 @@ import {
 import compose from 'lodash.flowright'
 
 import {globalStyles} from '../../../config/globalStyles';
-import { withNetworkService, withStorageService } from '../ServiceConnector';
+import { withNetworkService, withStorageService, withRelayService } from '../ServiceConnector';
 import { networkService, storageService } from '../../services';
 
 class ServerConnector extends React.Component { 
@@ -55,7 +55,10 @@ class ServerConnector extends React.Component {
 				</Text>
 				<Text>
 					Effective Connection Type: {effectiveConnectionType}
-				</Text>				
+				</Text>
+				<Text>
+					Relay status: {this.props.relayService.connected ? "connected" : "disconnected"}
+				</Text>								
 				<Text style={{marginTop: 20}}>
 					Server: {this.props.networkService.server}
 				</Text>
@@ -74,4 +77,4 @@ class ServerConnector extends React.Component {
   }
 }
 
-export default compose(withNetworkService, withStorageService)(ServerConnector);
+export default compose(withNetworkService, withStorageService, withRelayService)(ServerConnector);
