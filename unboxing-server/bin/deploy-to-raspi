@@ -1,0 +1,45 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]
+  then
+    echo "usage: bin/deploy-to-raspi <host>"
+fi
+
+USERNAME=pi
+
+echo "deloying to $USERNAME@$1"
+
+cd app
+
+echo "Building..."
+meteor build ../build --server-only --architecture os.linux.x86_32
+
+cd ../
+
+echo "Uploading..."
+scp build/app.tar.gz $USERNAME@$1:/home/pi/
+
+# continuing remotely:
+echo "Continuing remotely:"
+
+ssh $USERNAME@$1 /bin/bash << EOF
+echo "Stopping server..."
+sudo systemctl stop unboxing-server
+sleep 1
+
+echo "Unpacking..."
+tar -xzf app.tar.gz
+
+echo "Installing npm modules..."
+cd bundle/programs/server/
+npm install --production
+cd ../../
+
+echo "Starting server..."
+sudo systemctl start unboxing-server
+
+echo "Cleaning up..."
+cd ~/
+rm app.tar.gz
+
+EOF
