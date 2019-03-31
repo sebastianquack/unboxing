@@ -56,9 +56,15 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      hostname: ""
     }
 
+  }
+
+  async componentDidMount() {
+    Meteor.call('hostname', (error,hostname) => 
+      this.setState({hostname})
+    )
   }
 
   toggleSection = (name) => {
@@ -104,7 +110,7 @@ export default class App extends Component {
     return (
       <div className="container" style={{marginBottom: "5em"}}>
         <header>
-          <h1>Unboxing Server</h1>
+          <h1>Unboxing Server / {this.state.hostname}</h1>
         </header>
 
         { this.renderSections() }

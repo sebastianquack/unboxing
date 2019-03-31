@@ -14,6 +14,7 @@ class ImportExport extends React.Component {
       filenameFilesArchive: null,
     }
     this.clicked = false
+    this.fileInput = React.createRef();
   }
 
   componentDidMount() {
@@ -45,7 +46,7 @@ class ImportExport extends React.Component {
           this.setFilename(undefined, "unboxing_files", "filenameFilesArchive", ".zip")
         })
       }
-    })    
+    })
   }
 
   setFilename = (callback, customPrefix="unboxing_data", stateVar="filename", extension = ".json") => {
@@ -96,6 +97,17 @@ class ImportExport extends React.Component {
     }
   }
 
+  handleFilesSubmit = (event) => {
+    event.preventDefault();
+    const file = event.target.files[0]
+    console.log(file)
+    const reader = new FileReader();
+    reader.onload = function(fileLoadEvent) {
+      Meteor.call('uploadFiles', {fileInfo: file, fileData: reader.result});
+    };
+    reader.readAsBinaryString(file);
+  }
+
   render() {
     if (!this.state.path) return null
 
@@ -112,7 +124,13 @@ class ImportExport extends React.Component {
         </a>          
         <hr />
         <span className="link">
-          Import JSON (from json file): <input type="file" onChange={this.handleImport}/></span>
+          Import JSON (from json file): <input type="file" onChange={this.handleImport}/>
+        </span>
+        <br />
+        <label>
+          Import Files (.zip from Files Export):
+          <input type="file" ref={this.fileInput} onChange={this.handleFilesSubmit}/>
+        </label>
       </div>
     );
   }

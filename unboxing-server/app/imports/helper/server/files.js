@@ -121,6 +121,20 @@ function makeArchive(zipPath) {
   })
 }
 
+function receiveFiles(fileInfo, fileData) {
+  const target = global.files_dir + "/files.zip"
+  try {
+    fs.writeFileSync(target, fileData, 'binary');
+    var zip = new AdmZip(target);
+    zip.extractAllTo(global.files_dir, true)
+  } catch(error) {
+    if (error) {
+      console.log(error)
+    }
+  }
+
+}
+
 
 /********* helpers ***********/
 
@@ -137,4 +151,4 @@ function getUrlPath(fs_relative_path) {
   return global.files_uri_path + encodeURI(fs_relative_path);
 }
 
-export { updateFiles, getUrlPath }
+export { updateFiles, getUrlPath, receiveFiles }
