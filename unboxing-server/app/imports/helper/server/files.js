@@ -127,6 +127,7 @@ function receiveFiles(fileInfo, fileData) {
     fs.writeFileSync(target, fileData, 'binary');
     var zip = new AdmZip(target);
     zip.extractAllTo(global.files_dir, true)
+    updateFiles()
   } catch(error) {
     if (error) {
       console.log(error)

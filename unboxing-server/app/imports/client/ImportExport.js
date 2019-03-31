@@ -99,11 +99,14 @@ class ImportExport extends React.Component {
 
   handleFilesSubmit = (event) => {
     event.preventDefault();
+    event.persist()
     const file = event.target.files[0]
     console.log(file)
     const reader = new FileReader();
     reader.onload = function(fileLoadEvent) {
-      Meteor.call('uploadFiles', {fileInfo: file, fileData: reader.result});
+      Meteor.call('uploadFiles', {fileInfo: file, fileData: reader.result}, ()=>{
+        event.target.value = null;
+      });
     };
     reader.readAsBinaryString(file);
   }
