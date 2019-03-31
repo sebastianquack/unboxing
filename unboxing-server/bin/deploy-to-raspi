@@ -3,6 +3,7 @@
 if [ $# -eq 0 ]
   then
     echo "usage: bin/deploy-to-raspi <host>"
+    exit
 fi
 
 USERNAME=pi
