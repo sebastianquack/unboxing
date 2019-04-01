@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# sets the ssid of the acccess point
+
+command=`basename "$0"`
+if [ $# -lt 2 ]
+  then
+    echo "usage: $command <host> <ssid>"
+    echo "example: $command 192.168.8.1 unboxing"
+    exit
+fi
+
+DIR=/home/pi/ap-2-interfaces
+FIND="unboxing"
+
+USERNAME=pi
+HOST=$1
+REPLACE=$2
+
+echo Running on $USERNAME@$HOST ...
+
+ssh $USERNAME@$HOST /bin/bash << EOF
+
+sudo sh -c "sed 's/$FIND/$2/g' $DIR/etc/hostapd/hostapd.conf > /etc/hostapd/hostapd.conf"
+echo "please reboot to activate the changes"
+
+EOF

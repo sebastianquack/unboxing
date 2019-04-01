@@ -41,7 +41,14 @@ class GameContainer extends React.Component {
 
     // configure content
     if(this.props.gameService.activeChallenge) {
-      statusBar = <StatusBar title={this.props.gameService.statusBarTitle} description={this.props.gameService.statusBarSubtitle} />
+      statusBar = <StatusBar 
+        title={this.props.gameService.statusBarTitle} 
+        description={this.props.gameService.statusBarSubtitle} 
+        steps={this.props.gameService.pathLength}
+        currentStep={this.props.gameService.pathIndex}
+        minutesToEnd={70}
+        endText={storageService.t("time-to-concert")}
+      />
       mainContent = <ChallengeView/>        
     } else {
       if(this.props.gameService.walkStatus != "ended" && this.props.gameService.walkStatus != "tutorial-intro") {

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# sets the unique device id of the eth interface
+
+command=`basename "$0"`
+if [ $# -lt 2 ]
+  then
+    echo "usage: $command <host> <wifi device id>"
+    echo "example: $command 192.168.8.1 enxb827eb9ea941"
+    exit
+fi
+
+DIR=/home/pi/ap-2-interfaces
+FIND=enxb827eb9ea941
+
+USERNAME=pi
+HOST=$1
+REPLACE=$2
+
+echo Running on $USERNAME@$HOST ...
+
+ssh $USERNAME@$HOST /bin/bash << EOF
+
+sudo sh -c "sed 's/$FIND/$2/g' $DIR/etc/iptables.ipv4.nat > /etc/iptables.ipv4.nat"
+echo "please reboot to activate the changes"
+# echo "rebooting ..."
+# sudo reboot
+
+EOF

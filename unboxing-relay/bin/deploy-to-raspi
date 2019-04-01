@@ -1,0 +1,30 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]
+  then
+    echo "usage: bin/deploy-to-raspi <host>"
+    exit
+fi
+
+USERNAME=pi
+
+echo "deloying to $USERNAME@$1"
+
+echo "Uploading..."
+scp -r ./*.js* $USERNAME@$1:/home/pi/unboxing/unboxing-relay/
+
+# continuing remotely:
+echo "Continuing remotely:"
+
+ssh $USERNAME@$1 /bin/bash << EOF
+echo "Stopping server..."
+sudo systemctl stop unboxing-relay
+
+echo "Installing node_modules..."
+cd unboxing/unboxing-relay
+npm install
+
+echo "Starting server..."
+sudo systemctl start unboxing-relay
+
+EOF

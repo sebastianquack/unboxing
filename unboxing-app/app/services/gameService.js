@@ -79,6 +79,7 @@ class GameService extends Service {
           places: [{place: place1.shorthand, time: 0}, {place: place1.shorthand, time: 0}],
           startInstrument: "piano"
         },
+        pathLength: 2,
         pathIndex: -1,
         gameMode: "walk",
         walkStatus: "tutorial-intro",
@@ -96,7 +97,8 @@ class GameService extends Service {
 
 			this.setReactive({
 				activeWalk: walk,
-				activePath: activePath,
+        activePath: activePath,
+        pathLength: activePath.places.length,
 				pathIndex: walk.tutorial ? -1 : 0,
 				gameMode: "walk",
         walkStatus: walk.tutorial ? "tutorial-intro" : "ongoing",
