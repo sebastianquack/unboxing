@@ -8,6 +8,14 @@ const dimensions = {
   screenHeight: height,
 }
 
+const fontSizes = {
+  xxl: 64,
+  xl: 32,
+  l: 24,
+  m: 19,
+  s: 9
+}
+
 const colors = {
   turquoise: "#00AFA1",
   warmWhite: "#F3DFD4"
@@ -53,4 +61,4 @@ const globalStyles = StyleSheet.create({
   }
 });
 
-export {globalStyles, dimensions, colors};
+export {globalStyles, dimensions, colors, fontSizes };
