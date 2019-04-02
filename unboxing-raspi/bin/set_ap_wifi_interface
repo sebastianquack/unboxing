@@ -1,29 +1,31 @@
 #!/bin/bash
 
-# sets the unique device id of the external wifi dongle
+# sets the unique device id of the external wifi dongle and access point ssid
 
 command=`basename "$0"`
-if [ $# -lt 2 ]
+if [ $# -lt 3 ]
   then
-    echo "usage: $command <host> <wifi device id>"
-    echo "example: $command 192.168.8.1 wlx70f11c0f6d65"
+    echo "usage: $command <host> <wifi device id> <ssid>"
+    echo "example: $command 192.168.8.1 wlx70f11c0f6d65 unboxing"
     exit
 fi
 
 DIR=/home/pi/ap-2-interfaces
 FIND=wlx70f11c0f6d65
+FIND2="unboxing"
 
 USERNAME=pi
 HOST=$1
 REPLACE=$2
+REPLACE2=$3
 
 echo Running on $USERNAME@$HOST ...
 
 ssh $USERNAME@$HOST /bin/bash << EOF
 
-sudo sh -c "sed 's/$FIND/$2/g' $DIR/etc/dnsmasq.conf > /etc/dnsmasq.conf"
-sudo sh -c "sed 's/$FIND/$2/g' $DIR/etc/dhcpcd.conf > /etc/dhcpcd.conf"
-sudo sh -c "sed 's/$FIND/$2/g' $DIR/etc/hostapd/hostapd.conf > /etc/hostapd/hostapd.conf"
+sudo sh -c "sed 's/$FIND/$REPLACE/g' $DIR/etc/dnsmasq.conf > /etc/dnsmasq.conf"
+sudo sh -c "sed 's/$FIND/$REPLACE/g' $DIR/etc/dhcpcd.conf > /etc/dhcpcd.conf"
+sudo sh -c "sed 's/$FIND/$REPLACE/g; s/$FIND2/$REPLACE2/g' $DIR/etc/hostapd/hostapd.conf > /etc/hostapd/hostapd.conf"
 echo "please reboot to activate the changes"
 # echo "rebooting ..."
 # sudo reboot
