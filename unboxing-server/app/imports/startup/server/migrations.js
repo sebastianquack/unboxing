@@ -1,4 +1,4 @@
-import { Sequences } from '../../collections';
+import { Sequences, Challenges } from '../../collections';
 
 Migrations.add({
   version: 1,
@@ -55,8 +55,19 @@ Migrations.add({
   down: function() {}
 });
 
+Migrations.add({
+  version: 6,
+  name: 'add videos to challenge',
+  up: function() {
+    add_default_attributes_to_challenge({
+      videos: ""
+    });
+  }
+});
 
-const version = 5;
+
+
+const version = 6;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);
@@ -77,6 +88,21 @@ add_default_attributes_to_sequence = function(attribs) {
       if (Object.keys(new_attribs).length > 0) {
         console.log(`adding new default attributes ${JSON.stringify(new_attribs)} to sequence"`)
         Meteor.call('updateSequence', sequence._id, new_attribs)
+      }
+  });
+}
+
+add_default_attributes_to_challenge = function(attribs) {
+  Challenges.find().forEach( c => {
+      let new_attribs = {};
+      for (let a in attribs) {
+        if (!c[a]) {
+          new_attribs[a] = attribs[a]
+        }
+      }
+      if (Object.keys(new_attribs).length > 0) {
+        console.log(`adding new default attributes ${JSON.stringify(new_attribs)} to challenge"`)
+        Meteor.call('updateChallenge', c._id, new_attribs)
       }
   });
 }
