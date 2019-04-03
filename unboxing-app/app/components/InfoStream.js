@@ -11,6 +11,11 @@ import {gameService} from '../services';
 import triangleIcon from '../../assets/img/triangle.png'
 import videoThumb from '../../assets/img/videoThumb.png'
 
+import RNFS from 'react-native-fs';
+const pathPrefix = RNFS.ExternalStorageDirectoryPath + '/unboxing/files';
+
+import RNThumbnail from 'react-native-thumbnail';
+
 const highlightStyle = {
   borderLeftColor: colors.turquoise,  
   borderLeftWidth: 1,       
@@ -20,6 +25,12 @@ class InfoStreamElement extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+
+    this.props.video.forEach(path=>{
+      RNThumbnail.get(pathPrefix + path).then((result) => {
+        this.setState({["thumb_" + path]: result.path});
+      })
+    })
   }
 
   render() {
@@ -33,13 +44,14 @@ class InfoStreamElement extends React.Component {
     if(this.props.highlight) style = { ...style, ...highlightStyle }   
 
     const videoThumbs = this.props.video.map((video, index)=>
+      this.state["thumb_" + video] &&
       <TouchableOpacity
         key={index}
         onPress={()=>{gameService.startVideo(video)}}
       >
         <Image
-              source={videoThumb} 
-              style={{marginTop: 20, marginRight: 20, marginBottom: 20}}
+              source={{uri: this.state["thumb_" + video]}} 
+              style={{width: 150, height: 90, marginTop: 20, marginRight: 20, marginBottom: 20}}
         />
       </TouchableOpacity>
     ); 
