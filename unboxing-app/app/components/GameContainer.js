@@ -46,8 +46,8 @@ class GameContainer extends React.Component {
         description={this.props.gameService.statusBarSubtitle} 
         steps={this.props.gameService.pathLength}
         currentStep={this.props.gameService.pathIndex}
-        minutesToEnd={70}
-        endText={storageService.t("time-to-concert")}
+        minutesToEnd={this.props.gameService.challengeStatus != "navigate" ? this.props.gameService.minutesToEnd : null}
+        endText={storageService.t("time-left")}
       />
       mainContent = <ChallengeView/>        
     } else {
@@ -82,7 +82,7 @@ class GameContainer extends React.Component {
     
     switch(this.props.gameService.challengeStatus) {
       case "navigate": 
-        buttonRight = <Button text="Check In" onPress={()=>{gameService.handleRightButton()}}/>; 
+        buttonRight = <Button text={storageService.t("check-in")} onPress={()=>{gameService.handleRightButton()}}/>; 
         secondaryScreen = <SecondaryScreen type="navigation" target="default" />;
         break;
 
@@ -94,9 +94,13 @@ class GameContainer extends React.Component {
           <Button text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/> : null;  
         break;
       
-      case "prepare": 
-        buttonLeft = <Button type="home" text="Exit" onPress={()=>{gameService.handleLeftButton()}}/>;
-        buttonRight = instrumentName ? <Button text="Play" onPress={()=>{gameService.handleRightButton()}}/> : null;
+      case "prepare":
+        if(this.props.gameService.allowPlaceExit && this.props.gameService.activePath) {
+          buttonRight = <Button type="home" text={storageService.t("continue")} onPress={()=>{gameService.handleLeftButton()}}/>;
+        } else {
+          buttonRight = instrumentName ? <Button text={storageService.t("play")} onPress={()=>{gameService.handleRightButton()}}/> : null;  
+        }
+        
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
         if(!gameService.firstPlaceInTutorial()) {
           buttonMid = <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;  
@@ -105,7 +109,7 @@ class GameContainer extends React.Component {
         break;
  
       case "play":
-        buttonLeft = <Button type="home" text="Back" onPress={()=>{gameService.handleLeftButton()}}/>;
+        buttonLeft = <Button type="home" text={storageService.t("overview")} onPress={()=>{gameService.handleLeftButton()}}/>;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
         if(!gameService.firstPlaceInTutorial()) {
           buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;

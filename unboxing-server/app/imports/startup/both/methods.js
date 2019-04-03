@@ -135,6 +135,7 @@ Meteor.methods({
       description: "new",
       tag: "",
       active: true,
+      startTime: "12:00",
       tutorial: true,
       paths: "",
     });
