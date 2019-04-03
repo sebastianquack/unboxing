@@ -12,6 +12,7 @@ import SecondaryScreen from './SecondaryScreen'
 import StatusBar from './StatusBar'
 import Button from './Button'
 import ConnectionIndicator from './ConnectionIndicator'
+import VideoPlayer from './VideoPlayer'
 
 import ChallengeView from './ChallengeView';
 import TrackSelector from './TrackSelector';
@@ -58,6 +59,12 @@ class GameContainer extends React.Component {
           subtitle={storageService.t("main-title-sub")}
         />
       }
+    }
+
+    // special case: video playback
+    if(this.props.gameService.activeVideo) {
+      modalContent = <VideoPlayer source={this.props.gameService.activeVideo}/> 
+      buttonModal = <Button type="wide" text={storageService.t("video-close")} onPress={()=>{gameService.stopVideo()}}/>
     }
 
     // special case: tutorial

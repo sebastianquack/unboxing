@@ -5,7 +5,7 @@ import AdmZip from 'adm-zip';
 
 import Files from '../../collections/files';
 
-const filesFilter = (file) => (['.mp3','.wav','.aiff','.m4a','.MP3','.apk','.mp4','.png'].indexOf(path.extname(file)) > -1)
+const filesFilter = (file) => (['.mp3','.wav','.aiff','.m4a','.MP3','.apk','.mp4','.png','.mov'].indexOf(path.extname(file)) > -1)
 
 function readFiles(callback=false) {
   console.log("reading files")

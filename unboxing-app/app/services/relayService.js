@@ -36,7 +36,9 @@ class RelayService extends Service {
   }
 
   restart = () => {
-    this.socket.close()
+    if(this.socket) {
+      this.socket.close()  
+    }
     this.init()
   }
 

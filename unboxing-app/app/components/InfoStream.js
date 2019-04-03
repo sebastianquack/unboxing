@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions, colors} from '../../config/globalStyles';
@@ -30,7 +30,19 @@ class InfoStreamElement extends React.Component {
       marginLeft: 25, 
       marginTop: 20
     }
-    if(this.props.highlight) style = { ...style, ...highlightStyle }    
+    if(this.props.highlight) style = { ...style, ...highlightStyle }   
+
+    const videoThumbs = this.props.video.map((video, index)=>
+      <TouchableOpacity
+        key={index}
+        onPress={()=>{gameService.startVideo(video)}}
+      >
+        <Image
+              source={videoThumb} 
+              style={{marginTop: 20, marginRight: 20, marginBottom: 20}}
+        />
+      </TouchableOpacity>
+    ); 
     
     return(   
       <View style={style}>
@@ -46,15 +58,9 @@ class InfoStreamElement extends React.Component {
         }
         <UIText size="s" strong em caps >{this.props.title}</UIText>
         <UIText size="m" style={{color: colors.warmWhite}}>{this.props.content}</UIText>
-        {this.props.video &&
-           <Image
-            source={videoThumb} 
-            style={{
-              marginTop: 20,
-              marginBottom: 20
-            }}
-          />  
-        }
+        <View style={{flexDirection: "row"}}>
+          {videoThumbs}
+        </View>
       </View>
     );
   }
@@ -63,7 +69,7 @@ class InfoStreamElement extends React.Component {
 InfoStreamElement.propTypes = {
   title: PropTypes.string,
   content: PropTypes.string,
-  video: PropTypes.bool
+  video: PropTypes.array
 };
 
 class InfoStreamComponent extends React.Component { 

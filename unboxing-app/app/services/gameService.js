@@ -542,7 +542,7 @@ class GameService extends Service {
     });
   }
 
-  addItemToInfoStream = (title, content, video=false) => {
+  addItemToInfoStream = (title, content, video=[]) => {
     let infoStream = this.state.infoStream;
     infoStream.push({title: title, content: content, video: video});
     this.setReactive({
@@ -573,10 +573,10 @@ class GameService extends Service {
             this.addItemToInfoStream("welcome", "welcome to this passage. press play to start playing!");  
           }
           if(this.state.tutorialStatus == "first-play") {
-            this.addItemToInfoStream("did you know?", "you will find vidoes about each passage", true);
+            this.addItemToInfoStream("did you know?", "you will find vidoes about each passage", this.getVideoPathsForChallenge(this.state.activeChallenge));
           }
         } else {
-          this.addItemToInfoStream("welcome", "welcome to this passage. here's a video about it! (placeholder)", true);
+          this.addItemToInfoStream("welcome", "welcome to this passage. here's a video about it! (placeholder)", this.getVideoPathsForChallenge(this.state.activeChallenge));
           if(!sequenceService.getCurrentTrackName()) {
             this.addItemToInfoStream("how to play", "select your instrument, then press play to start playing");   
           } else {
@@ -648,6 +648,25 @@ class GameService extends Service {
         peakService.stopWaitingForStart()
         callback();
     });  
+  }
+
+  // video
+
+  getVideoPathsForChallenge = (challenge) => {
+    let videoFilenames = challenge.videos.split(" ");
+    let r = [];
+    videoFilenames.forEach((f)=>{
+      r.push("/video/" + f);
+    })
+    return r;
+  }
+
+  startVideo = (video) => {
+    this.setReactive({activeVideo: video});
+  }
+
+  stopVideo = () => {
+    this.setReactive({activeVideo: null});
   }
 
 
