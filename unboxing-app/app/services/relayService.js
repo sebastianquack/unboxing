@@ -17,12 +17,16 @@ class RelayService extends Service {
     // initialize with reactive vars
     super("relayService", {
       connected: false,
+      url: null
     });
 
     this.port = 3005;
+    this.initialized = false
     setTimeout(()=>{
-      this.init(); 
+      this.setServer( null )
+      this.init()
     }, 1000);
+
   }
 
   debug = (msg) => {
@@ -30,18 +34,33 @@ class RelayService extends Service {
     //console.warn(msg);
   }
 
-  getUrl = () => {
-    let relayUrl = "http://" + storageService.getServer() + ":" + this.port;
-    return relayUrl;
+  updateDefaultServer() {
+    this.defaultServerUrl = "http://" + storageService.getServer() + ":" + this.port
+    if (!this.server_id) this.setServer( null )
   }
 
-  restart = () => {
-    this.socket.close()
-    this.init()
+  setServer(server_id) {
+    this.server_id = server_id    
+    const serverObj = storageService.findServer(server_id)
+    const url = ( serverObj && server_id ? 
+      serverObj.url : 
+      this.defaultServerUrl
+    )
+    this.setReactive({ url })
+    console.log("relayService: url is ", url)
+    this.reload()
+  }
+
+  reload() {
+    console.log("relayService: reloading")
+    if (this.initialized) {
+      this.socket.close()
+      this.init()    
+    }
   }
 
   init = () => {
-    this.socket = io(this.getUrl());
+    this.socket = io(this.state.url);
     
     this.socket.on('disconnect', ()=>{
       this.debug("socket disconnect");
@@ -57,6 +76,8 @@ class RelayService extends Service {
       this.setReactive({connected: false})
       //this.debug("reconnect_attempt");
     });
+
+    this.initialized = true
   }
 
   socketConnected() {

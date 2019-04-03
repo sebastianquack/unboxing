@@ -1,4 +1,4 @@
-import { Challenges, Gestures, Sequences, Files, Translations, Places, Walks } from '../../collections/';
+import { Challenges, Gestures, Sequences, Files, Translations, Places, Walks, Servers } from '../../collections/';
 
 const importExportConfig = {
   path: "/unboxing_data.json",
@@ -8,7 +8,8 @@ const importExportConfig = {
     gestures: Gestures,
     files: Files,
     places: Places,
-    walks: Walks
+    walks: Walks,
+    servers: Servers,
   }
 }
 

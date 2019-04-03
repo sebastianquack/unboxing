@@ -15,7 +15,6 @@ export default Challenges;
 	- instructions: string
 	- sequence_id: string
 	- sequence_loop: bool
-	- autoplay_items: string // "all", "first", "none"
-	- item_manual_mode: string // "assisted", "free"
+	- item_manual_mode: string // "assisted", "free", "guitar_hero"
+	- relay_server_id: string
  */
-

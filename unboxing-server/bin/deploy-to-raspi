@@ -10,6 +10,7 @@ USERNAME=pi
 
 echo "deloying to $USERNAME@$1"
 
+cd $(git rev-parse --show-toplevel)/unboxing-server
 cd app
 
 echo "Building..."

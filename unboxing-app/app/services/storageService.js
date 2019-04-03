@@ -89,8 +89,8 @@ class StorageService extends Service {
 
   getServer = () => {
     return this.state.server;
-  }
-
+	}
+	
 	setCustomDeviceId(id) {
 		this.setReactive({customDeviceId: id});
 		this.writeToFile();
@@ -216,6 +216,14 @@ class StorageService extends Service {
     }
     return "sequence not found";
   }
+
+	findServer(id) {
+		if(this.state.collections.servers) {
+			return this.state.collections.servers.find( s => s._id == id)
+		} else {
+			return null
+		}
+	}
 
   setLanguage(code) {
     this.setReactive({language: code});

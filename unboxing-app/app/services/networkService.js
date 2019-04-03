@@ -77,7 +77,7 @@ class NetworkService extends Service {
     if(save) {
       storageService.setServer(server);  
     }
-    relayService.restart()
+    relayService.updateDefaultServer()
   }	
 
   initNetInfo = () => {

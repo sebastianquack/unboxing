@@ -165,7 +165,9 @@ class GameService extends Service {
 
     this.setReactive({challengeStatus: this.state.gameMode == "walk" ? "navigate" : "prepare"});
 
-		sequenceService.setSequence(challenge.sequence_id);
+    sequenceService.setSequence(challenge.sequence_id);
+    relayService.setServer(challenge.relay_server_id);
+    // networkService.setServer(challenge.relay_server_id);
 
     this.setReactive({
       statusBarTitle: sequenceService.getSequenceName(),

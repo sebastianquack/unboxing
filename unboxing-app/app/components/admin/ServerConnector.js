@@ -56,9 +56,12 @@ class ServerConnector extends React.Component {
 				<Text>
 					Effective Connection Type: {effectiveConnectionType}
 				</Text>
+				<Text style={{marginTop: 10}}>
+					Relay URL: {this.props.relayService.url}
+				</Text>								
 				<Text>
 					Relay status: {this.props.relayService.connected ? "connected" : "disconnected"}
-				</Text>								
+				</Text>												
 				<Text style={{marginTop: 20}}>
 					Server: {this.props.networkService.server}
 				</Text>

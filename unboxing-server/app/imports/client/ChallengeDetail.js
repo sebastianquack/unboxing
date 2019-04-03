@@ -4,7 +4,7 @@ import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import { css } from 'emotion'
 
-import { Sequences } from '../collections'
+import { Sequences, Servers } from '../collections'
 import { inputTransform, inputType } from '../helper/both/input';
 
 class ChallengeDetail extends React.Component {
@@ -58,7 +58,14 @@ class ChallengeDetail extends React.Component {
           <select value={value} onChange={ e => this.handleAttributeChange(attributeName, e.target.value) }>
             {["assisted", "guitar hero", "free"].map((o)=>{return <option key={o} value={o}>{o}</option>})}
           </select>
-        );          
+        );
+      case "relay_server_id": 
+        return (
+        <select value={value} onChange={ e => this.handleAttributeChange(attributeName, e.target.value) }>
+          {emptyOption}
+          {this.props.servers.map((s)=>{return <option key={s._id} value={s._id}>{s.name}</option>})}
+        </select>
+      );                  
       case "sequence_loop":
       	return (
       		 <input
@@ -111,9 +118,11 @@ ChallengeDetail.propTypes = {
 };
 
 export default withTracker(props => {
-	const sub = Meteor.subscribe('sequences.all')
+  const sub = Meteor.subscribe('sequences.all')
+  const sub2 = Meteor.subscribe('servers.all')
   return {
-  	sequences: Sequences.find().fetch(),
-    ready: sub.ready(),
+    sequences: Sequences.find().fetch(),
+    servers: Servers.find({type:"relay"}).fetch(),
+    ready: sub.ready() && sub2.ready(),
   };
 })(ChallengeDetail);

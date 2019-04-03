@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 
-import { Challenges, Gestures, Sequences, Files, Walks, Places, Translations } from '../../collections/';
+import { Challenges, Gestures, Sequences, Files, Walks, Places, Translations, Servers } from '../../collections/';
 import objectHash from 'object-hash'
 import { importExportConfig, importExportConfigTranslationsOnly } from '../../helper/server/importexport';
 
@@ -14,6 +14,7 @@ async function getEverything(req, res) {
   const places = await Places.find().fetch();
   const walks = await Walks.find().fetch();
   const translations = await Translations.find().fetch();
+  const servers = await Servers.find().fetch();
 
 
   // clean json
@@ -28,7 +29,8 @@ async function getEverything(req, res) {
     files,
     places,
     walks,
-    translations
+    translations,
+    servers
   }
 
   const hash = objectHash(collections)
