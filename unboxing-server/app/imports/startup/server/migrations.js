@@ -57,6 +57,16 @@ Migrations.add({
 
 Migrations.add({
   version: 6,
+  name: 'add videos to challenge',
+  up: function() {
+    add_default_attributes_to_challenge({
+      videos: ""
+    });
+  }
+});
+
+Migrations.add({
+  version: 7,
   name: 'add relay_server to challenge',
   up: function() {
     add_default_attributes_to_challenge({
@@ -66,7 +76,7 @@ Migrations.add({
   down: function() {}
 });
 
-const version = 6;
+const version = 7;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);

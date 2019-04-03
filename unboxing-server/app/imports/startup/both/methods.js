@@ -104,7 +104,8 @@ Meteor.methods({
       sequence_id: "",
       sequence_loop: false,
       item_manual_mode: "assisted",
-      relay_server_id: ""
+      relay_server_id: "",
+      videos: ""
     });
   },
   'removeChallenge'(id) {
@@ -136,6 +137,7 @@ Meteor.methods({
       description: "new",
       tag: "",
       active: true,
+      startTime: "12:00",
       tutorial: true,
       paths: "",
     });

@@ -65,10 +65,12 @@ class StatusBar extends React.Component {
           flexDirection: "column",
           flex: 1,
         }}>
+        {this.props.minutesToEnd &&
         <View>
-          <UIText style={{textAlign: "right"}} size="m" em caps>{this.props.minutesToEnd} MIN</UIText>
+          <UIText style={{textAlign: "right"}} size="m" em caps>{this.props.minutesToEnd < 1 ? (this.props.minutesToEnd > 0 ? "<1" : "0") : Math.floor(this.props.minutesToEnd)} MIN</UIText>
           <UIText style={{textAlign: "right"}} size="s" caps color="white">{this.props.endText}</UIText>
         </View>
+        }
       </View>
 
     </View>

@@ -3,6 +3,7 @@ package com.unboxing;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import me.hauvo.thumbnail.RNThumbnailPackage;
 import com.brentvatne.react.ReactVideoPackage;
 import com.BV.LinearGradient.LinearGradientPackage;
 import codes.simen.IMEI.IMEI;
@@ -33,6 +34,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNThumbnailPackage(),
             new ReactVideoPackage(),
             new LinearGradientPackage(),
             new IMEI(),

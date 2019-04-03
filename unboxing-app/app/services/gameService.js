@@ -33,6 +33,10 @@ class GameService extends Service {
 
 		this.assistanceThreshold = 2000;
     this.guitarHeroThreshold = {pre: 2000, post: 2000}
+
+    this.earlyLeaveMinutes = 0; // time left in place before force is used
+
+    this.walkTrackerInterval = setInterval(this.walkTracker, 10000);
 	}
 
 	toggleDebugMode = ()=> {
@@ -57,11 +61,16 @@ class GameService extends Service {
 
   /** game mode management **/
 
+  getStartTimeNow() {
+    let now = new Date(soundService.getSyncTime());    
+    return now.getHours() + ":" + now.getMinutes();
+  }
+
 	// for navigation testing
   setupMinimalWalk(place) {
     
     this.setReactive({
-        activeWalk: {tag: place.tag},
+        activeWalk: {tag: place.tag, startTime: this.getStartTimeNow()},
         activePath: {places: [{place: place.shorthand, time: 0}]},
         pathIndex: 0,
         gameMode: "walk"
@@ -73,19 +82,26 @@ class GameService extends Service {
   setupTutorialWalk() {
     let place1 = storageService.getPlaceAtIndex(0);
     let place2 = storageService.getPlaceAtIndex(1);
+
+
     this.setReactive({
-        activeWalk: {tag: place1.tag, tutorial: true},
+        activeWalk: {tag: place1.tag, tutorial: true, startTime: this.getStartTimeNow()},
         activePath: {
-          places: [{place: place1.shorthand, time: 0}, {place: place1.shorthand, time: 0}],
+          places: [
+            {place: place1.shorthand, duration: 1}, 
+            {place: place1.shorthand, duration: 5}, 
+            {place: place1.shorthand, duration: 5}
+          ],
           startInstrument: "piano"
         },
-        pathLength: 2,
+        pathLength: 3,
         pathIndex: -1,
         gameMode: "walk",
         walkStatus: "tutorial-intro",
         challengeStatus: "off"
     });
     this.initInfoStream();
+    this.walkTracker();
   }
 
   // called when admin starts walk
@@ -110,11 +126,57 @@ class GameService extends Service {
       } else {
         this.setupActivePlace();  
       }
+
+      this.walkTracker();
 		}
 	}
 
 
   /** walks and places **/
+
+  getWalkStartTime(walk) {
+    let hours = walk.startTime.split(":")[0];
+    let minutes = walk.startTime.split(":")[1];
+    let walkStartTime = new Date();
+    walkStartTime.setHours(hours, minutes, 0, 0);
+    return walkStartTime.getTime();
+  }
+
+  getStartTimeForWalkIndex(index) {
+    let walkStartTime = this.getWalkStartTime(this.state.activeWalk);
+    let totalDuration = 0;
+    for(let i = 0; i < index; i++) {
+      totalDuration += this.state.activePath.places[i].duration;
+    }
+    let r = walkStartTime + (totalDuration * 60 * 1000);
+    return r;
+  }
+
+  getMinutesUntilWalkIndex(index) {
+    return (this.getStartTimeForWalkIndex(index) - soundService.getSyncTime()) / 60000;
+  }
+
+  walkTracker = ()=>{
+    if(this.state.activeWalk && this.state.activePath) {
+
+      // check if current stage needs to be advanced
+      if(this.state.pathIndex > -1 && this.state.pathIndex < this.state.activePath.places.length - 1) {
+        let minutesToNextStage = this.getMinutesUntilWalkIndex(this.state.pathIndex + 1);
+        
+        if(minutesToNextStage < this.earlyLeaveMinutes) {
+          this.setReactive({allowPlaceExit: true});
+          this.backToLobby(); // when time in place is up force to lobby, don't force out of place - needs playtesting
+        } else {
+          this.setReactive({allowPlaceExit: false});
+        }
+        this.setReactive({minutesToEnd: minutesToNextStage});
+      }
+      
+      // update minutes until last stage of the path - needs playtesting
+      //let minutesToEnd = this.getMinutesUntilWalkIndex(this.state.activePath.places.length - 1);
+      //this.setReactive({minutesToEnd: minutesToEnd});
+    }
+  }
 
 	// called when user leaves place, moves to next one
 	moveToNextPlaceInWalk = ()=> {
@@ -132,7 +194,7 @@ class GameService extends Service {
 				activePlace: null,
 				activeChallenge: null,
 				walkStatus: "ended",
-        challengeStatus: "off"
+        challengeStatus: "off",
 			});
       this.initInfoStream();
 			return;
@@ -143,11 +205,13 @@ class GameService extends Service {
 		this.setReactive({
 			walkStatus: "ongoing",
 			activePlaceReference: placeReference,
-			activePlace: place
+			activePlace: place,
+      allowPlaceExit: false
 		});
 
 		let challenge = storageService.findChallenge(place.challenge_id);
 		this.setActiveChallenge(challenge);
+    this.walkTracker();
 	}
 
   firstPlaceInTutorial = ()=> {
@@ -480,7 +544,7 @@ class GameService extends Service {
     });
   }
 
-  addItemToInfoStream = (title, content, video=false) => {
+  addItemToInfoStream = (title, content, video=[]) => {
     let infoStream = this.state.infoStream;
     infoStream.push({title: title, content: content, video: video});
     this.setReactive({
@@ -507,17 +571,22 @@ class GameService extends Service {
         break
       case "prepare":
         if(this.firstPlaceInTutorial()) {
-          this.addItemToInfoStream("welcome", "welcome to this passage. press play to start playing!");
+          if(!this.state.allowPlaceExit) {
+            this.addItemToInfoStream("welcome", "welcome to this passage. press play to start playing!");  
+          }
           if(this.state.tutorialStatus == "first-play") {
-            this.addItemToInfoStream("did you know?", "you will find vidoes about each passage", true);
+            this.addItemToInfoStream("did you know?", "you will find vidoes about each passage", this.getVideoPathsForChallenge(this.state.activeChallenge));
           }
         } else {
-          this.addItemToInfoStream("welcome", "welcome to this passage. here's a video about it! (placeholder)", true);
+          this.addItemToInfoStream("welcome", "welcome to this passage. here's a video about it! (placeholder)", this.getVideoPathsForChallenge(this.state.activeChallenge));
           if(!sequenceService.getCurrentTrackName()) {
             this.addItemToInfoStream("how to play", "select your instrument, then press play to start playing");   
           } else {
             this.addItemToInfoStream("how to play", "press play to start playing!");   
           }  
+        }
+        if(this.state.allowPlaceExit) {
+          this.addItemToInfoStream(storageService.t("info"), storageService.t("time-to-go"));   
         }
         break;
       case "play":
@@ -581,6 +650,25 @@ class GameService extends Service {
         peakService.stopWaitingForStart()
         callback();
     });  
+  }
+
+  // video
+
+  getVideoPathsForChallenge = (challenge) => {
+    let videoFilenames = challenge.videos.split(" ");
+    let r = [];
+    videoFilenames.forEach((f)=>{
+      r.push("/video/" + f);
+    })
+    return r;
+  }
+
+  startVideo = (video) => {
+    this.setReactive({activeVideo: video});
+  }
+
+  stopVideo = () => {
+    this.setReactive({activeVideo: null});
   }
 
 
