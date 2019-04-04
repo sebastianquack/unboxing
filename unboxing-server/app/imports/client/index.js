@@ -19,6 +19,8 @@ import AudioPreview from './AudioPreview';
 import TranslationDetail from './TranslationDetail';
 import TranslationsInfo from './TranslationsInfo';
 
+import InputLine from './InputLine';
+
 export {
   FilesInfo,
   EventsInfo,
@@ -27,6 +29,7 @@ export {
   GesturesInfo,
   GestureDetail,
   ImportExport,
+  InputLine,
   SequencesInfo,
   SequenceDetail,
   SequenceDetailItem,

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
-import {SequenceDetailItem} from './';
+import {SequenceDetailItem, InputLine} from './';
 import { inputTransform, inputType } from '../helper/both/input';
 
 const trackTitleWidth = 6
@@ -64,18 +64,10 @@ class Sequence extends React.Component {
         return <span>{value}</span>
         break;
       default:
-        return (<ContentEditable 
-          style={{
-            border: "dotted grey 1px",
-            borderWidth: "0 0 1px 0",
-            fontWeight: "bold"
-          }}
-          onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
-          onBlur={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.innerHTML, inputType(value))) }
-          html={value + ""}
-          title={ inputType(value) }
-          tagName="span"
-        />)
+        return <InputLine 
+          onChange={ value => this.handleAttributeChange(attributeName, value) }
+          value={value}
+        />
     }
   }
 
