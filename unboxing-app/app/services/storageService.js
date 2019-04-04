@@ -199,6 +199,16 @@ class StorageService extends Service {
 		return null;
 	}
 
+	findChallengeByShorthand(challenge_shorthand) {
+		for(let i = 0; i < this.state.collections.challenges.length; i++) {
+			if(this.state.collections.challenges[i].shorthand == challenge_shorthand) {
+				return this.state.collections.challenges[i];
+			}
+		}
+		return null;
+	}
+
+
 	// finds a sequence give its id
 	findSequence(sequence_id) {
 		for(let i = 0; i < this.state.collections.sequences.length; i++) {

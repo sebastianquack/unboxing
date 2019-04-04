@@ -63,16 +63,10 @@ class PlaceDetail extends React.Component {
           </select>
         );        
       default:
-        const inputType = typeof(value) == "number" ? "number" : "text"
-        const inputTransform = (value) => {
-          let transformed = inputType == "number" ? parseInt(value) : value
-          if (transformed === NaN) transformed = value
-          return transformed
-        }
         return <InputLine 
-            onChange={ value => this.handleAttributeChange(attributeName, value) }
-            value={value}
-          />
+          onChange={ value => this.handleAttributeChange(attributeName, value) }
+          value={value}
+        />
     }
   }
 

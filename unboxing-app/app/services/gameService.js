@@ -209,7 +209,14 @@ class GameService extends Service {
       allowPlaceExit: false
 		});
 
-		let challenge = storageService.findChallenge(place.challenge_id);
+    let challenge
+    if (placeReference.challenge) {
+       challenge = storageService.findChallengeByShorthand(placeReference.challenge);
+    } else {
+      challenge = storageService.findChallenge(place.challenge_id);
+    }
+    console.log(placeReference, challenge)
+		
 		this.setActiveChallenge(challenge);
     this.walkTracker();
 	}

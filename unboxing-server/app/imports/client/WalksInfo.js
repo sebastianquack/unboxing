@@ -14,7 +14,7 @@ class WalksInfo extends React.Component {
   InfoCss = css`
     ul {
       display: flex;
-      flex-wrap: wrap;
+      flex-direction: column;
     }
     li {
       margin-right: 1em;
