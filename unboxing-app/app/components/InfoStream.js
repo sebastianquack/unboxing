@@ -27,11 +27,15 @@ class InfoStreamElement extends React.Component {
     this.state = {};
 
     this.props.video.forEach(path=>{
-      RNThumbnail.get(pathPrefix + path).then((result) => {
-        console.log("result", result)
-        this.setState({["thumb_" + path]: result.path});
-      })
-    })
+      RNFS.exists(pathPrefix + path)
+      .then( exists => {
+        if (exists) {
+          RNThumbnail.get(pathPrefix + path).then((result) => {
+            this.setState({["thumb_" + path]: result.path});
+          });    
+        }
+      });
+    });
   }
 
   render() {
