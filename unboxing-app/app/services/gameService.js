@@ -653,7 +653,7 @@ class GameService extends Service {
   // video
 
   getVideoPathsForChallenge = (challenge) => {
-    let videoFilenames = challenge.videos.split(" ");
+    let videoFilenames = challenge.videos.split(" ").filter(v => !!v);
     let r = [];
     videoFilenames.forEach((f)=>{
       r.push("/video/" + f);
