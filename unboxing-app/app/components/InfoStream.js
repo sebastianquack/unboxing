@@ -28,6 +28,7 @@ class InfoStreamElement extends React.Component {
 
     this.props.video.forEach(path=>{
       RNThumbnail.get(pathPrefix + path).then((result) => {
+        console.log("result", result)
         this.setState({["thumb_" + path]: result.path});
       })
     })

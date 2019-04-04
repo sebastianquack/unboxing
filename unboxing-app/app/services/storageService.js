@@ -67,7 +67,7 @@ class StorageService extends Service {
     setTimeout(()=>{
       //this.showNotification("trying to get everything...");
       this.updateEverything();
-    }, 1000);
+    }, 5000);
 	}
 
 	// called from ServerConnector component

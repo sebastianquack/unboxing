@@ -12,7 +12,7 @@ const servers=[{
   name: "raspi-master",
   type: "relay",
 	url: "http://192.168.8.1:3005",
-	connection: "wifi",
+	connectionType: "wifi",
 	ssid: "unboxing",
 	psk: "87542000",
 },{
@@ -20,7 +20,7 @@ const servers=[{
   name: "raspi-1",
   type: "relay",
 	url: "http://192.168.8.1:3005",
-	connection: "wifi",
+	connectionType: "wifi",
 	ssid: "unboxing-1",
 	psk: "87542000",
 }, {
@@ -28,7 +28,7 @@ const servers=[{
   name: "mobile-heroku",
   type: "relay",
 	url: "https://unboxing-relay.herokuapp.com",
-	connection: "mobile"
+	connectionType: "cellular"
 }]
 
 export { relay_servers }

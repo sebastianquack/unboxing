@@ -27,8 +27,7 @@ class ServerConnector extends React.Component {
 	}
 
   render() {
-		const connectionType = this.props.networkService.connectionInfo ? this.props.networkService.connectionInfo.type : null
-		const effectiveConnectionType = this.props.networkService.connectionInfo ? this.props.networkService.connectionInfo.effectiveType: null
+		const connectionType = this.props.networkService.connectionType || null
 		const lastApiResult = this.props.networkService.lastApiResult
 		const deviceId = storageService.getDeviceId();
 		const imeiDeviceId = storageService.getImeiDeviceId();
@@ -49,19 +48,29 @@ class ServerConnector extends React.Component {
 					IMEI: {" "}
 					<Text>{this.props.networkService.imei} (id: {imeiDeviceId})</Text>
 				</Text>
-				<Text>
+				<Text style={{marginTop: 10}}>
 					Connection Type: {" "}
 					<Text style={ (connectionType == "none" ? globalStyles.bad : globalStyles.good) }>{connectionType}</Text>
 				</Text>
 				<Text>
-					Effective Connection Type: {effectiveConnectionType}
+					Target Connection: {this.props.networkService.targetConnection.connectionType} 
+					| {this.props.networkService.targetConnection.ssid}
+				</Text>				
+
+				<Text style={{marginTop: 10}}>
+					SSID: {this.props.networkService.ssid}
+				</Text>				
+				<Text>
+					IP: {this.props.networkService.ip}
 				</Text>
+
 				<Text style={{marginTop: 10}}>
 					Relay URL: {this.props.relayService.url}
 				</Text>								
 				<Text>
 					Relay status: {this.props.relayService.connected ? "connected" : "disconnected"}
 				</Text>												
+
 				<Text style={{marginTop: 20}}>
 					Server: {this.props.networkService.server}
 				</Text>

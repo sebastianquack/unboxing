@@ -1,6 +1,6 @@
 import Service from './Service';
 
-import {sequenceService, soundService, storageService, relayService, peakService} from './';
+import {sequenceService, soundService, storageService, relayService, networkService, peakService} from './';
 
 import loadNavigationAssets from '../../config/instruments'
 const instruments = loadNavigationAssets();
@@ -230,8 +230,10 @@ class GameService extends Service {
     this.setReactive({challengeStatus: this.state.gameMode == "walk" ? "navigate" : "prepare"});
 
     sequenceService.setSequence(challenge.sequence_id);
+
+    const connection = storageService.findServer(challenge.relay_server_id)
     relayService.setServer(challenge.relay_server_id);
-    // networkService.setServer(challenge.relay_server_id);
+    networkService.setConnection(connection || null);
 
     this.setReactive({
       statusBarTitle: sequenceService.getSequenceName(),
@@ -655,7 +657,9 @@ class GameService extends Service {
   // video
 
   getVideoPathsForChallenge = (challenge) => {
-    let videoFilenames = challenge.videos.split(" ");
+    let videoFilenames = challenge.videos
+      .split(" ")
+      .filter( v => !!v );
     let r = [];
     videoFilenames.forEach((f)=>{
       r.push("/video/" + f);
@@ -670,8 +674,6 @@ class GameService extends Service {
   stopVideo = () => {
     this.setReactive({activeVideo: null});
   }
-
-
 
 }
 

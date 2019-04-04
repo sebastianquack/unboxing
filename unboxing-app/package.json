@@ -15,6 +15,7 @@
     "prop-types": "^15.7.2",
     "react": "^16.5.1",
     "react-native": "^0.57.0",
+    "react-native-android-wifi": "0.0.39",
     "react-native-clock-sync": "^1.0.0",
     "react-native-fs": "^2.11.15",
     "react-native-google-nearby-connection": "0.0.9",

@@ -1,10 +1,17 @@
 import { NetInfo } from 'react-native';
+import wifi from 'react-native-android-wifi';
 //import Zeroconf from 'react-native-zeroconf';
 
 import Service from './Service';
 import { storageService, soundService, relayService } from './';
 
 defaultServer = "192.168.8.10"
+
+defaultConnection = {
+  connectionType: "wifi",
+  ssid: "unboxing",
+  psk: "87542000",
+}
 
 const IMEI = require('react-native-imei')
 
@@ -17,19 +24,45 @@ class NetworkService extends Service {
       server: defaultServer,
       lastApiResult: "",
       imei: "",
-      timeSyncStatus: "not synced"
+      timeSyncStatus: "not synced",
+      ConnectionType: null,
+      ssid: null,
+      ip: null,
+      targetConnection: {},
 		});
 
     //this.initZeroconf()
     this.initNetInfo()
 
     setTimeout(()=>{
+      this.setConnection(defaultConnection)
+    }, 2000);
+
+    // setTimeout(()=>{
+    //   console.log("TEST changing connection")
+    //   this.setConnection({
+    //     connectionType: "wifi",
+    //     ssid: "unboxing-1",
+    //     psk: "87542000",
+    //   })
+    // },10000)
+
+    // setTimeout(()=>{
+    //  console.log("TEST changing connection")
+    //  this.setConnection({
+    //    connectionType: "wifi",
+    //    ssid: "unboxing",
+    //    psk: "87542000",
+    //  })
+    //},15000)     
+
+    setTimeout(()=>{
       this.setupImei();
-    }, 1000);
+    }, 3000);
 
     setTimeout(()=>{
       this.doTimeSync()
-    }, 2000);
+    }, 6000);
     
 	}
 
@@ -83,15 +116,42 @@ class NetworkService extends Service {
   initNetInfo = () => {
     const self = this
     NetInfo.getConnectionInfo().then((connectionInfo) => {
-      self.setReactive({connectionInfo})
+      self.setReactive({connectionType: connectionInfo.type})
     });
     function handleConnectivityChange(connectionInfo) {
-      self.setReactive({connectionInfo})
+      self.setReactive({connectionType: connectionInfo.type})
+      wifi.getSSID((ssid) => {
+        self.setReactive({ssid})
+      });
+      wifi.getIP((ip) => {
+        self.setReactive({ip})
+      });
     }
     NetInfo.addEventListener(
       'connectionChange',
       handleConnectivityChange
     );
+  }
+
+  setConnection(connection = defaultConnection) {
+    const { connectionType, ssid, psk } = connection
+
+    console.log("networkService: set connection", connection)
+    
+    if ( connectionType == "wifi") {
+      if ( this.state.ssid !== ssid) {
+        wifi.disconnect();
+        wifi.findAndConnect(ssid, psk, (found) => {
+          if (found) {
+            console.log(ssid + ": wifi is in range");
+          } else {
+            console.log(ssid + ": wifi is not in range");
+          }
+        });        
+      }
+    }
+
+    this.setReactive({targetConnection: connection})
   }
 
   async measureDelta(callback) {

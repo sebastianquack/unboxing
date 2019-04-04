@@ -62,7 +62,8 @@ Migrations.add({
     add_default_attributes_to_challenge({
       videos: ""
     });
-  }
+  },
+  down: function() {}  
 });
 
 Migrations.add({
