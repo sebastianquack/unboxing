@@ -35,7 +35,7 @@ class GameService extends Service {
     this.guitarHeroThreshold = {pre: 2000, post: 2000}
 
     this.earlyLeaveMinutes = 0; // time left in place before force is used
-    this.checkInButtonDelay = 1000;
+    this.checkInButtonDelay = 5000;
 
     this.walkTrackerInterval = setInterval(this.walkTracker, 10000);
 	}
@@ -641,13 +641,13 @@ class GameService extends Service {
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-1b"));  
         this.preloadPracticeSound();
         this.activatePeakTutorial(()=>{
-          this.playPracticeSound("1", storageService.t("info"), storageService.t("tutorial-instructions-playing-1"), "step-2");
+          this.playPracticeSound("1", storageService.t("info"), storageService.t("tutorial-instructions-playing-1"), "step-2", "step-1-playing");
         });
         break;
       case "step-2":
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-2"));  
         this.activatePeakTutorial(()=>{
-          this.playPracticeSound("2", storageService.t("info"), storageService.t("tutorial-instructions-playing-2"), "complete");
+          this.playPracticeSound("2", storageService.t("info"), storageService.t("tutorial-instructions-playing-2"), "complete", "step-2-playing");
         });
         break;
       case "complete":
@@ -666,10 +666,11 @@ class GameService extends Service {
     }); 
   }
 
-  playPracticeSound = (index, playInstructionsHeader, playInstructions, endStatus) => {
+  playPracticeSound = (index, playInstructionsHeader, playInstructions, endStatus, playingStatus=null) => {
     let soundFile = instruments[this.state.activePath.startInstrument].practiceSoundPath
     soundService.scheduleSound(this.getPracticeSoundFile(index), soundService.getSyncTime(), {
       onPlayStart: ()=>{
+        if(playingStatus) this.setReactive({tutorialStatus: playingStatus});
         this.addItemToInfoStream(playInstructionsHeader, playInstructions);
       },
       onPlayEnd: ()=>{

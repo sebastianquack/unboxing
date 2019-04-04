@@ -19,6 +19,7 @@ import TrackSelector from './TrackSelector';
 import {InfoStream} from './InfoStream';
 import Welcome from './Welcome';
 import SensorModulator from './SensorModulator';
+import Instructor from './Instructor';
 
 class GameContainer extends React.Component { 
   constructor(props) { 
@@ -120,6 +121,7 @@ class GameContainer extends React.Component {
         }
         buttonRight = this.props.gameService.tutorialStatus == "complete" ?
           <Button text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/> : null;  
+        overlayContent = <Instructor mode={this.props.gameService.tutorialStatus}/>   
         break;
       
       case "prepare":
