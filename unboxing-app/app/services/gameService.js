@@ -639,7 +639,8 @@ class GameService extends Service {
       case "step-1":
         this.addItemToInfoStream(storageService.t("info"), storageService.t("tutorial-instructions-1a"));  
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-1b"));  
-        this.preloadPracticeSound();
+        this.preloadPracticeSound(1);
+        this.preloadPracticeSound(1);
         this.activatePeakTutorial(()=>{
           this.playPracticeSound("1", storageService.t("info"), storageService.t("tutorial-instructions-playing-1"), "step-2", "step-1-playing");
         });
@@ -660,8 +661,8 @@ class GameService extends Service {
     return instruments[this.state.activePath.startInstrument]["practiceSoundPath" + index]; 
   }
 
-  preloadPracticeSound = () => {
-    soundService.preloadSoundfiles([this.getPracticeSoundFile()], ()=>{
+  preloadPracticeSound = (index) => {
+    soundService.preloadSoundfiles([this.getPracticeSoundFile(index)], ()=>{
       //console.warn("practice sound loaded");
     }); 
   }
