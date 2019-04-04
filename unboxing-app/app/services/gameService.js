@@ -215,7 +215,14 @@ class GameService extends Service {
       allowPlaceExit: false
 		});
 
-		let challenge = storageService.findChallenge(place.challenge_id);
+    let challenge
+    if (placeReference.challenge) {
+       challenge = storageService.findChallengeByShorthand(placeReference.challenge);
+    } else {
+      challenge = storageService.findChallenge(place.challenge_id);
+    }
+    console.log(placeReference, challenge)
+		
 		this.setActiveChallenge(challenge);
     this.walkTracker();
 	}
@@ -252,9 +259,7 @@ class GameService extends Service {
 	}
 
   leaveChallenge() {
-
     if(!this.state.activeChallenge) return;
-
     relayService.emitMessage({code: "leaveChallenge", challengeId: this.state.activeChallenge ? this.state.activeChallenge._id : null, deviceId: storageService.getDeviceId()});  
     
     sequenceService.stopSequence();

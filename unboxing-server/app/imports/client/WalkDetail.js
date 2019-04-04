@@ -18,7 +18,7 @@ class WalkDetail extends React.Component {
   }
 
   DetailCss = css`
-    width: 60em;
+    width: 100%;
 	  display: inline-block;
 	  background-color: lightgrey;
 	  padding: 1ex 1ex 1ex 1ex;
@@ -29,14 +29,14 @@ class WalkDetail extends React.Component {
 	    display: block;
 	    font-family: monospace;
 	    + label {margin-top: 0.5ex}
-	    span {
+	    > span {
 	      min-width: 6em;
         width: 25%;
         vertical-align: top;
 	      display: inline-block;
         min-height: 1em;
 	    }
-      span:last-child {
+      > span:last-child {
         width: 75%;
       }
 	  }

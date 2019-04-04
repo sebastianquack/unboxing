@@ -25,13 +25,36 @@ function updateDeviceMap(socket, challengeId) {
   socket.broadcast.emit('message', msgObj);
 }
 
+function leaveChallenge(socket, deviceId, challengeId) {
+  console.log("leave challenge", deviceId, challengeId)
+
+  if(deviceId) {
+     delete deviceMap[deviceId];
+  }
+
+  if(challengeId) {
+     
+     updateDeviceMap(socket, challengeId);
+     if(countParticipants(challengeId) == 0) {
+       challengeState[challengeId].sequenceControlStatus = "idle";  
+     }
+   
+  }
+
+  console.log("challengeState", challengeState)
+}
+
+
 function init(io) {
 
   // setup socket api
   io.on('connection', function(socket) {
     console.log('Client connected');
     
-    socket.on('disconnect', () => console.log('Client disconnected'));
+    socket.on('disconnect', () => {
+      console.log('Client disconnected')
+      leaveChallenge(socket, socket.deviceId, socket.challengeId)
+    });
     
     socket.on('message', async function(msg) {
       console.log('received message: ' + JSON.stringify(msg));
@@ -40,28 +63,25 @@ function init(io) {
         if(msg.challengeId && msg.deviceId) {
           deviceMap[msg.deviceId] = msg.challengeId;
           updateDeviceMap(socket, msg.challengeId);
+          socket.deviceId = msg.deviceId
+          socket.challengeId = msg.challengeId
 
           if(challengeState[msg.challengeId]) {
             if(challengeState[msg.challengeId].sequenceControlStatus == "playing") {
               socket.emit('message', {code: "startSequence", challengeId: msg.challengeId, startTime: challengeState[msg.challengeId].startTime});  
             }
+          } else {
+            challengeState[msg.challengeId] = {
+              sequenceControlStatus: "idle"
+            }
           }
         }
+        console.log("joining challenge")
+        console.log("challengeState", challengeState)
       }
 
       if(msg.code == "leaveChallenge") {
-         if(msg.deviceId) {
-            delete deviceMap[msg.deviceId];
-         }
-
-         if(msg.challengeId) {
-            
-            updateDeviceMap(socket, msg.challengeId);
-            if(countParticipants(msg.challengeId) == 0) {
-              challengeState[msg.challengeId].sequenceControlStatus = "idle";  
-            }
-          
-          } 
+        leaveChallenge(socket, msg.deviceId, msg.challengeId)
       }
 
       console.log(JSON.stringify(deviceMap));

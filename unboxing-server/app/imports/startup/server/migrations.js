@@ -77,7 +77,18 @@ Migrations.add({
   down: function() {}
 });
 
-const version = 7;
+Migrations.add({
+  version: 8,
+  name: 'add shorthand to challenge',
+  up: function() {
+    add_default_attributes_to_challenge({
+      shorthand: ""
+    });
+  },
+  down: function() {}
+});
+
+const version = 8;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);

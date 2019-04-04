@@ -100,12 +100,14 @@ Meteor.methods({
   'addChallenge'() {
     Challenges.insert({
       name: "new",
+      shorthand: "",
       instructions: "how it works",
       sequence_id: "",
       sequence_loop: false,
       item_manual_mode: "assisted",
       relay_server_id: "",
-      videos: ""
+      videos: "",
+      tag: ""
     });
   },
   'removeChallenge'(id) {

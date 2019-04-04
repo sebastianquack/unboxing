@@ -34,9 +34,12 @@ class NetworkService extends Service {
     //this.initZeroconf()
     this.initNetInfo()
 
+    // start wifi to save data
+    wifi.setEnabled(true);
+
     setTimeout(()=>{
       this.setConnection(defaultConnection)
-    }, 2000);
+    }, 1000);
 
     // setTimeout(()=>{
     //   console.log("TEST changing connection")
@@ -58,11 +61,11 @@ class NetworkService extends Service {
 
     setTimeout(()=>{
       this.setupImei();
-    }, 3000);
+    }, 2000);
 
     setTimeout(()=>{
       this.doTimeSync()
-    }, 6000);
+    }, 5000);
     
 	}
 
@@ -139,6 +142,8 @@ class NetworkService extends Service {
     console.log("networkService: set connection", connection)
     
     if ( connectionType == "wifi") {
+      wifi.setEnabled(true);
+      console.log("enabling wifi")
       if ( this.state.ssid !== ssid) {
         wifi.disconnect();
         wifi.findAndConnect(ssid, psk, (found) => {
@@ -149,6 +154,9 @@ class NetworkService extends Service {
           }
         });        
       }
+    } else if ( connectionType == "cellular") {
+      wifi.setEnabled(false) 
+      console.log("disabling wifi")
     }
 
     this.setReactive({targetConnection: connection})

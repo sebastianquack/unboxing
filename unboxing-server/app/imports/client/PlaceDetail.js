@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import { css } from 'emotion'
 
 import { Challenges, Sequences } from '../collections'
+import { InputLine } from './'
 
 class PlaceDetail extends React.Component {
 	constructor(props) {
@@ -62,23 +63,10 @@ class PlaceDetail extends React.Component {
           </select>
         );        
       default:
-        const inputType = typeof(value) == "number" ? "number" : "text"
-        const inputTransform = (value) => {
-          let transformed = inputType == "number" ? parseInt(value) : value
-          if (transformed === NaN) transformed = value
-          return transformed
-        }
-        return (<ContentEditable 
-          style={{
-            border: "dotted grey 1px",
-            borderWidth: "0 0 1px 0",
-            fontWeight: "bold"
-          }}
-          onChange={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.value)) } 
-          onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
-          html={value + ""}
-          tagName="span"
-        />)
+        return <InputLine 
+          onChange={ value => this.handleAttributeChange(attributeName, value) }
+          value={value}
+        />
     }
   }
 
