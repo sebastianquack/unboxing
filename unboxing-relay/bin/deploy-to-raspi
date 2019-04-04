@@ -8,6 +8,8 @@ fi
 
 USERNAME=pi
 
+cd $(git rev-parse --show-toplevel)/unboxing-relay
+
 echo "deloying to $USERNAME@$1"
 
 echo "Uploading..."

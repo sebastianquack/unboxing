@@ -29,6 +29,14 @@ const servers=[{
   type: "relay",
 	url: "https://unboxing-relay.herokuapp.com",
 	connectionType: "cellular"
+},{
+  _id: 2,
+  name: "192.168.8.62",
+  type: "relay",
+	url: "http://192.168.8.62:3005",
+	connectionType: "wifi",
+	ssid: "unboxing",
+	psk: "87542000",
 }]
 
 export { relay_servers }

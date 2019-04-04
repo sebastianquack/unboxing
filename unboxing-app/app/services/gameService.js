@@ -223,6 +223,9 @@ class GameService extends Service {
 
 	// called when user enters a challenge
 	setActiveChallenge = (challenge)=> {
+
+    this.leaveChallenge()
+
 		this.setReactive({
 			activeChallenge: challenge
 		});
@@ -245,7 +248,7 @@ class GameService extends Service {
 	}
 
   leaveChallenge() {
-
+    if (!this.state.activeChallenge) return
     
     relayService.emitMessage({code: "leaveChallenge", challengeId: this.state.activeChallenge ? this.state.activeChallenge._id : null, deviceId: storageService.getDeviceId()});  
     
