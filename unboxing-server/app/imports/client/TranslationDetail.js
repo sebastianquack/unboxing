@@ -60,7 +60,9 @@ class TranslationDetail extends React.Component {
   handleAttributeChange = (attributeName, value) => {
     $set = {}
     $set[attributeName] = value
-    Meteor.call('updateTranslation', this.props.translation._id, $set, ()=>{ this.focusInput(attributeName) } )    
+    Meteor.call('updateTranslation', this.props.translation._id, $set, ()=>{
+      setTimeout(()=>this.focusInput, 500);
+    })    
   }
 
   focusInput(attributeName) {
@@ -85,8 +87,8 @@ class TranslationDetail extends React.Component {
             borderWidth: "0 0 1px 0",
             fontWeight: "bold"
           }}
-          onChange={ e => this.handleAttributeChange(attributeName, e.target.value) } 
-          value={value + ""}
+          onBlur={ e => this.handleAttributeChange(attributeName, e.target.value) } 
+          defaultValue={value + ""}
         />)
     }
   }

@@ -48,15 +48,20 @@ class InfoStreamElement extends React.Component {
     }
     if(this.props.highlight) style = { ...style, ...highlightStyle }   
 
-    const videoThumbs = this.props.video.map((video, index)=>
-      this.state["thumb_" + video] &&
+    const videoThumbs = this.props.video.map((video, index)=>      
       <TouchableOpacity
         key={index}
         onPress={()=>{gameService.startVideo(video)}}
+        style={{height: 130, width: "100%", zIndex: 1}}
       >
+        {this.state["thumb_" + video] &&
         <Image
               source={{uri: this.state["thumb_" + video]}} 
-              style={{width: 150, height: 90, marginTop: 20, marginRight: 20, marginBottom: 20}}
+              style={{width: 150, height: 90, top: 20, position: "absolute", marginRight: 20, marginBottom: 20}}
+        />}
+        <Image 
+              source={videoThumb} 
+              style={{width: 150, height: 90, position: "absolute", top: 20, marginRight: 20, marginBottom: 20}}
         />
       </TouchableOpacity>
     ); 

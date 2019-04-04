@@ -1,5 +1,5 @@
 export default loadNavigationAssets = () => {return { 
-  "piano":       { practiceSoundPath: "/misc/doorbell.mp3", image: require('../assets/img/instruments/Piano.png'),  video: require('../assets/video/instruments/Piano.mov') },
+  "piano":       { image: require('../assets/img/instruments/Piano.png'),  video: require('../assets/video/instruments/Piano.mov') },
   "flute":       { image: require('../assets/img/instruments/Flute.png'),   video: require('../assets/video/instruments/Flute.mov') },
   "oboe1":      { image: require('../assets/img/instruments/Oboe.png'),    video: require('../assets/video/instruments/Oboe.mov') },
   "oboe2":      { image: require('../assets/img/instruments/Oboe.png'),    video: require('../assets/video/instruments/Oboe.mov') },
@@ -16,7 +16,10 @@ export default loadNavigationAssets = () => {return {
   "violin2":    { image: require('../assets/img/instruments/Violine.png'), video: require('../assets/video/instruments/Violine.mov') },
   "violin2.1":    { image: require('../assets/img/instruments/Violine.png'), video: require('../assets/video/instruments/Violine.mov') },
   "violin2.2":    { image: require('../assets/img/instruments/Violine.png'), video: require('../assets/video/instruments/Violine.mov') },    
-  "viola1":       { image: require('../assets/img/instruments/Viola.png'),   video: require('../assets/video/instruments/Viola.mov') },
+  "viola1":       { 
+    practiceSoundPath1: "/misc/doorbell.mp3", //"/sounds_viola_stimmen.mp3",
+    practiceSoundPath2: "/misc/doorbell.mp3", //"/sounds_viola_einspielen.mp3",
+    image: require('../assets/img/instruments/Viola.png'),   video: require('../assets/video/instruments/Viola.mov') },
   "cello1":       { image: require('../assets/img/instruments/Cello.png'),   video: require('../assets/video/instruments/Cello.mov') },
   "bass1":        { image: require('../assets/img/instruments/Cello.png'),   video: require('../assets/video/instruments/Kontrabass.mov') },
 }}

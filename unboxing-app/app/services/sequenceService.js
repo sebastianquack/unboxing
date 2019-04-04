@@ -250,22 +250,22 @@ class SequenceService extends Service {
     //console.log(this.state.currentItem);
 
     // sequence has ended
-    let endedMessage = this.state.endedFlag ? "play again? " : ""
+    let endedMessage = this.state.endedFlag ? storageService.t("play-again") + " " : ""
     
 		// sequence hasn't started yet
 		if(this.state.controlStatus == "ready" && this.state.currentTrack) {
 			const firstItem = this.firstItemInTrack(this.state.currentTrack.name);
 			if(firstItem) {
 				if(firstItem.startTime == 0) {				
-					this.setActionMessage(endedMessage + "your part is right at the beginning of this sequence. perform the start gesture to start the sequence for everyone here!");
+					this.setActionMessage(endedMessage + storageService.t("sequence-start-first"));
 					this.activateNextUserAction();
 					
 				} else {
-					this.setActionMessage(endedMessage + "anyone of you can start the sequence with their gesture");
+					this.setActionMessage(endedMessage + storageService.t("sequence-start-any"));
 					this.deactivateUserAction();
 				}
 			} else {
-				this.setActionMessage(endedMessage + "your instrument has nothing to play in this sequence");
+				this.setActionMessage(endedMessage + storageService.t("sequence-start-none"));
 				this.deactivateUserAction();
 			}
 		}
@@ -282,7 +282,7 @@ class SequenceService extends Service {
 				
         if(this.currentItemInfo.approved || !this.isGuitarHeroMode()) {
           //if(this.state.currentItem.sensorModulation == "off") {
-            this.setActionMessage("you're playing! tilt left for pp, tilt right for ff"); 
+            this.setActionMessage(storageService.t("sequence-playing")); 
             this.deactivateUserAction();
           /*} else {
             this.setActionMessage("you're playing! see how you can modulate the sound..."); 
@@ -317,15 +317,15 @@ class SequenceService extends Service {
         // next sound has been scheduled
 				if(this.state.scheduledItem) {
           if(this.state.scheduledItem.startTime == 0 && this.sequenceStartingLocally()) {
-            this.setActionMessage("preparing to play...");  
+            this.setActionMessage(storageService.t("autoplay-info"));  
             this.togglePlayButton(false);
           } else {
             if(this.isGuitarHeroMode()) {
-              this.setActionMessage("guitar hero mode!");  
+              this.setActionMessage(storageService.t("guitar-hero-instruct"));  
               this.activateNextUserAction();
             }
             if(this.autoPlayItem(this.state.scheduledItem)) {
-              this.setActionMessage("wait for your next sound to start playing automatically"); 
+              this.setActionMessage(storageService.t("autoplay-instruct")); 
               this.deactivateUserAction();
             }
           }
@@ -333,7 +333,7 @@ class SequenceService extends Service {
 
 					// no sound scheduled, but a next item has been set that is not on autoplay 
 					if(this.state.nextItem && !this.autoPlayNextItem()) {
-						this.setActionMessage("use the gesture to start playing at the right moment!");
+						this.setActionMessage(storageService.t("sensor-start-instruct"));
 						this.activateNextUserAction();
 					}
 				}	

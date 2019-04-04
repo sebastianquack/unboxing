@@ -34,6 +34,7 @@ class GameModeAdmin extends React.Component {
         <Text>activeWalk: {this.props.gameService.activeWalk ? JSON.stringify(this.props.gameService.activeWalk) : "none"}</Text>
         <Text>walkStatus: {this.props.gameService.walkStatus}</Text>
         <Text>tutorialStatus: {this.props.gameService.tutorialStatus}</Text>
+        <Text>activePath: {this.props.gameService.activePath ? JSON.stringify(this.props.gameService.activePath) : "none"}</Text>
         <Text>pathIndex: {this.props.gameService.pathIndex}</Text>
         <Text>activePlaceReference: {JSON.stringify(this.props.gameService.activePlaceReference)}</Text>
         <Text>activePlace: {JSON.stringify(this.props.gameService.activePlace)}</Text>
@@ -75,6 +76,7 @@ class GameModeAdmin extends React.Component {
               mode="dropdown"
               onValueChange={(itemValue, itemIndex) => {if(itemValue) {
                 gameService.setGameMode("manual");                
+                gameService.leaveChallenge();
                 gameService.setActiveChallenge(itemValue) 
                 gameService.initInfoStream();
                 this.props.adminClose();

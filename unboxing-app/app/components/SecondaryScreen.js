@@ -50,7 +50,7 @@ class SecondaryScreen extends React.Component {
             height: "100%",
             width: "100%"
           }}
-          onError={()=>{ToastAndroid.showWithGravity(JSON.stringify(this.videoError), ToastAndroid.SHORT, ToastAndroid.CENTER);}}
+          onError={()=>{console.warn("video load error " + JSON.stringify(this.videoError))}}
         />}
       </View>      
       <View style={{
@@ -62,7 +62,7 @@ class SecondaryScreen extends React.Component {
             {this.props.instrument}
           </UIText>    
         }
-        <UIText size="s" align="center" caps wide em>{this.props.instrument ? storageService.t("current") : storageService.t("your instrument")}</UIText>      
+        <UIText size="s" align="center" caps wide em>{this.props.instrument ? storageService.t("current") : storageService.t("current")}</UIText>      
       </View>
     </View>
   }

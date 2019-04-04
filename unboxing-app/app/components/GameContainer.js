@@ -42,17 +42,35 @@ class GameContainer extends React.Component {
 
     // configure content
     if(this.props.gameService.activeChallenge) {
-      statusBar = <StatusBar 
-        title={this.props.gameService.statusBarTitle} 
-        description={this.props.gameService.statusBarSubtitle} 
-        steps={this.props.gameService.pathLength}
-        currentStep={this.props.gameService.pathIndex}
-        minutesToEnd={this.props.gameService.challengeStatus != "navigate" ? this.props.gameService.minutesToEnd : null}
-        endText={storageService.t("time-left")}
-      />
       mainContent = <ChallengeView/>        
+    
+      if(!gameService.nthPlaceInTutorial(0) && this.props.gameService.challengeStatus != "navigate") {
+        statusBar = <StatusBar 
+          title={this.props.gameService.statusBarTitle} 
+          description={this.props.gameService.statusBarSubtitle} 
+          steps={this.props.gameService.pathLength - 1}
+          currentStep={this.props.gameService.pathIndex - 1}
+          minutesToEnd={this.props.gameService.minutesToEnd}
+          endText={storageService.t("time-left")}
+        />  
+      }
+
+      if(gameService.nthPlaceInTutorial(0) 
+        && this.props.gameService.challengeStatus != "navigate"
+        && (this.props.gameService.tutorialStatus == "complete" || this.props.gameService.tutorialStatus == "first-play")
+        ) {
+       statusBar = <StatusBar 
+          title={storageService.t("practice-sequence-title")} 
+          description={storageService.t("practice-sequence-subtitle")} 
+          minutesToEnd={this.props.gameService.minutesToEnd}
+          endText={storageService.t("time-left")}
+        />   
+      }
+
     } else {
-      if(this.props.gameService.walkStatus != "ended" && this.props.gameService.walkStatus != "tutorial-intro") {
+      if(this.props.gameService.walkStatus != "ended" 
+        && this.props.gameService.walkStatus != "tutorial-intro"
+        && this.props.gameService.challengeStatus != "tutorial") {
         mainContent = <Welcome
           supertitle={storageService.t("main-title-super")}
           title={storageService.t("main-title")}
@@ -61,6 +79,7 @@ class GameContainer extends React.Component {
       }
     }
 
+    
     // special case: video playback
     if(this.props.gameService.activeVideo) {
       modalContent = <VideoPlayer source={this.props.gameService.activeVideo}/> 
@@ -88,8 +107,10 @@ class GameContainer extends React.Component {
     const instrumentName = this.props.sequenceService.currentTrack ? this.props.sequenceService.currentTrack.name : null
     
     switch(this.props.gameService.challengeStatus) {
-      case "navigate": 
-        buttonRight = <Button text={storageService.t("check-in")} onPress={()=>{gameService.handleRightButton()}}/>; 
+      case "navigate":
+        if(this.props.gameService.allowCheckInButton) {
+          buttonRight = <Button text={storageService.t("check-in")} onPress={()=>{gameService.handleRightButton()}}/>;   
+        } 
         secondaryScreen = <SecondaryScreen type="navigation" target="default" />;
         break;
 
@@ -109,16 +130,18 @@ class GameContainer extends React.Component {
         }
         
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
-        if(!gameService.firstPlaceInTutorial()) {
+        if(!gameService.nthPlaceInTutorial(0)) {
           buttonMid = <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;  
         }
-        overlayContent = <ConnectionIndicator current={this.props.gameService.numChallengeParticipants} max={this.props.sequenceService.currentSequence ? this.props.sequenceService.currentSequence.tracks.length : 0} />;
+        if(!gameService.nthPlaceInTutorial(0)) {
+          overlayContent = <ConnectionIndicator current={this.props.gameService.numChallengeParticipants} max={this.props.sequenceService.currentSequence ? this.props.sequenceService.currentSequence.tracks.length : 0} />; 
+        }
         break;
  
       case "play":
         buttonLeft = <Button type="home" text={storageService.t("overview")} onPress={()=>{gameService.handleLeftButton()}}/>;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
-        if(!gameService.firstPlaceInTutorial()) {
+        if(!gameService.nthPlaceInTutorial(0)) {
           buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
         }
         break;
