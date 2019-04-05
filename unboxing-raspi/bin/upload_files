@@ -1,0 +1,39 @@
+#!/bin/bash
+
+command=`basename "$0"`
+if [ $# -lt 2 ]
+  then
+    echo "usage: $command <host> <zip>"
+    echo "example: $command 192.168.8.1 files.zip"
+    exit
+fi
+
+USERNAME=pi
+HOST=$1
+FILE=$2
+
+echo "uploading to $USERNAME@$HOST"
+
+echo "Uploading..."
+scp $FILE $USERNAME@$HOST:/home/pi/uploaded_files.zip
+
+# continuing remotely:
+echo "Continuing remotely:"
+ssh $USERNAME@$1 /bin/bash << EOF
+
+echo "Stopping server..."
+sudo systemctl stop unboxing-server
+
+echo "removing old files"
+cd /home/pi/bundle/files/
+rm -rf *
+
+echo "Unpacking..."
+/home/pi/bundle/files/
+mv /home/pi/uploaded_files.zip ./files.zip
+unzip files.zip
+
+echo "Starting server..."
+sudo systemctl stop unboxing-server
+
+EOF

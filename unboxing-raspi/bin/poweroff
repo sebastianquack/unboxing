@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# sets the ssid of the acccess point
+
+command=`basename "$0"`
+if [ $# -lt 1 ]
+  then
+    echo "usage: $command <host>"
+    echo "example: $command 192.168.8.1"
+    exit
+fi
+
+USERNAME=pi
+HOST=$1
+
+echo Running on $USERNAME@$HOST ...
+
+ssh $USERNAME@$HOST /bin/bash << EOF
+
+echo "rebooting"
+sudo poweroff &&
+exit
+
+EOF
