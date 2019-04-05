@@ -112,7 +112,7 @@ class GameContainer extends React.Component {
         if(this.props.gameService.allowCheckInButton) {
           buttonRight = <Button text={storageService.t("check-in")} onPress={()=>{gameService.handleRightButton()}}/>;   
         } 
-        secondaryScreen = <SecondaryScreen type="navigation" target="default" />;
+        secondaryScreen = <SecondaryScreen type="navigation" target={this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand} />;
         break;
 
       case "tutorial":

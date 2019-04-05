@@ -221,6 +221,10 @@ class GameService extends Service {
     } else {
       challenge = storageService.findChallenge(place.challenge_id);
     }
+    if(!challenge) {
+      console.warn("no challenge found, aborting")
+      return;
+    }
     console.log(placeReference, challenge)
 		
 		this.setActiveChallenge(challenge);

@@ -25,14 +25,14 @@ class ChallengeView extends React.Component {
     const challenge = this.props.gameService.activeChallenge;
     const challengeStatus = this.props.gameService.challengeStatus;
     const sequence = this.props.sequenceService.currentSequence;
-    
+
     return (
       <View> 
         
         {challengeStatus == "navigate" && walkStatus == "ongoing" &&
           <View>
               <Image
-                source={navigationAssets.default.navigation}
+                source={navigationAssets[this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand].navigation}
                 style={{
                   height: "100%",
                   width: "100%"
