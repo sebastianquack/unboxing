@@ -45,7 +45,8 @@ class GameContainer extends React.Component {
     if(this.props.gameService.activeChallenge) {
       mainContent = <ChallengeView/>        
     
-      if(!gameService.nthPlaceInTutorial(0) && this.props.gameService.challengeStatus != "navigate") {
+      if(!gameService.nthPlaceInTutorial(0) 
+        && this.props.gameService.challengeStatus != "navigate") {
         statusBar = <StatusBar 
           title={this.props.gameService.statusBarTitle} 
           description={this.props.gameService.statusBarSubtitle} 
@@ -57,8 +58,7 @@ class GameContainer extends React.Component {
       }
 
       if(gameService.nthPlaceInTutorial(0) 
-        && this.props.gameService.challengeStatus != "navigate"
-        && (this.props.gameService.tutorialStatus == "complete" || this.props.gameService.tutorialStatus == "first-play")
+        && (this.props.gameService.challengeStatus == "prepare" || this.props.gameService.challengeStatus == "play")
         ) {
        statusBar = <StatusBar 
           title={storageService.t("practice-sequence-title")} 
@@ -116,8 +116,8 @@ class GameContainer extends React.Component {
         break;
 
       case "tutorial":
-        if(this.props.gameService.tutorialStatus == "step-2") {
-          mainContent = <SensorModulator mode={"volume tilt"} item={{path: gameService.getPracticeSoundFile()}}/>     
+        if(this.props.gameService.tutorialStatus == "step-2-playing") {
+          mainContent = <SensorModulator mode={"volume tilt"} item={{path: gameService.getPracticeSoundFile(2)}}/>     
         }
         buttonRight = this.props.gameService.tutorialStatus == "complete" ?
           <Button text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/> : null;  
