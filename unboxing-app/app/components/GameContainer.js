@@ -50,8 +50,8 @@ class GameContainer extends React.Component {
         statusBar = <StatusBar 
           title={this.props.gameService.statusBarTitle} 
           description={this.props.gameService.statusBarSubtitle} 
-          steps={this.props.gameService.pathLength - 1}
-          currentStep={this.props.gameService.pathIndex - 1}
+          steps={this.props.gameService.pathLength > 1 ? this.props.gameService.pathLength - 1 : null}
+          currentStep={this.props.gameService.pathIndex >= 1 ? this.props.gameService.pathIndex - 1 : null}
           minutesToEnd={this.props.gameService.minutesToEnd}
           endText={storageService.t("time-left")}
         />  

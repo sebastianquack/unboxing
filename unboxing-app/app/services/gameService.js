@@ -672,7 +672,6 @@ class GameService extends Service {
   }
 
   playPracticeSound = (index, playInstructionsHeader, playInstructions, endStatus, playingStatus=null) => {
-    let soundFile = instruments[this.state.activePath.startInstrument].practiceSoundPath
     soundService.scheduleSound(this.getPracticeSoundFile(index), soundService.getSyncTime(), {
       onPlayStart: ()=>{
         if(playingStatus) this.setReactive({tutorialStatus: playingStatus});
