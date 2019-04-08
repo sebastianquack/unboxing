@@ -5,7 +5,7 @@ import AdmZip from 'adm-zip';
 
 import Files from '../../collections/files';
 
-const filesFilter = (file) => (['.mp3','.wav','.aiff','.m4a','.MP3','.apk','.mp4','.png','.mov'].indexOf(path.extname(file)) > -1)
+const filesFilter = (file) => (['.mp3','.wav','.aiff','.m4a','.MP3','.apk','.mp4','.png','.mov','.mid'].indexOf(path.extname(file)) > -1)
 
 function readFiles(callback=false) {
   console.log("reading files")
@@ -121,21 +121,35 @@ function makeArchive(zipPath) {
   })
 }
 
-function receiveFiles(fileInfo, fileData) {
+function receiveFiles(callback) {
   const target = global.files_dir + "/files.zip"
-  try {
-    fs.writeFileSync(target, fileData, 'binary');
-    var zip = new AdmZip(target);
-    zip.extractAllTo(global.files_dir, true)
-    updateFiles()
-  } catch(error) {
-    if (error) {
-      console.log(error)
-    }
-  }
+  console.log("upload started")
+  
+  var file = fs.createWriteStream(target); 
+  
+  file.on('error',function(error){console.warn(error)});
+  file.on('finish',Meteor.bindEnvironment(() => {
+      // res.writeHead(...) 
+      console.log('Finish uploading');
+      var zip = new AdmZip(target);
+      console.log('removing existing files')
+      updateFiles()
+      //Meteor.bindEnvironment(() => {
+        Files.find().forEach( existingFile => {
+          fs.unlinkSync(existingFile.abs_path)
+        })
+      //})
+      zip.extractAllTo(global.files_dir, true)
+      console.log("unzipped files")
+      updateFiles()      
+      if (callback) callback()
+  }));
+  
+  return file
+
+  req.pipe(file); //pipe the request to the file
 
 }
-
 
 /********* helpers ***********/
 

@@ -3,6 +3,7 @@ import { Meteor } from 'meteor/meteor'
 import { Challenges, Gestures, Sequences, Files, Walks, Places, Translations, Servers } from '../../collections/';
 import objectHash from 'object-hash'
 import { importExportConfig, importExportConfigTranslationsOnly } from '../../helper/server/importexport';
+import { receiveFiles } from '../../helper/server/files';
 
 import cleanJSON from '../../helper/both/cleanJSON';
 
@@ -61,6 +62,16 @@ async function addGesture(req, res) {
   });
 }
 
+async function uploadFiles(req, res) {
+  const file = receiveFiles(() => {
+    //res.end(); //end the respone 
+    res.status(200).json({ 
+      status: "ok"
+    });
+  })
+  req.pipe(file)
+}
+
 // export all data
 async function getDataJSON(req, res) {
 
@@ -88,6 +99,7 @@ export {
   getEverything,
   getTime,
   addGesture,
+  uploadFiles,
   getDataJSON,
   getTranslationsJSON
 }

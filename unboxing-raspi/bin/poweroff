@@ -17,7 +17,7 @@ echo Running on $USERNAME@$HOST ...
 
 ssh $USERNAME@$HOST /bin/bash << EOF
 
-echo "rebooting"
+echo "power off"
 sudo poweroff &&
 exit
 
