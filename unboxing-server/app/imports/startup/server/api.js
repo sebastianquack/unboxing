@@ -8,6 +8,7 @@ import {
   getEverything,
   getTime,
   addGesture,
+  uploadFiles,
   getDataJSON,
   getTranslationsJSON
 } from './rest'
@@ -31,6 +32,7 @@ app.use(bodyParser.json()); // for parsing application/json
 app.get('/api/getEverything.json', getEverything);
 app.get('/api/getTime.json', getTime);
 app.post('/api/addGesture.json', addGesture);
+app.post('/files', uploadFiles)
 app.get(importExportConfig.path, getDataJSON);
 app.get(importExportConfigTranslationsOnly.path, getTranslationsJSON);
 

@@ -5,7 +5,7 @@ import Events from '../../collections/events';
 import { Challenges, Gestures, Sequences } from '../../collections/';
 
 import {importExportConfig, importExportConfigTranslationsOnly} from '../../helper/server/importexport'
-import { updateFiles, receiveFiles } from '../../helper/server/files';
+import { updateFiles } from '../../helper/server/files';
 
 function createChallenge(uuid) {
   console.log("creating new challenge");
@@ -145,12 +145,6 @@ Meteor.methods({
   },*/
   'updateFiles'() {
     updateFiles();
-  },
-  'uploadFiles': function (data) {
-    const fileInfo = data.fileInfo
-    const fileData = data.fileData
-    console.log("received file", fileInfo);
-    return receiveFiles(fileInfo, fileData)
   },
   'dataExportJSONmeta'() {
     return {

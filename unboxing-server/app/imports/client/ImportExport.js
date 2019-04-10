@@ -12,6 +12,7 @@ class ImportExport extends React.Component {
       filename: null,
       filenameTranslations: null,
       filenameFilesArchive: null,
+      uploadProgress: null,
     }
     this.clicked = false
     this.fileInput = React.createRef();
@@ -102,13 +103,19 @@ class ImportExport extends React.Component {
     event.persist()
     const file = event.target.files[0]
     console.log(file)
-    const reader = new FileReader();
-    reader.onload = function(fileLoadEvent) {
-      Meteor.call('uploadFiles', {fileInfo: file, fileData: reader.result}, ()=>{
-        event.target.value = null;
-      });
-    };
-    reader.readAsBinaryString(file);
+
+    var xhr = new XMLHttpRequest(); 
+    xhr.onload = (evt) => {
+      event.target.value = null;
+      this.setState({uploadProgress: null})
+    }
+    xhr.onprogress = (evt) => {
+      this.setState({uploadProgress: 100 * evt.loaded / evt.total})
+    }
+    xhr.open('POST', '/files', true);
+    this.setState({uploadProgress: 0})
+    xhr.send(file); 
+
   }
 
   render() {
@@ -133,6 +140,7 @@ class ImportExport extends React.Component {
         <label>
           Import Files (.zip from Files Export):
           <input type="file" ref={this.fileInput} onChange={this.handleFilesSubmit}/>
+          { this.state.uploadProgress === null ? '-' : <span>{this.state.uploadProgress}%</span> }
         </label>
       </div>
     );
