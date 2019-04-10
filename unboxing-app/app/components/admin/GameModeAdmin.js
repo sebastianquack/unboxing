@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Switch, Picker } from 'react-native';
 
 import {globalStyles} from '../../../config/globalStyles';
-import {gameService, storageService} from '../../services';
+import {gameService, storageService, soundService} from '../../services';
 import {withGameService, withStorageService} from '../ServiceConnector';
 import DebugToggle from './DebugToggle';
 
@@ -85,6 +85,12 @@ class GameModeAdmin extends React.Component {
               {challengeItems}
         </Picker>
         <DebugToggle/>
+         <TouchableOpacity 
+          style={globalStyles.button}
+          onPress={()=>{
+            soundService.runSoundTest();
+          }}><Text>Run Crazy Sound Test</Text>
+        </TouchableOpacity>
       </View>
     );
   }

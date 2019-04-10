@@ -3,6 +3,8 @@ import Service from './Service';
 // Import the react-native-sound module
 import Sound from 'react-native-sound';
 
+import { storageService } from './storageService';
+
 // Enable playback in silence mode
 Sound.setCategory('Playback');
 
@@ -41,11 +43,49 @@ class SoundSevice extends Service {
     
     setTimeout(()=>{
 	    this.preloadSoundfiles([clickFilename], ()=>{
-	    	console.log("click loaded");
+	    	//console.warn("click loaded");
 	    });	
     }, 1000);
-    
+
 	}
+
+  runSoundTest() {
+    console.warn("starting sound service test");
+
+    let testSounds = storageService.state.collections.files
+      .map(f=>f.path)
+      .filter(f=>f.endsWith(".mp3"))
+      .slice(0, 20);
+
+    console.warn(testSounds);
+
+    this.preloadSoundfiles(testSounds, ()=>{
+      console.warn(this.getSyncTime() + ": loaded callback");
+      for(let i = 0; i < testSounds.length; i++) {
+        this.scheduleSound(testSounds[i], this.getSyncTime(), {
+          onPlayEnd: ()=>{
+            //console.warn("onPlayEnd " + testSounds[i]); 
+            this.scheduleSound(testSounds[i], this.getSyncTime());
+          }
+        });  
+      }
+
+      setTimeout(()=>{
+        this.preloadSoundfiles(testSounds, ()=>{
+          console.warn(this.getSyncTime() + ": loaded callback 2");
+          for(let i = 0; i < testSounds.length; i++) {
+            this.scheduleSound(testSounds[i], this.getSyncTime(), {
+              onPlayEnd: ()=>{
+                //console.warn("onPlayEnd " + testSounds[i]); 
+                this.scheduleSound(testSounds[i], this.getSyncTime());
+              }
+            });  
+          }
+        }, true); 
+      }, 5000);
+
+    });
+  }
 
 	// delta and sync time
 	getSyncTime() {
@@ -68,7 +108,7 @@ class SoundSevice extends Service {
 	findSoundIndices(filename, status=null) {
 		let indices = []
 		for(let i = 0; i < this.sounds.length; i++) {
-			if(this.sounds[i].filename == filename && (this.sounds[i].status == status) || !status) {
+			if((this.sounds[i].filename == filename && !status) || (this.sounds[i].filename == filename && status && (this.sounds[i].status == status))) {
 				indices.push(i);
 			}
 		}
@@ -78,13 +118,12 @@ class SoundSevice extends Service {
 
 	// preload an array of soundfiles, callback is called when all are ready
 	preloadSoundfiles(filenames, callback, allowDuplicates=false) {
-		console.log("loading filenames");
-		console.log(filenames);
+		//console.warn(this.getSyncTime() + ": preloadSoundfiles", filenames);
 		filenames.forEach((filename)=>{
 			// only load sounds we don't know about yet 
 			// unless allowDuplicates specified
-			if(allowDuplicates || this.findSoundIndices(filename).length == 0) { 
-				console.log("adding new pending sound");
+			if(allowDuplicates || this.findSoundIndices(filename, "ready").length == 0) { 
+				//console.warn(this.getSyncTime() + ": adding new pending sound");
 				this.sounds.push({
 					filename: filename,
 					status: "pending",
@@ -104,19 +143,30 @@ class SoundSevice extends Service {
 	// preload a soundfile from this.sounds array at index
 	// if successful or sound already loaded, proceeds to next sound
 	// when last sound loaded, execute callback
-	loadNextSoundfile(index, callback) {
-		console.log("checking sound at index " + index);
+	loadNextSoundfile = (index, callback) => {
+		//console.warn(this.getSyncTime() + ": checking sound at index " + index);
 		if(index >= this.sounds.length) {
-			console.log("no more sounds to load, finishing...");
 			if(typeof callback === 'function') {
-				callback(index - 1);	
+        //console.warn(this.getSyncTime() + ": no more sounds to load - checking if all are loaded...");
+        let allLoaded = true;
+        for(let i = 0; i < this.sounds.length; i++) {
+          if(this.sounds[i].status == "pending" || this.sounds[i].status == "loading") {
+            allLoaded = false;
+          }
+        }
+        if(allLoaded) {
+          //console.warn(this.getSyncTime() + ": all loaded!");
+          callback(index - 1);    
+        } else {
+          //console.warn(this.getSyncTime(), ": nope", this.sounds);
+        }
 			}
 			return;
 		}
 		if(this.sounds[index].status != "pending") {
 			console.log("sound status past pending, skip loading");
-			this.loadNextSoundfile(index + 1, callback);
-			return;	
+      this.loadNextSoundfile(index + 1, callback);  
+      return;	
 		}
 		let filename = this.sounds[index].filename;
 		if(!filename) {
@@ -130,18 +180,27 @@ class SoundSevice extends Service {
 		console.log("loading sound from file " + filename);
 		this.sounds[index].status = "loading";
 
-		var newSound = new Sound(filename, Sound.MAIN_BUNDLE, (error) => {
-		  if (error) {
-		    this.showNotification('aborting, failed to load sound ' + filename, error);
-		    return;
-		  }
-		  // loaded successfully
-		  console.log('succesfully loaded ' + this.sounds[index].filename + ' duration in seconds: ' + newSound.getDuration() + 'number of channels: ' + newSound.getNumberOfChannels());
-		  this.sounds[index].status = "ready";
-		  this.sounds[index].soundObj = newSound;
-		  this.sounds[index].soundObj.setVolume(this.getReactive("volume"));	
-		  this.loadNextSoundfile(index + 1, callback);
-		});
+    let loadingTimeout = setTimeout(()=>{
+      console.warn("sound loading timeout " + this.sounds[index].filename);
+      this.sounds[index].status = "released";      
+    }, 2000);
+		try {
+      var newSound = new Sound(filename, Sound.MAIN_BUNDLE, (error) => {
+        if (error) {
+          this.showNotification('aborting, failed to load sound ' + filename, error);
+  		    return;
+  		  }
+  		  // loaded successfully
+  		  // console.warn(this.getSyncTime() + ': succesfully loaded ' + this.sounds[index].filename + ' duration in seconds: ' + newSound.getDuration() + 'number of channels: ' + newSound.getNumberOfChannels());
+  		  clearTimeout(loadingTimeout);
+        this.sounds[index].status = "ready";
+  		  this.sounds[index].soundObj = newSound;
+  		  this.sounds[index].soundObj.setVolume(this.getReactive("volume"));	
+  		  this.loadNextSoundfile(index + 1, callback);
+  		});
+    } catch(e) {
+      console.warn(e);
+    }
 	}
 
 	// release memory for all currently loaded sound files
@@ -168,13 +227,14 @@ class SoundSevice extends Service {
 	}*/
 
 	// schedule playback of preloaded soundfile
-	scheduleSound(soundfile, targetTime, callbacks={}, startSilent=false) {
+	scheduleSound = (soundfile, targetTime, callbacks={}, startSilent=false) => {
 
 		// find sound index of a ready version for this sound
 		let indices = this.findSoundIndices(soundfile, "ready");
+    //console.warn(indices);
 		
 		if(indices.length == 0) {
-			console.log("no ready sound found - attempting to load a new version");
+			//console.warn("no ready sound found - attempting to load a new version");
 			this.preloadSoundfile(soundfile, ()=>{
 					console.log("finished loading duplicate sound, setting index to last sound loaded")
 					this.scheduleSound(soundfile, targetTime, callbacks, startSilent);
@@ -183,7 +243,8 @@ class SoundSevice extends Service {
 			return;
 		}
 		
-    console.log(this.getSyncTime() + ": scheduling sound " + soundfile + " for " + targetTime);  
+    //console.warn(this.getSyncTime() + ": indices found " + indices);
+    //console.warn(this.getSyncTime() + ": scheduling sound " + soundfile + " for " + targetTime);  
     const timeToRunStartingLoop = targetTime - this.getSyncTime();
 
     this.schedulingIntervals.push(setTimeout(()=>{
@@ -192,7 +253,7 @@ class SoundSevice extends Service {
   }
 
   // run loop for preloaded, scheduled sound at index to playback precisely at target time
-  runStartingLoop(index, targetTime, callbacks, startSilent=false) {
+  runStartingLoop = (index, targetTime, callbacks, startSilent=false) => {
 		const loopStartTime = this.getSyncTime(); // get the synchronized time
 		this.sounds[index].status = "starting";
 		let targetSoundStartTime = targetTime + 34; // aim for a bit later to allow for loop to be precise
@@ -216,7 +277,7 @@ class SoundSevice extends Service {
 	}
 
   // finally, initiate playback of sound and call callback on comepletion
-	playSound(index, callbacks, startSilent=false) {
+	playSound = (index, callbacks, startSilent=false) => {
 		if(!this.sounds[index]) return;
 
 		// check if sound is ready to play? maybe not necessary
@@ -224,23 +285,34 @@ class SoundSevice extends Service {
 			console.log("sound obj not ready to play - trying anyway...")
 		}
 
-		console.log("starting to play " + JSON.stringify(this.sounds[index]));
+		//console.warn(this.getSyncTime() + ": starting to play " + this.sounds[index].filename);
 		this.sounds[index].status = "playing";
     
 		this.sounds[index].soundObj.setVolume(startSilent ? 0.0 : 0.3).play((success) => {
-		  	this.sounds[index].status = "ready";
+		  	
+        // only use each player once
+        if(this.sounds[index].soundObj.release) {
+          //console.warn("releasing player...");
+          this.sounds[index].soundObj.release();  
+          this.sounds[index].status = "released";
+          // purge released players
+          setTimeout(()=>{
+            this.sounds[index] = {status: "released"};
+          }, 100);
+        }
+
 		  	if (success) {
 		    	console.log('successfully finished playing at', this.getSyncTime());
-		    	// todo: reset sound for next playback?
-		  	} else {
-		    	console.log('playback failed due to audio decoding errors');
-		    	console.warn('playback error - resetting player - restart app?');
-		    	//this.sounds[index].soundObj.reset();
-		  	}		  
-		  	// calling callback
-	    	if(typeof callbacks.onPlayEnd == "function") {
-	    		callbacks.onPlayEnd();
-	    	}
+		    	
+          // calling callback
+          if(typeof callbacks.onPlayEnd == "function") {
+            callbacks.onPlayEnd();
+          }
+
+        } else {
+		    	console.warn('playback error');		    	
+		  	}	
+		  	
 		});
 		this.sounds[index].soundObj.getCurrentTime((seconds) => {
 			console.log('getCurrentTime ' + seconds)
