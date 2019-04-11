@@ -5,7 +5,7 @@ import AdmZip from 'adm-zip';
 
 import Files from '../../collections/files';
 
-const filesFilter = (file) => (['.mp3','.wav','.aiff','.m4a','.MP3','.apk','.mp4','.png','.mov','.mid'].indexOf(path.extname(file)) > -1)
+const filesFilter = (file) => (['.mp3','.wav','.aiff','.m4a','.MP3','.apk','.mp4','.png','.jpg','.mov','.mid'].indexOf(path.extname(file)) > -1)
 
 function readFiles(callback=false) {
   console.log("reading files")
@@ -136,7 +136,9 @@ function receiveFiles(callback) {
       updateFiles()
       //Meteor.bindEnvironment(() => {
         Files.find().forEach( existingFile => {
-          fs.unlinkSync(existingFile.abs_path)
+          if (fs.existsSync(existingFile.abs_path)) {
+            fs.unlinkSync(existingFile.abs_path)
+          }
         })
       //})
       zip.extractAllTo(global.files_dir, true)
