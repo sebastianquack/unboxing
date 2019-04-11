@@ -27,7 +27,6 @@ import GameContainer from './app/components/GameContainer';
 import ServerConnector from './app/components/admin/ServerConnector';
 import Files from './app/components/admin/Files';
 import TimeSync from './app/components/admin/TimeSync';
-import NearbyStatus from './app/components/admin/NearbyStatus';
 import Gestures from './app/components/admin/Gestures';
 import SensorInfo from './app/components/admin/SensorInfo';
 import DebugToggle from './app/components/admin/DebugToggle';
@@ -71,12 +70,7 @@ const sections = [
     name: "Files",
     component:Files,
     default: false,
-  },
-  {
-    name: "NearbyStatus",
-    component:NearbyStatus,
-    default: false,
-  },          
+  },   
 ]
 
 class App extends Component {

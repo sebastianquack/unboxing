@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
-import {withGameService, withSequenceService, withNearbyService, withPeakService} from './ServiceConnector';
+import {withGameService, withSequenceService, withPeakService} from './ServiceConnector';
 import {gameService, sequenceService, storageService} from '../services';
 
 import ScreenContainer from './ScreenContainer'
@@ -174,4 +174,4 @@ class GameContainer extends React.Component {
   }
 }
 
-export default withPeakService(withNearbyService(withGameService(withSequenceService(GameContainer))));
+export default withPeakService(withGameService(withSequenceService(GameContainer)));

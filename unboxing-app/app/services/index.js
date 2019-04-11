@@ -1,5 +1,4 @@
 import {sensorService} from './sensorService'
-import {nearbyService} from './nearbyService'
 import {sequenceService} from './sequenceService'
 import {soundService} from './soundService'
 import {permissionService} from './permissionService'
@@ -12,7 +11,6 @@ import {relayService} from './relayService'
 
 export {
   sensorService,
-  nearbyService,
   sequenceService,
   soundService,
   permissionService,

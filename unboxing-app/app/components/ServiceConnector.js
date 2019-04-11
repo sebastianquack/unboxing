@@ -4,7 +4,6 @@ import { View, ToastAndroid } from 'react-native';
 import {
 		soundService, 
 		sequenceService, 
-		nearbyService,
 		sensorService,
 		permissionService,
 		networkService,
@@ -19,7 +18,6 @@ import {
 const services = [ 
 		soundService,
 		sequenceService,
-		nearbyService,
 		sensorService,
 		permissionService,
 		networkService,
@@ -101,17 +99,15 @@ class ServiceConnector extends React.Component {
       <SingleServiceProvider serviceName="relayService">
         <SingleServiceProvider serviceName="soundService">
   				<SingleServiceProvider serviceName="sequenceService">
-  					<SingleServiceProvider serviceName="nearbyService">
-  						<SingleServiceProvider serviceName="sensorService">
-  							<SingleServiceProvider serviceName="permissionService">
-  								<SingleServiceProvider serviceName="networkService">
-  									<SingleServiceProvider serviceName="storageService">
-  										<SingleServiceProvider serviceName="gestureService">
-  											<SingleServiceProvider serviceName="peakService">
-  												<SingleServiceProvider serviceName="gameService">
-													 {this.props.children}
-												  </SingleServiceProvider>
-                        </SingleServiceProvider>
+						<SingleServiceProvider serviceName="sensorService">
+							<SingleServiceProvider serviceName="permissionService">
+								<SingleServiceProvider serviceName="networkService">
+									<SingleServiceProvider serviceName="storageService">
+										<SingleServiceProvider serviceName="gestureService">
+											<SingleServiceProvider serviceName="peakService">
+												<SingleServiceProvider serviceName="gameService">
+													{this.props.children}
+												</SingleServiceProvider>
 											</SingleServiceProvider>
 										</SingleServiceProvider>
 									</SingleServiceProvider>
@@ -142,16 +138,6 @@ function withSequenceService(Component) {
       <serviceContexts.sequenceService.Consumer>
 				{ value => <Component {...props} sequenceService={value} /> }
       </serviceContexts.sequenceService.Consumer>
-    );
-  };
-}
-
-function withNearbyService(Component) {
-  return function ComponentWithService(props) {
-    return (
-      <serviceContexts.nearbyService.Consumer>
-				{ value => <Component {...props} nearbyService={value} /> }
-      </serviceContexts.nearbyService.Consumer>
     );
   };
 }
@@ -239,7 +225,6 @@ function withRelayService(Component) {
 export { ServiceConnector, 
 	withSoundService, 
 	withSequenceService, 
-	withNearbyService, 
 	withPermissionService, 
 	withSensorService, 
 	withNetworkService, 

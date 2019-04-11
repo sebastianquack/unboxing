@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
+    "clear": "watchman watch-del-all && rm -rf $TMPDIR/react-native-* && rm -rf $TMPDIR/metro-bundler-cache-* && rm -rf node_modules/ && npm cache verify && npm install && cd android && ./gradlew clean && cd ..",
     "test": "jest"
   },
   "dependencies": {
@@ -18,7 +19,6 @@
     "react-native-android-wifi": "0.0.39",
     "react-native-clock-sync": "^1.0.0",
     "react-native-fs": "^2.11.15",
-    "react-native-google-nearby-connection": "0.0.9",
     "react-native-imei": "^0.1.2",
     "react-native-keep-awake": "^3.1.0",
     "react-native-linear-gradient": "^2.5.3",
