@@ -1,137 +1,23 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
-import RNFS from 'react-native-fs'
-import path from 'react-native-path'
+import { Text, View, StyleSheet, TouchableOpacity, Switch } from 'react-native';
 import compose from 'lodash.flowright'
 
 import {globalStyles} from '../../../config/globalStyles';
-import {withNetworkService, withStorageService} from '../ServiceConnector';
+import {fileService} from '../../services';
+import {withStorageService, withFileService} from '../ServiceConnector';
 
-folder = RNFS.ExternalStorageDirectoryPath + '/unboxing/files'
-
-console.log("files folder: ", folder)
-
-class Files extends React.Component { 
+class Files extends React.PureComponent { 
   constructor(props) {
     super(props);
     this.state = {
-      localFiles : {}
+      showList: false
     };
-    this.updateFileInfo = this.updateFileInfo.bind(this)
-    this.downloadFile = this.downloadFile.bind(this)
     this.renderFile = this.renderFile.bind(this)
-  }
-
-  fileStatus(fileInfo) {
-    const files = this.props.storageService.collections.files
-    const file = files.find(file => file._id === fileInfo._id)
-    if (file && fileInfo.exists && fileInfo.size === file.size) {
-      return "OK"
-    } else {
-      if (fileInfo.size && file.size) {
-        return Math.round(100*fileInfo.size/file.size)+ "%"
-      } else {
-        return "-"
-      }
-    }
-  }
-
-  updateFilesize(file_id, size) {
-    this.setState(
-      { 
-        localFiles: { 
-          ...this.state.localFiles, 
-          [file_id]: {
-            ...this.state.localFiles[file_id],
-            size
-          } 
-        } 
-      })
-    }
-
-  updateFileInfo(file) {
-    let info = this.state.localFiles[file._id] || {
-      _id: file._id
-    }
-
-    return RNFS.exists(folder + file.path)
-      .then( exists => {
-        if (exists) {
-          info.exists = true
-          return RNFS.stat(folder + file.path)
-        }
-        else {
-          info.exists = false
-          RNFS.mkdir(folder + path.dirname(file.path))
-          return null
-        }
-      })
-      .then( stat => {
-        //console.log("stat", stat)
-        info.size = stat ? stat.size : 0
-      })
-      .catch((err) => {
-        console.log(err.message, err.code);
-      })
-      .finally( () => {
-        // console.log("new info", info)
-        this.setState({ localFiles: { ...this.state.localFiles, [file._id]: info } })
-      })   
-  }
-
-  downloadFile(file) {
-    //console.log(file)
-
-    let info = this.state.localFiles[file._id] || {
-      _id: file._id
-    }
-
-    return RNFS.downloadFile(
-      {
-        fromUrl: 'http://'+this.props.networkService.server+':3000' + file.url_path,
-        toFile: folder + file.path,
-        progressDivider: 5,
-        cacheable: false,
-        progress: p => {this.updateFilesize(file._id, p.bytesWritten)}
-      }
-    ).promise.then( result => {
-      console.log("download completed with code " + result.statusCode)
-      this.updateFilesize(file._id, result.bytesWritten)
-    }).catch((err) => {
-      console.log(err.message, err.code);
-    });       
-  }
-
-  updateFilesInfoAndDownload = async () => {
-    const ok = await this.updateFilesInfo()
-    if (!ok) {
-      await this.downloadFiles()
-    }
-  }
-
-
-  updateFilesInfo = async () => {
-    for (let file of this.props.storageService.collections.files) {
-      console.log("checking " + file.path)
-      await this.updateFileInfo(file)
-    }
-    const all_ok = Object.values(this.state.localFiles).findIndex( file => (this.fileStatus(file) != "OK")) === -1
-    console.log(all_ok ? "all files are okay" : "some files are missing or not okay")
-    return all_ok
-  }
-
-  downloadFiles = async (file) => {
-    for (let file of this.props.storageService.collections.files) {
-      if (this.fileStatus(this.state.localFiles[file._id])  !== "OK") {
-        console.log("downloading " + file.path)
-        await this.downloadFile(file)
-        this.updateFileInfo(file)
-      }
-    }
+    this.handleUpdate = this.handleUpdate.bind(this)
   }
 
   handleUpdate = () => {
-    this.updateFilesInfoAndDownload()
+    fileService.updateFilesInfoAndDownload()
   }
 
   handleDelete = () => {
@@ -145,16 +31,6 @@ class Files extends React.Component {
   }
 
   componentDidMount() {
-    console.log(RNFS.ExternalDirectoryPath)
-
-    RNFS.mkdir(folder)
-      .then(result => {
-        console.log("created directory")
-      })
-      .catch(err => {
-        console.log("error creating directory", err)
-      })
-
   }
 
   componentDidUpdate(prevProps, prevState) {
@@ -170,10 +46,10 @@ class Files extends React.Component {
   }
 
   renderFile(file) {
-    const info = this.state.localFiles[file._id]
+    const info = this.props.fileService.localFiles[file._id]
     //console.log(info, file.path, this.state)
 
-    const status = info ? this.fileStatus(info) : "?"
+    const status = info ? fileService.fileStatus(info) : "?"
 
     return (<View key={file._id} style={{flexDirection:"row"}}>
         <Text style={{width: 40}}>
@@ -189,6 +65,7 @@ class Files extends React.Component {
     return (
       <View style={styles.container}>
         <Text style={globalStyles.titleText}>Files</Text>
+        <Text>Status: {this.props.fileService.status}</Text>
         <TouchableOpacity 
             onPress={this.handleUpdate}
             style={styles.button}
@@ -200,14 +77,20 @@ class Files extends React.Component {
             style={styles.button}
           >
           <Text>Delete local files</Text>
-        </TouchableOpacity>*/}            
-        {this.renderFiles()}
+        </TouchableOpacity>*/}
+
+        <View>
+          <Text style={{fontSize: 16}}>Show file list (slow)</Text>
+          <Switch value={this.state.showList} onValueChange={value => this.setState({showList: value})}/>
+        </View>
+
+        { this.state.showList && this.renderFiles()}
       </View>
     );
   }
 }
 
-export default compose(withNetworkService,withStorageService)(Files)
+export default compose(withFileService, withStorageService)(Files)
 
 
 const styles = StyleSheet.create({

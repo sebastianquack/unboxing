@@ -11,7 +11,8 @@ import {
 		gestureService,
 		peakService,
 		gameService,
-    relayService
+		relayService,
+		fileService,
 	} from '../services';
 
 // all services need to be imported above, registered here, get a provider and consumer below
@@ -25,7 +26,8 @@ const services = [
 		gestureService,
 		peakService,
 		gameService,
-    relayService,
+		relayService,
+		fileService,
 	]
 
 // create a context for each service
@@ -99,24 +101,26 @@ class ServiceConnector extends React.Component {
       <SingleServiceProvider serviceName="relayService">
         <SingleServiceProvider serviceName="soundService">
   				<SingleServiceProvider serviceName="sequenceService">
-						<SingleServiceProvider serviceName="sensorService">
-							<SingleServiceProvider serviceName="permissionService">
-								<SingleServiceProvider serviceName="networkService">
-									<SingleServiceProvider serviceName="storageService">
-										<SingleServiceProvider serviceName="gestureService">
-											<SingleServiceProvider serviceName="peakService">
-												<SingleServiceProvider serviceName="gameService">
-													{this.props.children}
+						<SingleServiceProvider serviceName="fileService">
+							<SingleServiceProvider serviceName="sensorService">
+								<SingleServiceProvider serviceName="permissionService">
+									<SingleServiceProvider serviceName="networkService">
+										<SingleServiceProvider serviceName="storageService">
+											<SingleServiceProvider serviceName="gestureService">
+												<SingleServiceProvider serviceName="peakService">
+													<SingleServiceProvider serviceName="gameService">
+														{this.props.children}
+													</SingleServiceProvider>
 												</SingleServiceProvider>
 											</SingleServiceProvider>
 										</SingleServiceProvider>
 									</SingleServiceProvider>
 								</SingleServiceProvider>
-							</SingleServiceProvider>
 						</SingleServiceProvider>
 					</SingleServiceProvider>
 				</SingleServiceProvider>
 			</SingleServiceProvider>
+		</SingleServiceProvider>
 		);
 	}
 }
@@ -181,6 +185,16 @@ function withStorageService(Component) {
   };
 }
 
+function withFileService(Component) {
+  return function ComponentWithService(props) {
+    return (
+      <serviceContexts.fileService.Consumer>
+				{ value => <Component {...props} fileService={value} /> }
+      </serviceContexts.fileService.Consumer>
+    );
+  };
+}
+
 function withGestureService(Component) {
   return function ComponentWithService(props) {
     return (
@@ -229,6 +243,7 @@ export { ServiceConnector,
 	withSensorService, 
 	withNetworkService, 
 	withStorageService, 
+	withFileService,
 	withGestureService, 
 	withPeakService, 
 	withGameService,

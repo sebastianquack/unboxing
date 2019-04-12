@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+#set -x
 
 NETWORK_PREFIX="${NETWORK_PREFIX:-192.168.8.1}" # default NETWORK starts with 192.168.8.1
 DEV_HOST="${DEV_HOST:-192.168.8.10}" # default DEV_HOST is 192.168.8.10
@@ -20,8 +20,13 @@ do
      i="0${i}";
    fi
 
-   echo "connecting to device ${i}"
    adb disconnect
+
+   echo "pinging device at $NETWORK_PREFIX${i} ( ctrl-z to abort )"
+   ping -o -n -W 2 -i 2  $NETWORK_PREFIX${i} &> /dev/null
+   echo "device discovered"
+
+   echo "connecting to device ${i}"
    adb connect "$NETWORK_PREFIX${i}:5555"
 
    echo "stopping app"

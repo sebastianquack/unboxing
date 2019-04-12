@@ -152,7 +152,9 @@ class App extends Component {
         <LanguageSelector/>
           { this.renderSections() }
         </View>        
-        { this.renderBuildInfo() }
+        <View style={{marginTop:10, marginBottom: 10}}>
+          { this.renderBuildInfo() }
+        </View>
       </ScrollView>
     );
   }
@@ -181,17 +183,13 @@ export default App;
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
-    height: "100%",
+    ...StyleSheet.absoluteFill
   },
   adminMenu: {
-    position: 'absolute',
     zIndex: 99,
-    width: "100%",
-    height: "100%",
-    backgroundColor: "white",
-    padding: 10,
-    paddingTop: 30,
+    ...StyleSheet.absoluteFill,
+    paddingHorizontal: 10,
+    marginVertical: 10,
   },
   adminMenu__translucent: {
     backgroundColor: 'rgba(200,200,200,0.5)'
