@@ -85,6 +85,7 @@
 		84AD4B26D3ED446C9E0B72EA /* DINPro-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 27FE5E9341C64908BB8C8E3C /* DINPro-LightItalic.ttf */; };
 		82879E18AC3C41309C216901 /* DINPro-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FEC32E4D8794FA2927D5685 /* DINPro-MediumItalic.ttf */; };
 		9B90659B9E8F4002BC00D184 /* libRNThumbnail.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0896FE416073433C9C6AFADB /* libRNThumbnail.a */; };
+		D71341F741A04E87B2810DBD /* libRCTImageSequence.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 920F56ECE118482DA29029D1 /* libRCTImageSequence.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -446,6 +447,8 @@
 		1FEC32E4D8794FA2927D5685 /* DINPro-MediumItalic.ttf */ = {isa = PBXFileReference; name = "DINPro-MediumItalic.ttf"; path = "../assets/fonts/DINPro-MediumItalic.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 		8105AF9C5BD44519BCE679C1 /* RNThumbnail.xcodeproj */ = {isa = PBXFileReference; name = "RNThumbnail.xcodeproj"; path = "../node_modules/react-native-thumbnail/ios/RNThumbnail.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		0896FE416073433C9C6AFADB /* libRNThumbnail.a */ = {isa = PBXFileReference; name = "libRNThumbnail.a"; path = "libRNThumbnail.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		19218F27FBF14C7EB348422F /* RCTImageSequence.xcodeproj */ = {isa = PBXFileReference; name = "RCTImageSequence.xcodeproj"; path = "../node_modules/react-native-image-sequence/ios/RCTImageSequence.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		920F56ECE118482DA29029D1 /* libRCTImageSequence.a */ = {isa = PBXFileReference; name = "libRCTImageSequence.a"; path = "libRCTImageSequence.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -481,6 +484,7 @@
 				B0C2D37ADF1A4CCE9FF9B332 /* libBVLinearGradient.a in Frameworks */,
 				52955AC42BEB43119C17F789 /* libRCTVideo.a in Frameworks */,
 				9B90659B9E8F4002BC00D184 /* libRNThumbnail.a in Frameworks */,
+				D71341F741A04E87B2810DBD /* libRCTImageSequence.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -676,6 +680,7 @@
 				459BFE2A8F5441BE9BBB03B8 /* BVLinearGradient.xcodeproj */,
 				59D46DD717F24C90A1726B77 /* RCTVideo.xcodeproj */,
 				8105AF9C5BD44519BCE679C1 /* RNThumbnail.xcodeproj */,
+				19218F27FBF14C7EB348422F /* RCTImageSequence.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1391,8 +1396,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1404,6 +1407,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
+					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
 				);
 			};
 			name = Debug;
@@ -1426,8 +1430,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1439,6 +1441,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
+					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
 				);
 			};
 			name = Release;
@@ -1469,6 +1472,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
+					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
 				);
 			};
 			name = Debug;
@@ -1498,6 +1502,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
+					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
 				);
 			};
 			name = Release;
@@ -1528,8 +1533,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1541,6 +1544,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
+					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
 				);
 			};
 			name = Debug;
@@ -1571,8 +1575,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1584,6 +1586,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
+					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
 				);
 			};
 			name = Release;
@@ -1613,8 +1616,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1626,6 +1627,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
+					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
 				);
 			};
 			name = Debug;
@@ -1655,8 +1657,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
-					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1668,6 +1668,7 @@
 					"$(SRCROOT)/../node_modules/react-native-linear-gradient/BVLinearGradient",
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
+					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
 				);
 			};
 			name = Release;
