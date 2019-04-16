@@ -5,7 +5,7 @@ import wifi from 'react-native-android-wifi';
 import Service from './Service';
 import { storageService, soundService, relayService } from './';
 
-defaultServer = "192.168.8.10"
+defaultServer = "192.168.8.1"
 
 defaultConnection = {
   connectionType: "wifi",
