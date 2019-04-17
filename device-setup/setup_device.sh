@@ -62,10 +62,16 @@ setprop persist.adb.tcp.port 5555
 getprop | grep adb
 echo
 
-
-
 echo "Settings -> system -> advanced -> screen lock -> none"
 read -p "Press enter when done"
+echo
+
+echo "setting time, disabling NTP"
+adb shell 'settings put global auto_time 0'
+adb shell 'setprop persist.sys.timezone "Europe/Berlin"'
+adb shell 'date @`date +%s`'
+adb shell 'am broadcast -a android.intent.action.TIME_SET'
+adb shell 'date'
 echo
 
 echo "install app with unboxing-app/bin/deploy_production and copy assets"

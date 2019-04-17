@@ -13,4 +13,13 @@
 
 ## run
 
-run ./setup_device.sh and follow orders
+run `./setup_device.sh` and follow orders
+
+## connect with adb
+
+use the provided keys
+
+````
+cp adbkey ~/.android/
+cp adbkey.pub ~/.android/
+````
