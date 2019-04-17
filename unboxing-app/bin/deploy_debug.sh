@@ -28,7 +28,8 @@ do
 
    echo "connecting to device ${i}"
    adb connect "$NETWORK_PREFIX${i}:5555"
-
+   sleep 1
+   
    echo "stopping app"
    adb shell am force-stop com.unboxing
 

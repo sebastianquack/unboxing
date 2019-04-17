@@ -21,6 +21,7 @@ do
      echo "connecting to device ${i}"
      adb disconnect
      adb connect "192.168.8.1${i}:5555"
+     sleep 1
 
      adb shell "${deviceIds[0]}"
    fi

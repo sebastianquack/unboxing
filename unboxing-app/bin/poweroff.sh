@@ -1,7 +1,6 @@
-
 #!/bin/bash
 
-set -x
+# set -x
 
 ## declare an array variable
 #declare -a deviceIds=("17") ## You can access them using "${deviceIds[0]}", "${deviceIds[1]}" 
@@ -16,22 +15,16 @@ do
      i="0${i}";
    fi
 
+   echo "pinging device at 192.168.8.1${i} ( ctrl-z to abort )"
+   ping -o -n -W 2 -i 2  192.168.8.1${i} &> /dev/null
+   echo "device discovered"
+
    echo "connecting to device ${i}"
    adb disconnect
    adb connect "192.168.8.1${i}:5555"
-
    sleep 1
 
-   echo "stopping app"
-   adb shell am force-stop com.unboxing
+   echo "initializing poweroff"
+   adb shell reboot -p &
 
-   
-   adb shell input keyevent 82
-
-   echo "starting app"
-   adb shell am start -n com.unboxing/com.unboxing.MainActivity
-
-   adb shell settings put system screen_off_timeout 300000
-   
-   
 done
