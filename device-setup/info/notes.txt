@@ -1,0 +1,127 @@
+NOTE: most files belong to system:system
+
+
+
+/data/system/users/0/*
+
+
+:/data/misc # cat adb/adb_keys                                                 
+QAAAAN8BaBbhBRM9HIjZOC3R75aFVjpT8/lRCBzp1i6EQG6i44FM10m3CPZxhf7GwXJxZbSF0Qf5+BLEogYTaqAYCB7WUYUqDDJ/7smwCr3dfRBJ+lNKev+2j4tFtI40jpjiOVuzDizcD3E0C5f9jzQaPaStG9I7tDWfTSlNfcdo+MrJzsqDA/NiQ/tNVfNu6rjN2sf+97dwbrCYdiqLwbJscuPcG7OqKqA1hdOXAbWf/WSWbmtC6sDQ1ShS9NVDNr6wyzFiMMwkojCcwn8j11HNdRIogqWGgisxVoNBUIaNwXKcuFnf/cdT7kd87thO2CKj6A46lEWw9b9TQkRn0uwxPxBv7GrcvToSjD+ikTyshry0Ku5zydp/GXRcpyUtTdYZsaBag3YodS7m1dVatNlD7f7q8AwXzRP3IpIGVE8Le8oKyJJTB4c1LvCwFqOZTjHsNBk5BDpZHnSR7KqfIcYDSI473+bLtrOsUWYJHpYBqOEx9VO4rIzVv9cWGCFkUlKl+FdpolijjumzQqt9x8G/t8trzWWsbH61CfRyHIu3RUmQyNKuHSNKysu2LP7m3h2aa3VkedaB7T7ORNtWl9+GCIAY4+lWKZI3t3L6DuRgpSSndbh3sRP/ZJz/4juPsQyZ+Hew314rHUQnj7FgX2GSqutayQmZVf6cvhnvRFVg2TBBFYiVigEAAQA= holger@playmaster.fritz.box
+QAAAAKf/CczpR+k6mkjDz2AQiuLf+A8OyUnNrg96Rql+U/yG4lhcGkzIyKjOSsY26I4V0W2J8Ri3tKCOQzrCQJyz5/DDclNZGzdnt3EcRbX9cwkwZeiceqHE9UfCSg8U3UMcekdmmTV5DoJn1uwTXPICPL7XTyK2bI0HQveePF00BQidI991XfuuQbGLFqhFc+Jb7bIszcXbr/kKNB+rPZPSaU3bHxT7I9vwjphxWxUl48leCR4z/Cnn2V7tdLHSCNcHiR8XKpd9iIZuw4mj7GpmgSuXNBHZll/8i2EoPhnUayNuOoayR1S2bkUCFp0KJvaI1I/XNb4LWoaYhp/tiyheID1IhqCpgCt5sdEScKClY9VCVfgLsAE3KW0iKWE7IPQZ+N+MS/64uaMCCK33REV8jz6p93uSB2gURT1JI1IcMYLkv0hIqa2wVbARQYS5ImwFsHHBI5wyzwPm7Hi1APqP7HIgnyE8xjsXUvoZjIEypk5149ODwiv5LltHqB/ELI5jj2OfLt7BIDpTyOL65BXIcApXyh0LpcnQ8hz/dinW5s8dTYvGPj1Oky+Szt7HcIzVZ0bQr2hQioMEV6Ows1iuAj2CMNDFAvdyIJNjcnUTMCJp5G86DeVLk6QVax4wBFHuKNFjVv62AIcZ3KRxQGolIy160QR54xnOMfx9MDBfy130NydOIAEAAQA= holger@Holgers-MacBook-Pro.local
+
+/data/misc/wifi/WifiConfigStore.xml
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<WifiConfigStoreData>
+<int name="Version" value="1" />
+<NetworkList>
+<Network>
+<WifiConfiguration>
+<string name="ConfigKey">&quot;Zum Internet 5GHz&quot;WPA_PSK</string>
+<string name="SSID">&quot;Zum Internet 5GHz&quot;</string>
+<null name="BSSID" />
+<string name="PreSharedKey">&quot;ZumLIDLrechtsrum&quot;</string>
+<null name="WEPKeys" />
+<int name="WEPTxKeyIndex" value="0" />
+<boolean name="HiddenSSID" value="false" />
+<boolean name="RequirePMF" value="false" />
+<byte-array name="AllowedKeyMgmt" num="1">02</byte-array>
+<byte-array name="AllowedProtocols" num="1">03</byte-array>
+<byte-array name="AllowedAuthAlgos" num="1">01</byte-array>
+<byte-array name="AllowedGroupCiphers" num="1">0f</byte-array>
+<byte-array name="AllowedPairwiseCiphers" num="1">06</byte-array>
+<boolean name="Shared" value="true" />
+<int name="Status" value="2" />
+<null name="FQDN" />
+<null name="ProviderFriendlyName" />
+<null name="LinkedNetworksList" />
+<null name="DefaultGwMacAddress" />
+<boolean name="ValidatedInternetAccess" value="true" />
+<boolean name="NoInternetAccessExpected" value="false" />
+<int name="UserApproved" value="0" />
+<boolean name="MeteredHint" value="false" />
+<int name="MeteredOverride" value="0" />
+<boolean name="UseExternalScores" value="false" />
+<int name="NumAssociation" value="14" />
+<int name="CreatorUid" value="1000" />
+<string name="CreatorName">android.uid.system:1000</string>
+<string name="CreationTime">time=04-16 00:39:37.804</string>
+<int name="LastUpdateUid" value="1000" />
+<string name="LastUpdateName">android.uid.system:1000</string>
+<int name="LastConnectUid" value="1000" />
+<boolean name="IsLegacyPasspointConfig" value="false" />
+<long-array name="RoamingConsortiumOIs" num="0" />
+<string name="RandomizedMacAddress">02:00:00:00:00:00</string>
+</WifiConfiguration>
+<NetworkStatus>
+<string name="SelectionStatus">NETWORK_SELECTION_ENABLED</string>
+<string name="DisableReason">NETWORK_SELECTION_ENABLE</string>
+<string name="ConnectChoice">&quot;unboxing&quot;NONE</string>
+<long name="ConnectChoiceTimeStamp" value="1555417526265" />
+<boolean name="HasEverConnected" value="true" />
+</NetworkStatus>
+<IpConfiguration>
+<string name="IpAssignment">DHCP</string>
+<string name="ProxySettings">NONE</string>
+</IpConfiguration>
+</Network>
+<Network>
+<WifiConfiguration>
+<string name="ConfigKey">&quot;unboxing&quot;NONE</string>
+<string name="SSID">&quot;unboxing&quot;</string>
+<null name="BSSID" />
+<null name="PreSharedKey" />
+<null name="WEPKeys" />
+<int name="WEPTxKeyIndex" value="0" />
+<boolean name="HiddenSSID" value="false" />
+<boolean name="RequirePMF" value="false" />
+<byte-array name="AllowedKeyMgmt" num="1">01</byte-array>
+<byte-array name="AllowedProtocols" num="1">03</byte-array>
+<byte-array name="AllowedAuthAlgos" num="1">01</byte-array>
+<byte-array name="AllowedGroupCiphers" num="1">0f</byte-array>
+<byte-array name="AllowedPairwiseCiphers" num="1">06</byte-array>
+<boolean name="Shared" value="true" />
+<int name="Status" value="2" />
+<null name="FQDN" />
+<null name="ProviderFriendlyName" />
+<null name="LinkedNetworksList" />
+<null name="DefaultGwMacAddress" />
+<boolean name="ValidatedInternetAccess" value="true" />
+<boolean name="NoInternetAccessExpected" value="false" />
+<int name="UserApproved" value="0" />
+<boolean name="MeteredHint" value="false" />
+<int name="MeteredOverride" value="0" />
+<boolean name="UseExternalScores" value="false" />
+<int name="NumAssociation" value="2" />
+<int name="CreatorUid" value="1000" />
+<string name="CreatorName">android.uid.system:1000</string>
+<string name="CreationTime">time=04-16 14:25:26.234</string>
+<int name="LastUpdateUid" value="1000" />
+<string name="LastUpdateName">android.uid.system:1000</string>
+<int name="LastConnectUid" value="1000" />
+<boolean name="IsLegacyPasspointConfig" value="false" />
+<long-array name="RoamingConsortiumOIs" num="0" />
+<string name="RandomizedMacAddress">02:00:00:00:00:00</string>
+</WifiConfiguration>
+<NetworkStatus>
+<string name="SelectionStatus">NETWORK_SELECTION_ENABLED</string>
+<string name="DisableReason">NETWORK_SELECTION_ENABLE</string>
+<null name="ConnectChoice" />
+<long name="ConnectChoiceTimeStamp" value="-1" />
+<boolean name="HasEverConnected" value="true" />
+</NetworkStatus>
+<IpConfiguration>
+<string name="IpAssignment">DHCP</string>
+<string name="ProxySettings">NONE</string>
+</IpConfiguration>
+</Network>
+</NetworkList>
+<PasspointConfigData>
+<long name="ProviderIndex" value="0" />
+</PasspointConfigData>
+</WifiConfigStoreData>
+
+
+ content://telephony/carriers --where "name='things'"                         <
+Row: 0 _id=3478, name=things, numeric=23450, mcc=234, mnc=50, apn=TM, user=, server=, password=, proxy=, port=, mmsproxy=, mmsport=, mmsc=, authtype=-1, type=default,mms,supl,hipri,fota,ims,cbs, current=1, protocol=IP, roaming_protocol=IP, carrier_enabled=1, bearer=0, bearer_bitmask=0, network_type_bitmask=0, mvno_type=, mvno_match_data=, sub_id=1, profile_id=0, modem_cognitive=0, max_conns=0, wait_time=0, max_conns_time=0, mtu=0, edited=1, user_visible=1, user_editable=1, owned_by=1, apn_set_id=0
+
+

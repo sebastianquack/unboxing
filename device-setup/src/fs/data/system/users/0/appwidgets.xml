@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<gs version="1">
+<p pkg="org.lineageos.eleven" cl="org.lineageos.eleven.appwidgets.AppWidgetLarge" tag="8" />
+<p pkg="org.lineageos.lockclock" cl="org.lineageos.lockclock.ClockWidgetProvider" tag="a" />
+<h pkg="com.android.launcher3" id="400" tag="0" />
+<g id="2" rid="0" h="0" p="a" min_width="236" min_height="e0" max_width="2bd" max_height="136" host_category="1" />
+<g id="3" rid="0" h="0" p="8" min_width="2ac" min_height="e0" max_width="34e" max_height="136" host_category="1" />
+</gs>

@@ -1,0 +1,244 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<package-restrictions>
+    <pkg name="org.lineageos.overlay.accent.black" ceDataInode="114804" />
+    <pkg name="com.android.cts.priv.ctsshim" ceDataInode="114807" />
+    <pkg name="org.lineageos.overlay.accent.brown" ceDataInode="114810" />
+    <pkg name="org.lineageos.overlay.accent.green" ceDataInode="114813" />
+    <pkg name="com.android.internal.display.cutout.emulation.corner" ceDataInode="114816" />
+    <pkg name="com.android.internal.display.cutout.emulation.double" ceDataInode="114828" />
+    <pkg name="com.android.providers.telephony" ceDataInode="114693" />
+    <pkg name="com.android.providers.calendar" ceDataInode="114825" />
+    <pkg name="com.android.providers.media" ceDataInode="114831" />
+    <pkg name="com.android.wallpapercropper" ceDataInode="114834" />
+    <pkg name="com.android.documentsui" ceDataInode="114837" />
+    <pkg name="android.auto_generated_rro__" ceDataInode="114840" />
+    <pkg name="com.android.externalstorage" ceDataInode="114843" />
+    <pkg name="com.android.htmlviewer" ceDataInode="114846" />
+    <pkg name="com.android.companiondevicemanager" ceDataInode="114849" />
+    <pkg name="com.android.mms.service" ceDataInode="114696" />
+    <pkg name="com.android.providers.downloads" ceDataInode="114852" />
+    <pkg name="com.android.messaging" ceDataInode="114855">
+        <enabled-components>
+            <item name="com.android.messaging.datamodel.NoConfirmationSmsSendService" />
+        </enabled-components>
+        <disabled-components>
+            <item name="com.android.messaging.receiver.AbortMmsWapPushReceiver" />
+            <item name="com.android.messaging.receiver.AbortSmsReceiver" />
+            <item name="com.android.messaging.receiver.MmsWapPushReceiver" />
+            <item name="com.android.messaging.receiver.SmsReceiver" />
+        </disabled-components>
+    </pkg>
+    <pkg name="com.android.terminal" ceDataInode="114858" />
+    <pkg name="org.lineageos.lockclock" ceDataInode="114861" />
+    <pkg name="com.android.defcontainer" ceDataInode="114702" />
+    <pkg name="org.lineageos.overlay.black" ceDataInode="114864" />
+    <pkg name="com.android.providers.downloads.ui" ceDataInode="114867" />
+    <pkg name="com.android.pacprocessor" ceDataInode="114870" />
+    <pkg name="com.android.simappdialog" ceDataInode="114873" />
+    <pkg name="org.lineageos.profiles" ceDataInode="114876">
+        <disabled-components>
+            <item name="org.lineageos.profiles.StartUpReceiver" />
+        </disabled-components>
+    </pkg>
+    <pkg name="com.android.internal.display.cutout.emulation.tall" ceDataInode="114879" />
+    <pkg name="com.android.certinstaller" ceDataInode="114882" />
+    <pkg name="com.android.carrierconfig" ceDataInode="114885" />
+    <pkg name="android" ceDataInode="114708" />
+    <pkg name="com.android.contacts" ceDataInode="114888" />
+    <pkg name="com.android.camera2" ceDataInode="114891">
+        <disabled-components>
+            <item name="com.android.camera.DisableCameraReceiver" />
+        </disabled-components>
+    </pkg>
+    <pkg name="org.lineageos.recorder" ceDataInode="114894" />
+    <pkg name="com.android.egg" ceDataInode="114897" />
+    <pkg name="com.android.mtp" ceDataInode="114900" />
+    <pkg name="com.android.stk" ceDataInode="114906">
+        <disabled-components>
+            <item name="com.android.stk.StkMain" />
+        </disabled-components>
+    </pkg>
+    <pkg name="com.android.launcher3" ceDataInode="114909" />
+    <pkg name="com.android.backupconfirm" ceDataInode="114914" />
+    <pkg name="org.lineageos.weather.provider" ceDataInode="114919" />
+    <pkg name="com.android.statementservice" ceDataInode="114922" />
+    <pkg name="com.android.settings.intelligence" ceDataInode="114925" />
+    <pkg name="com.android.calendar" ceDataInode="114928">
+        <disabled-components>
+            <item name="com.android.calendar.UpgradeReceiver" />
+        </disabled-components>
+    </pkg>
+    <pkg name="org.lineageos.setupwizard" ceDataInode="114931">
+        <enabled-components>
+            <item name="org.lineageos.setupwizard.wizardmanager.WizardManager" />
+        </enabled-components>
+        <disabled-components>
+            <item name="org.lineageos.setupwizard.ChooseDataSimActivity" />
+            <item name="org.lineageos.setupwizard.BluetoothSetupActivity" />
+            <item name="org.lineageos.setupwizard.SetupWizardExitService" />
+            <item name="org.lineageos.setupwizard.SetupWizardActivity" />
+            <item name="org.lineageos.setupwizard.PartnerReceiver" />
+        </disabled-components>
+    </pkg>
+    <pkg name="com.sony.timekeep" ceDataInode="114711" />
+    <pkg name="com.android.providers.settings" ceDataInode="114717" />
+    <pkg name="com.android.sharedstoragebackup" ceDataInode="114934" />
+    <pkg name="com.android.printspooler" ceDataInode="114937" />
+    <pkg name="com.android.dreams.basic" ceDataInode="114940" />
+    <pkg name="com.android.webview" ceDataInode="114943" />
+    <pkg name="com.android.se" ceDataInode="114947" />
+    <pkg name="com.android.inputdevices" ceDataInode="114723" />
+    <pkg name="org.lineageos.overlay.accent.orange" ceDataInode="114950" />
+    <pkg name="com.android.bips" ceDataInode="114953" />
+    <pkg name="org.lineageos.overlay.accent.purple" ceDataInode="114956" />
+    <pkg name="com.android.cellbroadcastreceiver" ceDataInode="114962" />
+    <pkg name="android.ext.shared" ceDataInode="114729" />
+    <pkg name="com.android.onetimeinitializer" ceDataInode="114965" />
+    <pkg name="org.lineageos.overlay.accent.yellow" ceDataInode="114968" />
+    <pkg name="com.android.server.telecom" ceDataInode="114735" />
+    <pkg name="org.lineageos.overlay.accent.blue" ceDataInode="114971" />
+    <pkg name="org.lineageos.overlay.accent.cyan" ceDataInode="114974" />
+    <pkg name="org.lineageos.overlay.accent.pink" ceDataInode="114977" />
+    <pkg name="com.android.keychain" ceDataInode="114980" />
+    <pkg name="com.android.printservice.recommendation" ceDataInode="114983" />
+    <pkg name="com.android.dialer" ceDataInode="114738" />
+    <pkg name="com.android.gallery3d" ceDataInode="114986">
+        <disabled-components>
+            <item name="com.android.camera.DisableCameraReceiver" />
+        </disabled-components>
+    </pkg>
+    <pkg name="com.unboxing" ceDataInode="115413" />
+    <pkg name="android.ext.services" ceDataInode="114744" />
+    <pkg name="com.android.calllogbackup" ceDataInode="114989" />
+    <pkg name="com.android.packageinstaller" ceDataInode="114750" />
+    <pkg name="com.android.carrierdefaultapp" ceDataInode="114992" domainVerificationStatus="2" app-link-generation="1">
+        <disabled-components>
+            <item name="com.android.carrierdefaultapp.URLHandlerActivity" />
+        </disabled-components>
+    </pkg>
+    <pkg name="org.lineageos.jelly" ceDataInode="114995" />
+    <pkg name="com.android.proxyhandler" ceDataInode="114756" />
+    <pkg name="com.android.inputmethod.latin" ceDataInode="114762">
+        <disabled-components>
+            <item name="com.android.inputmethod.latin.setup.SetupActivity" />
+        </disabled-components>
+    </pkg>
+    <pkg name="org.lineageos.eleven" ceDataInode="114998" />
+    <pkg name="com.android.managedprovisioning" ceDataInode="115001" />
+    <pkg name="com.android.dreams.phototable" ceDataInode="115004" />
+    <pkg name="org.lineageos.overlay.accent.red" ceDataInode="115007" />
+    <pkg name="com.android.smspush" ceDataInode="115010" />
+    <pkg name="com.android.wallpaper.livepicker" ceDataInode="115013" />
+    <pkg name="org.lineageos.audiofx" ceDataInode="115016" />
+    <pkg name="org.lineageos.overlay.dark" ceDataInode="115019" />
+    <pkg name="com.android.storagemanager" ceDataInode="115022" />
+    <pkg name="com.android.bookmarkprovider" ceDataInode="115025" />
+    <pkg name="com.android.settings" ceDataInode="114768">
+        <enabled-components>
+            <item name="com.android.settings.Settings$MyDeviceInfoActivity" />
+            <item name="com.android.settings.Settings$ConnectedDeviceDashboardActivity" />
+            <item name="com.android.settings.Settings$PowerUsageSummaryActivity" />
+            <item name="com.android.settings.Settings$NetworkDashboardActivity" />
+            <item name="com.android.settings.Settings$WifiDisplaySettingsActivity" />
+            <item name="com.android.settings.Settings$DateTimeSettingsActivity" />
+            <item name="com.android.settings.Settings$BluetoothSettingsActivity" />
+            <item name="com.android.settings.Settings$DevelopmentSettingsDashboardActivity" />
+            <item name="com.android.settings.backup.BackupSettingsActivity" />
+            <item name="com.android.settings.Settings$WifiSettingsActivity" />
+            <item name="com.android.settings.WebViewImplementation" />
+            <item name="com.android.settings.Settings$UserSettingsActivity" />
+            <item name="com.android.settings.Settings$DataUsageSummaryActivity" />
+        </enabled-components>
+        <disabled-components>
+            <item name="com.android.settings.Settings$DeviceInfoSettingsActivity" />
+            <item name="com.android.settings.CryptKeeper" />
+            <item name="com.android.settings.Settings$SimSettingsActivity" />
+            <item name="com.android.settings.Settings$DataUsageSummaryLegacyActivity" />
+        </disabled-components>
+    </pkg>
+    <pkg name="com.android.calculator2" ceDataInode="115028" />
+    <pkg name="org.lineageos.updater" ceDataInode="115031" />
+    <pkg name="com.android.cts.ctsshim" ceDataInode="115034" />
+    <pkg name="org.lineageos.lineageparts" ceDataInode="115040" />
+    <pkg name="org.lineageos.settings.device" ceDataInode="115043" />
+    <pkg name="org.lineageos.lineagesettings" ceDataInode="114774" />
+    <pkg name="com.android.vpndialogs" ceDataInode="115046" />
+    <pkg name="lineageos.platform" ceDataInode="114777" />
+    <pkg name="com.android.email" ceDataInode="115049">
+        <enabled-components>
+            <item name="com.android.email.service.EasAuthenticatorService" />
+        </enabled-components>
+        <disabled-components>
+            <item name="com.android.email.service.EasAuthenticatorServiceAlternate" />
+            <item name="com.android.email.service.EmailUpgradeBroadcastReceiver" />
+            <item name="com.android.email.service.LegacyEmailAuthenticatorService" />
+            <item name="com.android.email.service.LegacyEasAuthenticatorService" />
+            <item name="com.android.email.service.AttachmentService" />
+            <item name="com.android.email.activity.ComposeActivityEmail" />
+        </disabled-components>
+    </pkg>
+    <pkg name="com.android.phone" ceDataInode="114783" />
+    <pkg name="com.android.shell" ceDataInode="114789">
+        <enabled-components>
+            <item name="com.android.shell.BugreportStorageProvider" />
+        </enabled-components>
+    </pkg>
+    <pkg name="com.android.wallpaperbackup" ceDataInode="115052" />
+    <pkg name="com.android.providers.blockednumber" ceDataInode="115058" />
+    <pkg name="com.android.providers.userdictionary" ceDataInode="115061" />
+    <pkg name="com.android.emergency" ceDataInode="115067" />
+    <pkg name="com.android.location.fused" ceDataInode="114795" />
+    <pkg name="com.android.deskclock" ceDataInode="115070" />
+    <pkg name="com.android.systemui" ceDataInode="114801">
+        <disabled-components>
+            <item name="com.android.systemui.tuner.TunerActivity" />
+        </disabled-components>
+    </pkg>
+    <pkg name="com.android.exchange" ceDataInode="115073" />
+    <pkg name="com.android.bluetoothmidiservice" ceDataInode="115076" />
+    <pkg name="com.android.traceur" ceDataInode="115079" />
+    <pkg name="com.android.bluetooth" ceDataInode="115085" />
+    <pkg name="com.android.development" ceDataInode="115088" />
+    <pkg name="com.android.wallpaperpicker" ceDataInode="115091" />
+    <pkg name="com.android.providers.contacts" ceDataInode="115094" />
+    <pkg name="com.android.captiveportallogin" ceDataInode="115097" />
+    <preferred-activities>
+        <item name="com.android.messaging/.ui.conversation.LaunchConversationActivity" match="200000" always="true" set="1">
+            <set name="com.android.messaging/.ui.conversation.LaunchConversationActivity" />
+            <filter>
+                <action name="android.intent.action.SENDTO" />
+                <cat name="android.intent.category.DEFAULT" />
+                <scheme name="mmsto" />
+            </filter>
+        </item>
+        <item name="com.android.messaging/.ui.conversation.LaunchConversationActivity" match="200000" always="true" set="1">
+            <set name="com.android.messaging/.ui.conversation.LaunchConversationActivity" />
+            <filter>
+                <action name="android.intent.action.SENDTO" />
+                <cat name="android.intent.category.DEFAULT" />
+                <scheme name="mms" />
+            </filter>
+        </item>
+        <item name="com.android.messaging/.ui.conversation.LaunchConversationActivity" match="200000" always="true" set="1">
+            <set name="com.android.messaging/.ui.conversation.LaunchConversationActivity" />
+            <filter>
+                <action name="android.intent.action.SENDTO" />
+                <cat name="android.intent.category.DEFAULT" />
+                <scheme name="smsto" />
+            </filter>
+        </item>
+        <item name="com.android.messaging/.ui.conversation.LaunchConversationActivity" match="200000" always="true" set="1">
+            <set name="com.android.messaging/.ui.conversation.LaunchConversationActivity" />
+            <filter>
+                <action name="android.intent.action.SENDTO" />
+                <cat name="android.intent.category.DEFAULT" />
+                <scheme name="sms" />
+            </filter>
+        </item>
+    </preferred-activities>
+    <persistent-preferred-activities />
+    <crossProfile-intent-filters />
+    <default-apps>
+        <default-dialer packageName="com.android.dialer" />
+    </default-apps>
+</package-restrictions>

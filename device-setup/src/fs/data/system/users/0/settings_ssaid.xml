@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<settings version="-1">
+  <setting id="0" name="userkey" value="2EAD1C53F072C014C0DBE0BE5E6C27F6F42EDEBBDF9B3470BC840629A8A02DCB" package="android" defaultValue="2EAD1C53F072C014C0DBE0BE5E6C27F6F42EDEBBDF9B3470BC840629A8A02DCB" defaultSysSet="true" tag="null" />
+  <setting id="2" name="10084" value="0d663d7cd2937aa3" package="com.unboxing" defaultValue="0d663d7cd2937aa3" defaultSysSet="false" tag="null" />
+</settings>
