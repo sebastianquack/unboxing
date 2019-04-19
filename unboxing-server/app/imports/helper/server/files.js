@@ -1,11 +1,16 @@
 import recursive from "recursive-readdir";
 import path from 'path';
 import fs from 'fs';
+import archiver from 'archiver';
 import AdmZip from 'adm-zip';
 
 import Files from '../../collections/files';
 
-const filesFilter = (file) => (['.mp3','.wav','.aiff','.m4a','.MP3','.apk','.mp4','.png','.jpg','.mov','.mid'].indexOf(path.extname(file)) > -1)
+
+const filesFilter = (file) => (
+  ['.mp3','.wav','.aiff','.m4a','.MP3','.apk','.mp4','.png','.jpg','.mov','.mid'].indexOf(path.extname(file)) > -1
+  && ['__MACOSX'].indexOf(file) < 0
+  )
 
 function readFiles(callback=false) {
   console.log("reading files")
@@ -97,7 +102,14 @@ async function updateFiles(callback=false) {
 }
 
 function makeArchive(zipPath) {
-  var zip = new AdmZip();
+  const output = fs.createWriteStream(zipPath);
+  const archive = archiver('zip', {
+    zlib: { level: 9 } // Sets the compression level.
+  });
+  archive.pipe(output);
+  output.on('close', function() {
+    console.log('created zip, ' + archive.pointer() + ' total bytes');
+  });
 
   console.log("creating zip archive")
   recursive(global.files_dir, function (err, files) {
@@ -112,11 +124,11 @@ function makeArchive(zipPath) {
       const dirRelative = p.dir.substr(global.files_dir.length);
       const fs_relative_path = dirRelative+'/'+p.base
 
-      // console.log("adding " + fs_relative_path + " to zip ")
-      zip.addLocalFile(file, dirRelative);
+      archive.file(file, { name: fs_relative_path });
     }
 
-    zip.writeZip(zipPath);
+    // zip.writeZip(zipPath);
+    archive.finalize();
 
   })
 }

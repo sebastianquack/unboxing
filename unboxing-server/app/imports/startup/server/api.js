@@ -26,7 +26,7 @@ var app = express()
 app.use(global.files_uri_path, serveStatic(files_dir, { 'index': false }))
 
 // body parse
-app.use(bodyParser.json()); // for parsing application/json
+//app.use(bodyParser.json()); // for parsing application/json
 
 // serve REST api requests
 app.get('/api/getEverything.json', getEverything);
