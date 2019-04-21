@@ -13,7 +13,8 @@ const fontSizes = {
   xl: 32,
   l: 24,
   m: 19,
-  s: 9
+  s: 15,
+  xs: 9
 }
 
 const colors = {

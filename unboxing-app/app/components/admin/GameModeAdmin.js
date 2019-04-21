@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity, Switch, Picker } from 'react-
 
 import {globalStyles} from '../../../config/globalStyles';
 import {gameService, storageService, soundService} from '../../services';
-import {withGameService, withStorageService} from '../ServiceConnector';
+import {withGameService, withStorageService, withSoundService} from '../ServiceConnector';
 import DebugToggle from './DebugToggle';
 
 class GameModeAdmin extends React.Component { 
@@ -91,9 +91,10 @@ class GameModeAdmin extends React.Component {
             soundService.runSoundTest();
           }}><Text>Run Crazy Sound Test</Text>
         </TouchableOpacity>
+        <Text style={{marginBottom: 20}}>soundService errorLog: {JSON.stringify(this.props.soundService.errorLog)}</Text>
       </View>
     );
   }
 }
 
-export default withGameService(withStorageService(GameModeAdmin));
+export default withSoundService(withGameService(withStorageService(GameModeAdmin)));

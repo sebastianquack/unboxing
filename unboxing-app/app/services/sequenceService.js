@@ -254,20 +254,27 @@ class SequenceService extends Service {
     
 		// sequence hasn't started yet
 		if(this.state.controlStatus == "ready" && this.state.currentTrack) {
-			const firstItem = this.firstItemInTrack(this.state.currentTrack.name);
-			if(firstItem) {
-				if(firstItem.startTime == 0) {				
-					this.setActionMessage(endedMessage + storageService.t("sequence-start-first"));
-					this.activateNextUserAction();
-					
-				} else {
-					this.setActionMessage(endedMessage + storageService.t("sequence-start-any"));
-					this.deactivateUserAction();
-				}
-			} else {
-				this.setActionMessage(endedMessage + storageService.t("sequence-start-none"));
-				this.deactivateUserAction();
-			}
+
+
+      // check with gameService if we are allowed to start
+      if(gameService.enoughChallengeParticipantsReady()) { 
+  			const firstItem = this.firstItemInTrack(this.state.currentTrack.name);
+  			if(firstItem) {
+  				if(firstItem.startTime == 0) {				
+  					this.setActionMessage(endedMessage + storageService.t("sequence-start-first"));
+  					this.activateNextUserAction();
+  					
+  				} else {
+  					this.setActionMessage(endedMessage + storageService.t("sequence-start-any"));
+  					this.deactivateUserAction();
+  				}
+  			} else {
+  				this.setActionMessage(endedMessage + storageService.t("sequence-start-none"));
+  				this.deactivateUserAction();
+  			}
+      } else {
+        this.setActionMessage(storageService.t("waiting-for-more-participants"));
+      }
 		}
 
 		// sequence is playing

@@ -13,6 +13,7 @@ const instruments = loadInstrumentIcons();
 
 const instrumentBackground = require('../../assets/img/instrumentBackground.png')
 const instrumentBackgroundSelected = require('../../assets/img/instrumentBackgroundSelected.png')
+const instrumentBackgroundFigure = require('../../assets/img/trackSelectedMarker.png')
 
 class TrackSelector extends React.Component { 
   constructor(props) {
@@ -27,7 +28,10 @@ class TrackSelector extends React.Component {
     return (
       <TouchableOpacity
           key={index}
-          onPress={()=>{gameService.trackSelect(track)}}
+          onPress={()=>{
+            gameService.trackSelect(track);
+            gameService.handleCloseModal();
+          }}
           style={{width: 150, height: 200, marginRight: 10, justifyContent: 'center', alignItems: 'center'}}
         >
         <ImageBackground
@@ -42,7 +46,21 @@ class TrackSelector extends React.Component {
               source={instruments[track.name].image} 
               resizeMode="contain"
           />}
+
+          { this.props.selectedTracks && this.props.selectedTracks[track.name] && !( this.props.selectedTracks[track.name] == 1 && selected ) && <Image 
+              style={{
+                width: 40,
+                height: 40,
+                position: "absolute",
+                top: 79,
+                left: 65
+              }}
+              source={instrumentBackgroundFigure} 
+              resizeMode="contain"
+          />}
         </ImageBackground>
+
+          
         
         <UIText align="center" style={{color: "#F3DFD4"}}>
           {track.name}
@@ -55,7 +73,7 @@ class TrackSelector extends React.Component {
     if(!this.props.sequence) return <View><Text>sequence not found</Text></View>;
     const tracks = this.props.sequence.tracks.map((t, index)=>this.renderTrack(this.props.sequence, t, index));
     return (
-      <View style={{paddingLeft: 64, paddingRight: 64, flexDirection: 'row', flexWrap: 'wrap'}}>
+      <View style={{paddingTop: 20, paddingLeft: 64, paddingRight: 64, flexDirection: 'row', flexWrap: 'wrap'}}>
         {tracks}
       </View>
     );

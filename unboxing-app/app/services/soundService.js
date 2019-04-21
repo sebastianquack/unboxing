@@ -22,7 +22,8 @@ class SoundSevice extends Service {
 			delta: 0,
 			volume: 1,
 			speed: 0.5,
-			soundCounter: 0
+			soundCounter: 0,
+      errorLog: []
 		});
 
 		// not reative
@@ -311,6 +312,8 @@ class SoundSevice extends Service {
 
         } else {
 		    	console.warn('playback error');		    	
+          let errorLog = this.state.errorLog;
+          errorLog.push({time: this.getSyncTime(), error: "playback error"});
 		  	}	
 		  	
 		});
