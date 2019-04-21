@@ -17,9 +17,11 @@ USERNAME=pi
 HOST=$1
 REPLACE=$2
 
+IDENTITY=$(git rev-parse --show-toplevel)/unboxing-raspi/id_rsa
+
 echo Running on $USERNAME@$HOST ...
 
-ssh $USERNAME@$HOST /bin/bash << EOF
+ssh -i $IDENTITY $USERNAME@$HOST /bin/bash << EOF
 
 sudo sh -c "sed 's/$FIND/$REPLACE/g' $DIR/etc/hostname > /etc/hostname"
 sudo sh -c "sed 's/$FIND/$REPLACE/g' $DIR/etc/hosts > /etc/hosts"

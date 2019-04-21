@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# sets the ssid of the acccess point
+# sets current time
 
 command=`basename "$0"`
 if [ $# -lt 1 ]
@@ -17,10 +17,4 @@ IDENTITY=$(git rev-parse --show-toplevel)/unboxing-raspi/id_rsa
 
 echo Running on $USERNAME@$HOST ...
 
-ssh -i $IDENTITY $USERNAME@$HOST /bin/bash << EOF
-
-echo "power off"
-sudo poweroff &
-exit
-
-EOF
+ssh -i $IDENTITY $USERNAME@$HOST 'sudo date -s @`date +%s`'

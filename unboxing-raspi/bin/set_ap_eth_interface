@@ -11,15 +11,17 @@ if [ $# -lt 2 ]
 fi
 
 DIR=/home/pi/ap-2-interfaces
-FIND=enxb827eb9ea941
+FIND=eth0
 
 USERNAME=pi
 HOST=$1
 REPLACE=$2
 
+IDENTITY=$(git rev-parse --show-toplevel)/unboxing-raspi/id_rsa
+
 echo Running on $USERNAME@$HOST ...
 
-ssh $USERNAME@$HOST /bin/bash << EOF
+ssh -i $IDENTITY $USERNAME@$HOST /bin/bash << EOF
 
 sudo sh -c "sed 's/$FIND/$2/g' $DIR/etc/iptables.ipv4.nat > /etc/iptables.ipv4.nat"
 echo "please reboot to activate the changes"

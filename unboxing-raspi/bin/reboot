@@ -13,12 +13,14 @@ fi
 USERNAME=pi
 HOST=$1
 
+IDENTITY=$(git rev-parse --show-toplevel)/unboxing-raspi/id_rsa
+
 echo Running on $USERNAME@$HOST ...
 
-ssh $USERNAME@$HOST /bin/bash << EOF
+ssh -i $IDENTITY $USERNAME@$HOST /bin/bash << EOF
 
 echo "rebooting"
-sudo reboot &&
+sudo reboot &
 exit
 
 EOF

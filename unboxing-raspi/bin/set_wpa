@@ -19,11 +19,15 @@ HOST=$1
 REPLACE1=$2
 REPLACE2=$3
 
+IDENTITY=$(git rev-parse --show-toplevel)/unboxing-raspi/id_rsa
+
 echo Running on $USERNAME@$HOST ...
 
-ssh $USERNAME@$HOST /bin/bash << EOF
+ssh -i $IDENTITY $USERNAME@$HOST /bin/bash << EOF
 
 sudo sh -c "sed 's/$FIND1/$REPLACE1/g; s/$FIND2/$REPLACE2/g' $DIR/etc/wpa_supplicant/wpa_supplicant.conf > /etc/wpa_supplicant/wpa_supplicant.conf"
-echo "please reboot to activate the changes"
+sudo systemctl restart wpa_supplicant.service
+sudo systemctl restart networking.service
+sudo wpa_cli -i wlan0 reconfigure
 
 EOF

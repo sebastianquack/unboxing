@@ -12,14 +12,16 @@ USERNAME=pi
 HOST=$1
 FILE=$2
 
+IDENTITY=$(git rev-parse --show-toplevel)/unboxing-raspi/id_rsa
+
 echo "uploading to $USERNAME@$HOST"
 
 echo "Uploading..."
-scp $FILE $USERNAME@$HOST:/home/pi/uploaded_files.zip
+scp -i $IDENTITY $FILE $USERNAME@$HOST:/home/pi/uploaded_files.zip
 
 # continuing remotely:
 echo "Continuing remotely:"
-ssh $USERNAME@$1 /bin/bash << EOF
+ssh -i $IDENTITY $USERNAME@$1 /bin/bash << EOF
 
 echo "Stopping server..."
 sudo systemctl stop unboxing-server
