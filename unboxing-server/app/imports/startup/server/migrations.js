@@ -88,7 +88,18 @@ Migrations.add({
   down: function() {}
 });
 
-const version = 8;
+Migrations.add({
+  version: 9,
+  name: 'add minParticipants to challenge',
+  up: function() {
+    add_default_attributes_to_challenge({
+      minParticipants: 1
+    });
+  },
+  down: function() {}
+});
+
+const version = 9;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);

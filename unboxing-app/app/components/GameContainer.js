@@ -54,6 +54,12 @@ class GameContainer extends React.Component {
           currentStep={this.props.gameService.pathIndex >= 1 ? this.props.gameService.pathIndex - 1 : null}
           minutesToEnd={this.props.gameService.minutesToEnd}
           endText={storageService.t("time-left")}
+          midSection={
+            <ConnectionIndicator 
+              current={this.props.gameService.numChallengeParticipants} 
+              max={this.props.sequenceService.currentSequence ? this.props.sequenceService.currentSequence.tracks.length : 0} 
+            />
+          }
         />  
       }
 
@@ -65,7 +71,7 @@ class GameContainer extends React.Component {
           description={storageService.t("practice-sequence-subtitle")} 
           minutesToEnd={this.props.gameService.minutesToEnd}
           endText={storageService.t("time-left")}
-        />   
+          />
       }
 
     } else {
@@ -100,8 +106,8 @@ class GameContainer extends React.Component {
     
     // configure modal
     if(this.props.gameService.showInstrumentSelector) {
-        modalContent = <TrackSelector sequence={this.props.sequenceService.currentSequence}/>
-        buttonModal = <Button type="wide" text="Auswählen" onPress={()=>{gameService.handleCloseModal()}}/>
+        modalContent = <TrackSelector selectedTracks={this.props.gameService.selectedTracks} sequence={this.props.sequenceService.currentSequence}/>
+        buttonModal = <Button type="wide" text={storageService.t("close")} onPress={()=>{gameService.handleCloseModal()}}/>
     }
     
     // configure secondary screen and buttons
@@ -134,9 +140,6 @@ class GameContainer extends React.Component {
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
         if(!gameService.nthPlaceInTutorial(0)) {
           buttonMid = <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;  
-        }
-        if(!gameService.nthPlaceInTutorial(0)) {
-          overlayContent = <ConnectionIndicator current={this.props.gameService.numChallengeParticipants} max={this.props.sequenceService.currentSequence ? this.props.sequenceService.currentSequence.tracks.length : 0} />; 
         }
         break;
  

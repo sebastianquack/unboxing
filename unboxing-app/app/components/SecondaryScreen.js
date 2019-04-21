@@ -40,15 +40,17 @@ class SecondaryScreen extends React.Component {
       <View style={{
           flex: 2,
           // backgroundColor: "red"
+          justifyContent: "center",
+          alignItems: "center"
         }}>
-        {this.props.instrument && <Video 
+        {this.props.instrument && instruments[this.props.instrument] && <Video 
           source={instruments[this.props.instrument].video} 
           repeat
           muted
           resizeMode="contain"
           style={{
-            height: "100%",
-            width: "100%"
+            height: "80%",
+            width: "80%",
           }}
           onError={()=>{console.warn("video load error " + JSON.stringify(this.videoError))}}
         />}
@@ -62,19 +64,19 @@ class SecondaryScreen extends React.Component {
             {this.props.instrument}
           </UIText>    
         }
-        <UIText size="s" align="center" caps wide em>{this.props.instrument ? storageService.t("current") : storageService.t("current")}</UIText>      
+        <UIText size="xs" align="center" caps wide em>{this.props.instrument ? storageService.t("current") : storageService.t("current")}</UIText>      
       </View>
     </View>
   }
 
   renderNavigation() { // TODO
-    return <Image
+    return navigationAssets[this.props.target] ? <Image
         source={navigationAssets[this.props.target].image}
         style={{
           height: "100%",
           width: "100%"
         }}
-      />
+      /> : null;
   }
 
   render() {

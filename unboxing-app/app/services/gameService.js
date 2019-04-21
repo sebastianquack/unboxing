@@ -242,7 +242,9 @@ class GameService extends Service {
 	setActiveChallenge = (challenge)=> {
 
 		this.setReactive({
-			activeChallenge: challenge
+			activeChallenge: challenge,
+      numChallengeParticipants: 1,
+      numChallengeParticipantsWithInstrument: 0,
 		});
 
     this.setReactive({challengeStatus: this.state.gameMode == "walk" ? "navigate" : "prepare"});
@@ -293,7 +295,12 @@ class GameService extends Service {
     if(msgObj.code == "challengeParticipantUpdate") {
       if(this.state.activeChallenge) {
         if(msgObj.challengeId == this.state.activeChallenge._id) {
-          this.setReactive({numChallengeParticipants: msgObj.numParticipants})
+          this.setReactive({
+            numChallengeParticipants: msgObj.numParticipants,
+            numChallengeParticipantsWithInstrument: msgObj.numParticipantsWithInstrument,
+            selectedTracks: msgObj.selectedTracks
+          })
+          this.initInfoStream();
         }  
       }
     }
@@ -308,15 +315,13 @@ class GameService extends Service {
     }
   }
 
-  activateNearbyCallbacks = () => {
-    nearbyService.setCustomCallbacks({
-      onConnectionEstablished: () => {
-        // todo
-      },
-      onMessageReceived: this.onMessageReceived
-    });   
-  }
+  // clear to start sequence
+  enoughChallengeParticipantsReady = ()=> {
+    if(!this.state.activeChallenge.minParticipants) return true;
 
+    return this.state.numChallengeParticipantsWithInstrument >= this.state.activeChallenge.minParticipants;
+  }
+  
   activateRelayCallbacks() {
     relayService.listenForMessages(this.onMessageReceived);
   }
@@ -354,11 +359,14 @@ class GameService extends Service {
   // called from TrackSelector when user selects track
   trackSelect = (track)=> {
     sequenceService.trackSelect(track);
+    this.setReactive({numChallengeParticipantsWithInstrument: this.state.numChallengeParticipantsWithInstrument + 1});
+    this.initInfoStream();
+    relayService.emitMessage({code: "selectTrack", deviceId: storageService.getDeviceId(), challengeId: this.state.activeChallenge._id, track: track.name});
   }
 
   startSequence = () => {
 
-      if(this.state.challengeStatus == "play") {
+      if(this.state.challengeStatus == "play" && this.enoughChallengeParticipantsReady()) {
         this.showNotification("starting sequence...");
         
         let nowTime = soundService.getSyncTime();
@@ -457,7 +465,9 @@ class GameService extends Service {
   					sequenceService.scheduleSoundForNextItem(now); 		
   				}
         }		
-			}	
+			}	else {
+        this.showNotification("couldn't start sequence - still loading?");
+      }
 		}
 
 		sequenceService.updateActionInterface();

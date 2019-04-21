@@ -5,22 +5,47 @@ server = app.listen(process.env.PORT || 3005);
 
 const io = require('socket.io')(server);
 
-let deviceMap = {}; // {deviceId: {challengeId: }} -- used to store where devices are
+let deviceMap = {}; // {deviceId: {challengeId: id, track: name}} -- used to store where devices are
 let challengeState = {} // {challengeId: {sequenceControlStatus: startTime: }}
 
+// returns {withInstrument: x, total: y}
 function countParticipants(challengeId) {
-  let numParticipants = 0;
+  let numParticipantsTotal = 0;
+  let numParticipantsWithInstrument = 0;
   for(let deviceId in deviceMap) {
-    if(deviceMap[deviceId] == challengeId) {
-      numParticipants++;
+    if(deviceMap[deviceId].challengeId == challengeId) {
+      numParticipantsTotal++;
+      if(deviceMap[deviceId].track) {
+        numParticipantsWithInstrument++;
+      }
     }
   }
-  return numParticipants;
+  return {withInstrument: numParticipantsWithInstrument, total: numParticipantsTotal}
+}
+
+// returns {piano: 2, violin1: 4}
+function countSelectedTracks(challengeId) {
+  let selectedTracks = {};
+  for(let deviceId in deviceMap) {
+    if(deviceMap[deviceId].track) {
+      if(!selectedTracks[deviceMap[deviceId].track]) selectedTracks[deviceMap[deviceId].track] = 0;
+      selectedTracks[deviceMap[deviceId].track]++;
+    }
+  }
+  return selectedTracks; 
 }
 
 function updateDeviceMap(socket, challengeId) {
   let numParticipants = countParticipants(challengeId);
-  let msgObj = {code: "challengeParticipantUpdate", challengeId: challengeId, numParticipants: numParticipants};
+  let selectedTracks = countSelectedTracks(challengeId);
+  let msgObj = {
+    code: "challengeParticipantUpdate", 
+    challengeId: challengeId, 
+    numParticipants: numParticipants.total,
+    numParticipantsWithInstrument: numParticipants.withInstrument,
+    selectedTracks: selectedTracks
+  };
+  console.log("updateDeviceMap", msgObj);
   socket.emit('message', msgObj);
   socket.broadcast.emit('message', msgObj);
 }
@@ -59,9 +84,20 @@ function init(io) {
     socket.on('message', async function(msg) {
       console.log('received message: ' + JSON.stringify(msg));
 
+      if(msg.code == "selectTrack") {
+        if(msg.challengeId && msg.deviceId && msg.track) {
+          console.log("selectTrack " + msg.track);
+          if(!deviceMap[msg.deviceId]) deviceMap[msg.deviceId] = {};
+          deviceMap[msg.deviceId].challengeId = msg.challengeId;
+          deviceMap[msg.deviceId].track = msg.track;
+          updateDeviceMap(socket, msg.challengeId);
+        }
+      }
+
       if(msg.code == "joinChallenge") {
         if(msg.challengeId && msg.deviceId) {
-          deviceMap[msg.deviceId] = msg.challengeId;
+          if(!deviceMap[msg.deviceId]) deviceMap[msg.deviceId] = {};
+          deviceMap[msg.deviceId].challengeId = msg.challengeId;
           updateDeviceMap(socket, msg.challengeId);
           socket.deviceId = msg.deviceId
           socket.challengeId = msg.challengeId
@@ -84,7 +120,7 @@ function init(io) {
         leaveChallenge(socket, msg.deviceId, msg.challengeId)
       }
 
-      console.log(JSON.stringify(deviceMap));
+      console.log("deviceMap: " + JSON.stringify(deviceMap));
 
       if(msg.code == "startSequence") {
         if(msg.challengeId) {

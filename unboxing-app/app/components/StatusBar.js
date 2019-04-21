@@ -45,13 +45,6 @@ class StatusBar extends React.Component {
           flexDirection: "column" ,
           flex: 1,
         }}>
-        <UIText size="m" em caps>{this.props.title}</UIText>
-        <UIText size="s" caps color="white">{this.props.description}</UIText>
-      </View>
-
-      <View className="secondSection" style={{
-          flexDirection: "column",
-        }}>
         { this.props.steps &&
           <View style={{
             flexDirection: "row"
@@ -59,6 +52,15 @@ class StatusBar extends React.Component {
           { squares }
           </View>
         }
+
+        <UIText size="s" caps color="white">{this.props.title}</UIText>
+        <UIText size="s" caps color="white">{this.props.description}</UIText>
+      </View>
+
+      <View className="secondSection" style={{
+          flexDirection: "column",
+        }}>
+        {this.props.midSection}
       </View>    
 
       <View className="thirdSection" style={{

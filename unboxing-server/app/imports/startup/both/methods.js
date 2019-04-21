@@ -101,13 +101,14 @@ Meteor.methods({
     Challenges.insert({
       name: "new",
       shorthand: "",
+      tag: "",
       instructions: "how it works",
       sequence_id: "",
       sequence_loop: false,
       item_manual_mode: "assisted",
       relay_server_id: "",
       videos: "",
-      tag: ""
+      minParticipants: 1,
     });
   },
   'removeChallenge'(id) {

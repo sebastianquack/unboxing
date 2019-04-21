@@ -37,6 +37,22 @@ const servers=[{
 	connectionType: "wifi",
 	ssid: "unboxing",
 	psk: "87542000",
+},{
+  _id: 5,
+  name: "192.168.8.91",
+  type: "relay",
+  url: "http://192.168.8.91:3005",
+  connectionType: "wifi",
+  ssid: "unboxing",
+  psk: "87542000",
+},{
+  _id: 6,
+  name: "192.168.1.2",
+  type: "relay",
+  url: "http://192.168.1.2:3005",
+  connectionType: "wifi",
+  ssid: "unboxing",
+  psk: "87542000",
 }]
 
 export { relay_servers }

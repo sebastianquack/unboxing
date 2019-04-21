@@ -31,6 +31,7 @@ class ChallengeView extends React.Component {
         
         {challengeStatus == "navigate" && walkStatus == "ongoing" &&
           <View>
+            { navigationAssets[this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand] && 
               <Image
                 source={navigationAssets[this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand].navigation}
                 style={{
@@ -38,6 +39,7 @@ class ChallengeView extends React.Component {
                   width: "100%"
                 }}
               />
+            }
           </View>
         }
 
