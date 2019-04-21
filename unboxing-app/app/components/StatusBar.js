@@ -53,8 +53,10 @@ class StatusBar extends React.Component {
           </View>
         }
 
-        <UIText size="s" caps color="white">{this.props.title}</UIText>
-        <UIText size="s" caps color="white">{this.props.description}</UIText>
+        <View style={{marginTop: 10}}>
+          <UIText size="s" caps color="white">{this.props.title}</UIText>
+          <UIText size="s" caps color="white">{this.props.description}</UIText>
+        </View>
       </View>
 
       <View className="secondSection" style={{
@@ -69,7 +71,7 @@ class StatusBar extends React.Component {
         }}>
         {this.props.minutesToEnd &&
         <View>
-          <UIText style={{textAlign: "right"}} size="m" em caps>{this.props.minutesToEnd < 1 ? (this.props.minutesToEnd > 0 ? "<1" : "0") : Math.floor(this.props.minutesToEnd)} MIN</UIText>
+          <UIText style={{textAlign: "right"}} size="m" em caps>{this.props.minutesToEnd < 1 ? (this.props.minutesToEnd > 0 ? "<1" : "0") : Math.floor(this.props.minutesToEnd) + 1} MIN</UIText>
           <UIText style={{textAlign: "right"}} size="s" caps color="white">{this.props.endText}</UIText>
         </View>
         }

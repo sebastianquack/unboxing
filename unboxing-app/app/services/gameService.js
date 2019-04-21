@@ -35,7 +35,7 @@ class GameService extends Service {
     this.guitarHeroThreshold = {pre: 2000, post: 2000}
 
     this.earlyLeaveMinutes = 0; // time left in place before force is used
-    this.checkInButtonDelay = 5000;
+    this.checkInButtonDelay = 100;
 
     this.walkTrackerInterval = setInterval(this.walkTracker, 10000);
 	}
@@ -72,10 +72,12 @@ class GameService extends Service {
     
     this.setReactive({
         activeWalk: {tag: place.tag, startTime: this.getStartTimeNow()},
-        activePath: {places: [{place: place.shorthand, time: 0}]},
+        activePath: {places: [{place: place.shorthand, duration: 2}]},
+        pathLength: 1,
         pathIndex: 0,
         gameMode: "walk"
       });
+    this.walkTracker();
     this.setupActivePlace();
   }
 
@@ -165,12 +167,14 @@ class GameService extends Service {
     if(this.state.activeWalk && this.state.activePath) {
 
       // check if current stage needs to be advanced
-      if(this.state.pathIndex > -1 && this.state.pathIndex < this.state.activePath.places.length - 1) {
+      if(this.state.pathIndex > -1 && this.state.pathIndex < this.state.activePath.places.length) {
         let minutesToNextStage = this.getMinutesUntilWalkIndex(this.state.pathIndex + 1);
         
         if(minutesToNextStage < this.earlyLeaveMinutes) {
-          this.setReactive({allowPlaceExit: true});
-          this.backToLobby(); // when time in place is up force to lobby, don't force out of place - needs playtesting
+          //this.setReactive({allowPlaceExit: true});
+          //this.backToLobby();
+          this.leaveChallenge(); 
+          this.moveToNextPlaceInWalk(); // when time in place is up force to lobby, force out of place - needs playtesting
         } else {
           this.setReactive({allowPlaceExit: false});
         }
@@ -235,6 +239,13 @@ class GameService extends Service {
     if(!this.state.activeWalk) return false;
     return (this.state.activeWalk.tutorial && this.state.pathIndex == n);
   }
+
+  backToNavigation() {
+    this.setReactive({challengeStatus :"navigate"});
+    clearTimeout(this.checkInTimeout);
+    this.initInfoStream(); 
+  }
+
 
   /** challenges **/
 
@@ -487,11 +498,8 @@ class GameService extends Service {
     this.setReactive({challengeStatus :"prepare"});
     this.initInfoStream();
   }
+
   
-
-
-
-
   /** interface actions **/
 
   // big left button on game container
@@ -501,7 +509,7 @@ class GameService extends Service {
         this.backToLobby();
         break;
       case "prepare":
-        this.leaveChallenge();
+        this.backToNavigation();
         break;
       default:
         this.showNotification("no current function");
@@ -543,6 +551,7 @@ class GameService extends Service {
           challengeStatus: timeForTutorial ? "tutorial" : "prepare",
           tutorialStatus: timeForTutorial ? "step-1" : "off"
         });            
+        clearTimeout(this.checkInTimeout);
         this.initInfoStream();
         break;
       case "tutorial":
@@ -594,7 +603,7 @@ class GameService extends Service {
     switch(this.state.challengeStatus) {
       case "navigate":
         this.addItemToInfoStream(storageService.t("navigation"), storageService.t("navigation-1"));
-        setTimeout(()=>{
+        this.checkInTimeout = setTimeout(()=>{
           this.addItemToInfoStream(storageService.t("navigation"), storageService.t("navigation-2"));  
           this.setReactive({allowCheckInButton: true});
         }, this.checkInButtonDelay);

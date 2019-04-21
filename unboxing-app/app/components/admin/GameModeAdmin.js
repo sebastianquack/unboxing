@@ -38,6 +38,7 @@ class GameModeAdmin extends React.Component {
         <Text>pathIndex: {this.props.gameService.pathIndex}</Text>
         <Text>activePlaceReference: {JSON.stringify(this.props.gameService.activePlaceReference)}</Text>
         <Text>activePlace: {JSON.stringify(this.props.gameService.activePlace)}</Text>
+        <Text>minutesToEnd: {this.props.gameService.minutesToEnd}</Text>
         <Text>activeChallenge: {JSON.stringify(this.props.gameService.activeChallenge)}</Text>
         <Text>challengeStatus: {this.props.gameService.challengeStatus}</Text>
 

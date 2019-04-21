@@ -50,8 +50,8 @@ class GameContainer extends React.Component {
         statusBar = <StatusBar 
           title={this.props.gameService.statusBarTitle} 
           description={this.props.gameService.statusBarSubtitle} 
-          steps={this.props.gameService.pathLength > 1 ? this.props.gameService.pathLength - 1 : null}
-          currentStep={this.props.gameService.pathIndex >= 1 ? this.props.gameService.pathIndex - 1 : null}
+          steps={this.props.gameService.pathLength >= 1 ? this.props.gameService.pathLength : null}
+          currentStep={this.props.gameService.pathIndex >= 0 ? this.props.gameService.pathIndex : null}
           minutesToEnd={this.props.gameService.minutesToEnd}
           endText={storageService.t("time-left")}
           midSection={
@@ -116,7 +116,7 @@ class GameContainer extends React.Component {
     switch(this.props.gameService.challengeStatus) {
       case "navigate":
         if(this.props.gameService.allowCheckInButton) {
-          buttonRight = <Button text={storageService.t("check-in")} onPress={()=>{gameService.handleRightButton()}}/>;   
+          buttonRight = <Button type="round" walk text={storageService.t("check-in")} onPress={()=>{gameService.handleRightButton()}}/>;   
         } 
         secondaryScreen = <SecondaryScreen type="navigation" target={this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand} />;
         break;
@@ -131,6 +131,10 @@ class GameContainer extends React.Component {
         break;
       
       case "prepare":
+        if(this.props.gameService.activePlace) {
+          buttonLeft = <Button back type="wide" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;  
+        }
+        
         if(this.props.gameService.allowPlaceExit && this.props.gameService.activePath) {
           buttonRight = <Button type="home" text={storageService.t("continue")} onPress={()=>{gameService.handleLeftButton()}}/>;
         } else {
@@ -144,7 +148,7 @@ class GameContainer extends React.Component {
         break;
  
       case "play":
-        buttonLeft = <Button type="home" text={storageService.t("overview")} onPress={()=>{gameService.handleLeftButton()}}/>;
+        buttonLeft = <Button back type="wide" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
         if(!gameService.nthPlaceInTutorial(0)) {
           buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
