@@ -74,7 +74,12 @@ adb shell 'am broadcast -a android.intent.action.TIME_SET'
 adb shell 'date'
 echo
 
-echo "install app with unboxing-app/bin/deploy_production and copy assets"
+echo "note the mac address (d0:...) in the inventory table"
+adb shell 'ip address | grep link/ether | grep d0'
+read -p "Press enter when noted"
+echo
+
+echo "install app with unboxing-app/bin/deploy_production and download assets"
 read -p "Press enter to finish"
 echo
 

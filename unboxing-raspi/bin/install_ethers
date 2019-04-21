@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# sets the ssid of the acccess point
+# copy ethers file
 
 command=`basename "$0"`
 if [ $# -lt 1 ]
@@ -14,13 +14,17 @@ USERNAME=pi
 HOST=$1
 
 IDENTITY=$(git rev-parse --show-toplevel)/unboxing-raspi/id_rsa
+FILE=$(git rev-parse --show-toplevel)/unboxing-raspi/ethers
 
 echo Running on $USERNAME@$HOST ...
 
-ssh -i $IDENTITY $USERNAME@$HOST /bin/bash << EOF
+scp -i $IDENTITY $FILE $USERNAME@$HOST:/etc/ethers
 
-echo "power off"
-sudo poweroff &
+ssh -i $IDENTITY $USERNAME@$HOST  /bin/bash << EOF
+
+sudo chown root:root /etc/ethers
+ls -l /etc/ethers
+cat /etc/ethers
 exit
 
 EOF

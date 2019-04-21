@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# sets the ssid of the acccess point
+# enable hardware clock
 
 command=`basename "$0"`
 if [ $# -lt 1 ]
@@ -13,14 +13,17 @@ fi
 USERNAME=pi
 HOST=$1
 
+DIR=/home/pi/ap-2-interfaces
+
 IDENTITY=$(git rev-parse --show-toplevel)/unboxing-raspi/id_rsa
 
 echo Running on $USERNAME@$HOST ...
 
-ssh -i $IDENTITY $USERNAME@$HOST /bin/bash << EOF
+ssh -i $IDENTITY $USERNAME@$HOST  /bin/bash << EOF
 
-echo "power off"
-sudo poweroff &
+sudo cp $DIR/lib/udev/hwclock-set.enabled /lib/udev/hwclock-set
+sudo date -s @`date +%s`
+sudo hwclock -w
 exit
 
 EOF

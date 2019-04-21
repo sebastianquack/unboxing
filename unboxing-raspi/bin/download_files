@@ -12,8 +12,10 @@ USERNAME=pi
 HOST=$1
 FILE=$2
 
+IDENTITY=$(git rev-parse --show-toplevel)/unboxing-raspi/id_rsa
+
 echo "downloading from $USERNAME@$HOST"
 
-scp $FILE $USERNAME@$HOST:/home/pi/bundle/files/files.zip $FILE
+scp -i $IDENTITY $FILE $USERNAME@$HOST:/home/pi/bundle/files/files.zip $FILE
 
 EOF
