@@ -124,8 +124,13 @@ Meteor.methods({
     console.log("remove challenge", id);
     Challenges.remove(id);
   },
-  'updateChallenge'(id,$set) {
-    Challenges.update({_id: id}, {$set})
+  'updateChallenge'(id,$set, $unset=null) {
+    if(!$unset) {
+      Challenges.update({_id: id}, {$set})  
+    } else {
+      Challenges.update({_id: id}, {$unset})  
+    }
+    
   },
 
   'addPlace'() {

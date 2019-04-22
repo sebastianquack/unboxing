@@ -111,7 +111,30 @@ Migrations.add({
   down: function() {}
 });
 
-const version = 10;
+Migrations.add({
+  version: 11,
+  name: 'setup stages',
+  up: function() {
+    add_default_attributes_to_challenge({
+      stages: `[{<br>
+                "text1_en":"",<br> 
+                "text1_de":"",<br> 
+                "text2_en":"",<br> 
+                "text2_de":"",<br> 
+                "video_en":"",<br>
+                "video_de":"",<br>
+                "minParticipants": 1,<br>
+                "instruments": []<br>
+              }]`
+    });
+    Challenges.find().forEach( challenge => {
+      Meteor.call('updateChallenge', challenge._id, {}, {minParticipants: 0, videos: ""});
+    });  
+  },
+  down: function() {}
+});
+
+const version = 11;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);
