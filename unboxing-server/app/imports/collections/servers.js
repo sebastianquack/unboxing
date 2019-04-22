@@ -8,14 +8,26 @@ Servers.allow({
   remove: () => true
 });
 
-export default Servers;
+const schema = {
+  type: ["relay", "other"],
+  name: "",
+  url: "",
+  connection: ["wifi", "cellular"],
+  ssid: "", // optional
+  psk: "", // optional
+}
 
-/* SCHEMA 
-  - type (string)
-  - name (string)
-  - url (string)
-  - connection (string)
-  - (optional) ssid (string)
-  - (optional) psk (string)
-*/
+const defaults = {
+  type: "",
+  name: "",
+  url: "",
+  connection: "",
+  ssid: "",
+  psk: "",
+}
 
+export { 
+  Servers, 
+  schema as serverSchema, 
+  defaults as serverDefaults
+}

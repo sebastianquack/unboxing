@@ -4,7 +4,7 @@ import { Meteor } from 'meteor/meteor';
 //import { Random } from 'meteor/random';
 //import SimpleSchema from 'meteor/aldeed:simple-schema';
 
-import Servers from '../../collections/servers';
+import {Servers} from '../../collections';
 //import RoomSchema from '../../schemas/room';
 
 const servers=[{

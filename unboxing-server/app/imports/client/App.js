@@ -1,6 +1,6 @@
 import React, { Component, Switch } from 'react';
 
-import {WalksInfo, EventsInfo, PlacesInfo, ChallengesInfo, NetworkInfo, FilesInfo, GesturesInfo, SequencesInfo, ImportExport, TranslationsInfo} from './';
+import {WalksInfo, EventsInfo, PlacesInfo, ChallengesInfo, NetworkInfo, ServersInfo, FilesInfo, GesturesInfo, SequencesInfo, ImportExport, TranslationsInfo} from './';
  
 const sections = [
   {
@@ -47,7 +47,12 @@ const sections = [
     name: "Translations",
     component:TranslationsInfo,
     default: false
-  },     
+  },
+  {
+    name: "Servers",
+    component:ServersInfo,
+    default: false
+  },       
 ]
 
 // App component - represents the whole app

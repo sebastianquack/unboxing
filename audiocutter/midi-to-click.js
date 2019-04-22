@@ -2,23 +2,27 @@ const fs = require("fs");
 const WavEncoder = require("wav-encoder");
 
 const { loadMidi, getTempoMap, getTimingTrack, getBeats, humanTime } = require("./midi")
+const configs = require('./configs')
 
-const filePath = "./Mozart KV466 3.Satz Click Midi.mid"
+const config = configs[0]
+
+const filePath = config.midi // "./Mozart KV466 3.Satz Click Midi.mid"
 //const filePath = "/Users/holger/Downloads/III.\ Rondo\ Click\ \&\ Playback.1.mid"
 //const filePath = "/Users/holger/Downloads/Projekt_Satz3_click.band.mid"
 
-const beatsOffset = 26//16 // leave the first ones out
-const beatCountOffset = 2//16 // beats until the first bar start
-const beginningOffsetMs = 105 // add milliseconds in the beginning before the first beat starts
+const beatsOffset = config.beatsOffset // leave the first ones out
+const beatCountOffset = config.beatCountOffset  // beats until the first bar start
+const beginningOffsetMs = config.beginningOffsetMs // add milliseconds in the beginning before the first beat starts
 
-const totalLengthMs = 7.5 * 60 * 1000
+const lastBar = config.lastBar
+const totalLengthMs = config.totalLengthMs
 
 const sampleRate = 44100
 const clickLengthMs = 3
 const clickVolume = 0.5
 
 const outputDir = 'output'
-const outputFilename = `clicks_off${beatsOffset}_vorlauf${beatCountOffset}_absOff${beginningOffsetMs}`
+const outputFilename = config.output // `clicks_off${beatsOffset}_vorlauf${beatCountOffset}_absOff${beginningOffsetMs}`
 
 const makeClick = function(lengthMs, volume) {
   return new Float32Array(sampleRate * 0.001 * lengthMs).map(() => volume * (Math.random() - 0.5))
@@ -82,6 +86,23 @@ beats = beats.filter( b => b.absTimeMs >= 0)
 // add absolute offset at the beginning
 console.log("Add absolute offset of " + beginningOffsetMs + "ms at the beginning")
 beats.forEach( b => b.absTimeMs += beginningOffsetMs)
+
+// apply corrections
+config.corrections.forEach( correction => {
+  console.log("applying correction at bar " + correction.bar)
+  const beatNumber = beats.find( b => (b.bar == correction.bar && b.barBeat == correction.barBeat)).beat
+  beats.forEach( b => {
+    if (b.beat >= beatNumber) {
+      if (correction.offsetMs) b.absTimeMs += correction.offsetMs
+      if (correction.offsetBar) b.bar -= correction.offsetBar
+    }
+  })
+})
+
+// cut after last beat
+const lastBarIndex = beats.findIndex( b => (b.bar > lastBar))
+console.log("lastBar index " + lastBarIndex)
+beats.splice(lastBarIndex)
 
 // the final beat data
 //console.log(JSON.stringify(beats,null,1))
@@ -148,13 +169,15 @@ function beatsToCSV(beats, delimiter = ",") {
     b.beat,
     b.bar,
     b.barBeat,
-    b.absTimeMs
+    b.absTimeMs,
+    b.humanTime
   ])
   csvLinesArray.unshift([
     '#',
     'bar',
     'beat',
-    'time (ms)'
+    'time (ms)',
+    'time (human)'
   ])
   cvsLines = csvLinesArray.map( l => l.join(delimiter))
   var endOfLine = require('os').EOL;
