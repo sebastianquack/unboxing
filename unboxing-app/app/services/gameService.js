@@ -372,7 +372,7 @@ class GameService extends Service {
     if(!stage) return true;
     if(!stage.minParticipants) return true;
 
-    return this.state.numChallengeParticipantsWithInstrument >= stage.numParticipants;
+    return this.state.numChallengeParticipantsWithInstrument >= stage.minParticipants;
   }
   
   activateRelayCallbacks() {
@@ -544,7 +544,8 @@ class GameService extends Service {
   }
 
   backToLobby() {
-    sequenceService.cancelItemsAndSounds()
+    //sequenceService.cancelItemsAndSounds()
+    sequenceService.turnOffVolumeCurrentItem();
     this.setReactive({challengeStatus :"prepare"});
     this.initInfoStream();
   }
@@ -618,7 +619,12 @@ class GameService extends Service {
           challengeStatus: "play",
           tutorialStatus: "first-play"
         });
-        sequenceService.resetTrack();
+        if(sequenceService.getControlStatus() == "playing") {
+          sequenceService.turnOnVolumeCurrentItem();
+        } else {
+          sequenceService.resetTrack();  
+        }
+        
         this.activateRelayCallbacks();
         this.initInfoStream();
         break;

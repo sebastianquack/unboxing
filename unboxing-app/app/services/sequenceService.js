@@ -249,7 +249,7 @@ class SequenceService extends Service {
 	// analyse current state and display appropriate action message
 	// called on every beat and at special events (setupNextSequenceItem, sound ended)
 	updateActionInterface = ()=> {
-		//console.log("updateActionInterface");
+		//console.warn("updateActionInterface");
     //console.log(this.state.currentItem);
 
     // sequence has ended
@@ -710,6 +710,13 @@ class SequenceService extends Service {
       }
     }, 1000);*/
   }
+
+  turnOffVolumeCurrentItem() {
+    if(this.state.currentItem) {
+      soundService.setVolumeFor(this.state.currentItem.path, 0.0);
+    }
+  }
+
 
   // approve the next item
   approveScheduledOrCurrentItem() {

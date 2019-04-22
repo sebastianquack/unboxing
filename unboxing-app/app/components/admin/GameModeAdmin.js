@@ -42,6 +42,8 @@ class GameModeAdmin extends React.Component {
         <Text>activeChallenge: {JSON.stringify(this.props.gameService.activeChallenge)}</Text>
         <Text>challengeStatus: {this.props.gameService.challengeStatus}</Text>
         <Text>challengeStageIndex: {this.props.gameService.challengeStageIndex}</Text>
+        <Text>numChallengeParticipants: {this.props.gameService.numChallengeParticipants}</Text>
+        <Text>numChallengeParticipantsWithInstrument: {this.props.gameService.numChallengeParticipantsWithInstrument}</Text>
 
         <Text style={{marginTop: 20}}>start a walk:</Text>
         <Picker
