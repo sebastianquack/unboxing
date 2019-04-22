@@ -71,7 +71,8 @@ class TrackSelector extends React.Component {
 
   render() {
     if(!this.props.sequence) return <View><Text>sequence not found</Text></View>;
-    const tracks = this.props.sequence.tracks.map((t, index)=>this.renderTrack(this.props.sequence, t, index));
+    const tracks = this.props.sequence.tracks.filter(track => gameService.instrumentAllowedInStage(track.name))
+    .map((t, index)=>this.renderTrack(this.props.sequence, t, index));
     return (
       <View style={{paddingTop: 20, paddingLeft: 64, paddingRight: 64, flexDirection: 'row', flexWrap: 'wrap'}}>
         {tracks}

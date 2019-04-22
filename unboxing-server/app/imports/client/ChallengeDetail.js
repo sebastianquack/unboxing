@@ -7,13 +7,18 @@ import { css } from 'emotion'
 import { Sequences, Servers } from '../collections'
 import { inputTransform, inputType } from '../helper/both/input';
 
+import cleanJSON from '../helper/both/cleanJSON';
+
 class ChallengeDetail extends React.Component {
 	constructor(props) {
     	super(props);
+      this.state = {
+        JSONValid: ""
+      }
   }
 
   ChallengeDetailCss = css`
-    width: 20em;
+    width: 40em;
 	  display: inline-block;
 	  background-color: lightgrey;
 	  padding: 1ex 1ex 1ex 1ex;
@@ -26,16 +31,32 @@ class ChallengeDetail extends React.Component {
 	    + label {margin-top: 0.5ex}
 	    span {
 	      min-width: 6em;
-        width: 50%;
+        width: 25%;
         vertical-align: top;
 	      display: inline-block;
         min-height: 1em;
 	    }
+      > span:last-child {
+        width: 75%;
+      }
 	  }
     button {
       margin-top: 1em;
     }
 	`
+
+  checkJSON = (value)=> {
+    cleanText = cleanJSON(value);
+    console.log(cleanText);
+    try {
+      JSON.parse(cleanText);
+      this.setState({JSONValid: "valid"});
+    }
+    catch(e) {
+      this.setState({JSONValid: "error"});
+    }
+    return value;
+  }
 
   handleAttributeChange = (attributeName, value) => {
     $set = {}
@@ -73,7 +94,19 @@ class ChallengeDetail extends React.Component {
             type="checkbox"
             checked={this.props.challenge[attributeName]}
             onChange={ e => this.handleAttributeChange(attributeName, !this.props.challenge[attributeName])} />
-        	);      
+        	);  
+      case "stages":       
+        return (
+          <ContentEditable 
+            style={{
+              border: "dotted grey 1px",
+              borderWidth: "0 0 1px 0",
+            }}
+            onChange={ e => this.handleAttributeChange(attributeName, this.checkJSON(e.target.value)) } 
+            html={value + ""}
+            tagName="span"
+          />
+        )
       default:
         return (<ContentEditable 
           style={{
@@ -105,7 +138,8 @@ class ChallengeDetail extends React.Component {
 	    return (
 	    	<div className={this.ChallengeDetailCss}>
 					{Object.entries(this.props.challenge).map(this.renderAttribute)}	            
-			 		<button onClick={()=>Meteor.call('removeChallenge',this.props.challenge._id)}>
+			 		<label key="json-valid"><span>JSON check</span><span>{this.state.JSONValid}</span></label>
+          <button onClick={()=>Meteor.call('removeChallenge',this.props.challenge._id)}>
 	            	Delete Challenge
 	        </button>     
 	    	</div>

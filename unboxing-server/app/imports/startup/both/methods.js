@@ -105,10 +105,18 @@ Meteor.methods({
       instructions: "how it works",
       sequence_id: "",
       sequence_loop: false,
-      item_manual_mode: "assisted",
+      item_manual_mode: "guitar hero",
       relay_server_id: "",
-      videos: "",
-      minParticipants: 1,
+      stages: `[{<br>
+                "text1_en":"",<br> 
+                "text1_de":"",<br> 
+                "text2_en":"",<br> 
+                "text2_de":"",<br> 
+                "video_en":"",<br>
+                "video_de":"",<br>
+                "minParticipants": 1,<br>
+                "instruments": []<br>
+              }]`
     });
   },
   'removeChallenge'(id) {

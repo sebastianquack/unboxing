@@ -152,14 +152,17 @@ class SequenceService extends Service {
 		if (!this.state.isLooping) {
 			const sequenceEndsAt = this.state.playbackStartedAt + this.state.currentSequence.custom_duration
 			if (currentTime >= sequenceEndsAt) {
-				this.resetSequence();
+				//console.warn("playbackStartedAt", this.state.playbackStartedAt);
+        this.resetSequence();
         this.resetTrack();
         this.updateActionInterface(); 
+        gameService.incrementChallengeStage();
+        gameService.backToLobby();
+        //console.warn(currentTime + " >= " + sequenceEndsAt); 
         return
 			}
 		}
 		
-
 		// beat calculations
 		const durationOfBeat = (60000 / this.state.currentSequence.bpm);
 		const currentBeatInSequence = Math.floor(currentTimeInSequence / durationOfBeat);
@@ -473,6 +476,11 @@ class SequenceService extends Service {
 
 	// invoked from track selector component
 	trackSelect = (track)=> {
+
+    if(!track) {
+      this.setReactive({currentTrack: null});
+      return;
+    }
 		
   	this.setReactive({currentTrack: track});
 
