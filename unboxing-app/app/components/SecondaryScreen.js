@@ -5,10 +5,11 @@ import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
 import loadInstrumentIcons from '../../config/instruments'
-import loadNavigationAssets from '../../config/navigationAssets'
 import UIText from './UIText'
 
 import {storageService} from '../services';
+import {withGameService} from './ServiceConnector';
+
 
 const horizontalPadding = Math.floor(dimensions.screenWidth * 0.014)
 const verticalPadding = Math.floor(dimensions.screenWidth * 0.016)
@@ -16,7 +17,6 @@ const verticalPadding = Math.floor(dimensions.screenWidth * 0.016)
 const imageWidth = dimensions.screenWidth * 0.25
 
 const instruments = loadInstrumentIcons();
-const navigationAssets = loadNavigationAssets();
 
 class SecondaryScreen extends React.Component { 
   constructor(props) {
@@ -69,9 +69,9 @@ class SecondaryScreen extends React.Component {
     </View>
   }
 
-  renderNavigation() { // TODO
-    return navigationAssets[this.props.target] ? <Image
-        source={navigationAssets[this.props.target].image}
+  renderNavigation() { 
+    return this.props.gameService.activePlace && this.props.gameService.activePlace.navigationPhoto ? <Image
+        source={{uri: "file:///sdcard/unboxing/files/places/" + this.props.gameService.activePlace.tag + "/" + this.props.gameService.activePlace.navigationPhoto}}
         style={{
           height: "100%",
           width: "100%"
@@ -93,4 +93,4 @@ SecondaryScreen.propTypes = {
   target: PropTypes.string // code of navigation target
 };
 
-export default SecondaryScreen;
+export default withGameService(SecondaryScreen);

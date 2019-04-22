@@ -125,6 +125,8 @@ Meteor.methods({
       shorthand: "",
       challenge_id: "",
       tag: "",
+      navigationDiagram: "",
+      navigationPhoto: "",
     });
   },
   'removePlace'(id) {
