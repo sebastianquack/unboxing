@@ -10,9 +10,6 @@ import SensorModulator from './SensorModulator';
 
 import {gameService, sequenceService} from '../services';
 
-import loadNavigationAssets from '../../config/navigationAssets'
-const navigationAssets = loadNavigationAssets();
-
 class ChallengeView extends React.Component { 
   constructor(props) {
     super(props);
@@ -30,17 +27,13 @@ class ChallengeView extends React.Component {
       <View> 
         
         {challengeStatus == "navigate" && walkStatus == "ongoing" &&
-          <View>
-            { navigationAssets[this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand] && 
-              <Image
-                source={navigationAssets[this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand].navigation}
-                style={{
-                  height: "100%",
-                  width: "100%"
-                }}
-              />
-            }
-          </View>
+          <Image
+              source={{uri: "file:///sdcard/unboxing/files/places/" + this.props.gameService.activePlace.tag + "/" + this.props.gameService.activePlace.navigationDiagram}}
+              style={{
+                height: "100%",
+                width: "100%"
+              }}
+            />
         }
 
         {challengeStatus == "prepare" &&       

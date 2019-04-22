@@ -51,38 +51,36 @@ function updateDeviceMap(socket, challengeId) {
 }
 
 function leaveChallenge(socket, deviceId, challengeId) {
-  console.log("leave challenge", deviceId, challengeId)
-
+  console.log(deviceId, "leave challenge", challengeId)
   if(deviceId) {
      delete deviceMap[deviceId];
   }
-
   if(challengeId) {
-     
      updateDeviceMap(socket, challengeId);
-     if(countParticipants(challengeId) == 0) {
-       challengeState[challengeId].sequenceControlStatus = "idle";  
+     if(countParticipants(challengeId).total == 0) {
+       if(challengeState[challengeId]) {
+        challengeState[challengeId].sequenceControlStatus = "idle";   
+       }
      }
-   
   }
-
   console.log("challengeState", challengeState)
 }
-
 
 function init(io) {
 
   // setup socket api
   io.on('connection', function(socket) {
-    console.log('Client connected');
+    console.log('\nClient connected: ' + socket.deviceId);
     
     socket.on('disconnect', () => {
-      console.log('Client disconnected')
-      leaveChallenge(socket, socket.deviceId, socket.challengeId)
+      console.log('\nClient disconnected: ' + socket.deviceId);
+      if(socket.deviceId && socket.challengeId) {
+        leaveChallenge(socket, socket.deviceId, socket.challengeId)  
+      }
     });
     
     socket.on('message', async function(msg) {
-      console.log('received message: ' + JSON.stringify(msg));
+      console.log('\nreceived message: ' + JSON.stringify(msg));
 
       if(msg.code == "selectTrack") {
         if(msg.challengeId && msg.deviceId && msg.track) {

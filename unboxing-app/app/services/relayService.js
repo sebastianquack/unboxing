@@ -30,8 +30,8 @@ class RelayService extends Service {
   }
 
   debug = (msg) => {
-    this.showNotification(msg);
-    //console.warn(msg);
+    //this.showNotification(msg);
+    console.log(msg);
   }
 
   updateDefaultServer() {

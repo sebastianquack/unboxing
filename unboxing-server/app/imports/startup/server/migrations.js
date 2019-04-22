@@ -1,4 +1,4 @@
-import { Sequences, Challenges } from '../../collections';
+import { Sequences, Challenges, Places } from '../../collections';
 
 Migrations.add({
   version: 1,
@@ -99,7 +99,19 @@ Migrations.add({
   down: function() {}
 });
 
-const version = 9;
+Migrations.add({
+  version: 10,
+  name: 'add navitation assets to places',
+  up: function() {
+    add_default_attributes_to_place({
+      navigationDiagram: "",
+      navigationPhoto: "",
+    });
+  },
+  down: function() {}
+});
+
+const version = 10;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);
@@ -120,6 +132,22 @@ add_default_attributes_to_sequence = function(attribs) {
       if (Object.keys(new_attribs).length > 0) {
         console.log(`adding new default attributes ${JSON.stringify(new_attribs)} to sequence"`)
         Meteor.call('updateSequence', sequence._id, new_attribs)
+      }
+  });
+}
+
+// add attribute to place
+add_default_attributes_to_place = function(attribs) {
+  Places.find().forEach( place => {
+      let new_attribs = {};
+      for (let a in attribs) {
+        if (!place[a]) {
+          new_attribs[a] = attribs[a]
+        }
+      }
+      if (Object.keys(new_attribs).length > 0) {
+        console.log(`adding new default attributes ${JSON.stringify(new_attribs)} to place"`)
+        Meteor.call('updatePlace', place._id, new_attribs)
       }
   });
 }
