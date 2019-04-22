@@ -133,7 +133,9 @@ class FileService extends Service {
       await this.downloadFiles()
       const final_ok = await this.updateFilesInfo()
       this.setReactive({ status: final_ok ? "OK" : "problem" })      
-		}
+		} else {
+      this.setReactive({ status: "OK"})
+    }
   }
 
 
