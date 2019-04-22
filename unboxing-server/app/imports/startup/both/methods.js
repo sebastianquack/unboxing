@@ -2,7 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random'
 
 import Events from '../../collections/events';
-import { Challenges, Gestures, Sequences, Places, Walks, Translations } from '../../collections/';
+import { Challenges, Gestures, Sequences, Places, Walks, Translations, Servers } from '../../collections/';
+import { serverDefaults } from '../../collections'
 
 Meteor.methods({
   'addGesture'(data) {
@@ -167,5 +168,15 @@ Meteor.methods({
   'updateTranslation'(id,$set) {
     Translations.update({_id: id}, {$set})
   },
-  
+
+  'addServer'() {
+    Servers.insert(serverDefaults)
+  },
+  'removeServer'(id) {
+    Servers.remove(id);
+  },
+  'updateServer'(id,$set) {
+    Servers.update({_id: id}, {$set})
+  },
+
 });

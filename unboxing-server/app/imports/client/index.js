@@ -14,12 +14,14 @@ import ImportExport from './ImportExport';
 import SequencesInfo from './SequencesInfo';
 import SequenceDetail from './SequenceDetail';
 import SequenceDetailItem from './SequenceDetailItem';
+import ServersInfo from './ServersInfo';
 import AudioPreview from './AudioPreview';
 
 import TranslationDetail from './TranslationDetail';
 import TranslationsInfo from './TranslationsInfo';
 
 import InputLine from './InputLine';
+import AutoForm from './AutoForm';
 
 export {
   FilesInfo,
@@ -30,12 +32,14 @@ export {
   GestureDetail,
   ImportExport,
   InputLine,
+  AutoForm,
   SequencesInfo,
   SequenceDetail,
   SequenceDetailItem,
   AudioPreview,
   PlaceDetail,
   PlacesInfo,
+  ServersInfo,
   WalkDetail,
   WalksInfo,
   TranslationDetail,
