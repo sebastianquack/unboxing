@@ -412,7 +412,11 @@ class GameService extends Service {
   // called from TrackSelector when user selects track
   trackSelect = (track)=> {
     sequenceService.trackSelect(track);
-    this.setReactive({numChallengeParticipantsWithInstrument: this.state.numChallengeParticipantsWithInstrument + 1});
+    if(track) {
+      this.setReactive({numChallengeParticipantsWithInstrument: this.state.numChallengeParticipantsWithInstrument + 1});  
+    } else {
+      this.setReactive({numChallengeParticipantsWithInstrument: this.state.numChallengeParticipantsWithInstrument - 1});
+    }
     this.initInfoStream();
     relayService.emitMessage({code: "selectTrack", deviceId: storageService.getDeviceId(), challengeId: this.state.activeChallenge._id, track: track ? track.name : null});
   }
