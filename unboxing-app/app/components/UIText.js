@@ -57,6 +57,8 @@ class UIText extends React.Component {
     // set fontSize
     if (this.props.size) style = { ...style, fontSize: fontSizes[this.props.size] }   
 
+    if (this.props.verticalCenter) style = { ...style, lineHeight: style.fontSize }
+
     // align
     if (this.props.align) style = { ...style, textAlign: this.props.align}
 

@@ -378,7 +378,7 @@ class GameService extends Service {
   startSequence = () => {
 
       if(this.state.challengeStatus == "play" && this.enoughChallengeParticipantsReady()) {
-        this.showNotification("starting sequence...");
+        //this.showNotification("starting sequence...");
         
         let nowTime = soundService.getSyncTime();
         let startTime = nowTime + 2000; // set time for sequence to start
@@ -416,13 +416,15 @@ class GameService extends Service {
 
   handleMissedCue() {
     if(this.state.activeChallenge.item_manual_mode == "assisted") {
-      this.showNotification("too late! skipping sound...");   
+      this.showInfoStreamAlert(storageService.t("too-late"), "red");
+      //this.showNotification("too late! skipping sound...");   
       sequenceService.skipNextItem();
     }
   }
 
   handleMissedGuitarHeroCue() {
-    this.showNotification("guitar hero too late!");
+    this.showInfoStreamAlert(storageService.t("too-late"), "red");
+    //this.showNotification("guitar hero too late!");
     console.log("guitar hero missed cue");
     sequenceService.stopCurrentSound();
   }
@@ -453,23 +455,28 @@ class GameService extends Service {
 
         if(this.state.activeChallenge.item_manual_mode == "guitar hero") {
             if(difference <= -this.guitarHeroThreshold.pre) {
-              this.showNotification("guitar hero: too early!");    
+              this.showInfoStreamAlert(storageService.t("too-early"));
+              //this.showNotification("guitar hero: too early!");    
             }
             if(difference > -this.guitarHeroThreshold.pre && difference <= this.guitarHeroThreshold.post) {
-              this.showNotification("guitar hero: good!");   
+              this.showInfoStreamAlert(storageService.t("good"));
+              //this.showNotification("guitar hero: good!");   
               sequenceService.approveScheduledOrCurrentItem();
             }
         } else {
   				if(this.state.activeChallenge.item_manual_mode == "assisted") {
   					if(difference <= -this.assistanceThreshold) {
-  						this.showNotification("too early! try again");		
+  						this.showInfoStreamAlert(storageService.t("too-early"), "red");
+              //this.showNotification("too early! try again");		
   					}
   					if(difference > -this.assistanceThreshold && difference <= 0) {
-              this.showNotification("good!");		
+              this.showInfoStreamAlert(storageService.t("good"));
+              //this.showNotification("good!");		
   					  sequenceService.scheduleSoundForNextItem(officialTime); 			
   					}
   					if(difference > 0) {
-  						this.showNotification("too late! skipping sound...");		
+  						this.showInfoStreamAlert(storageService.t("too-late"), "red");
+              //this.showNotification("too late! skipping sound...");		
   						sequenceService.skipNextItem();
   					}
   				} else {
@@ -477,7 +484,7 @@ class GameService extends Service {
   				}
         }		
 			}	else {
-        this.showNotification("couldn't start sequence - still loading?");
+        this.showNotification("couldn't start sequence - still loading?"); // this should only appear when files missing
       }
 		}
 
@@ -532,7 +539,9 @@ class GameService extends Service {
     this.setReactive({
       showInstrumentSelector: false
     });
-    this.handleRightButton();
+    if(sequenceService.state.currentTrack) {
+      this.handleRightButton();  
+    }
   }
 
   // big right button on game container
@@ -588,6 +597,21 @@ class GameService extends Service {
     this.setReactive({
       infoStream: infoStream
     });
+  }
+
+  showInfoStreamAlert = (text, color="blue", duration=2000) => {
+    this.setReactive({
+      infoAlert: {
+        text: text,
+        color: color
+      }
+    });
+    if(this.infoAlertTimeout) {
+      clearTimeout(this.infoAlertTimeout);
+    }
+    this.infoAlertTimeout = setTimeout(()=>{
+      this.setReactive({infoAlert: null});
+    }, duration)
   }
 
   initInfoStream = ()=> {
@@ -666,12 +690,14 @@ class GameService extends Service {
         this.preloadPracticeSound(1);
         this.activatePeakTutorial(()=>{
           this.playPracticeSound("1", storageService.t("info"), storageService.t("tutorial-instructions-playing-1"), "step-2", "step-1-playing");
+          this.showInfoStreamAlert(storageService.t("good"));
         });
         break;
       case "step-2":
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-2"));  
         this.activatePeakTutorial(()=>{
           this.playPracticeSound("2", storageService.t("info"), storageService.t("tutorial-instructions-playing-2"), "complete", "step-2-playing");
+          this.showInfoStreamAlert(storageService.t("good"));
         });
         break;
       case "complete":
