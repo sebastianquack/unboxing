@@ -151,6 +151,7 @@ class NetworkService extends Service {
     this.adminSocket = io("http://" + this.state.server + ":" + adminSocketPort);
     
     this.adminSocket.on('disconnect', ()=>{
+      this.lastSentAdminPayload = null;
       this.setReactive({adminSocketConnected: false})
     });
     
@@ -166,7 +167,7 @@ class NetworkService extends Service {
     this.adminSocketinitialized = true
 
     this.adminSocket.on('message', (msgObj)=>{
-      console.warn(msgObj);  
+      //console.warn(msgObj); 
       this.handleAdminMessage(msgObj);
     });
 
@@ -179,7 +180,7 @@ class NetworkService extends Service {
   }
 
   sendAdminStatus = () => {
-    let walk = gameService.state.activeWalk ? {tag: gameService.state.activeWalk.tag, startTime: gameService.state.activeWalk} : null
+    let walk = gameService.state.activeWalk ? {tag: gameService.state.activeWalk.tag, startTime: gameService.state.walkStartTime} : null
     let payload = {
       everythingVersion: storageService.state.version,      
       fileStatus: fileService.state.status,

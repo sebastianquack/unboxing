@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "start device in download mode"
+echo "start device in download mode - restart and hold home + power + down"
 read -p "Press enter when done"
 echo
 
@@ -33,7 +33,7 @@ fi
 sudo heimdall flash --RECOVERY files/twrp-3.3.0-0-gts28velte.img --no-reboot
 echo
 
-echo "reboot directly into recovery mode (akrobatik)"
+echo "reboot directly into recovery mode (akrobat mode: hold power + down until screen dark, then quickly press and hold power + home + up until it says recovery booting"
 read -p "Press when in twrp"
 echo
 
@@ -42,7 +42,6 @@ read -p "Press when wiped"
 echo
 
 echo "formatting partitions"
-
 adb shell twrp wipe cache
 sleep 2
 adb shell twrp wipe system

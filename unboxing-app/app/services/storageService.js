@@ -119,7 +119,7 @@ class StorageService extends Service {
 
   async loadGameStateFromFile(callback) {
     let json = await RNFS.readFile(gameStateFile, 'utf8').catch((err)=>{
-      console.warn("load gameState from file failed: " + err.message)
+      //console.warn("load gameState from file failed: " + err.message)
     });
     if(json) {
       let gameStateFromFile = JSON.parse(json);

@@ -13,7 +13,7 @@ function init(io) {
   console.log("setting up admin socket...")
 
   // setup socket api
-  io.on('connection', function(socket) {
+  io.on('connection', (socket)=> {
     console.log('Client connected');
     
     socket.on('disconnect', () => {
@@ -44,7 +44,10 @@ init(io);
 
 const sendMessage = ( deviceIds, message) => {
   if (message.payload && message.payload.tag) {
-    message.payload.startTime = (message.payload.startTimeOffset*1000) + Date.now()
+    if(!message.payload.startTime) {
+      message.payload.startTime = (message.payload.startTimeOffset*1000) + Date.now()  
+    }
+    
   }
   console.log("sending admin message", message)
   io.sockets.emit('message', {
