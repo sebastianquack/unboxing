@@ -112,7 +112,13 @@ class GameService extends Service {
   }
 
   // called when admin starts walk
-	setActiveWalk = (walk)=> {
+	startWalkByTag = (tag, startTime) => {
+    let walk = storageService.getWalkByTag(tag);
+    walk.startTime = startTime;
+    this.setActiveWalk(walk)
+  }
+
+  setActiveWalk = (walk)=> {
 		
 		let activePath = storageService.getActivePath(walk);
 		

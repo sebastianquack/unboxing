@@ -20,10 +20,10 @@ class StorageService extends Service {
 		});
 
 		this.loadFromFile()		
-    setTimeout(()=>{
+    /*setTimeout(()=>{
       //this.showNotification("trying to get everything...");
       this.updateEverything();
-    }, 5000);
+    }, 5000);*/
 	}
 
 	// called from ServerConnector component
@@ -175,6 +175,14 @@ class StorageService extends Service {
 		return null;
 	}
 
+  getWalkByTag(tag) {
+    for(let i = 0; i < this.state.collections.walks.length; i++) {
+      if(this.state.collections.walks[i].tag == tag) {
+        return this.state.collections.walks[i];
+      } 
+    }
+    return null;
+  }
 
 	// finds a sequence give its id
 	findSequence(sequence_id) {

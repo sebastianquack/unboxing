@@ -69,7 +69,11 @@ class ServerConnector extends React.Component {
 				</Text>								
 				<Text>
 					Relay status: {this.props.relayService.connected ? "connected" : "disconnected"}
-				</Text>												
+				</Text>					
+
+        <Text style={{marginTop: 10}}>
+          AdminSocket status: {this.props.networkService.adminSocketConnected ? "connected" : "disconnected"}
+        </Text>                       							
 
 				<Text style={{marginTop: 20}}>
 					Server: {this.props.networkService.server}

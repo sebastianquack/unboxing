@@ -3,7 +3,9 @@ import wifi from 'react-native-android-wifi';
 //import Zeroconf from 'react-native-zeroconf';
 
 import Service from './Service';
-import { storageService, soundService, relayService } from './';
+import { storageService, soundService, relayService, fileService, gameService } from './';
+
+import io from 'socket.io-client';
 
 defaultServer = "192.168.8.1"
 
@@ -12,6 +14,8 @@ defaultConnection = {
   ssid: "unboxing",
   psk: "87542000",
 }
+
+adminSocketPort = "3004";
 
 const IMEI = require('react-native-imei')
 
@@ -29,9 +33,10 @@ class NetworkService extends Service {
       ssid: null,
       ip: null,
       targetConnection: {},
+      adminSocketConnected: false,
+      adminSocketInitialized: false,
 		});
 
-    //this.initZeroconf()
     this.initNetInfo()
 
     // start wifi to save data
@@ -63,34 +68,7 @@ class NetworkService extends Service {
       this.setupImei();
     }, 2000);
 
-    setTimeout(()=>{
-      this.doTimeSync()
-    }, 5000);
-    
 	}
-
-  /*initZeroconf() {
-    const zeroconf = new Zeroconf();
-    zeroconf.scan(type = 'http', protocol = 'tcp', domain = 'local.');
-    zeroconf.on('start', () => console.log('Zeorfonf scan has started.'));
-    zeroconf.on('update', () => {
-      const zc_services = zeroconf.getServices()
-      console.log("update " + JSON.stringify(zc_services))
-      const servers = []
-      for (key in zc_services) {
-        const parts = key.split("_")
-        if (parts[0]=="unboxing" && parts[4] != undefined) {
-          servers.push(`${parts[1]}.${parts[2]}.${parts[3]}.${parts[4]}`)
-        }
-      }
-      if (servers.length > 0) {
-        console.log(">>> found unboxing servers", servers)
-        this.setServer(servers[0])
-      }
-    });
-    zeroconf.on('resolved', data => console.log("resolved " + JSON.stringify(data)));
-    zeroconf.on('error', data => console.log("error " + JSON.stringify(data)))
-	}*/  	
 
   setupImei = ()=> {
     const imei = IMEI.getImei();
@@ -160,6 +138,61 @@ class NetworkService extends Service {
     }
 
     this.setReactive({targetConnection: connection})
+  }
+
+  initAdminSocket = () => {
+    this.adminSocket = io(server + ":" + adminSocketPort);
+    
+    this.adminSocket.on('disconnect', ()=>{
+      this.setReactive({adminSocketConnected: false})
+    });
+    
+    this.adminSocket.on('connect', ()=>{
+      this.setReactive({adminSocketConnected: true})
+    });
+
+    this.adminSocket.on('reconnect_attempt', () => {
+      //this.setReactive({adminSocketConnected: false})
+    });
+
+    this.adminSocketinitialized = true
+
+    this.socket.on('message', (msgObj)=>{
+      console.warn(msgObj);  
+      handleAdminMessage(msgObj);
+    });
+
+    this.adminStatusInterval = setInterval(()=>{
+      if(this.state.adminSocketConnected) {
+        this.sendAdminStatus();  
+      }
+    }, 2000);
+  }
+
+  sendAdminStatus = () => {
+    let walk = gameService.state.activeWalk ? {tag: gameService.state.activeWalk.tag, startTime: gameService.state.activeWalk} : null
+    let payload = {
+      deviceId: storageService.getDeviceId(),
+      everythingVersion: storageService.state.version,      
+      fileStatus: fileService.state.status,
+      timeSyncStatus: this.state.timeSyncStatus,
+      activeWalk: walk,
+    }
+    let msgObj = {code: "statusUpdate", payload: payload};
+    this.adminSocket.emit('message', msgObj);
+  }
+
+  handleAdminMessage = (msgObj) => {
+    switch(msgObj.code) {
+      case "timeSync": this.doTimeSync(); break;
+      case "updateFiles": fileService.updateFilesInfoAndDownload(); break;
+      case "getEverything": storageService.getEverything(); break;
+      case "startWalk": 
+        if(msgObj.payload.tag && msgObj.payload.startTime) {
+          gameService.startWalkByTag(msgObj.payload.tag, msgObj.payload.startTime);
+        }
+        break;
+    }
   }
 
   async measureDelta(callback) {

@@ -27,7 +27,7 @@ class FileService extends Service {
 			console.log("error creating directory", err)
 		})
 
-		setTimeout(this.updateFilesInfoAndDownload, 8000)
+		//setTimeout(this.updateFilesInfoAndDownload, 8000)
   }
 
   fileStatus(fileInfo) {

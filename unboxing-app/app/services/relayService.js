@@ -73,7 +73,7 @@ class RelayService extends Service {
     });
 
     this.socket.on('reconnect_attempt', () => {
-      this.setReactive({connected: false})
+      //this.setReactive({connected: false})
       //this.debug("reconnect_attempt");
     });
 
