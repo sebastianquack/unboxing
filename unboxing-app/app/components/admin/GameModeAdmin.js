@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Switch, Picker } from 'react-native';
+import { Alert, Text, View, StyleSheet, TouchableOpacity, Switch, Picker } from 'react-native';
+
+import RestartAndroid from 'react-native-restart-android'
 
 import {globalStyles} from '../../../config/globalStyles';
 import {gameService, storageService, soundService} from '../../services';
 import {withGameService, withStorageService, withSoundService} from '../ServiceConnector';
-import DebugToggle from './DebugToggle';
 
 class GameModeAdmin extends React.Component { 
   constructor(props) {
@@ -88,14 +89,32 @@ class GameModeAdmin extends React.Component {
         >
               {challengeItems}
         </Picker>
-        <DebugToggle/>
-         <TouchableOpacity 
+
+        {/*<TouchableOpacity 
           style={globalStyles.button}
           onPress={()=>{
-            soundService.runSoundTest();
-          }}><Text>Run Crazy Sound Test</Text>
-        </TouchableOpacity>
-        <Text style={{marginBottom: 20}}>soundService errorLog: {JSON.stringify(this.props.soundService.errorLog)}</Text>
+            gameService.resumeWalkFromFile();
+          }}><Text>Resume Walk from file</Text>
+        </TouchableOpacity>*/}
+
+        <TouchableOpacity 
+          style={globalStyles.button}
+          onPress={()=>{
+            Alert.alert(
+              'Confirm',
+              'Restart App?',
+              [
+                {text: 'Yes', onPress: () => RestartAndroid.restart()},
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+              ],
+              {cancelable: true},
+            );
+          }}><Text>Restart App</Text>
+        </TouchableOpacity>        
       </View>
     );
   }

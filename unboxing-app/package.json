@@ -26,6 +26,7 @@
     "react-native-linear-gradient": "^2.5.3",
     "react-native-meteor": "^1.4.0",
     "react-native-path": "0.0.5",
+    "react-native-restart-android": "0.0.7",
     "react-native-sensors": "^2.4.2",
     "react-native-sound": "0.10.12",
     "react-native-svg": "^8.0.8",

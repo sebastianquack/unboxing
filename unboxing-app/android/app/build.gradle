@@ -149,6 +149,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-restart-android')
     compile project(':react-native-image-sequence')
     compile project(':react-native-android-wifi')
     compile project(':react-native-thumbnail')
