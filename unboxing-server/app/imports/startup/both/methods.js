@@ -155,8 +155,6 @@ Meteor.methods({
     Walks.insert({
       description: "new",
       tag: "",
-      active: true,
-      startTime: "12:00",
       tutorial: true,
       paths: "",
     });
@@ -165,10 +163,15 @@ Meteor.methods({
     console.log("remove walk", id);
     Walks.remove(id);
   },
-  'updateWalk'(id,$set) {
-    Walks.update({_id: id}, {$set})
+  'updateWalk'(id,$set, $unset=null) {
+    if(!$unset) {
+      Walks.update({_id: id}, {$set})  
+    } else {
+      Walks.update({_id: id}, {$unset})  
+    }
+    
   },
-
+  
   'addTranslation'() {
     Translations.insert({
       key: "",

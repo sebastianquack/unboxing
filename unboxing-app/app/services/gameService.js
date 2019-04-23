@@ -34,7 +34,6 @@ class GameService extends Service {
 		this.assistanceThreshold = 2000;
     this.guitarHeroThreshold = {pre: 2000, post: 2000}
 
-    this.earlyLeaveMinutes = 0; // time left in place before force is used
     this.checkInButtonDelay = 100;
 
     this.walkTrackerInterval = setInterval(this.walkTracker, 10000);
@@ -76,11 +75,12 @@ class GameService extends Service {
   setupMinimalWalk(place) {
     
     this.setReactive({
-        activeWalk: {tag: place.tag, startTime: this.getStartTimeNow()},
+        activeWalk: {tag: place.tag},
         activePath: {places: [{place: place.shorthand, duration: 2}]},
         pathLength: 1,
         pathIndex: 0,
-        gameMode: "walk"
+        gameMode: "walk",
+        walkStartTime: Date.now(),
       });
     this.walkTracker();
     this.setupActivePlace();
@@ -105,6 +105,7 @@ class GameService extends Service {
         pathLength: 3,
         pathIndex: -1,
         gameMode: "walk",
+        walkStartTime: Date.now(),
         walkStatus: "tutorial-intro",
         challengeStatus: "off"
     });
@@ -119,11 +120,10 @@ class GameService extends Service {
   // called when admin starts walk
 	startWalkByTag = (tag, startTime) => {
     let walk = storageService.getWalkByTag(tag);
-    walk.startTime = startTime;
-    this.setActiveWalk(walk)
+    this.setActiveWalk(walk, startTime)
   }
 
-  setActiveWalk = (walk)=> {
+  setActiveWalk = (walk, startTime)=> {
 		
 		let activePath = storageService.getActivePath(walk);
 		
@@ -136,16 +136,16 @@ class GameService extends Service {
 				pathIndex: walk.tutorial ? -1 : 0,
 				gameMode: "walk",
         walkStatus: walk.tutorial ? "tutorial-intro" : "ongoing",
+        walkStartTime: startTime,
         challengeStatus: "off"
 			});
 
-      if(walk.tutorial) {
-        this.initInfoStream();
-      } else {
+      if(!walk.tutorial) {
         this.setupActivePlace();  
       }
 
       this.walkTracker();
+      this.initInfoStream(); 
 		}
 	}
 
@@ -169,6 +169,7 @@ class GameService extends Service {
             pathIndex: stateObj.pathIndex,
             gameMode: stateObj.gameMode,
             walkStatus: stateObj.walkStatus,
+            walkStartTime: stateObj.walkStartTime,
             challengeStatus: "off"
           });
           if(!(stateObj.activeWalk.tutorial && stateObj.pathIndex == 0)) {
@@ -184,22 +185,24 @@ class GameService extends Service {
 
   /** walks and places **/
 
-  // getWalkStartTime(walk) {
-  //   let hours = walk.startTime.split(":")[0];
-  //   let minutes = walk.startTime.split(":")[1];
-  //   let walkStartTime = new Date();
-  //   walkStartTime.setHours(hours, minutes, 0, 0);
-  //   return walkStartTime.getTime();
-  // }
-
   getStartTimeForWalkIndex(index) {
-    let walkStartTime = this.state.activeWalk.startTime //this.getWalkStartTime(this.state.activeWalk);
+    let walkStartTime = this.state.walkStartTime;
     let totalDuration = 0;
     for(let i = 0; i < index; i++) {
       totalDuration += this.state.activePath.places[i].duration;
     }
     let r = walkStartTime + (totalDuration * 60 * 1000);
     return r;
+  }
+
+  getEndTimeForWalkIndex(index) {
+    let walkStartTime = this.state.walkStartTime;
+    let totalDuration = 0;
+    for(let i = 0; i <= index; i++) {
+      totalDuration += this.state.activePath.places[i].duration;
+    }
+    let r = walkStartTime + (totalDuration * 60 * 1000);
+    return r; 
   }
 
   getMinutesUntilWalkIndex(index) {
@@ -209,34 +212,31 @@ class GameService extends Service {
   walkTracker = ()=>{
     if(this.state.activeWalk && this.state.activePath) {
 
-      // check if current stage needs to be advanced
+      // update pathIndex to correct time
+      let oldPathIndex = this.state.pathIndex;
+      let now = soundService.getSyncTime();
+      let pathIndexUpdated = false;
+      for(let i = 0; i < this.state.pathLength; i++) {
+        if(now < this.getEndTimeForWalkIndex(i)) {
+          this.setReactive({ pathIndex: i });
+          pathIndexUpdated = true;
+          break;
+        }
+      }
+      if(!pathIndexUpdated) this.setReactive({ pathIndex: this.state.pathLength });
+      
+      // if pathIndex changed, leave the challenge
+      if(this.state.pathIndex != oldPathIndex) {
+        this.leaveChallenge();
+      }
+
+      // update time display
       if(this.state.pathIndex > -1 && this.state.pathIndex < this.state.activePath.places.length) {
         let minutesToNextStage = this.getMinutesUntilWalkIndex(this.state.pathIndex + 1);
-        
-        if(minutesToNextStage < this.earlyLeaveMinutes) {
-          //this.setReactive({allowPlaceExit: true});
-          //this.backToLobby();
-          this.leaveChallenge(); 
-          this.moveToNextPlaceInWalk(); // when time in place is up force to lobby, force out of place - needs playtesting
-        } else {
-          this.setReactive({allowPlaceExit: false});
-        }
         this.setReactive({minutesToEnd: minutesToNextStage});
       }
-      
-      // update minutes until last stage of the path - needs playtesting
-      //let minutesToEnd = this.getMinutesUntilWalkIndex(this.state.activePath.places.length - 1);
-      //this.setReactive({minutesToEnd: minutesToEnd});
     }
   }
-
-	// called when user leaves place, moves to next one
-	moveToNextPlaceInWalk = ()=> {
-    this.setReactive({
-			pathIndex: this.state.pathIndex + 1
-		});
-		this.setupActivePlace();
-	}
 
   jumpToPlaceInWalk = (index) => {
     this.setReactive({
@@ -379,7 +379,7 @@ class GameService extends Service {
     })
     
     if(this.state.gameMode == "walk") {
-      this.moveToNextPlaceInWalk();
+      this.setupActivePlace();
     } else {
       this.setReactive({
         challengeStatus: "list",
@@ -646,7 +646,7 @@ class GameService extends Service {
   // big right button on game container
   handleRightButton = ()=> {
     if(this.state.walkStatus == "tutorial-intro") {
-      this.moveToNextPlaceInWalk();
+      this.walkTracker();
       this.initInfoStream();
       return;
     }

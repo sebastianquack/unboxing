@@ -180,7 +180,7 @@ class NetworkService extends Service {
   }
 
   sendAdminStatus = () => {
-    let walk = gameService.state.activeWalk ? {tag: gameService.state.activeWalk.tag, startTime: gameService.state.activeWalk} : null
+    let walk = gameService.state.activeWalk ? {tag: gameService.state.activeWalk.tag, startTime: gameService.state.walkStartTime} : null
     let payload = {
       everythingVersion: storageService.state.version,      
       fileStatus: fileService.state.status,

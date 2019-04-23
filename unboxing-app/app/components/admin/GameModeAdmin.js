@@ -15,7 +15,7 @@ class GameModeAdmin extends React.Component {
   render() {
     let walkItems = [<Picker.Item key="none" label={"-"} value={null}/>]
     if(this.props.storageService.collections.walks) {
-      walkItems.push(this.props.storageService.collections.walks.filter(w=>w.active).map(w=>
+      walkItems.push(this.props.storageService.collections.walks.map(w=>
         <Picker.Item key={w._id} label={w.description} value={w}/>));
     }
     let placeItems = [<Picker.Item key="none" label={"-"} value={null}/>]
@@ -34,6 +34,7 @@ class GameModeAdmin extends React.Component {
         <Text>gameMode: {this.props.gameService.gameMode}</Text>
         <Text>activeWalk: {this.props.gameService.activeWalk ? JSON.stringify(this.props.gameService.activeWalk) : "none"}</Text>
         <Text>walkStatus: {this.props.gameService.walkStatus}</Text>
+        <Text>walkStartTime: {this.props.gameService.walkStartTime}</Text>
         <Text>tutorialStatus: {this.props.gameService.tutorialStatus}</Text>
         <Text>activePath: {this.props.gameService.activePath ? JSON.stringify(this.props.gameService.activePath) : "none"}</Text>
         <Text>pathIndex: {this.props.gameService.pathIndex}</Text>
@@ -50,7 +51,7 @@ class GameModeAdmin extends React.Component {
         <Picker
               mode="dropdown"
               onValueChange={(itemValue, itemIndex) => {if(itemValue) {
-                gameService.setActiveWalk(itemValue) 
+                gameService.startWalkByTag(itemValue.tag, Date.now());
                 this.props.adminClose();
               }}}
         >

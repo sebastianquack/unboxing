@@ -1,4 +1,4 @@
-import { Sequences, Challenges, Places } from '../../collections';
+import { Sequences, Challenges, Places, Walks } from '../../collections';
 
 Migrations.add({
   version: 1,
@@ -134,7 +134,18 @@ Migrations.add({
   down: function() {}
 });
 
-const version = 11;
+Migrations.add({
+  version: 12,
+  name: 'remove startTime from walk',
+  up: function() {
+    Walks.find().forEach( walk => {
+      Meteor.call('updateWalk', walk._id, {}, {active: false, startTime: 0});
+    });  
+  },
+  down: function() {}
+});
+
+const version = 12;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);

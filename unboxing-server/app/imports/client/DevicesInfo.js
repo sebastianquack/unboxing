@@ -47,7 +47,8 @@ class DevicesInfo extends React.Component {
       code: 'startWalk',
       payload: {
         tag: this.state.tag,
-        startTimeOffset: parseInt(this.state.startTimeOffset)
+        startTimeOffset: parseInt(this.state.startTimeOffset),
+        startTime: this.state.startTime,
       }
     })
   }
@@ -69,7 +70,8 @@ class DevicesInfo extends React.Component {
     const timeSync = <button onClick={event => this.sendMessage({ code: "timeSync"})}>timeSync</button>
     const startWalk = <form onSubmit={ this.sendWalkMessage }>
         <label>tag: <input value={this.state.tag} onChange={event => this.setState({tag: event.target.value})} type="text"></input></label>
-        <label>in seconds: <input value={this.state.startTimeOffset} onChange={event => this.setState({startTimeOffset: event.target.value})} type="text"></input></label>
+        <label>seconds from now: <input value={this.state.startTimeOffset} onChange={event => this.setState({startTimeOffset: event.target.value})} type="text"></input></label>
+        <label>or timestamp: <input value={this.state.startTime} onChange={event => this.setState({startTime: event.target.value})} type="text"></input></label>
         <input type="submit" value="startWalk" />
       </form>
 
