@@ -99,14 +99,20 @@ class NetworkService extends Service {
     NetInfo.getConnectionInfo().then((connectionInfo) => {
       self.setReactive({connectionType: connectionInfo.type})
     });
-    function handleConnectivityChange(connectionInfo) {
+    handleConnectivityChange = (connectionInfo) => {
       self.setReactive({connectionType: connectionInfo.type})
       wifi.getSSID((ssid) => {
         self.setReactive({ssid})
+
+        if(ssid == "unboxing") {
+          this.initAdminSocket();
+        }
       });
+      
       wifi.getIP((ip) => {
         self.setReactive({ip})
       });
+
     }
     NetInfo.addEventListener(
       'connectionChange',
@@ -141,7 +147,8 @@ class NetworkService extends Service {
   }
 
   initAdminSocket = () => {
-    this.adminSocket = io(server + ":" + adminSocketPort);
+    console.warn("connecting to admin socket " + this.state.server + ":" + adminSocketPort);
+    this.adminSocket = io("http://" + this.state.server + ":" + adminSocketPort);
     
     this.adminSocket.on('disconnect', ()=>{
       this.setReactive({adminSocketConnected: false})
@@ -157,11 +164,12 @@ class NetworkService extends Service {
 
     this.adminSocketinitialized = true
 
-    this.socket.on('message', (msgObj)=>{
+    this.adminSocket.on('message', (msgObj)=>{
       console.warn(msgObj);  
       handleAdminMessage(msgObj);
     });
 
+    clearInterval(this.adminStatusInterval);
     this.adminStatusInterval = setInterval(()=>{
       if(this.state.adminSocketConnected) {
         this.sendAdminStatus();  
@@ -172,13 +180,12 @@ class NetworkService extends Service {
   sendAdminStatus = () => {
     let walk = gameService.state.activeWalk ? {tag: gameService.state.activeWalk.tag, startTime: gameService.state.activeWalk} : null
     let payload = {
-      deviceId: storageService.getDeviceId(),
       everythingVersion: storageService.state.version,      
       fileStatus: fileService.state.status,
       timeSyncStatus: this.state.timeSyncStatus,
       activeWalk: walk,
     }
-    let msgObj = {code: "statusUpdate", payload: payload};
+    let msgObj = {code: "statusUpdate", payload: payload, deviceId: storageService.getDeviceId()};
     this.adminSocket.emit('message', msgObj);
   }
 
