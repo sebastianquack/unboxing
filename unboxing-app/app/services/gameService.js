@@ -158,6 +158,7 @@ class GameService extends Service {
   resumeWalkFromFile = () => {
     storageService.loadGameStateFromFile(stateObj=>{
       //console.warn("loaded", stateObj);
+      if (!stateObj) return
 
       if(stateObj.activeWalk && stateObj.gameMode == "walk") {
         if(stateObj.pathIndex < stateObj.pathLength) {
@@ -183,16 +184,16 @@ class GameService extends Service {
 
   /** walks and places **/
 
-  getWalkStartTime(walk) {
-    let hours = walk.startTime.split(":")[0];
-    let minutes = walk.startTime.split(":")[1];
-    let walkStartTime = new Date();
-    walkStartTime.setHours(hours, minutes, 0, 0);
-    return walkStartTime.getTime();
-  }
+  // getWalkStartTime(walk) {
+  //   let hours = walk.startTime.split(":")[0];
+  //   let minutes = walk.startTime.split(":")[1];
+  //   let walkStartTime = new Date();
+  //   walkStartTime.setHours(hours, minutes, 0, 0);
+  //   return walkStartTime.getTime();
+  // }
 
   getStartTimeForWalkIndex(index) {
-    let walkStartTime = this.getWalkStartTime(this.state.activeWalk);
+    let walkStartTime = this.state.activeWalk.startTime //this.getWalkStartTime(this.state.activeWalk);
     let totalDuration = 0;
     for(let i = 0; i < index; i++) {
       totalDuration += this.state.activePath.places[i].duration;

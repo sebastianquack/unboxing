@@ -156,6 +156,7 @@ class NetworkService extends Service {
     
     this.adminSocket.on('connect', ()=>{
       this.setReactive({adminSocketConnected: true})
+      setTimeout(this.sendAdminStatus, 3000)
     });
 
     this.adminSocket.on('reconnect_attempt', () => {
