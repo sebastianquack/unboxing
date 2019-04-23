@@ -30,7 +30,8 @@ let devices = []
 for (let i = 1 ; i <= 42; i++)  {
   devices.push({
     _id: i,
-    deviceId: i
+    deviceId: i,
+    deviceStatus: {}
   })
 }
 

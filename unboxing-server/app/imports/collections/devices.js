@@ -9,7 +9,9 @@ Devices.allow({
 });
 
 const schema = {
-  device_id: "",
+  deviceId: "",
+  connected: false, // connection status
+  deviceStatus: {} // sent by device
 }
 
 const defaults = {

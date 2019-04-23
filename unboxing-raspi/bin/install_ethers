@@ -18,13 +18,15 @@ FILE=$(git rev-parse --show-toplevel)/unboxing-raspi/ethers
 
 echo Running on $USERNAME@$HOST ...
 
-scp -i $IDENTITY $FILE $USERNAME@$HOST:/etc/ethers
+scp -i $IDENTITY $FILE $USERNAME@$HOST:/tmp/ethers
 
 ssh -i $IDENTITY $USERNAME@$HOST  /bin/bash << EOF
 
+sudo mv /tmp/ethers /etc/ethers
 sudo chown root:root /etc/ethers
 ls -l /etc/ethers
 cat /etc/ethers
+sudo systemctl restart dnsmasq
 exit
 
 EOF
