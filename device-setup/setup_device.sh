@@ -3,7 +3,7 @@ read -p "Press enter when unplugged"
 adb disconnect
 echo
 
-echo "start device in download mode"
+echo "start device in download mode - restart and hold home + power + down"
 read -p "Press enter when done"
 echo
 
@@ -12,7 +12,7 @@ read -p "Press enter to flash twrp"
 sudo heimdall flash --RECOVERY files/twrp-3.3.0-0-gts28velte.img --no-reboot
 echo
 
-echo "reboot directly into recovery mode (akrobatik)"
+echo "reboot directly into recovery mode (akrobat mode: hold power + down until screen dark, then quickly press and hold power + home + up until it says recovery booting"
 read -p "Press when in twrp"
 echo
 
@@ -25,7 +25,7 @@ read -p "Press when done"
 echo
 
 echo "advanced -> adb sideload"
-read -p "Press when sideload active"
+read -p "Press when sideload active (after slide to activate)"
 adb sideload files/lineage-16.0-20190410_155303-UNOFFICIAL-gts28velte.zip
 echo
 

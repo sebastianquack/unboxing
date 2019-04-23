@@ -151,6 +151,7 @@ class NetworkService extends Service {
     this.adminSocket = io("http://" + this.state.server + ":" + adminSocketPort);
     
     this.adminSocket.on('disconnect', ()=>{
+      this.lastSentAdminPayload = null;
       this.setReactive({adminSocketConnected: false})
     });
     
@@ -165,7 +166,7 @@ class NetworkService extends Service {
     this.adminSocketinitialized = true
 
     this.adminSocket.on('message', (msgObj)=>{
-      console.warn(msgObj);  
+      //console.warn(msgObj); 
       this.handleAdminMessage(msgObj);
     });
 
