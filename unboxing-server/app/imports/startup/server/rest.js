@@ -23,6 +23,11 @@ async function getEverything(req, res) {
     walks[i].paths = cleanJSON(walks[i].paths);
   }
 
+  for(let i = 0; i < challenges.length; i++) {
+    challenges[i].stages = cleanJSON(challenges[i].stages);  
+  }
+
+
   const collections = {
     challenges,
     sequences,

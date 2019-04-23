@@ -215,7 +215,7 @@ const videos = {
 
 const images = {
   "step-1": imagesEinsatz,
-  "step-2": imagesStop,
+  "step-2": imagesEinsatz,
   "step-2-playing": imagesVolume 
 }
 

@@ -152,14 +152,17 @@ class SequenceService extends Service {
 		if (!this.state.isLooping) {
 			const sequenceEndsAt = this.state.playbackStartedAt + this.state.currentSequence.custom_duration
 			if (currentTime >= sequenceEndsAt) {
-				this.resetSequence();
+				//console.warn("playbackStartedAt", this.state.playbackStartedAt);
+        this.resetSequence();
         this.resetTrack();
         this.updateActionInterface(); 
+        gameService.incrementChallengeStage();
+        gameService.backToLobby();
+        //console.warn(currentTime + " >= " + sequenceEndsAt); 
         return
 			}
 		}
 		
-
 		// beat calculations
 		const durationOfBeat = (60000 / this.state.currentSequence.bpm);
 		const currentBeatInSequence = Math.floor(currentTimeInSequence / durationOfBeat);
@@ -246,7 +249,7 @@ class SequenceService extends Service {
 	// analyse current state and display appropriate action message
 	// called on every beat and at special events (setupNextSequenceItem, sound ended)
 	updateActionInterface = ()=> {
-		//console.log("updateActionInterface");
+		//console.warn("updateActionInterface");
     //console.log(this.state.currentItem);
 
     // sequence has ended
@@ -473,6 +476,11 @@ class SequenceService extends Service {
 
 	// invoked from track selector component
 	trackSelect = (track)=> {
+
+    if(!track) {
+      this.setReactive({currentTrack: null});
+      return;
+    }
 		
   	this.setReactive({currentTrack: track});
 
@@ -702,6 +710,13 @@ class SequenceService extends Service {
       }
     }, 1000);*/
   }
+
+  turnOffVolumeCurrentItem() {
+    if(this.state.currentItem) {
+      soundService.setVolumeFor(this.state.currentItem.path, 0.0);
+    }
+  }
+
 
   // approve the next item
   approveScheduledOrCurrentItem() {

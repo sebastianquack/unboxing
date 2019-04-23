@@ -131,7 +131,7 @@ class GameContainer extends React.Component {
         break;
       
       case "prepare":
-        if(this.props.gameService.activePlace) {
+        if(this.props.gameService.activePlace && !gameService.nthPlaceInTutorial(0)) {
           buttonLeft = <Button back type="wide" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;  
         }
         

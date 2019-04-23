@@ -256,6 +256,7 @@ class GameService extends Service {
 			activeChallenge: challenge,
       numChallengeParticipants: 1,
       numChallengeParticipantsWithInstrument: 0,
+      challengeStageIndex: 0
 		});
 
     this.setReactive({challengeStatus: this.state.gameMode == "walk" ? "navigate" : "prepare"});
@@ -274,6 +275,45 @@ class GameService extends Service {
     relayService.emitMessage({code: "joinChallenge", challengeId: challenge._id, deviceId: storageService.getDeviceId()});
     this.activateRelayCallbacks();
 	}
+
+  getActiveChallengeStage = () => {
+    if(!this.state.activeChallenge) return null;
+    let stages = storageService.getChallengeStages(this.state.activeChallenge);
+    if(!stages) return null;
+    if(this.state.challengeStageIndex < stages.length) {
+      return stages[this.state.challengeStageIndex];
+    } else {
+      return null;
+    }
+  }
+
+  getStageInstruments = () => {
+    let stage = this.getActiveChallengeStage();
+    if(!stage) return [];
+    return stage.instruments;
+  }
+
+  instrumentAllowedInStage(instrument) {
+    let permittedInstruments = this.getStageInstruments();
+    if(!permittedInstruments || permittedInstruments.length == 0) return true;
+    return permittedInstruments.includes(instrument)
+  }
+
+  incrementChallengeStage = () => {
+    if(!this.state.activeChallenge) return null;
+    let stages = storageService.getChallengeStages(this.state.activeChallenge);
+    if(!stages) return;
+    if(this.state.challengeStageIndex < stages.length) {
+      this.setReactive({challengeStageIndex: this.state.challengeStageIndex + 1})
+    }
+
+    // deselect track if not allowed in new stage
+    if(sequenceService.state.currentTrack) {
+      if(!this.instrumentAllowedInStage(sequenceService.state.currentTrack.name)) {
+        this.trackSelect(null);
+      }  
+    }
+  }
 
   leaveChallenge() {
     if(!this.state.activeChallenge) return;
@@ -328,9 +368,11 @@ class GameService extends Service {
 
   // clear to start sequence
   enoughChallengeParticipantsReady = ()=> {
-    if(!this.state.activeChallenge.minParticipants) return true;
+    let stage = this.getActiveChallengeStage();
+    if(!stage) return true;
+    if(!stage.minParticipants) return true;
 
-    return this.state.numChallengeParticipantsWithInstrument >= this.state.activeChallenge.minParticipants;
+    return this.state.numChallengeParticipantsWithInstrument >= stage.minParticipants;
   }
   
   activateRelayCallbacks() {
@@ -370,15 +412,20 @@ class GameService extends Service {
   // called from TrackSelector when user selects track
   trackSelect = (track)=> {
     sequenceService.trackSelect(track);
-    this.setReactive({numChallengeParticipantsWithInstrument: this.state.numChallengeParticipantsWithInstrument + 1});
+    if(track) {
+      this.setReactive({numChallengeParticipantsWithInstrument: this.state.numChallengeParticipantsWithInstrument + 1});  
+    } else {
+      this.setReactive({numChallengeParticipantsWithInstrument: this.state.numChallengeParticipantsWithInstrument - 1});
+    }
     this.initInfoStream();
-    relayService.emitMessage({code: "selectTrack", deviceId: storageService.getDeviceId(), challengeId: this.state.activeChallenge._id, track: track.name});
+    relayService.emitMessage({code: "selectTrack", deviceId: storageService.getDeviceId(), challengeId: this.state.activeChallenge._id, track: track ? track.name : null});
   }
 
   startSequence = () => {
 
       if(this.state.challengeStatus == "play" && this.enoughChallengeParticipantsReady()) {
         //this.showNotification("starting sequence...");
+        //this.showInfoStreamAlert(storageService.t("starting"));
         
         let nowTime = soundService.getSyncTime();
         let startTime = nowTime + 2000; // set time for sequence to start
@@ -501,7 +548,8 @@ class GameService extends Service {
   }
 
   backToLobby() {
-    sequenceService.cancelItemsAndSounds()
+    //sequenceService.cancelItemsAndSounds()
+    sequenceService.turnOffVolumeCurrentItem();
     this.setReactive({challengeStatus :"prepare"});
     this.initInfoStream();
   }
@@ -575,7 +623,12 @@ class GameService extends Service {
           challengeStatus: "play",
           tutorialStatus: "first-play"
         });
-        sequenceService.resetTrack();
+        if(sequenceService.getControlStatus() == "playing") {
+          sequenceService.turnOnVolumeCurrentItem();
+        } else {
+          sequenceService.resetTrack();  
+        }
+        
         this.activateRelayCallbacks();
         this.initInfoStream();
         break;
@@ -587,13 +640,14 @@ class GameService extends Service {
   // info stream management
   clearInfoStream = ()=> {
     this.setReactive({
-      infoStream: []
+      infoStream: [],
+      infoStreamVideo: null
     });
   }
 
-  addItemToInfoStream = (title, content, video=[]) => {
+  addItemToInfoStream = (title, content) => {
     let infoStream = this.state.infoStream;
-    infoStream.push({title: title, content: content, video: video});
+    infoStream.push({title: title, content: content});
     this.setReactive({
       infoStream: infoStream
     });
@@ -649,25 +703,34 @@ class GameService extends Service {
         }
 
         else {
-          if(!this.state.allowPlaceExit) {
-            this.addItemToInfoStream(storageService.t("welcome"), storageService.t("challenge-welcome"));  
-          }  
-        }
 
-        let videos = this.getVideoPathsForChallenge(this.state.activeChallenge);
-        if(videos.length > 0) {
-          if(!this.nthPlaceInTutorial(0)) {
-            this.addItemToInfoStream(storageService.t("info"), storageService.t("video-info"), videos);  
-          } 
-        }
+          let stage = this.getActiveChallengeStage();
+          if(stage) {
+            
+            ["text1", "text2"].forEach(key=> {
+              let textItem = stage[key + "_" + storageService.state.language]
+              if(textItem) {
+                this.addItemToInfoStream(storageService.t("info"), textItem);  
+              }  
+            });
 
-        if(!sequenceService.state.currentTrack && !this.state.allowPlaceExit) {
+            let video = this.getVideoPathForActiveChallengeStage();
+            if(video) {
+              this.setReactive({
+                infoStreamVideo: video
+              })
+            }
+
+          }
+        }
+        
+        /*if(!sequenceService.state.currentTrack && !this.state.allowPlaceExit) {
           this.addItemToInfoStream(storageService.t("info"), storageService.t("prompt-select-instrument"));  
-        }
+        }*/
 
-        if(this.state.allowPlaceExit) {
+        /*if(this.state.allowPlaceExit) {
           this.addItemToInfoStream(storageService.t("info"), storageService.t("time-to-go"));   
-        }
+        }*/
         break;
       case "play":
         sequenceService.updateActionInterface();
@@ -738,15 +801,16 @@ class GameService extends Service {
 
   // video
 
-  getVideoPathsForChallenge = (challenge) => {
-    let videoFilenames = challenge.videos
-      .split(" ")
-      .filter( v => !!v );
-    let r = [];
-    videoFilenames.forEach((f)=>{
-      r.push("/video/" + f);
-    })
-    return r;
+  getVideoPathForActiveChallengeStage = () => {
+    let stage = this.getActiveChallengeStage();
+
+    let video = stage["video_" + storageService.state.language];
+    if(video) {
+      return "/video/" + video;  
+    } else {
+      return null;
+    }
+    
   }
 
   startVideo = (video) => {

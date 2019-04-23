@@ -7,11 +7,11 @@ import UIText from './UIText'
 
 import buttonPlayImg from '../../assets/img/button.png'
 import buttonHomeImg from '../../assets/img/homebutton.png'
-import buttonChangeImg from '../../assets/img/changebutton.png'
+import buttonChangeImg from '../../assets/img/changeButtonNew.png'
 import buttonWideImg from '../../assets/img/wideButton.png'
 import blankRoundButtonImg from '../../assets/img/blankRoundButton.png'
 
-import backIcon from '../../assets/img/Back.png'
+
 import walkIcon from '../../assets/img/Walk.png'
 
 const buttons = {
@@ -53,12 +53,6 @@ class Button extends React.Component {
 
     return <TouchableOpacity onPress={this.props.onPress}>
       <Image source={buttons[type]} />
-      {this.props.back &&
-          <Image 
-            style={{position: "absolute", height: 26, width: 26, top: 34, left: 24}}
-            source={backIcon} 
-          />
-      }
       {this.props.walk &&
           <Image 
             style={{position: "absolute", top: 47, left: 49}}
@@ -66,7 +60,7 @@ class Button extends React.Component {
           />
       }
       <View style={textPosition}>
-        <UIText caps wide strong align="center" style={textStyle}>{this.props.text}</UIText>
+        <UIText backIcon={this.props.back} caps wide strong align="center" style={textStyle}>{this.props.text}</UIText>
       </View>
     </TouchableOpacity>
   }

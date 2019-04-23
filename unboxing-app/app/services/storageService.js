@@ -128,6 +128,17 @@ class StorageService extends Service {
 		return null;
 	}
 
+  getChallengeStages = (challenge)=> {
+    let stagesObj = [];
+    try {
+      stagesObj = JSON.parse(challenge.stages);  
+    }
+    catch {
+      console.warn("error parsing stages json");
+    }
+    return stagesObj;
+  }
+
 	findPlace = (placeShorthand, walkTag)=> {
 
 		for(let i = 0; i < this.state.collections.places.length; i++) {
