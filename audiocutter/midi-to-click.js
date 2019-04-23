@@ -89,14 +89,36 @@ beats.forEach( b => b.absTimeMs += beginningOffsetMs)
 
 // apply corrections
 config.corrections.forEach( correction => {
-  console.log("applying correction at bar " + correction.bar)
   const beatNumber = beats.find( b => (b.bar == correction.bar && b.barBeat == correction.barBeat)).beat
+  console.log("applying correction at bar " + correction.bar + ", beat number " + beatNumber)
   beats.forEach( b => {
     if (b.beat >= beatNumber) {
-      if (correction.offsetMs) b.absTimeMs += correction.offsetMs
+      if (correction.offsetMs) {
+        b.absTimeMs += correction.offsetMs
+        b.humanTime = humanTime(b.absTimeMs)
+      }
       if (correction.offsetBar) b.bar -= correction.offsetBar
     }
   })
+  // remove skipped or duplicate bars
+  if (correction.offsetBar) {
+    const beatIndex = beats.findIndex( b => (b.bar == correction.bar && b.barBeat == correction.barBeat))
+    const beatsToRemove = beatsPerBar * correction.offsetBar
+    const startBeatIndex = beatIndex - beatsToRemove
+    beats.splice(startBeatIndex, beatsToRemove)
+  }
+  // remove duplicate bars
+  /*let currentBar = lastBar
+  for (let i = beats.length; i > 0; i--) {
+    let beat = beats[i-1]
+    if (currentBar >= beat.bar) {
+      delete beat
+    } else {
+      if (beat.barBeat == 1) {
+        currentBar = beats.bar
+      }
+    }
+  }*/
 })
 
 // cut after last beat
@@ -104,8 +126,13 @@ const lastBarIndex = beats.findIndex( b => (b.bar > lastBar))
 console.log("lastBar index " + lastBarIndex)
 beats.splice(lastBarIndex)
 
+// fix human Time
+beats.forEach( b => {
+  b.humanTime = humanTime(b.absTimeMs)
+})
+
 // the final beat data
-//console.log(JSON.stringify(beats,null,1))
+// console.log(JSON.stringify(beats,null,1))
 console.log(beatsToCSV(beats, "\t"))
 
 // create click sequence
@@ -145,6 +172,7 @@ WavEncoder.encode(audio).then((buffer) => {
   const filename = outputDir + '/' + outputFilename
   fs.writeFileSync(`${filename}.wav`, new Buffer(buffer));
   fs.writeFileSync(`${filename}.tsv`, beatsToCSV(beats, "\t"))
+  fs.writeFileSync(`${filename}.json`, JSON.stringify(beats, null, 1))
 });
 
 

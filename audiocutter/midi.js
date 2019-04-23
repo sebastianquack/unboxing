@@ -147,7 +147,8 @@ let s = ms / 1000;
 let minutes = Math.floor((s / 60)) + '';
 let seconds = Math.round((s % 60)) + '';
 if (seconds.length === 1) seconds = '0' + seconds;
-let humanTime = minutes + ':' + seconds;
+let millis = ms % 1000
+let humanTime = minutes + ':' + seconds + "." + millis.toFixed(0).padStart(3, '0');
 return humanTime;
 }
 

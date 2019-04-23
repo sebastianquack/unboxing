@@ -12,7 +12,7 @@ const schema = {
   type: ["relay", "other"],
   name: "",
   url: "",
-  connection: ["wifi", "cellular"],
+  connectionType: ["wifi", "cellular"],
   ssid: "", // optional
   psk: "", // optional
 }
@@ -21,7 +21,7 @@ const defaults = {
   type: "",
   name: "",
   url: "",
-  connection: "",
+  connectionType: "",
   ssid: "",
   psk: "",
 }
