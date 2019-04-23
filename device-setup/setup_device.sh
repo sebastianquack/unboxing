@@ -75,7 +75,7 @@ adb shell 'date'
 echo
 
 echo "note the mac address (d0:...) in the inventory table"
-adb shell 'ip address | grep link/ether | grep d0'
+adb shell 'ip address'
 read -p "Press enter when noted"
 echo
 

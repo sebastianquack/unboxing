@@ -17,12 +17,15 @@ function init(io) {
     console.log('Client connected');
     
     socket.on('disconnect', () => {
-      console.log('Client disconnected: ' + socket.deviceId);
-      Devices.update({ deviceId }, {$set:{connected: false}})
+      const deviceId = socket.deviceId
+      console.log('Client disconnected: ' + deviceId);
+      if (deviceId) {
+        Devices.update({ deviceId }, {$set:{connected: false}})
+      }
     });
     
     socket.on('message', async function(msg) {
-      // console.log('Message received: ', msg);
+      console.log('Message received: ', msg);
       const deviceId = parseInt(msg.deviceId)
       socket.deviceId = deviceId // store deviceId
       deviceId, Devices.update({ deviceId }, {$set:{connected: true}})
@@ -40,6 +43,10 @@ function init(io) {
 init(io);
 
 const sendMessage = ( deviceIds, message) => {
+  if (message.payload && message.payload.tag) {
+    message.payload.startTime = (message.payload.startTimeOffset*1000) + Date.now()
+  }
+  console.log("sending admin message", message)
   io.sockets.emit('message', {
     deviceIds,
     ...message
