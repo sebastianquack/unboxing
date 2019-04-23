@@ -41,11 +41,14 @@ class DevicesInfo extends React.Component {
     Meteor.call('sendAdminMessage', deviceIds, message)
   }
 
-  sendWalkMessage = () => {
+  sendWalkMessage = (event) => {
+    event.preventDefault()
     this.sendMessage({
       code: 'startWalk',
-      tag: this.state.tag,
-      startTime: this.state.startTime
+      payload: {
+        tag: this.state.tag,
+        startTimeOffset: parseInt(this.state.startTimeOffset)
+      }
     })
   }
 
@@ -65,8 +68,8 @@ class DevicesInfo extends React.Component {
     const updateFiles = <button onClick={event => this.sendMessage({ code: "updateFiles"})}>updateFiles</button>
     const timeSync = <button onClick={event => this.sendMessage({ code: "timeSync"})}>timeSync</button>
     const startWalk = <form onSubmit={ this.sendWalkMessage }>
-        <label>tag: <input value={this.state.tag} onChange={event => this.setState({tag: event.value})} type="text"></input></label>
-        <label>startTime: <input value={this.state.startTime} onChange={event => this.setState({startTime: event.value})} type="text"></input></label>
+        <label>tag: <input value={this.state.tag} onChange={event => this.setState({tag: event.target.value})} type="text"></input></label>
+        <label>in seconds: <input value={this.state.startTimeOffset} onChange={event => this.setState({startTimeOffset: event.target.value})} type="text"></input></label>
         <input type="submit" value="startWalk" />
       </form>
 
