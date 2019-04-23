@@ -166,7 +166,7 @@ class NetworkService extends Service {
 
     this.adminSocket.on('message', (msgObj)=>{
       console.warn(msgObj);  
-      handleAdminMessage(msgObj);
+      this.handleAdminMessage(msgObj);
     });
 
     clearInterval(this.adminStatusInterval);
@@ -185,17 +185,20 @@ class NetworkService extends Service {
       timeSyncStatus: this.state.timeSyncStatus,
       activeWalk: walk,
     }
-    let msgObj = {code: "statusUpdate", payload: payload, deviceId: storageService.getDeviceId()};
-    this.adminSocket.emit('message', msgObj);
+    if(JSON.stringify(this.lastSentAdminPayload) !== JSON.stringify(payload)) {
+      let msgObj = {code: "statusUpdate", payload: payload, deviceId: storageService.getDeviceId()};
+      this.adminSocket.emit('message', msgObj);
+      this.lastSentAdminPayload = payload;
+    }
   }
 
   handleAdminMessage = (msgObj) => {
     if(msgObj.deviceIds) {
-      if(msgObj.deviceIds.contains(storageService.getDeviceId())) { 
+      if(msgObj.deviceIds.indexOf(storageService.getDeviceId()) > -1) { 
         switch(msgObj.code) {
           case "timeSync": this.doTimeSync(); break;
           case "updateFiles": fileService.updateFilesInfoAndDownload(); break;
-          case "getEverything": storageService.getEverything(); break;
+          case "updateEverything": storageService.updateEverything(); break;
           case "startWalk": 
             if(msgObj.payload.tag && msgObj.payload.startTime) {
               gameService.startWalkByTag(msgObj.payload.tag, msgObj.payload.startTime);
