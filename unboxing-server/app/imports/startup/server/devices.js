@@ -18,11 +18,13 @@ function init(io) {
     
     socket.on('disconnect', () => {
       console.log('Client disconnected: ' + socket.deviceId);
-      Devices.update({ deviceId }, {$set:{connected: false}})
+      if (socket.deviceId) {
+        Devices.update({ deviceId }, {$set:{connected: false}})
+      }
     });
     
     socket.on('message', async function(msg) {
-      // console.log('Message received: ', msg);
+       console.log('Message received: ', msg);
       const deviceId = parseInt(msg.deviceId)
       socket.deviceId = deviceId // store deviceId
       deviceId, Devices.update({ deviceId }, {$set:{connected: true}})
