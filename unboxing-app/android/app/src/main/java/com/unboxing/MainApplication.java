@@ -3,6 +3,7 @@ package com.unboxing;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.rnrestartandroid.RNRestartAndroidPackage;
 import dk.madslee.imageSequence.RCTImageSequencePackage;
 import com.devstepbcn.wifi.AndroidWifiPackage;
 import me.hauvo.thumbnail.RNThumbnailPackage;
@@ -34,6 +35,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNRestartAndroidPackage(),
             new RCTImageSequencePackage(),
             new AndroidWifiPackage(),
             new RNThumbnailPackage(),

@@ -6,6 +6,8 @@ import { imeiIds } from '../../config/imei';
 import RNFS from 'react-native-fs';
 persistentFile = RNFS.ExternalStorageDirectoryPath + '/unboxing/collections.json';
 
+gameStateFile = RNFS.ExternalStorageDirectoryPath + '/unboxing/gameState.json';
+
 const uuidv1 = require('uuid/v1');
 
 class StorageService extends Service {
@@ -102,6 +104,30 @@ class StorageService extends Service {
 		});
 	}
 
+  saveGameStateToFile(gameStateObj) {
+    // write the file
+    let gameStateJSON = JSON.stringify(gameStateObj);
+    RNFS.writeFile(gameStateFile, gameStateJSON, 'utf8')
+    .then((success) => {
+      //console.warn("succesfully saved gameState data to file");
+    })
+    .catch((err) => {
+      console.log("error saving gameState data to file");
+      console.log(err.message);
+    });
+  }
+
+  async loadGameStateFromFile(callback) {
+    let json = await RNFS.readFile(gameStateFile, 'utf8').catch((err)=>{
+      console.warn("load gameState from file failed: " + err.message)
+    });
+    if(json) {
+      let gameStateFromFile = JSON.parse(json);
+      callback(gameStateFromFile);
+    } else {
+      callback(null);
+    }
+  }
 
 	// called when admin starts walk
 	getActivePath = (walk)=> {

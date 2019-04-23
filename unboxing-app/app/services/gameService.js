@@ -38,6 +38,11 @@ class GameService extends Service {
     this.checkInButtonDelay = 100;
 
     this.walkTrackerInterval = setInterval(this.walkTracker, 10000);
+
+    // automatically resume the last walk saved
+    setTimeout(()=>{
+      this.resumeWalkFromFile();
+    }, 3000);
 	}
 
 	toggleDebugMode = ()=> {
@@ -144,6 +149,37 @@ class GameService extends Service {
 		}
 	}
 
+  /** persist and resume **/
+
+  saveGameStateToFile = () => {
+    storageService.saveGameStateToFile(this.state);
+  }
+
+  resumeWalkFromFile = () => {
+    storageService.loadGameStateFromFile(stateObj=>{
+      //console.warn("loaded", stateObj);
+
+      if(stateObj.activeWalk && stateObj.gameMode == "walk") {
+        if(stateObj.pathIndex < stateObj.pathLength) {
+          this.setReactive({
+            activeWalk: stateObj.activeWalk,
+            activePath: stateObj.activePath,
+            pathLength: stateObj.pathLength,
+            pathIndex: stateObj.pathIndex,
+            gameMode: stateObj.gameMode,
+            walkStatus: stateObj.walkStatus,
+            challengeStatus: "off"
+          });
+          if(!(stateObj.activeWalk.tutorial && stateObj.pathIndex == 0)) {
+            this.setupActivePlace();  
+          }
+          this.walkTracker();
+          this.initInfoStream(); 
+        }        
+      }
+    });
+  }
+
 
   /** walks and places **/
 
@@ -201,6 +237,13 @@ class GameService extends Service {
 		this.setupActivePlace();
 	}
 
+  jumpToPlaceInWalk = (index) => {
+    this.setReactive({
+      pathIndex: index
+    });
+    this.setupActivePlace(); 
+  }
+
 	setupActivePlace = ()=> {
 		// check if there are still places in path
 		if(this.state.pathIndex >= this.state.activePath.places.length) {
@@ -239,6 +282,7 @@ class GameService extends Service {
 		
 		this.setActiveChallenge(challenge);
     this.walkTracker();
+    this.saveGameStateToFile();
 	}
 
   nthPlaceInTutorial = (n) => {

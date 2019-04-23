@@ -147,7 +147,7 @@ class NetworkService extends Service {
   }
 
   initAdminSocket = () => {
-    console.warn("connecting to admin socket " + this.state.server + ":" + adminSocketPort);
+    //console.warn("connecting to admin socket " + this.state.server + ":" + adminSocketPort);
     this.adminSocket = io("http://" + this.state.server + ":" + adminSocketPort);
     
     this.adminSocket.on('disconnect', ()=>{
@@ -190,17 +190,22 @@ class NetworkService extends Service {
   }
 
   handleAdminMessage = (msgObj) => {
-    switch(msgObj.code) {
-      case "timeSync": this.doTimeSync(); break;
-      case "updateFiles": fileService.updateFilesInfoAndDownload(); break;
-      case "getEverything": storageService.getEverything(); break;
-      case "startWalk": 
-        if(msgObj.payload.tag && msgObj.payload.startTime) {
-          gameService.startWalkByTag(msgObj.payload.tag, msgObj.payload.startTime);
+    if(msgObj.deviceIds) {
+      if(msgObj.deviceIds.contains(storageService.getDeviceId())) { 
+        switch(msgObj.code) {
+          case "timeSync": this.doTimeSync(); break;
+          case "updateFiles": fileService.updateFilesInfoAndDownload(); break;
+          case "getEverything": storageService.getEverything(); break;
+          case "startWalk": 
+            if(msgObj.payload.tag && msgObj.payload.startTime) {
+              gameService.startWalkByTag(msgObj.payload.tag, msgObj.payload.startTime);
+            }
+            break;
         }
-        break;
+      }
     }
   }
+  
 
   async measureDelta(callback) {
     let sendTimeStamp = (new Date()).getTime();

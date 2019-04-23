@@ -12,6 +12,8 @@ import {globalStyles} from '../../../config/globalStyles';
 import {soundService, networkService} from '../../services';
 import {withSoundService, withNetworkService} from '../ServiceConnector';
 
+import DebugToggle from './DebugToggle';
+
 const clickFilename = '/misc/click.mp3';
 
 class TimeSync extends React.Component { 
@@ -77,6 +79,15 @@ class TimeSync extends React.Component {
             <Switch value={this.state.testClick} onValueChange={this.handleTestClickSwitch}/>
           </View>
         </View>
+
+        <DebugToggle/>
+         <TouchableOpacity 
+          style={globalStyles.button}
+          onPress={()=>{
+            soundService.runSoundTest();
+          }}><Text>Run Crazy Sound Test</Text>
+        </TouchableOpacity>
+        <Text style={{marginBottom: 20}}>soundService errorLog: {JSON.stringify(this.props.soundService.errorLog)}</Text>
         
       </View>
   	);
