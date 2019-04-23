@@ -19,6 +19,10 @@ do
      i="0${i}";
    fi
 
+   echo "pinging device at $NETWORK_PREFIX${i} ( ctrl-z to abort )"
+   ping -o -n -W 2 -i 2  $NETWORK_PREFIX${i} &> /dev/null
+   echo "device discovered"
+
    echo "connecting to device ${i}"
    adb disconnect
    adb connect "$NETWORK_PREFIX${i}:5555"

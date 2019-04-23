@@ -9,6 +9,8 @@ fi
 USERNAME=pi
 TEMPDIR=/tmp/unboxing-relay_`base64 /dev/urandom | tr -d '/+' | dd bs=32 count=1 2>/dev/null`
 
+IDENTITY=$(git rev-parse --show-toplevel)/unboxing-raspi/id_rsa
+
 cd $(git rev-parse --show-toplevel)/unboxing-relay
 
 echo "deloying to $USERNAME@$1"
@@ -25,7 +27,7 @@ rsync -r --links --delete ./* $USERNAME@$1:/home/pi/unboxing/unboxing-relay/
 # continuing remotely:
 echo "Continuing remotely:"
 
-ssh $USERNAME@$1 /bin/bash << EOF
+ssh -i $IDENTITY $USERNAME@$1 /bin/bash << EOF
 
 echo "Restarting server..."
 sudo systemctl restart unboxing-relay
