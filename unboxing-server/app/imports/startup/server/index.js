@@ -11,6 +11,7 @@ import './migrations';
 import './fixtures';
 import './files';
 import './api';
+import './devices'
 
 // zeroconf
 import './zeroconf.js';

@@ -1,8 +1,13 @@
 import React, { Component, Switch } from 'react';
 
-import {WalksInfo, EventsInfo, PlacesInfo, ChallengesInfo, NetworkInfo, ServersInfo, FilesInfo, GesturesInfo, SequencesInfo, ImportExport, TranslationsInfo} from './';
+import {DevicesInfo, WalksInfo, EventsInfo, PlacesInfo, ChallengesInfo, NetworkInfo, ServersInfo, FilesInfo, GesturesInfo, SequencesInfo, ImportExport, TranslationsInfo} from './';
  
 const sections = [
+  {
+    name: "Devices",
+    component:DevicesInfo,
+    default: false
+  },  
   {
     name: "Walks",
     component:WalksInfo,

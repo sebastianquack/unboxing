@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { css } from 'emotion'
 
-import { Servers, derverDefaults, serverSchema } from '../collections';
+import { Servers, serverSchema } from '../collections';
 import { AutoForm } from './'
 
 class ServersInfo extends React.Component {

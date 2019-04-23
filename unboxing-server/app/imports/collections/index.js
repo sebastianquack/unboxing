@@ -6,4 +6,5 @@ export {default as Places} from './places';
 export {default as Walks} from './walks';
 export {default as Translations} from './translations';
 export * from './servers'
+export * from './devices'
 export * from './sequences';

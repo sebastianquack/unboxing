@@ -15,6 +15,7 @@ import SequencesInfo from './SequencesInfo';
 import SequenceDetail from './SequenceDetail';
 import SequenceDetailItem from './SequenceDetailItem';
 import ServersInfo from './ServersInfo';
+import DevicesInfo from './DevicesInfo';
 import AudioPreview from './AudioPreview';
 
 import TranslationDetail from './TranslationDetail';
@@ -42,6 +43,7 @@ export {
   ServersInfo,
   WalkDetail,
   WalksInfo,
+  DevicesInfo,
   TranslationDetail,
   TranslationsInfo
 }
