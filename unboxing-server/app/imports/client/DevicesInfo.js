@@ -7,30 +7,55 @@ import { Devices } from '../collections';
 class DevicesInfo extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      selected: {}
+    }
   }
 
   DevicesInfoCss = css`
-    ul {
-      display: flex;
-      flex-wrap: wrap;
+    table {
+      border-collapse: collapse;
     }
-    li {
-      margin-right: 1em;
-      margin-bottom: 1ex;
+    td, th {
+      padding: 0.5ex;
+      border-width: 1px 0 1px 0;
+      border-color: lightgrey;
+      border-style: solid;
 	  }
-	`  
+  `
+  
+  select = (deviceId, checked) => {
+    this.setState( state => ({ 
+      selected: { 
+        ...state.selected, 
+        [deviceId]: checked 
+      }
+    }))
+  }
+
+  sendMessage = message => {
+    deviceIds = Object.entries(this.state.selected)
+      .filter( ([deviceId, checked]) => checked )
+      .map( ([deviceId, checked]) => deviceId )
+    console.log(message, deviceIds)
+    Meteor.call('sendAdminMessage', deviceIds, message)
+  }
 
   render() {
 
     const columnAccessors = {
+      'select': row => <input type="checkbox" checked={this.state.selected[row.deviceId]} onChange={event => this.select(row.deviceId, event.target.checked)}/>,
       'deviceId': row => row.deviceId,
-      'connected': row => row.connected,
-      'everythingVersion': row => row.deviceStatus.everythingVersion,
-      'fileStatus': row => row.deviceStatus.fileStatus,
-      'timeSyncStatus': row => row.deviceStatus.timeSyncStatus,
+      'connected': row => row.connected ? "OK" : "-",
+      'everything': row => row.deviceStatus.everythingVersion,
+      'file': row => row.deviceStatus.fileStatus,
+      'timeSync': row => row.deviceStatus.timeSyncStatus,
+      'walk': row => row.deviceStatus.activeWalk ? row.deviceStatus.activeWalk.tag + "@" + row.deviceStatus.activeWalk.startTime : "-"
     }
 
-    const columnNames = Object.keys(columnAccessors)
+    const updateEverything = <button onClick={event => this.sendMessage({ code: "updateEverything"})}>updateEverything</button>
+
+    const headerRows = Object.keys(columnAccessors).map(c => <th key={c}>{c}</th>)
 
     const rows = this.props.devices.map(device => <tr key={device._id}>
       { Object.entries(columnAccessors).map(
@@ -38,12 +63,16 @@ class DevicesInfo extends React.Component {
         )}
     </tr>)
 
+
     return (
       <div  className={this.DevicesInfoCss}>
+        <div className="actions">
+          { updateEverything }
+        </div>
         <table>
           <thead>
             <tr>
-              { columnNames.map(c => <th key={c}>{c}</th>) }
+              { headerRows }
             </tr>
           </thead>
           <tbody>

@@ -6,6 +6,7 @@ import { Challenges, Gestures, Sequences } from '../../collections/';
 
 import {importExportConfig, importExportConfigTranslationsOnly} from '../../helper/server/importexport'
 import { updateFiles } from '../../helper/server/files';
+import { sendMessage } from '../../startup/server/devices'
 
 function createChallenge(uuid) {
   console.log("creating new challenge");
@@ -166,6 +167,10 @@ Meteor.methods({
   },
   'hostname'() {
     return os.hostname()
+  },
+  'sendAdminMessage'(deviceIds, message) {
+    console.log("sendMessage", deviceIds, message)
+    sendMessage(deviceIds, message)
   },
   async 'importEntries'(json) {
     const collections = Object.keys(json)
