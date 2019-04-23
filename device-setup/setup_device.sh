@@ -58,11 +58,12 @@ echo " - android debugging ON"
 echo " - adb over network ON"
 echo " - root access: ADB and apps"
 read -p "Press enter when done"
-setprop persist.adb.tcp.port 5555
-getprop | grep adb
+adb root
+adb shell 'setprop persist.adb.tcp.port 5555'
+adb shell 'getprop | grep adb'
 echo
 
-echo "Settings -> system -> advanced -> screen lock -> none"
+echo "Settings -> security & location -> screen lock -> none"
 read -p "Press enter when done"
 echo
 
@@ -74,7 +75,7 @@ adb shell 'am broadcast -a android.intent.action.TIME_SET'
 adb shell 'date'
 echo
 
-echo "note the mac address (d0:...) in the inventory table"
+echo "note the mac address (wlan0 link/ether -> this kind of number 8c:83:e1:eb:0e:10) in the inventory table"
 adb shell 'ip address'
 read -p "Press enter when noted"
 echo
