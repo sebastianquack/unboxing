@@ -1,6 +1,6 @@
 const exec = require('await-exec')
 
-async function cut(cues, beats, filePath, outputDir, filePrefix) {
+async function cut(cues, beats, filePath, outputDir, filePrefix, cutStartOffsetMs=0) {
   console.log(filePath)
   for (let cue of cues) {
     
@@ -9,7 +9,10 @@ async function cut(cues, beats, filePath, outputDir, filePrefix) {
       console.warn(`cue ${cue.start.bar}.${cue.start.barBeat} not found`)
       continue
     }
-    const startMs = startBeat.absTimeMs
+    let startMs = startBeat.absTimeMs + cutStartOffsetMs
+    if ( startMs < 0) { // cutStartOffset
+      startMs = 0
+    }
 
     const endBeat = beats.find( b => b.bar == cue.end.bar && b.barBeat == cue.end.barBeat)
     if (!endBeat) {
