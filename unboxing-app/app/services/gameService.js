@@ -110,12 +110,7 @@ class GameService extends Service {
         walkStatus: "tutorial-intro",
         challengeStatus: "off"
     });
-    this.initInfoStream();
-    this.walkTracker();
-    if(this.state.pathIndex > -1) {
-      this.setupActivePlace();  
-      sequenceService.trackSelectByName(this.state.activePath.startInstrument);
-    }
+    this.initInfoStream();    
   }
 
   // called when admin starts walk
@@ -211,7 +206,7 @@ class GameService extends Service {
   }
 
   walkTracker = ()=>{
-    if(this.state.activeWalk && this.state.activePath) {
+    if(this.state.activeWalk && this.state.activePath && this.state.walkStatus == "ongoing") {
 
       // update pathIndex to correct time
       let oldPathIndex = this.state.pathIndex;
@@ -654,8 +649,8 @@ class GameService extends Service {
   // big right button on game container
   handleRightButton = ()=> {
     if(this.state.walkStatus == "tutorial-intro") {
-      this.walkTracker();
-      this.initInfoStream();
+      this.setReactive({pathIndex: 0});
+      this.setupActivePlace();
       return;
     }
 
@@ -758,16 +753,10 @@ class GameService extends Service {
         break
       case "prepare":
         if(this.nthPlaceInTutorial(0)) {
-          if(!this.state.allowPlaceExit) {
-            this.addItemToInfoStream(storageService.t("welcome"), storageService.t("tutorial-place-0-1"));  
-          }
+          this.addItemToInfoStream(storageService.t("welcome"), storageService.t("tutorial-place-0-1"));  
+          this.setReactive({numChallengeParticipantsWithInstrument: 1});
+          
         } 
-
-        else if(this.nthPlaceInTutorial(1)) {
-          if(!this.state.allowPlaceExit) {
-            this.addItemToInfoStream(storageService.t("welcome"), storageService.t("tutorial-place-1-1"));  
-          }
-        }
 
         else {
 
@@ -790,14 +779,6 @@ class GameService extends Service {
 
           }
         }
-        
-        /*if(!sequenceService.state.currentTrack && !this.state.allowPlaceExit) {
-          this.addItemToInfoStream(storageService.t("info"), storageService.t("prompt-select-instrument"));  
-        }*/
-
-        /*if(this.state.allowPlaceExit) {
-          this.addItemToInfoStream(storageService.t("info"), storageService.t("time-to-go"));   
-        }*/
         break;
       case "play":
         sequenceService.updateActionInterface();
@@ -820,17 +801,19 @@ class GameService extends Service {
         this.preloadPracticeSound(1);
         this.activatePeakTutorial(()=>{
           this.playPracticeSound("1", storageService.t("info"), storageService.t("tutorial-instructions-playing-1"), "step-2", "step-1-playing");
-          this.showInfoStreamAlert(storageService.t("good"));
+          this.showInfoStreamAlert(storageService.t("good"), "blue", 4000);
         });
         break;
       case "step-2":
+        this.clearInfoStream();
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-2"));  
         this.activatePeakTutorial(()=>{
           this.playPracticeSound("2", storageService.t("info"), storageService.t("tutorial-instructions-playing-2"), "complete", "step-2-playing");
-          this.showInfoStreamAlert(storageService.t("good"));
+          this.showInfoStreamAlert(storageService.t("good"), "blue", 4000);
         });
         break;
       case "complete":
+        this.clearInfoStream();
         this.addItemToInfoStream(storageService.t("info"), storageService.t("tutorial-complete"));
         break;  
     }
