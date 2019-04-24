@@ -25,7 +25,8 @@ class GameService extends Service {
       statusBarSubtitle: defaultStatusBarSubtitle,
       debugMode: false,          // show debugging info in interface
       infoStream: [],
-      numChallengeParticipants: 1 // number of people in the challenge
+      numChallengeParticipants: 1, // number of people in the challenge
+      numChallengeParticipantsWithInstrument: 0
 		});
 
 		// not reactive vars
@@ -354,7 +355,7 @@ class GameService extends Service {
     if(!this.state.activeChallenge) return null;
     let stages = storageService.getChallengeStages(this.state.activeChallenge);
     if(!stages) return;
-    if(this.state.challengeStageIndex < stages.length) {
+    if(this.state.challengeStageIndex < stages.length - 1) { // always stay on last stage
       this.setReactive({challengeStageIndex: this.state.challengeStageIndex + 1})
     }
 
@@ -397,11 +398,17 @@ class GameService extends Service {
     if(msgObj.code == "challengeParticipantUpdate") {
       if(this.state.activeChallenge) {
         if(msgObj.challengeId == this.state.activeChallenge._id) {
+          //console.warn(msgObj);
           this.setReactive({
             numChallengeParticipants: msgObj.numParticipants,
-            numChallengeParticipantsWithInstrument: msgObj.numParticipantsWithInstrument,
             selectedTracks: msgObj.selectedTracks
           })
+          if(typeof msgObj.numChallengeParticipantsWithInstrument != "undefined") {
+            this.setReactive({
+              numChallengeParticipantsWithInstrument: msgObj.numParticipantsWithInstrument,  
+            })            
+          }
+          //console.warn(msgObj);
           this.initInfoStream();
         }  
       }
@@ -420,6 +427,7 @@ class GameService extends Service {
   // clear to start sequence
   enoughChallengeParticipantsReady = ()=> {
     let stage = this.getActiveChallengeStage();
+    //console.warn(stage);
     if(!stage) return true;
     if(!stage.minParticipants) return true;
 

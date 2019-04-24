@@ -32,6 +32,7 @@ class PrimaryScreen extends React.Component {
     this.renderMainContent = this.renderMainContent.bind(this)
     this.renderOverlayContent = this.renderOverlayContent.bind(this)
     this.renderScrollContent = this.renderScrollContent.bind(this)
+    this.renderBackgroundContent = this.renderBackgroundContent.bind(this)
   }
 
   renderBackgroundColor() {
@@ -56,6 +57,17 @@ class PrimaryScreen extends React.Component {
     }}>
       <Text style={{textAlign: "center"}}>FLOW</Text>
     </View>        
+  }
+
+  renderBackgroundContent() {
+    return <View style={{
+      position: "absolute",
+      zIndex: 1,
+      height: "100%",
+      width: "100%",
+      }}>
+      { this.props.backgroundContent }
+    </View>          
   }
   
   renderMainContent() {
@@ -137,6 +149,7 @@ class PrimaryScreen extends React.Component {
       // backgroundColor: 'rgba(255,0,0,0.5)',
     }}>
       { this.props.backgroundColor && this.renderBackgroundColor() }
+      { this.props.backgroundContent && this.renderBackgroundContent() }
       { this.props.backgroundFlow && this.renderBackgroundFlow() }
       { this.props.mainContent && this.renderMainContent() }
       { this.props.overlayContent && this.renderOverlayContent() }

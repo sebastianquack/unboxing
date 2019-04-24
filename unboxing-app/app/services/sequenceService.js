@@ -253,7 +253,7 @@ class SequenceService extends Service {
     //console.log(this.state.currentItem);
 
     // sequence has ended
-    let endedMessage = this.state.endedFlag ? storageService.t("play-again") + " " : ""
+    let endedMessage = ""; //this.state.endedFlag ? storageService.t("play-again") + " " : ""
     
 		// sequence hasn't started yet
 		if(this.state.controlStatus == "ready" && this.state.currentTrack) {

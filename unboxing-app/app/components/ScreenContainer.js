@@ -4,8 +4,11 @@ import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
 
-import frameImg from '../../assets/img/frame.png'
-import frameSecondaryImg from '../../assets/img/frameSecondary.png'
+//import frameImg from '../../assets/img/frame.png'
+//import frameSecondaryImg from '../../assets/img/frameSecondary.png'
+
+import frameImg from '../../assets/img/ShapeScreenAlternative.png'
+import frameSecondaryImg from '../../assets/img/ShapeScreenMain.png'
 
 const primaryScreenWidth = Math.floor(dimensions.screenWidth * 0.91)
 const primaryScreenLeft = Math.floor((dimensions.screenWidth - primaryScreenWidth) / 2)
