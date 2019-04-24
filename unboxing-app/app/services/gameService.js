@@ -731,7 +731,15 @@ class GameService extends Service {
     // there is an active challenge
     switch(this.state.challengeStatus) {
       case "navigate":
-        this.addItemToInfoStream(storageService.t("navigation"), storageService.t("navigation-1"));
+        let navText = storageService.t("navigation-1");
+        let description = this.state.activePlace["description_" + storageService.state.language];
+        if(description) {
+          if(description != "new" && description != "neu") {
+            navText = description;
+          }
+        }
+        this.addItemToInfoStream(storageService.t("navigation"), navText);
+        clearTimeout(this.checkInTimeout);
         this.checkInTimeout = setTimeout(()=>{
           this.addItemToInfoStream(storageService.t("navigation"), storageService.t("navigation-2"));  
           this.setReactive({allowCheckInButton: true});

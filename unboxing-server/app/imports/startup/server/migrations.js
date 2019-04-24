@@ -145,7 +145,23 @@ Migrations.add({
   down: function() {}
 });
 
-const version = 12;
+Migrations.add({
+  version: 13,
+  name: 'add description to place',
+  up: function() {
+    add_default_attributes_to_place({
+      description_en: "new",
+      description_de: "neu"
+    });
+    Places.find().forEach( place => {
+      Meteor.call('updatePlace', place._id, {}, {description: ""});
+    });  
+  },
+  down: function() {}
+});
+
+
+const version = 13;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);

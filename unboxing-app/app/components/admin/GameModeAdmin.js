@@ -21,7 +21,7 @@ class GameModeAdmin extends React.Component {
     let placeItems = [<Picker.Item key="none" label={"-"} value={null}/>]
     if(this.props.storageService.collections.places) {
       placeItems.push(this.props.storageService.collections.places.map(p=>
-        <Picker.Item key={p._id} label={p.description} value={p}/>));
+        <Picker.Item key={p._id} label={p.description_en} value={p}/>));
     }
     let challengeItems = [<Picker.Item key="none" label={"-"} value={null}/>]
     if(this.props.storageService.collections.challenges) {

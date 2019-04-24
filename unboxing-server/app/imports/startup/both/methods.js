@@ -135,7 +135,8 @@ Meteor.methods({
 
   'addPlace'() {
     Places.insert({
-      description: "new",
+      description_en: "new",
+      description_de: "new",
       shorthand: "",
       challenge_id: "",
       tag: "",
@@ -147,8 +148,13 @@ Meteor.methods({
     console.log("remove place", id);
     Places.remove(id);
   },
-  'updatePlace'(id,$set) {
-    Places.update({_id: id}, {$set})
+  'updatePlace'(id,$set, $unset=null) {
+    if(!$unset) {
+      Places.update({_id: id}, {$set})  
+    } else {
+      Places.update({_id: id}, {$unset})  
+    }
+    
   },
 
   'addWalk'() {
