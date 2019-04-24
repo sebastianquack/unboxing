@@ -160,8 +160,19 @@ Migrations.add({
   down: function() {}
 });
 
+Migrations.add({
+  version: 14,
+  name: 'remove instructions from challenges',
+  up: function() {
+    Challenges.find().forEach( challenge => {
+      Meteor.call('updateChallenge', challenge._id, {}, {instructions: ""});
+    });  
+  },
+  down: function() {}
+});
 
-const version = 13;
+
+const version = 14;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);
