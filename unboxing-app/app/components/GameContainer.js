@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
@@ -40,11 +40,23 @@ class GameContainer extends React.Component {
     let buttonRight = null;
     let modalContent = null;
     let buttonModal = null;
+    let backgroundContent = null;
 
     // configure content
     if(this.props.gameService.activeChallenge) {
-      mainContent = <ChallengeView/>        
-    
+      
+      if(this.props.gameService.challengeStatus == "navigate" && this.props.gameService.walkStatus == "ongoing") {
+        backgroundContent = <Image
+              source={{uri: "file:///sdcard/unboxing/files/places/" + this.props.gameService.activePlace.tag + "/" + this.props.gameService.activePlace.navigationDiagram}}
+              style={{
+                height: "100%",
+                width: "100%"
+              }}
+            />
+      } else {
+        mainContent = <ChallengeView/>        
+      }
+
       if(!gameService.nthPlaceInTutorial(0) 
         && this.props.gameService.challengeStatus != "navigate") {
         statusBar = <StatusBar 
@@ -162,10 +174,11 @@ class GameContainer extends React.Component {
           primaryScreen = {<PrimaryScreen
               backgroundColor={this.props.peakService.isUp ? "passive" : "active" }
               // backgroundFlow
+              backgroundContent = { backgroundContent }
               mainContent = { mainContent }
               overlayContent = { overlayContent }
               scrollContent = { scrollContent }
-              infoStreamContent = { this.props.gameService.infoStream.length ? <InfoStream/> : null }
+              infoStreamContent = { <InfoStream/> }
             />}
           secondaryScreen = {secondaryScreen}
           buttonRight = {buttonRight}
