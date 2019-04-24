@@ -147,7 +147,7 @@ class Sequence extends React.Component {
           </ol>
         </div>
         <datalist id={this.datalists.tracks} >
-          { this.props.sequence.tracks.map( t => <option key={t.name} value={t.name} />) }
+          { this.props.sequence.tracks && this.props.sequence.tracks.map( t => <option key={t.name} value={t.name} />) }
         </datalist>
       </div>
     );
