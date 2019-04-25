@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import os from 'os';
 
 import Events from '../../collections/events';
-import { Challenges, Gestures, Sequences } from '../../collections/';
+import { Challenges, Gestures, Sequences, Devices } from '../../collections/';
 
 import {importExportConfig, importExportConfigTranslationsOnly} from '../../helper/server/importexport'
 import { updateFiles } from '../../helper/server/files';
@@ -193,3 +193,4 @@ Meteor.methods({
   }  
 
 });
+

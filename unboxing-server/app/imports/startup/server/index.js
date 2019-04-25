@@ -14,4 +14,7 @@ import './api';
 import './devices'
 
 // zeroconf
-import './zeroconf.js';
+//import './zeroconf.js';
+
+// bot
+import './downloadBot'
