@@ -228,7 +228,7 @@ class SoundSevice extends Service {
 	}*/
 
 	// schedule playback of preloaded soundfile
-	scheduleSound = (soundfile, targetTime, callbacks={}, startSilent=false) => {
+	scheduleSound = (soundfile, targetTime, callbacks={}, startSilent=false, unload=false) => {
 
 		// find sound index of a ready version for this sound
 		let indices = this.findSoundIndices(soundfile, "ready");
@@ -249,7 +249,7 @@ class SoundSevice extends Service {
     const timeToRunStartingLoop = targetTime - this.getSyncTime();
 
     this.schedulingIntervals.push(setTimeout(()=>{
-			this.runStartingLoop(indices[0], targetTime, callbacks, startSilent);
+			this.runStartingLoop(indices[0], targetTime, callbacks, startSilent, unload);
     }, timeToRunStartingLoop - 34)); // set timeout to a bit less to allow for loop
   }
 
@@ -292,7 +292,7 @@ class SoundSevice extends Service {
 		this.sounds[index].soundObj.setVolume(startSilent ? 0.0 : 0.3).play((success) => {
 		  	
         // only use each player once
-        if(this.sounds[index].soundObj.release) {
+        /*if(this.sounds[index].soundObj.release) {
           //console.warn("releasing player...");
           this.sounds[index].soundObj.release();  
           this.sounds[index].status = "released";
@@ -300,7 +300,7 @@ class SoundSevice extends Service {
           setTimeout(()=>{
             this.sounds[index] = {status: "released"};
           }, 100);
-        }
+        }*/
 
 		  	if (success) {
 		    	console.log('successfully finished playing at', this.getSyncTime());

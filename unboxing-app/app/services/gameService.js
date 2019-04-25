@@ -56,6 +56,8 @@ class GameService extends Service {
 		if(this.state.gameMode == "walk" && mode == "manual") {
 			this.setReactive({
 				activeWalk: null,
+        activePath: null,
+        pathLength: 0,
 				pathIndex: 0,
 				gameMode: "manual",
         walkStatus: "off"
@@ -342,6 +344,7 @@ class GameService extends Service {
 
   instrumentAllowedInStage(instrument) {
     let permittedInstruments = this.getStageInstruments();
+    //console.warn(permittedInstruments, instrument);
     if(!permittedInstruments || permittedInstruments.length == 0) return true;
     return permittedInstruments.includes(instrument)
   }
@@ -367,6 +370,7 @@ class GameService extends Service {
     relayService.emitMessage({code: "leaveChallenge", challengeId: this.state.activeChallenge ? this.state.activeChallenge._id : null, deviceId: storageService.getDeviceId()});  
     
     sequenceService.stopSequence();
+    soundService.unloadSoundfiles();
 
     this.setReactive({
       statusBarTitle: defaultStatusBarTitle,
@@ -423,6 +427,9 @@ class GameService extends Service {
   enoughChallengeParticipantsReady = ()=> {
     let stage = this.getActiveChallengeStage();
     //console.warn(stage);
+
+    if(this.state.debugMode) return true;
+
     if(!stage) return true;
     if(!stage.minParticipants) return true;
 
@@ -506,7 +513,7 @@ class GameService extends Service {
     }
     // should this request start the sequence?
     // yes, if sequence is ready to play
-    else if (sequenceService.state.controlStatus === "ready") {
+    else if (sequenceService.state.controlStatus === "idle") {
       console.log("startSequenceRemotely: starting sequence")
       sequenceService.startSequence(startTime, false)
     } else {
@@ -534,7 +541,7 @@ class GameService extends Service {
 	handlePlayNextItem = ()=> {
 
 		// if the sequence isn't running, start the sequence and inform other players
-		if(sequenceService.getControlStatus() == "ready") {
+		if(sequenceService.getControlStatus() == "idle") {
 			this.startSequence();
 		// else, if the sequence is already running
 		} else {
