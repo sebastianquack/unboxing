@@ -26,9 +26,10 @@ do
    echo "connecting to device ${i}"
    adb disconnect
    adb connect "$NETWORK_PREFIX${i}:5555"
-   #adb wait-for-devices
    sleep 1
 
+   adb shell 'settings  put  global  data_roaming0  0'
+   
    echo "stopping app"
    adb shell am force-stop com.unboxing
 

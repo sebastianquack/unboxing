@@ -42,7 +42,7 @@ do
      sleep 5
      adb shell content insert --uri content://telephony/carriers/preferapn --bind apn_id:i:3478
      sleep 2
-     adb shell settings  put  global  data_roaming0  1
+     #adb shell 'settings  put  global  data_roaming0  1'
      sleep 2
      adb reboot
      cd $THIS_DIR
