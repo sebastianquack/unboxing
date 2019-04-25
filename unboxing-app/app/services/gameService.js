@@ -282,6 +282,7 @@ class GameService extends Service {
 		this.setActiveChallenge(challenge);
     this.walkTracker();
     this.saveGameStateToFile();
+    this.initInfoStream();
 	}
 
   nthPlaceInTutorial = (n) => {
@@ -664,7 +665,7 @@ class GameService extends Service {
     // decide what to do depending on our current challengeStatus
     switch(this.state.challengeStatus) {
       case "navigate":
-        let timeForTutorial = this.state.activeWalk.tutorial && this.state.pathIndex == 0;
+        let timeForTutorial = this.state.activeWalk && this.state.activeWalk.tutorial && this.state.pathIndex == 0;
         this.setReactive({
           challengeStatus: timeForTutorial ? "tutorial" : "prepare",
           tutorialStatus: timeForTutorial ? "step-1" : "off"
