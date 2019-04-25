@@ -91,11 +91,13 @@ const places = [
 const avgPathLength = 3;
 const durations = [5, 6, 3, 5, 4, 6, 6];
 
-console.log("{");
-
 function renderStep(challenge, place, duration, comma=',') {
   console.log('{"challenge":"' + challenge + '", "place":"' + place + '", "duration":' + duration + '}' + comma);
 }
+
+
+/*
+console.log("{");
 
 for(let i = 0; i < 37; i++) {
   console.log('"' + deviceIds[i] + '":{');
@@ -112,6 +114,23 @@ for(let i = 0; i < 37; i++) {
 }
 
 console.log("}");
+*/
+
+console.log("{");
+
+for(let i = 0; i < 37; i++) {
+  console.log('"' + deviceIds[i] + '":{');
+  console.log('"places":[');
+  renderStep("admin-1", "1", 6);
+  renderStep("admin-2", "2", 6);
+  renderStep("admin-1", "1", 6);
+  renderStep("admin-2", "2", 6, "");
+  console.log("]");
+  console.log("}" + (i < 36 ? "," : ""));
+}
+
+console.log("}");
+
 
 
 
