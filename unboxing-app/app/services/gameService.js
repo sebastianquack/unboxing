@@ -743,7 +743,7 @@ class GameService extends Service {
     switch(this.state.challengeStatus) {
       case "navigate":
         let navText = storageService.t("navigation-1");
-        let description = this.state.activePlace["description_" + storageService.state.language];
+        let description = this.state.activePlace ? this.state.activePlace["description_" + storageService.state.language] : null;
         if(description) {
           if(description != "new" && description != "neu") {
             navText = description;
