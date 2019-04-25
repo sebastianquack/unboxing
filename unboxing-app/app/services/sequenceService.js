@@ -8,7 +8,8 @@ class SequenceService extends Service {
 
 		// reactive vars - used in interface component
 		super("sequenceService", {
-			controlStatus: "idle", // idle -> loading -> ready -> playing
+			controlStatus: "idle", // idle -> playing
+      loadingStatus: "idle", // idle <-> loading
 			currentSequence: null, // sequence object
       currentTrack: null, // track object
 			playbackStartedAt: null, // start time of first loop of this sequence
@@ -256,7 +257,7 @@ class SequenceService extends Service {
     let endedMessage = ""; //this.state.endedFlag ? storageService.t("play-again") + " " : ""
     
 		// sequence hasn't started yet
-		if(this.state.controlStatus == "ready" && this.state.currentTrack) {
+		if(this.state.controlStatus == "idle" && this.state.currentTrack) {
 
 
       // check with gameService if we are allowed to start
@@ -440,24 +441,36 @@ class SequenceService extends Service {
 		if(sequence != this.state.currentSequence) {
 			this.stopSequence(); 		
 			this.setReactive({currentSequence: sequence});
-
-			// preload all sounds from this sequence
-			let soundfilesToLoad = [];
-			sequence.items.forEach((item)=>{
-				soundfilesToLoad.push(item.path);
-			});
-			this.setReactive({controlStatus: "loading"});
-			soundService.preloadSoundfiles(soundfilesToLoad, ()=>{
-				console.log("finished loading sound files for this track");
-				this.setReactive({
-					controlStatus: "ready",
-					endedFlag: false
-				});
-				this.updateActionInterface();
-			});
+      this.updateActionInterface();
 		}
 		
 	}
+
+  loadSoundFiles = (trackName)=> {
+      if(!this.state.currentSequence) {
+        console.warn("no current sequence - cannot load");
+        return;
+      }
+      soundService.unloadSoundfiles();
+
+      // preload sound files for track
+      let soundfilesToLoad = [];
+      this.state.currentSequence.items.forEach((item)=>{
+        if(item.track == trackName) {
+          soundfilesToLoad.push(item.path);  
+        }
+        
+      });
+      this.setReactive({loadingStatus: "loading"});
+      console.warn("loading soundfiles", soundfilesToLoad);
+      soundService.preloadSoundfiles(soundfilesToLoad, ()=>{
+        console.warn("done loading");
+        this.setReactive({
+          loadingStatus: "idle"
+        });
+        this.updateActionInterface();
+      });
+  }
 
   // on coming back to a sequence
   resetTrack() {
@@ -480,6 +493,14 @@ class SequenceService extends Service {
     if(!track) {
       this.setReactive({currentTrack: null});
       return;
+    }
+
+    if(this.state.currentTrack) {
+      if(track.name != this.state.currentTrack.name) {
+        this.loadSoundFiles(track.name);  
+      }  
+    } else {
+      this.loadSoundFiles(track.name);  
     }
 		
   	this.setReactive({currentTrack: track});
@@ -522,8 +543,8 @@ class SequenceService extends Service {
 
   // start sequence playback - localStart marks if sequence was started on this device
  	startSequence = (startTime, localStart) => {
-		if(this.state.controlStatus != "ready") {
-			console.log("cannot start - sequence not ready to play");
+		if(this.state.controlStatus != "idle") {
+			console.warn("sequence already running");
 			return;
 		}
 
@@ -804,7 +825,7 @@ class SequenceService extends Service {
 		this.deactivateUserAction();
 
 		this.setReactive({
-			controlStatus: "ready",
+			controlStatus: "idle",
 			nextItem: null,
 			scheduledItem: null,
 			currentItem: null,

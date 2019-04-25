@@ -21,16 +21,16 @@ export default loadNavigationAssets = () => {return {
   "violin2.3":    { image: require('../assets/img/instruments/Violine.png'), video: require('../assets/video/instruments/Violine.mov') },    
   "violin2.4":    { image: require('../assets/img/instruments/Violine.png'), video: require('../assets/video/instruments/Violine.mov') },    
   "viola1":       { 
-    practiceSoundPath1: "/sounds_viola_stimmen.mp3",
-    practiceSoundPath2: "/sounds_viola_einspielen.mp3",
+    practiceSoundPath1: "/einspielen/sounds_viola_stimmen.mp3",
+    practiceSoundPath2: "/einspielen/sounds_viola_einspielen.mp3",
     image: require('../assets/img/instruments/Viola.png'),   video: require('../assets/video/instruments/Viola.mov') },
   "viola1.1":       { 
-    practiceSoundPath1: "/sounds_viola_stimmen.mp3",
-    practiceSoundPath2: "/sounds_viola_einspielen.mp3",
+    practiceSoundPath1: "/einspielen/sounds_viola_stimmen.mp3",
+    practiceSoundPath2: "/einspielen/sounds_viola_einspielen.mp3",
     image: require('../assets/img/instruments/Viola.png'),   video: require('../assets/video/instruments/Viola.mov') },
 "viola1.2":       { 
-    practiceSoundPath1: "/sounds_viola_stimmen.mp3",
-    practiceSoundPath2: "/sounds_viola_einspielen.mp3",
+    practiceSoundPath1: "/einspielen/sounds_viola_stimmen.mp3",
+    practiceSoundPath2: "/einspielen/sounds_viola_einspielen.mp3",
     image: require('../assets/img/instruments/Viola.png'),   video: require('../assets/video/instruments/Viola.mov') },
 "viola1.3":       { 
     practiceSoundPath1: "/sounds_viola_stimmen.mp3",

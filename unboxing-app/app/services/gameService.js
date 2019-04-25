@@ -56,6 +56,8 @@ class GameService extends Service {
 		if(this.state.gameMode == "walk" && mode == "manual") {
 			this.setReactive({
 				activeWalk: null,
+        activePath: null,
+        pathLength: 0,
 				pathIndex: 0,
 				gameMode: "manual",
         walkStatus: "off"
@@ -280,6 +282,7 @@ class GameService extends Service {
 		this.setActiveChallenge(challenge);
     this.walkTracker();
     this.saveGameStateToFile();
+    this.initInfoStream();
 	}
 
   nthPlaceInTutorial = (n) => {
@@ -342,6 +345,7 @@ class GameService extends Service {
 
   instrumentAllowedInStage(instrument) {
     let permittedInstruments = this.getStageInstruments();
+    //console.warn(permittedInstruments, instrument);
     if(!permittedInstruments || permittedInstruments.length == 0) return true;
     return permittedInstruments.includes(instrument)
   }
@@ -367,6 +371,7 @@ class GameService extends Service {
     relayService.emitMessage({code: "leaveChallenge", challengeId: this.state.activeChallenge ? this.state.activeChallenge._id : null, deviceId: storageService.getDeviceId()});  
     
     sequenceService.stopSequence();
+    soundService.unloadSoundfiles();
 
     this.setReactive({
       statusBarTitle: defaultStatusBarTitle,
@@ -423,6 +428,9 @@ class GameService extends Service {
   enoughChallengeParticipantsReady = ()=> {
     let stage = this.getActiveChallengeStage();
     //console.warn(stage);
+
+    if(this.state.debugMode) return true;
+
     if(!stage) return true;
     if(!stage.minParticipants) return true;
 
@@ -506,7 +514,7 @@ class GameService extends Service {
     }
     // should this request start the sequence?
     // yes, if sequence is ready to play
-    else if (sequenceService.state.controlStatus === "ready") {
+    else if (sequenceService.state.controlStatus === "idle") {
       console.log("startSequenceRemotely: starting sequence")
       sequenceService.startSequence(startTime, false)
     } else {
@@ -534,7 +542,7 @@ class GameService extends Service {
 	handlePlayNextItem = ()=> {
 
 		// if the sequence isn't running, start the sequence and inform other players
-		if(sequenceService.getControlStatus() == "ready") {
+		if(sequenceService.getControlStatus() == "idle") {
 			this.startSequence();
 		// else, if the sequence is already running
 		} else {
@@ -657,7 +665,7 @@ class GameService extends Service {
     // decide what to do depending on our current challengeStatus
     switch(this.state.challengeStatus) {
       case "navigate":
-        let timeForTutorial = this.state.activeWalk.tutorial && this.state.pathIndex == 0;
+        let timeForTutorial = this.state.activeWalk && this.state.activeWalk.tutorial && this.state.pathIndex == 0;
         this.setReactive({
           challengeStatus: timeForTutorial ? "tutorial" : "prepare",
           tutorialStatus: timeForTutorial ? "step-1" : "off"
@@ -735,7 +743,7 @@ class GameService extends Service {
     switch(this.state.challengeStatus) {
       case "navigate":
         let navText = storageService.t("navigation-1");
-        let description = this.state.activePlace["description_" + storageService.state.language];
+        let description = this.state.activePlace ? this.state.activePlace["description_" + storageService.state.language] : null;
         if(description) {
           if(description != "new" && description != "neu") {
             navText = description;

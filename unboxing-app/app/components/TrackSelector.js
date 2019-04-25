@@ -23,6 +23,7 @@ class TrackSelector extends React.Component {
 
   renderTrack = (sequence, track, index)=> {
     //const trackStyle = Object.assign({backgroundColor: track.color}, styles.button);
+    //console.warn(track.name, instruments[track.name].image);
     const selected = this.props.sequenceService.currentTrack ? 
       ((this.props.sequenceService.currentTrack == track) ? "(selected)" : "") : ""
     return (
@@ -71,6 +72,7 @@ class TrackSelector extends React.Component {
 
   render() {
     if(!this.props.sequence) return <View><Text>sequence not found</Text></View>;
+
     const tracks = this.props.sequence.tracks.filter(track => gameService.instrumentAllowedInStage(track.name))
     .map((t, index)=>this.renderTrack(this.props.sequence, t, index));
     return (
