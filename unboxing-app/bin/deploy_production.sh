@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+set +x
 
 NETWORK_PREFIX="${NETWORK_PREFIX:-192.168.8.1}" # default NETWORK starts with 192.168.8.1
 
@@ -26,6 +26,7 @@ do
    echo "connecting to device ${i}"
    adb disconnect
    adb connect "$NETWORK_PREFIX${i}:5555"
+   #adb wait-for-devices
    sleep 1
 
    echo "stopping app"
