@@ -56,6 +56,8 @@ class GameService extends Service {
 		if(this.state.gameMode == "walk" && mode == "manual") {
 			this.setReactive({
 				activeWalk: null,
+        activePath: null,
+        pathLength: 0,
 				pathIndex: 0,
 				gameMode: "manual",
         walkStatus: "off"
@@ -110,12 +112,7 @@ class GameService extends Service {
         walkStatus: "tutorial-intro",
         challengeStatus: "off"
     });
-    this.initInfoStream();
-    this.walkTracker();
-    if(this.state.pathIndex > -1) {
-      this.setupActivePlace();  
-      sequenceService.trackSelectByName(this.state.activePath.startInstrument);
-    }
+    this.initInfoStream();    
   }
 
   // called when admin starts walk
@@ -211,7 +208,7 @@ class GameService extends Service {
   }
 
   walkTracker = ()=>{
-    if(this.state.activeWalk && this.state.activePath) {
+    if(this.state.activeWalk && this.state.activePath && this.state.walkStatus == "ongoing") {
 
       // update pathIndex to correct time
       let oldPathIndex = this.state.pathIndex;
@@ -285,6 +282,7 @@ class GameService extends Service {
 		this.setActiveChallenge(challenge);
     this.walkTracker();
     this.saveGameStateToFile();
+    this.initInfoStream();
 	}
 
   nthPlaceInTutorial = (n) => {
@@ -347,6 +345,7 @@ class GameService extends Service {
 
   instrumentAllowedInStage(instrument) {
     let permittedInstruments = this.getStageInstruments();
+    //console.warn(permittedInstruments, instrument);
     if(!permittedInstruments || permittedInstruments.length == 0) return true;
     return permittedInstruments.includes(instrument)
   }
@@ -372,6 +371,7 @@ class GameService extends Service {
     relayService.emitMessage({code: "leaveChallenge", challengeId: this.state.activeChallenge ? this.state.activeChallenge._id : null, deviceId: storageService.getDeviceId()});  
     
     sequenceService.stopSequence();
+    soundService.unloadSoundfiles();
 
     this.setReactive({
       statusBarTitle: defaultStatusBarTitle,
@@ -428,6 +428,9 @@ class GameService extends Service {
   enoughChallengeParticipantsReady = ()=> {
     let stage = this.getActiveChallengeStage();
     //console.warn(stage);
+
+    if(this.state.debugMode) return true;
+
     if(!stage) return true;
     if(!stage.minParticipants) return true;
 
@@ -511,7 +514,7 @@ class GameService extends Service {
     }
     // should this request start the sequence?
     // yes, if sequence is ready to play
-    else if (sequenceService.state.controlStatus === "ready") {
+    else if (sequenceService.state.controlStatus === "idle") {
       console.log("startSequenceRemotely: starting sequence")
       sequenceService.startSequence(startTime, false)
     } else {
@@ -539,7 +542,7 @@ class GameService extends Service {
 	handlePlayNextItem = ()=> {
 
 		// if the sequence isn't running, start the sequence and inform other players
-		if(sequenceService.getControlStatus() == "ready") {
+		if(sequenceService.getControlStatus() == "idle") {
 			this.startSequence();
 		// else, if the sequence is already running
 		} else {
@@ -654,15 +657,15 @@ class GameService extends Service {
   // big right button on game container
   handleRightButton = ()=> {
     if(this.state.walkStatus == "tutorial-intro") {
-      this.walkTracker();
-      this.initInfoStream();
+      this.setReactive({pathIndex: 0});
+      this.setupActivePlace();
       return;
     }
 
     // decide what to do depending on our current challengeStatus
     switch(this.state.challengeStatus) {
       case "navigate":
-        let timeForTutorial = this.state.activeWalk.tutorial && this.state.pathIndex == 0;
+        let timeForTutorial = this.state.activeWalk && this.state.activeWalk.tutorial && this.state.pathIndex == 0;
         this.setReactive({
           challengeStatus: timeForTutorial ? "tutorial" : "prepare",
           tutorialStatus: timeForTutorial ? "step-1" : "off"
@@ -740,7 +743,7 @@ class GameService extends Service {
     switch(this.state.challengeStatus) {
       case "navigate":
         let navText = storageService.t("navigation-1");
-        let description = this.state.activePlace["description_" + storageService.state.language];
+        let description = this.state.activePlace ? this.state.activePlace["description_" + storageService.state.language] : null;
         if(description) {
           if(description != "new" && description != "neu") {
             navText = description;
@@ -758,16 +761,10 @@ class GameService extends Service {
         break
       case "prepare":
         if(this.nthPlaceInTutorial(0)) {
-          if(!this.state.allowPlaceExit) {
-            this.addItemToInfoStream(storageService.t("welcome"), storageService.t("tutorial-place-0-1"));  
-          }
+          this.addItemToInfoStream(storageService.t("welcome"), storageService.t("tutorial-place-0-1"));  
+          this.setReactive({numChallengeParticipantsWithInstrument: 1});
+          
         } 
-
-        else if(this.nthPlaceInTutorial(1)) {
-          if(!this.state.allowPlaceExit) {
-            this.addItemToInfoStream(storageService.t("welcome"), storageService.t("tutorial-place-1-1"));  
-          }
-        }
 
         else {
 
@@ -790,14 +787,6 @@ class GameService extends Service {
 
           }
         }
-        
-        /*if(!sequenceService.state.currentTrack && !this.state.allowPlaceExit) {
-          this.addItemToInfoStream(storageService.t("info"), storageService.t("prompt-select-instrument"));  
-        }*/
-
-        /*if(this.state.allowPlaceExit) {
-          this.addItemToInfoStream(storageService.t("info"), storageService.t("time-to-go"));   
-        }*/
         break;
       case "play":
         sequenceService.updateActionInterface();
@@ -820,17 +809,19 @@ class GameService extends Service {
         this.preloadPracticeSound(1);
         this.activatePeakTutorial(()=>{
           this.playPracticeSound("1", storageService.t("info"), storageService.t("tutorial-instructions-playing-1"), "step-2", "step-1-playing");
-          this.showInfoStreamAlert(storageService.t("good"));
+          this.showInfoStreamAlert(storageService.t("good"), "blue", 4000);
         });
         break;
       case "step-2":
+        this.clearInfoStream();
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-2"));  
         this.activatePeakTutorial(()=>{
           this.playPracticeSound("2", storageService.t("info"), storageService.t("tutorial-instructions-playing-2"), "complete", "step-2-playing");
-          this.showInfoStreamAlert(storageService.t("good"));
+          this.showInfoStreamAlert(storageService.t("good"), "blue", 4000);
         });
         break;
       case "complete":
+        this.clearInfoStream();
         this.addItemToInfoStream(storageService.t("info"), storageService.t("tutorial-complete"));
         break;  
     }

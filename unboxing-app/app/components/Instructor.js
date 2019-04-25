@@ -248,6 +248,7 @@ class Instructor extends React.PureComponent {
       const images = imgUris.map( uri => ({uri}))
 
   */
+    //console.warn("instructor render", this.props.mode);
 
     if(images[this.props.mode]) {
       return(

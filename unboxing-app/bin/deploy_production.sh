@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+set +x
 
 NETWORK_PREFIX="${NETWORK_PREFIX:-192.168.8.1}" # default NETWORK starts with 192.168.8.1
 
@@ -28,6 +28,8 @@ do
    adb connect "$NETWORK_PREFIX${i}:5555"
    sleep 1
 
+   adb shell 'settings  put  global  data_roaming0  0'
+   
    echo "stopping app"
    adb shell am force-stop com.unboxing
 

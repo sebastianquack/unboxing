@@ -27,7 +27,7 @@ class FileService extends Service {
 			console.log("error creating directory", err)
 		})
 
-		//setTimeout(this.updateFilesInfoAndDownload, 8000)
+		setTimeout(this.updateFilesInfo, 6000)
   }
 
   fileStatus(fileInfo) {
@@ -116,6 +116,7 @@ class FileService extends Service {
 	}
 	
 	downloadFiles = async (file) => {
+    this.setReactive({ status: "downloading" })
     for (let file of storageService.state.collections.files) {
       if (this.fileStatus(this.state.localFiles[file._id])  !== "OK") {
         console.log("downloading " + file.path)
@@ -126,27 +127,24 @@ class FileService extends Service {
   }
 
   updateFilesInfoAndDownload = async () => {
-		this.setReactive({ status: "checking" })
     const ok = await this.updateFilesInfo()
     if (!ok) {
-			this.setReactive({ status: "downloading" })
       await this.downloadFiles()
-      const final_ok = await this.updateFilesInfo()
-      this.setReactive({ status: final_ok ? "OK" : "problem" })      
-		} else {
-      this.setReactive({ status: "OK"})
-    }
+      await this.updateFilesInfo()
+		} 
   }
 
 
   updateFilesInfo = async () => {
-		console.log("checking " + storageService.state.collections.files.length + " local files")
+    console.log("checking " + storageService.state.collections.files.length + " local files")
+    this.setReactive({ status: "checking" })
     for (let file of storageService.state.collections.files) {
       // console.log("checking " + file.path)
       await this.updateFileInfo(file)
     }
     const all_ok = Object.values(this.state.localFiles).findIndex( file => (this.fileStatus(file) != "OK")) === -1
     console.log(all_ok ? "all files are okay" : "some files are missing or not okay")
+    this.setReactive({ status: all_ok ? "OK" : "problem" })
     return all_ok
   }	
 }

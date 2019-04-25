@@ -38,7 +38,7 @@ class SequenceVisualizer extends React.PureComponent {
 
   componentWillUnmount() {
     this.state.scrollX.stopAnimation()
-    this.state.pulsate.stopAnimation()
+    //this.state.pulsate.stopAnimation()
   }
 
   setWidth = (event) => {
@@ -60,7 +60,7 @@ class SequenceVisualizer extends React.PureComponent {
     const hasActionItem = this.props.hasActionItem
     const hadActionItem = prevProps && prevProps.hasActionItem
 
-    if (hasActionItem && !hadActionItem){
+    /*if (hasActionItem && !hadActionItem){
       console.log("starting cursor animation")
       Animated.loop(
         Animated.sequence([
@@ -78,12 +78,12 @@ class SequenceVisualizer extends React.PureComponent {
             })              
         ])
       ).start()
-    }
+    }*/
 
-    if (hadActionItem && !hasActionItem ) {
+    /*if (hadActionItem && !hasActionItem ) {
       console.log("stopping cursor animation")
       this.state.pulsate.stopAnimation()
-    }
+    }*/
 
     if (/*prevControlStatus === controlStatus ||*/ !this.props.controlStatus || !this.props.sequence || !this.state.sequenceWidth) return
 
@@ -129,7 +129,7 @@ class SequenceVisualizer extends React.PureComponent {
     } else if (this.props.controlStatus !== "playing" && this.isRunning ) {
       this.isRunning = false
       this.state.scrollX.stopAnimation()
-      this.state.pulsate.stopAnimation()
+      //this.state.pulsate.stopAnimation()
     }
   }
 
@@ -169,7 +169,7 @@ class SequenceVisualizer extends React.PureComponent {
     return (
       <View style={{...styles.track}} key={"body " + track.name}>
         { sequenceItems.map(sequenceItem => this.renderBodyTrackItem(sequenceItem, track) ) }
-        { this.props.hasActionItem && this.props.track.name == track.name && this.renderActionItem(this.props.nextUserAction) }
+        {/* this.props.hasActionItem && this.props.track.name == track.name && this.renderActionItem(this.props.nextUserAction) */}
       </View>
     )
   }

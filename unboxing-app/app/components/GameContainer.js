@@ -46,13 +46,13 @@ class GameContainer extends React.Component {
     if(this.props.gameService.activeChallenge) {
       
       if(this.props.gameService.challengeStatus == "navigate" && this.props.gameService.walkStatus == "ongoing") {
-        backgroundContent = <Image
+        backgroundContent = this.props.gameService.activePlace ? <Image
               source={{uri: "file:///sdcard/unboxing/files/places/" + this.props.gameService.activePlace.tag + "/" + this.props.gameService.activePlace.navigationDiagram}}
               style={{
                 height: "100%",
                 width: "100%"
               }}
-            />
+            /> : null;
       } else {
         mainContent = <ChallengeView/>        
       }
@@ -130,7 +130,7 @@ class GameContainer extends React.Component {
         if(this.props.gameService.allowCheckInButton) {
           buttonRight = <Button type="round" walk text={storageService.t("check-in")} onPress={()=>{gameService.handleRightButton()}}/>;   
         } 
-        secondaryScreen = <SecondaryScreen type="navigation" target={this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand} />;
+        secondaryScreen = this.props.gameService.activePlace ? <SecondaryScreen type="navigation" target={this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand} /> : null;
         break;
 
       case "tutorial":
