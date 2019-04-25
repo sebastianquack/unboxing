@@ -75,6 +75,9 @@ class DevicesInfo extends React.Component {
         <input type="submit" value="startWalk" />
       </form>
 
+    const selectAll = <button onClick={event => this.setState({selected: this.props.devices.map(d=>d.deviceId)})}>select all</button>
+    const selectNone = <button onClick={event => this.setState({selected:[]})}>select none</button>
+
     const headerRows = Object.keys(columnAccessors).map(c => <th key={c}>{c}</th>)
 
     const rows = this.props.devices.map(device => <tr key={device._id}>
@@ -90,6 +93,9 @@ class DevicesInfo extends React.Component {
           { updateFiles }
           { timeSync }
           { startWalk }
+          <br />
+          { selectAll }
+          { selectNone }
         </div>
         <table>
           <thead>
@@ -108,7 +114,7 @@ class DevicesInfo extends React.Component {
 
 export default withTracker(props => {
   Meteor.subscribe('devices.all');
-  const devices = Devices.find().fetch();
+  const devices = Devices.find({},{sort:{deviceId: 1}}).fetch();
 
   return {
     devices
