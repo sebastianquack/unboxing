@@ -60,7 +60,7 @@ class DevicesInfo extends React.Component {
       'deviceId': row => row.deviceId,
       'connected': row => row.connected ? "OK" : "-",
       'everything': row => row.deviceStatus.everythingVersion,
-      'file': row => (row.deviceStatus.fileStatus ? row.deviceStatus.fileStatus + ( !!row.downloadBot ? <sup>row.downloadBot</sup> : '' ) : null),
+      'file': row => (row.deviceStatus.fileStatus ? row.deviceStatus.fileStatus + ( !!row.downloadBot ? " <- "+row.downloadBot : '' ) : null),
       'timeSync': row => row.deviceStatus.timeSyncStatus,
       'walk': row => row.deviceStatus.activeWalk ? row.deviceStatus.activeWalk.tag + "@" + row.deviceStatus.activeWalk.startTime : "-"
     }
@@ -79,8 +79,11 @@ class DevicesInfo extends React.Component {
       const deviceIds = Object.entries(this.state.selected)
           .filter( ([deviceId, checked]) => checked )
           .map( ([deviceId, checked]) => deviceId )
+        console.log(deviceIds)
         deviceIds.forEach( id => {
+          console.log(id)
           const d = this.props.devices.find(d => d.deviceId == id)
+          console.log(d)
           Devices.update(d._id, { $set: { downloadBot: "queued"}})
         })
       }
