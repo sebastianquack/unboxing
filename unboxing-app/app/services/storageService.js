@@ -216,11 +216,9 @@ class StorageService extends Service {
     catch {
       console.warn("error parsing deviceGroups json");
     }
-    console.warn(deviceGroupsObj); 
 
     let challenges = [];
     let split = installation.challenges.split(" ");   
-    console.warn(split);
     for(let i = 0; i < split.length; i++) {
       split[i].trim();
       let challenge = this.findChallengeByShorthand(split[i]);
@@ -238,11 +236,11 @@ class StorageService extends Service {
     }
   }
 
-  findRelayServerIdForInstallation = (installation) => {
-    for(let i = 0; i < installation.deviceGroups; i++) {
-      for(let j = 0; j < installation.deviceGroups[j].devices; j++) {
-        if(installation.deviceGroups[j].devices[j] == this.getDeviceId()) {
-          return installation.deviceGroups[j].relay_server_id;
+  findRelayServerForInstallation = (installation) => {
+    for(let i = 0; i < installation.deviceGroups.length; i++) {
+      for(let j = 0; j < installation.deviceGroups[i].devices.length; j++) {
+        if(installation.deviceGroups[i].devices[j].toString() == this.getDeviceId().toString()) {
+          return installation.deviceGroups[i].relayServerName;
         } 
       }
     }
@@ -274,6 +272,14 @@ class StorageService extends Service {
       return s.name
     }
     return "sequence not found";
+  }
+
+  findServerByName(name) {
+    if(this.state.collections.servers) {
+      return this.state.collections.servers.find( s => s.name == name)
+    } else {
+      return null
+    }
   }
 
 	findServer(id) {

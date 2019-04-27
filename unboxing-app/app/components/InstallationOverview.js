@@ -9,7 +9,18 @@ import {gameService, storageService} from '../services';
 import challengeBackground from '../../assets/img/Inactive.png'
 import userMarker from '../../assets/img/User.png'
 
-const buttonPositions = [{x:10,y:10},{x:200,y:20},{x:400,y:40},{x:20,y:100},{x:10,y:400},{x:180,y:120},{x:450,y:300}] 
+const buttonPositions = [
+  {x:15,y:10},  // 1
+  {x:200,y:20}, // 2
+  {x:400,y:40}, // 3
+  {x:30,y:200}, // 4
+  {x:10,y:350}, // 5
+  {x:180,y:150},// 6
+  {x:300,y:300},// 7
+  {x:450,y:400} // 8
+] 
+
+const selectedIndex = 1;
 
 class InstallationOverview extends React.Component { 
   constructor(props) {
@@ -31,7 +42,7 @@ class InstallationOverview extends React.Component {
           position: "absolute", 
           left: buttonPositions[index].x, 
           top: buttonPositions[index].y,
-          width: 200
+          width: 160
         }}
       >
         <ImageBackground 
@@ -39,9 +50,9 @@ class InstallationOverview extends React.Component {
             style={{height: 60, width: 60, alignItems: "center", justifyContent: "center"}}
             source={challengeBackground}>
             <UIText size="xl" verticalCenter>{challenge.shorthand}</UIText>
-            <Image style={{position: "absolute", bottom: -8, left: 11}} source={userMarker}/>
+            { index == selectedIndex && <Image style={{position: "absolute", bottom: -8, left: 11}} source={userMarker}/>}
         </ImageBackground>
-         
+        
         <UIText size="m" style={{textAlign: "center"}}>{storageService.getSequenceNameFromChallenge(challenge).toUpperCase()}</UIText>    
       </TouchableOpacity>
     )

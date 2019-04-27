@@ -145,14 +145,18 @@ class GameService extends Service {
   startInstallationByName = (name) => {
     let installation = storageService.loadInstallationByName(name);
     if(installation) {
-      console.warn(installation);
+      //console.warn(installation);
 
       // set relay server based on installation config
-      let relay_server_id = storageService.findRelayServerIdForInstallation(installation);
-      const connection = storageService.findServer(relay_server_id)
-      relayService.setServer(relay_server_id);
-      networkService.setConnection(connection || undefined);
-
+      let relayServerName = storageService.findRelayServerForInstallation(installation);
+      if(relayServerName != null) {
+        const connection = storageService.findServerByName(relayServerName)
+        relayService.setServer(connection._id);
+        networkService.setConnection(connection || undefined);  
+      } else {
+        this.showNotification("relay server not specified for this device")
+      }
+      
       this.setReactive({
         activeInstallation: installation,
         gameMode: "installation",
