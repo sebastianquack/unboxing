@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -x
+set +x
 
 NETWORK_PREFIX="${NETWORK_PREFIX:-192.168.8.1}" # default NETWORK starts with 192.168.8.1
 
@@ -25,9 +25,10 @@ do
 
    echo "connecting to device ${i}"
    adb disconnect
+   sleep 1
    adb connect "$NETWORK_PREFIX${i}:5555"
    sleep 1
-
+ 
    echo "stopping app"
    adb shell am force-stop com.unboxing
 
@@ -42,6 +43,8 @@ do
    adb shell pm grant com.unboxing android.permission.READ_EXTERNAL_STORAGE
    adb shell pm grant com.unboxing android.permission.WRITE_EXTERNAL_STORAGE
    adb shell pm grant com.unboxing android.permission.READ_PHONE_STATE
+
+   adb shell 'settings  put  global  data_roaming0 1'
    
    echo "starting app"
    adb shell am start -n com.unboxing/com.unboxing.MainActivity

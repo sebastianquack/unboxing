@@ -6,7 +6,7 @@ command=`basename "$0"`
 if [ $# -lt 3 ]
   then
     echo "usage: $command <host> <wifi device id> <ssid>"
-    echo "example: $command 192.168.8.1 wlx70f11c0f6d65 unboxing"
+    echo "example: $command 192.168.8.1 wlan1 unboxing"
     exit
 fi
 
@@ -25,10 +25,17 @@ echo Running on $USERNAME@$HOST ...
 
 ssh -i $IDENTITY $USERNAME@$HOST /bin/bash << EOF
 
+sudo systemctl stop dhcpcd
+sudo systemctl stop dnsmasq
+sudo systemctl stop hostapd
 sudo sh -c "sed 's/$FIND/$REPLACE/g' $DIR/etc/dnsmasq.conf > /etc/dnsmasq.conf"
 sudo sh -c "sed 's/$FIND/$REPLACE/g' $DIR/etc/dhcpcd.conf > /etc/dhcpcd.conf"
 sudo sh -c "sed 's/$FIND/$REPLACE/g; s/$FIND2/$REPLACE2/g' $DIR/etc/hostapd/hostapd.conf > /etc/hostapd/hostapd.conf"
-echo "please reboot to activate the changes"
+sudo systemctl daemon-reload
+sudo systemctl start dhcpcd
+sudo systemctl start dnsmasq
+sudo systemctl start hostapd
+# echo "please reboot to activate the changes"
 # echo "rebooting ..."
 # sudo reboot
 

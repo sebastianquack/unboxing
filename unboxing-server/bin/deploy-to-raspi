@@ -31,7 +31,7 @@ zip -rq bundle.zip bundle
 
 echo "Uploading..."
 cd $TEMPDIR
-rsync bundle.zip $USERNAME@$1:/home/pi/bundle.zip
+scp -i $IDENTITY bundle.zip $USERNAME@$1:/home/pi/bundle.zip
 
 # continuing remotely:
 echo "Continuing remotely:"

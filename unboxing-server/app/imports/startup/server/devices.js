@@ -16,7 +16,7 @@ function init(io) {
   io.on('connection', (socket)=> {
     console.log('Client connected');
     
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async function() {
       const deviceId = socket.deviceId
       console.log('Client disconnected: ' + deviceId);
       if (deviceId) {

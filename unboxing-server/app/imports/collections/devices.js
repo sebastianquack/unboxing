@@ -11,7 +11,8 @@ Devices.allow({
 const schema = {
   deviceId: "",
   connected: false, // connection status
-  deviceStatus: {} // sent by device
+  deviceStatus: {}, // sent by device
+  downloadBot: null
 }
 
 const defaults = {

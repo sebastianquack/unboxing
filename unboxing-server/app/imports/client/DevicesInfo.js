@@ -60,7 +60,7 @@ class DevicesInfo extends React.Component {
       'deviceId': row => row.deviceId,
       'connected': row => row.connected ? "OK" : "-",
       'everything': row => row.deviceStatus.everythingVersion,
-      'file': row => row.deviceStatus.fileStatus,
+      'file': row => (row.deviceStatus.fileStatus ? row.deviceStatus.fileStatus + ( !!row.downloadBot ? " <- "+row.downloadBot : '' ) : null),
       'timeSync': row => row.deviceStatus.timeSyncStatus,
       'walk': row => row.deviceStatus.activeWalk ? row.deviceStatus.activeWalk.tag + "@" + row.deviceStatus.activeWalk.startTime : "-"
     }
@@ -74,6 +74,27 @@ class DevicesInfo extends React.Component {
         <label>or timestamp: <input value={this.state.startTime} onChange={event => this.setState({startTime: event.target.value})} type="text"></input></label>
         <input type="submit" value="startWalk" />
       </form>
+
+    const startBot = <button onClick={event => {
+      const deviceIds = Object.entries(this.state.selected)
+          .filter( ([deviceId, checked]) => checked )
+          .map( ([deviceId, checked]) => deviceId )
+        console.log(deviceIds)
+        deviceIds.forEach( id => {
+          console.log(id)
+          const d = this.props.devices.find(d => d.deviceId == id)
+          console.log(d)
+          Devices.update(d._id, { $set: { downloadBot: "queued"}})
+        })
+      }
+    }>add to downloadBot</button>
+
+    const stopBot = <button onClick={event => {
+      this.props.devices.forEach( d => {
+          Devices.update(d._id, { $set: { downloadBot: null}})
+        })
+      }
+    }>clear downloadBot</button>
 
     const selectAll = <button onClick={event => this.setState({selected: this.props.devices.map(d=>d.deviceId)})}>select all</button>
     const selectNone = <button onClick={event => this.setState({selected:[]})}>select none</button>
@@ -93,6 +114,8 @@ class DevicesInfo extends React.Component {
           { updateFiles }
           { timeSync }
           { startWalk }
+          <br />
+          { startBot }
           <br />
           { selectAll }
           { selectNone }

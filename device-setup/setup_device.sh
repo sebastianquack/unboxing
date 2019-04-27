@@ -80,12 +80,13 @@ echo
 
 echo "Settings -> system -> advanced -> developer options -> "
 echo " - automatic updates OFF"
+echo " - updater -> download updates never"
 echo " - android debugging ON"
 echo " - adb over network ON"
 echo " - root access: ADB and apps"
 read -p "Press enter when done"
 adb root
-sleep 1
+sleep 3
 adb shell 'setprop persist.adb.tcp.port 5555'
 adb shell 'getprop | grep adb'
 echo
@@ -125,6 +126,16 @@ echo $MAC $IP >> ../unboxing-raspi/ethers
 cat ../unboxing-raspi/ethers
 ../unboxing-raspi/bin/install_ethers 192.168.8.1
 echo
+
+echo "resetting APN settings"
+cd src/fs
+adb push data/user_de/0/com.android.providers.telephony/databases/telephony.db /data/user_de/0/com.android.providers.telephony/databases/telephony.db
+adb shell chown radio:radio /data/user_de/0/com.android.providers.telephony/databases/telephony.db
+adb shell chmod 660 /data/user_de/0/com.android.providers.telephony/databases/telephony.db
+cd ../../
+sleep 5
+adb shell content insert --uri content://telephony/carriers/preferapn --bind apn_id:i:3478
+sleep 2
 
 read -p "Press enter to reboot"
 adb reboot
