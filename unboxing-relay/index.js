@@ -43,7 +43,8 @@ function updateDeviceMap(socket, challengeId) {
     challengeId: challengeId, 
     numParticipants: numParticipants.total,
     numParticipantsWithInstrument: numParticipants.withInstrument,
-    selectedTracks: selectedTracks
+    selectedTracks: selectedTracks,
+    deviceMap: deviceMap
   };
   console.log("updateDeviceMap", msgObj);
   socket.emit('message', msgObj);
@@ -70,16 +71,16 @@ function init(io) {
 
   // setup socket api
   io.on('connection', function(socket) {
-    console.log('\nClient connected: ' + socket.deviceId);
+    console.log('\nClient connected');
     
     socket.on('disconnect', () => {
-      console.log('\nClient disconnected: ' + socket.deviceId);
+      console.log('\nClient disconnected');
       if(socket.deviceId && socket.challengeId) {
         leaveChallenge(socket, socket.deviceId, socket.challengeId)  
       }
     });
     
-    socket.on('message', async function(msg) {
+    socket.on('message', function(msg) {
       console.log('\nreceived message: ' + JSON.stringify(msg));
 
       if(msg.code == "selectTrack") {
@@ -90,6 +91,15 @@ function init(io) {
           deviceMap[msg.deviceId].track = msg.track;
           updateDeviceMap(socket, msg.challengeId);
         }
+      }
+
+      if(msg.code == "installationInfo") {
+        let payload = {
+          deviceMap: deviceMap,
+          challengeState: challengeState
+        }
+        console.log("sending back with payload", payload);
+        socket.emit('message', {code: 'installationInfo', payload: payload});  
       }
 
       if(msg.code == "joinChallenge") {
@@ -117,8 +127,6 @@ function init(io) {
       if(msg.code == "leaveChallenge") {
         leaveChallenge(socket, msg.deviceId, msg.challengeId)
       }
-
-      console.log("deviceMap: " + JSON.stringify(deviceMap));
 
       if(msg.code == "startSequence") {
         if(msg.challengeId) {

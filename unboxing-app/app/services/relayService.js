@@ -1,6 +1,6 @@
 
 import Service from './Service';
-import {storageService} from './';
+import {storageService, gameService} from './';
 
 import io from 'socket.io-client';
 
@@ -69,7 +69,9 @@ class RelayService extends Service {
     
     this.socket.on('connect', ()=>{
       this.setReactive({connected: true})
-      this.debug("socket connect");
+      if(gameService.state.gameMode == "installation") {
+        this.emitMessage({code: 'installationInfo'})
+      }
     });
 
     this.socket.on('reconnect_attempt', () => {

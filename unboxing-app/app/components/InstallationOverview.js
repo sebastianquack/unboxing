@@ -5,6 +5,7 @@ import {globalStyles, colors} from '../../config/globalStyles';
 import UIText from './UIText'
 
 import {gameService, storageService} from '../services';
+import {withGameService} from './ServiceConnector';
 
 import challengeBackground from '../../assets/img/Inactive.png'
 import userMarker from '../../assets/img/User.png'
@@ -50,7 +51,9 @@ class InstallationOverview extends React.Component {
             style={{height: 60, width: 60, alignItems: "center", justifyContent: "center"}}
             source={challengeBackground}>
             <UIText size="xl" verticalCenter>{challenge.shorthand}</UIText>
-            { index == selectedIndex && <Image style={{position: "absolute", bottom: -8, left: 11}} source={userMarker}/>}
+            { (this.props.gameService.installationActivityMap && this.props.gameService.installationActivityMap[challenge._id] == "active") && 
+              <Image style={{position: "absolute", bottom: -8, left: 11}} source={userMarker}/>
+            }
         </ImageBackground>
         
         <UIText size="m" style={{textAlign: "center"}}>{storageService.getSequenceNameFromChallenge(challenge).toUpperCase()}</UIText>    
@@ -72,4 +75,4 @@ class InstallationOverview extends React.Component {
   }
 }
 
-export default InstallationOverview;
+export default withGameService(InstallationOverview);

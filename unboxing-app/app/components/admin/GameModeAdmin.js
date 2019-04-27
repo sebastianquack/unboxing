@@ -53,6 +53,7 @@ class GameModeAdmin extends React.Component {
         <Text>numChallengeParticipants: {this.props.gameService.numChallengeParticipants}</Text>
         <Text>numChallengeParticipantsWithInstrument: {this.props.gameService.numChallengeParticipantsWithInstrument}</Text>
         <Text>infoStream: {JSON.stringify(this.props.gameService.infoStream)}</Text>
+        <Text>installationActivityMap: {JSON.stringify(this.props.gameService.installationActivityMap)}</Text>
 
         <Text style={{marginTop: 20}}>start installation:</Text>
         <Picker

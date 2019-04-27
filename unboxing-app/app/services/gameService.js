@@ -26,7 +26,8 @@ class GameService extends Service {
       debugMode: false,          // show debugging info in interface
       infoStream: [],
       numChallengeParticipants: 1, // number of people in the challenge
-      numChallengeParticipantsWithInstrument: 0
+      numChallengeParticipantsWithInstrument: 0,
+      installationActivityMap: {}
 		});
 
 		// not reactive vars
@@ -153,6 +154,8 @@ class GameService extends Service {
         const connection = storageService.findServerByName(relayServerName)
         relayService.setServer(connection._id);
         networkService.setConnection(connection || undefined);  
+        this.activateRelayCallbacks();
+
       } else {
         this.showNotification("relay server not specified for this device")
       }
@@ -427,8 +430,24 @@ class GameService extends Service {
 
   }
 
+  updateInstallationActivity = (deviceMap) => {
+    this.state.installationActivityMap = {};
+    Object.keys(deviceMap).forEach((key)=>{
+      this.state.installationActivityMap[deviceMap[key].challengeId] = "active"
+    });
+    this.setReactive({installationActivityMap:this.state.installationActivityMap});
+  }
+
   onMessageReceived = (msgObj) => {
-    //this.showNotification(JSON.stringify(msgObj));
+    //console.warn(msgObj);
+
+    if(msgObj.code == "installationInfo" && msgObj.payload) {
+      console.warn("installationInfo");
+      console.warn(msgObj);
+      if(msgObj.payload.deviceMap) {
+        this.updateInstallationActivity(msgObj.payload.deviceMap);
+      }
+    }
 
     if(msgObj.code == "challengeParticipantUpdate") {
       if(this.state.activeChallenge) {
@@ -446,6 +465,14 @@ class GameService extends Service {
           //console.warn(msgObj);
           this.initInfoStream();
         }  
+      } else {
+        if(this.state.gameMode == "installation") {
+          //this.state.installationActivityMap[msgObj.challengeId] = msgObj.numParticipants > 0 ? "active" : "inactive";
+          //this.setReactive({installationActivityMap:this.state.installationActivityMap});
+          if(msgObj.deviceMap) {
+            this.updateInstallationActivity(msgObj.deviceMap);
+          }
+        }
       }
     }
         
