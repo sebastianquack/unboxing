@@ -154,8 +154,16 @@ class GameService extends Service {
 
       this.setReactive({
         activeInstallation: installation,
-        gameMode: "installation"
-      });  
+        gameMode: "installation",
+        activeWalk: null,
+        activePath: null,
+        pathLength: null,
+        pathIndex: null,
+        walkStatus: "off",
+        walkStartTime: null,
+        challengeStatus: "off"
+      });
+      this.initInfoStream();  
     }    
   }
 
@@ -342,6 +350,7 @@ class GameService extends Service {
 
   joinChallengeInstallation = (challenge)=> {
     this.setActiveChallenge(challenge, false);
+    this.initInfoStream(); 
   }
 
   getActiveChallengeStage = () => {

@@ -44,6 +44,11 @@ class GameContainer extends React.Component {
     let buttonModal = null;
     let backgroundContent = null;
 
+    // show info stream?
+    if(this.props.gameService.infoStream && this.props.gameService.infoStream.length > 0) {
+      infoStreamContent = <InfoStream/>
+    }
+    
     // configure content
     if(this.props.gameService.activeChallenge) {
       
@@ -194,7 +199,7 @@ class GameContainer extends React.Component {
               mainContent = { mainContent }
               overlayContent = { overlayContent }
               scrollContent = { scrollContent }
-              infoStreamContent = { this.props.gameService.InfoStream && this.props.gameService.InfoStream != [] ? <InfoStream/> : null }
+              infoStreamContent = { infoStreamContent }
             />}
           secondaryScreen = {secondaryScreen}
           buttonRight = {buttonRight}
