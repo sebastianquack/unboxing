@@ -166,7 +166,8 @@ class GameService extends Service {
         pathIndex: null,
         walkStatus: "off",
         walkStartTime: null,
-        challengeStatus: "off"
+        challengeStatus: "off",
+        statusBarTitle: "Choose what to play next!",
       });
       this.initInfoStream();  
     }    

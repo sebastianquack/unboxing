@@ -462,9 +462,9 @@ class SequenceService extends Service {
         
       });
       this.setReactive({loadingStatus: "loading"});
-      console.warn("loading soundfiles", soundfilesToLoad);
+      //console.warn("loading soundfiles", soundfilesToLoad);
       soundService.preloadSoundfiles(soundfilesToLoad, ()=>{
-        console.warn("done loading");
+        //console.warn("done loading");
         this.setReactive({
           loadingStatus: "idle"
         });

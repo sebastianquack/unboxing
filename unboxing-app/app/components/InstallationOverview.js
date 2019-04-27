@@ -10,14 +10,14 @@ import challengeBackground from '../../assets/img/Inactive.png'
 import userMarker from '../../assets/img/User.png'
 
 const buttonPositions = [
-  {x:15,y:10},  // 1
-  {x:200,y:20}, // 2
-  {x:400,y:40}, // 3
-  {x:30,y:200}, // 4
-  {x:10,y:350}, // 5
-  {x:180,y:150},// 6
+  {x:15,y:50},  // 1
+  {x:200,y:60}, // 2
+  {x:400,y:80}, // 3
+  {x:30,y:230}, // 4
+  {x:10,y:380}, // 5
+  {x:180,y:190},// 6
   {x:300,y:300},// 7
-  {x:450,y:400} // 8
+  {x:450,y:410} // 8
 ] 
 
 const selectedIndex = 1;

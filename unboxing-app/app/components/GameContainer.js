@@ -95,11 +95,6 @@ class GameContainer extends React.Component {
 
     } else {
       
-      // installation base screen
-      if(this.props.gameService.gameMode == "installation") {
-        mainContent = <InstallationOverview installation={this.props.gameService.activeInstallation}/>
-      }
-
       if(this.props.gameService.gameMode == "manual" || this.props.gameService.gameMode == "walk") {
         // home screen
         if(this.props.gameService.walkStatus != "ended" 
@@ -113,6 +108,17 @@ class GameContainer extends React.Component {
         }
       }
 
+    }
+
+    // special case: installation home screen 
+    if(this.props.gameService.gameMode == "installation" && !this.props.gameService.activeChallenge) {
+        mainContent = <InstallationOverview installation={this.props.gameService.activeInstallation}/>
+        statusBar = <StatusBar 
+          title={this.props.gameService.statusBarTitle} 
+          description={""} 
+          steps={7}
+          currentStep={0}
+        />
     }
 
     
