@@ -367,6 +367,7 @@ class GameService extends Service {
   joinChallengeInstallation = (challenge)=> {
     this.setActiveChallenge(challenge, false);
     this.initInfoStream(); 
+    peakService.invalidateStill();
   }
 
   getActiveChallengeStage = () => {
@@ -687,6 +688,12 @@ class GameService extends Service {
 
   
   /** interface actions **/
+
+  handleStillEvent = ()=> {
+    if(this.state.gameMode == "installation" && this.state.activeChallenge) {
+      this.leaveChallenge();
+    }
+  }
 
   // big left button on game container
   handleLeftButton = ()=> {
