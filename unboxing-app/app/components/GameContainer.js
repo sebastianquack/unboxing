@@ -21,6 +21,8 @@ import Welcome from './Welcome';
 import SensorModulator from './SensorModulator';
 import Instructor from './Instructor';
 
+import InstallationOverview from './InstallationOverview';
+
 class GameContainer extends React.Component { 
   constructor(props) { 
     super(props);
@@ -87,15 +89,25 @@ class GameContainer extends React.Component {
       }
 
     } else {
-      if(this.props.gameService.walkStatus != "ended" 
-        && this.props.gameService.walkStatus != "tutorial-intro"
-        && this.props.gameService.challengeStatus != "tutorial") {
-        mainContent = <Welcome
-          supertitle={storageService.t("main-title-super")}
-          title={storageService.t("main-title")}
-          subtitle={storageService.t("main-title-sub")}
-        />
+      
+      // installation base screen
+      if(this.props.gameService.gameMode == "installation") {
+        mainContent = <InstallationOverview installation={this.props.gameService.activeInstallation}/>
       }
+
+      if(this.props.gameService.gameMode == "manual" || this.props.gameService.gameMode == "walk") {
+        // home screen
+        if(this.props.gameService.walkStatus != "ended" 
+          && this.props.gameService.walkStatus != "tutorial-intro"
+          && this.props.gameService.challengeStatus != "tutorial") {
+          mainContent = <Welcome
+            supertitle={storageService.t("main-title-super")}
+            title={storageService.t("main-title")}
+            subtitle={storageService.t("main-title-sub")}
+          />
+        }
+      }
+
     }
 
     
@@ -146,6 +158,10 @@ class GameContainer extends React.Component {
         if(this.props.gameService.activePlace && !gameService.nthPlaceInTutorial(0)) {
           buttonLeft = <Button back type="wide" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;  
         }
+
+        if(this.props.gameService.gameMode == "installation") {
+          buttonLeft = <Button back type="wide" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;   
+        }
         
         if(this.props.gameService.allowPlaceExit && this.props.gameService.activePath) {
           buttonRight = <Button type="home" text={storageService.t("continue")} onPress={()=>{gameService.handleLeftButton()}}/>;
@@ -178,7 +194,7 @@ class GameContainer extends React.Component {
               mainContent = { mainContent }
               overlayContent = { overlayContent }
               scrollContent = { scrollContent }
-              infoStreamContent = { <InfoStream/> }
+              infoStreamContent = { this.props.gameService.InfoStream && this.props.gameService.InfoStream != [] ? <InfoStream/> : null }
             />}
           secondaryScreen = {secondaryScreen}
           buttonRight = {buttonRight}

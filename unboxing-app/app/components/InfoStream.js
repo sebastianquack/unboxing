@@ -104,7 +104,9 @@ class InfoStreamComponent extends React.Component {
 
   render() {
     let infoStream = this.props.gameService.infoStream;
-    if(!infoStream) infoStream = [];
+    if(!infoStream) return null;
+    if(infoStream.length == 0) return null;
+    
     const elements = infoStream.map((element, index)=>
       <InfoStreamElement highlight={index >= infoStream.length -1} key={index} title={element.title} content={element.content}/> 
     );

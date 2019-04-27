@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random'
 
 import Events from '../../collections/events';
-import { Challenges, Gestures, Sequences, Places, Walks, Translations, Servers } from '../../collections/';
+import { Challenges, Installations, Gestures, Sequences, Places, Walks, Translations, Servers } from '../../collections/';
 import { serverDefaults } from '../../collections'
 
 Meteor.methods({
@@ -174,6 +174,31 @@ Meteor.methods({
       Walks.update({_id: id}, {$set})  
     } else {
       Walks.update({_id: id}, {$unset})  
+    }
+    
+  },
+
+  'addInstallation'() {
+    Installations.insert({
+      name: "new",
+      challenges: "1 2 3",
+      deviceGroups: `[<br>{<br>
+        "name":"name",<br>
+        "devices":[1, 2, 3],<br>
+        "relayServerName": "raspi-master"<br>
+      }<br>]
+      `
+    });
+  },
+  'removeInstallation'(id) {
+    console.log("remove installation", id);
+    Installations.remove(id);
+  },
+  'updateInstallation'(id,$set, $unset=null) {
+    if(!$unset) {
+      Installations.update({_id: id}, {$set})  
+    } else {
+      Installations.update({_id: id}, {$unset})  
     }
     
   },

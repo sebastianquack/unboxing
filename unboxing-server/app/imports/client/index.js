@@ -21,6 +21,9 @@ import AudioPreview from './AudioPreview';
 import TranslationDetail from './TranslationDetail';
 import TranslationsInfo from './TranslationsInfo';
 
+import InstallationDetail from './InstallationDetail';
+import InstallationsInfo from './InstallationsInfo';
+
 import InputLine from './InputLine';
 import AutoForm from './AutoForm';
 
@@ -45,5 +48,7 @@ export {
   WalksInfo,
   DevicesInfo,
   TranslationDetail,
-  TranslationsInfo
+  TranslationsInfo,
+  InstallationDetail,
+  InstallationsInfo
 }

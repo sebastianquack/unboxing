@@ -192,7 +192,7 @@ class StorageService extends Service {
 		return null;
 	}
 
-	findChallengeByShorthand(challenge_shorthand) {
+	findChallengeByShorthand = (challenge_shorthand) => { 
 		for(let i = 0; i < this.state.collections.challenges.length; i++) {
 			if(this.state.collections.challenges[i].shorthand == challenge_shorthand) {
 				return this.state.collections.challenges[i];
@@ -200,6 +200,52 @@ class StorageService extends Service {
 		}
 		return null;
 	}
+
+  loadInstallationByName = (name) => {
+    let installation = null;
+    for(let i = 0; i < this.state.collections.installations.length; i++) {
+      if(this.state.collections.installations[i].name == name) {
+        installation = this.state.collections.installations[i];
+      } 
+    }
+    if(!installation) return null;
+    let deviceGroupsObj = null;
+    try {
+      deviceGroupsObj = JSON.parse(installation.deviceGroups);  
+    }
+    catch {
+      console.warn("error parsing deviceGroups json");
+    } 
+
+    let challenges = [];
+    let split = installation.challenges.split(" ");   
+    for(let i = 0; i < split.length; i++) {
+      split[i].trim();
+      let challenge = this.findChallengeByShorthand(split[i]);
+      if(challenge) {
+        challenges.push(challenge);
+      } else {
+        this.showNotification("warning: challenge not found in installation");
+      }
+    }
+
+    return {
+      name: installation.name,
+      challenges: challenges,
+      deviceGroups: deviceGroupsObj 
+    }
+  }
+
+  findRelayServerIdForInstallation = (installation) => {
+    for(let i = 0; i < installation.deviceGroups; i++) {
+      for(let j = 0; j < installation.deviceGroups[j].devices; j++) {
+        if(installation.deviceGroups[j].devices[j] == this.getDeviceId()) {
+          return installation.deviceGroups[j].relay_server_id;
+        } 
+      }
+    }
+    return null;
+  }
 
   getWalkByTag(tag) {
     for(let i = 0; i < this.state.collections.walks.length; i++) {

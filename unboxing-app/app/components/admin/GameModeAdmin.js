@@ -28,11 +28,17 @@ class GameModeAdmin extends React.Component {
       challengeItems.push(this.props.storageService.collections.challenges.map(c=>
         <Picker.Item key={c._id} label={c.name + " " + storageService.getSequenceNameFromChallenge(c)} value={c}/>));
     }
+    let installationItems = [<Picker.Item key="none" label={"-"} value={null}/>]
+    if(this.props.storageService.collections.installations) {
+      installationItems.push(this.props.storageService.collections.installations.map(i=>
+        <Picker.Item key={i._id} label={i.name} value={i}/>));
+    }
     
     return (
       <View>
         <Text>gameMode: {this.props.gameService.gameMode}</Text>
-        <Text>activeWalk: {this.props.gameService.activeWalk ? JSON.stringify(this.props.gameService.activeWalk) : "none"}</Text>
+        <Text>activeInstallation: {this.props.gameService.activeInstallation ? JSON.stringify(this.props.gameService.activeInstallation).substring(0, 100) + "..." : "none"}</Text>
+        <Text>activeWalk: {this.props.gameService.activeWalk ? JSON.stringify(this.props.gameService.activeWalk).substring(0,100) + "..." : "none"}</Text>
         <Text>walkStatus: {this.props.gameService.walkStatus}</Text>
         <Text>walkStartTime: {this.props.gameService.walkStartTime}</Text>
         <Text>tutorialStatus: {this.props.gameService.tutorialStatus}</Text>
@@ -46,7 +52,18 @@ class GameModeAdmin extends React.Component {
         <Text>challengeStageIndex: {this.props.gameService.challengeStageIndex}</Text>
         <Text>numChallengeParticipants: {this.props.gameService.numChallengeParticipants}</Text>
         <Text>numChallengeParticipantsWithInstrument: {this.props.gameService.numChallengeParticipantsWithInstrument}</Text>
+        <Text>infoStream: {JSON.stringify(this.props.gameService.infoStream)}</Text>
 
+        <Text style={{marginTop: 20}}>start installation:</Text>
+        <Picker
+              mode="dropdown"
+              onValueChange={(itemValue, itemIndex) => {if(itemValue) {
+                gameService.startInstallationByName(itemValue.name);
+                this.props.adminClose();
+              }}}
+        >
+              {installationItems}
+        </Picker>
         <Text style={{marginTop: 20}}>start a walk:</Text>
         <Picker
               mode="dropdown"

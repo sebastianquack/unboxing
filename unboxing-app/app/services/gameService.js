@@ -69,11 +69,6 @@ class GameService extends Service {
 
   /** game mode management **/
 
-  getStartTimeNow() {
-    let now = new Date(soundService.getSyncTime());    
-    return now.getHours() + ":" + now.getMinutes();
-  }
-
 	// for navigation testing
   setupMinimalWalk(place) {
     
@@ -146,6 +141,23 @@ class GameService extends Service {
       this.initInfoStream(); 
 		}
 	}
+
+  startInstallationByName = (name) => {
+    let installation = storageService.loadInstallationByName(name);
+    if(installation) {
+
+      // set relay server based on installation config
+      let relay_server_id = storageService.findRelayServerIdForInstallation(installation);
+      const connection = storageService.findServer(relay_server_id)
+      relayService.setServer(relay_server_id);
+      networkService.setConnection(connection || undefined);
+
+      this.setReactive({
+        activeInstallation: installation,
+        gameMode: "installation"
+      });  
+    }    
+  }
 
   /** persist and resume **/
 
@@ -300,7 +312,7 @@ class GameService extends Service {
   /** challenges **/
 
 	// called when user enters a challenge
-	setActiveChallenge = (challenge)=> {
+	setActiveChallenge = (challenge, useChallengeConnection=true)=> {
 
 		this.setReactive({
 			activeChallenge: challenge,
@@ -313,10 +325,12 @@ class GameService extends Service {
 
     sequenceService.setSequence(challenge.sequence_id);
 
-    const connection = storageService.findServer(challenge.relay_server_id)
-    relayService.setServer(challenge.relay_server_id);
-    networkService.setConnection(connection || undefined);
-
+    if(useChallengeConnection) {
+      const connection = storageService.findServer(challenge.relay_server_id)
+      relayService.setServer(challenge.relay_server_id);
+      networkService.setConnection(connection || undefined);
+    }
+    
     this.setReactive({
       statusBarTitle: sequenceService.getSequenceName(),
       statusBarSubtitle: challenge.name
@@ -325,6 +339,10 @@ class GameService extends Service {
     relayService.emitMessage({code: "joinChallenge", challengeId: challenge._id, deviceId: storageService.getDeviceId()});
     this.activateRelayCallbacks();
 	}
+
+  joinChallengeInstallation = (challenge)=> {
+    this.setActiveChallenge(challenge, false);
+  }
 
   getActiveChallengeStage = () => {
     if(!this.state.activeChallenge) return null;
@@ -381,11 +399,13 @@ class GameService extends Service {
     
     if(this.state.gameMode == "walk") {
       this.setupActivePlace();
-    } else {
+    }
+
+    if(this.state.gameMode == "installation") {
       this.setReactive({
-        challengeStatus: "list",
-        activeChallenge: null
-      }); 
+        activeChallenge: null,
+        challengeStatus: "off",
+      });
     }
 
     this.initInfoStream();
@@ -626,7 +646,12 @@ class GameService extends Service {
         this.backToLobby();
         break;
       case "prepare":
-        this.backToNavigation();
+        if(this.state.gameMode == "walk") {
+          this.backToNavigation();  
+        }
+        if(this.state.gameMode == "installation") {
+          this.leaveChallenge();
+        }
         break;
       default:
         this.showNotification("no current function");
