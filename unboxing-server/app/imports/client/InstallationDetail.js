@@ -46,7 +46,7 @@ class InstallationDetail extends React.Component {
   handleAttributeChange = (attributeName, value) => {
     $set = {}
     $set[attributeName] = value
-    Meteor.call('updateInstallation', this.props.walk._id, $set )
+    Meteor.call('updateInstallation', this.props.installation._id, $set )
   }
 
   cleanJSON(string) {

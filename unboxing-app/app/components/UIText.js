@@ -17,7 +17,7 @@ const letterSpacings = {
 }
 
 const defaultStyle = {
-  color: "white",
+  color: colors.warmWhite,
   fontFamily: "DINPro-Medium",
   fontSize: fontSizes.m
 }

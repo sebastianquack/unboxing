@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Image, ImageBackground } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
-import {globalStyles} from '../../config/globalStyles';
+import {globalStyles, colors} from '../../config/globalStyles';
 import UIText from './UIText'
 
-import {gameService} from '../services';
+import {gameService, storageService} from '../services';
+
+import challengeBackground from '../../assets/img/Inactive.png'
+import userMarker from '../../assets/img/User.png'
+
+const buttonPositions = [{x:10,y:10},{x:200,y:20},{x:400,y:40},{x:20,y:100},{x:10,y:400},{x:180,y:120},{x:450,y:300}] 
 
 class InstallationOverview extends React.Component { 
   constructor(props) {
@@ -12,16 +17,32 @@ class InstallationOverview extends React.Component {
     this.state = {};
   }
 
-  renderChallenge = (challenge) => {
+  renderChallenge = (challenge, index) => {
     return(
       <TouchableOpacity
         key={challenge._id}
         onPress={()=>{
           gameService.joinChallengeInstallation(challenge);
         }}
-        style = {{marginTop: 20, marginLeft: 20, width: 200, height: 100, backgroundColor: "blue", alignItems: "center", justifyContent: "center"}}
+        style = {{
+          margin: 20, 
+          alignItems: "center", 
+          justifyContent: "center", 
+          position: "absolute", 
+          left: buttonPositions[index].x, 
+          top: buttonPositions[index].y,
+          width: 200
+        }}
       >
-        <UIText>{challenge.name}</UIText>    
+        <ImageBackground 
+            imageStyle={{resizeMode: 'stretch'}}
+            style={{height: 60, width: 60, alignItems: "center", justifyContent: "center"}}
+            source={challengeBackground}>
+            <UIText size="xl" verticalCenter>{challenge.shorthand}</UIText>
+            <Image style={{position: "absolute", bottom: -8, left: 11}} source={userMarker}/>
+        </ImageBackground>
+         
+        <UIText size="m" style={{textAlign: "center"}}>{storageService.getSequenceNameFromChallenge(challenge).toUpperCase()}</UIText>    
       </TouchableOpacity>
     )
   }
@@ -30,10 +51,10 @@ class InstallationOverview extends React.Component {
   render() {
 
     const challenges = this.props.installation ? this.props.installation.challenges : [];
-    const challengeButtons = challenges.map(this.renderChallenge);
+    const challengeButtons = challenges.map((challenge, index) => {return this.renderChallenge(challenge, index)});
     
     return (
-      <View style={{width: "100%", height: "100%", backgroundColor: "red"}}> 
+      <View style={{width: "100%", height: "100%"}}> 
         {challengeButtons}
       </View>
     );

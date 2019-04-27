@@ -145,6 +145,7 @@ class GameService extends Service {
   startInstallationByName = (name) => {
     let installation = storageService.loadInstallationByName(name);
     if(installation) {
+      console.warn(installation);
 
       // set relay server based on installation config
       let relay_server_id = storageService.findRelayServerIdForInstallation(installation);

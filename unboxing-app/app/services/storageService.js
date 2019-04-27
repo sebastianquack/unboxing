@@ -215,10 +215,12 @@ class StorageService extends Service {
     }
     catch {
       console.warn("error parsing deviceGroups json");
-    } 
+    }
+    console.warn(deviceGroupsObj); 
 
     let challenges = [];
     let split = installation.challenges.split(" ");   
+    console.warn(split);
     for(let i = 0; i < split.length; i++) {
       split[i].trim();
       let challenge = this.findChallengeByShorthand(split[i]);
