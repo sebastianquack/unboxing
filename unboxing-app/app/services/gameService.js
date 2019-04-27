@@ -42,7 +42,7 @@ class GameService extends Service {
 
     // automatically resume the last walk saved
     setTimeout(()=>{
-      this.resumeWalkFromFile();
+      this.resumeGameFromFile();
     }, 3000);
 	}
 
@@ -163,6 +163,7 @@ class GameService extends Service {
       this.setReactive({
         activeInstallation: installation,
         gameMode: "installation",
+        activeChallenge: null,
         activeWalk: null,
         activePath: null,
         pathLength: null,
@@ -172,7 +173,8 @@ class GameService extends Service {
         challengeStatus: "off",
         statusBarTitle: "Choose what to play next!",
       });
-      this.initInfoStream();  
+      this.initInfoStream();
+      storageService.saveGameStateToFile(this.state);  
     }    
   }
 
@@ -182,7 +184,7 @@ class GameService extends Service {
     storageService.saveGameStateToFile(this.state);
   }
 
-  resumeWalkFromFile = () => {
+  resumeGameFromFile = () => {
     storageService.loadGameStateFromFile(stateObj=>{
       //console.warn("loaded", stateObj);
       if (!stateObj) return
@@ -206,6 +208,11 @@ class GameService extends Service {
           this.initInfoStream(); 
         }        
       }
+
+      if(stateObj.activeInstallation && stateObj.gameMode == "installation") {
+          this.startInstallationByName(stateObj.activeInstallation.name);
+      }
+
     });
   }
 
@@ -442,8 +449,8 @@ class GameService extends Service {
     //console.warn(msgObj);
 
     if(msgObj.code == "installationInfo" && msgObj.payload) {
-      console.warn("installationInfo");
-      console.warn(msgObj);
+      //console.warn("installationInfo");
+      //console.warn(msgObj);
       if(msgObj.payload.deviceMap) {
         this.updateInstallationActivity(msgObj.payload.deviceMap);
       }
@@ -457,7 +464,7 @@ class GameService extends Service {
             numChallengeParticipants: msgObj.numParticipants,
             selectedTracks: msgObj.selectedTracks
           })
-          if(typeof msgObj.numChallengeParticipantsWithInstrument != "undefined") {
+          if(typeof msgObj.numParticipantsWithInstrument != "undefined") {
             this.setReactive({
               numChallengeParticipantsWithInstrument: msgObj.numParticipantsWithInstrument,  
             })            
@@ -552,7 +559,7 @@ class GameService extends Service {
         //this.showInfoStreamAlert(storageService.t("starting"));
         
         let nowTime = soundService.getSyncTime();
-        let startTime = nowTime + 2000; // set time for sequence to start
+        let startTime = nowTime + 5000; // set time for sequence to start
         sequenceService.startSequence(startTime, true); // set local start flag to true 
 
         // send start_sequence message to all players connected via nearby
@@ -571,7 +578,7 @@ class GameService extends Service {
         // && sequenceService.state.playbackStartedAt > nowTime
         && startTime < sequenceService.state.playbackStartedAt
       ) {
-      console.log("startSequenceRemotely: shifting timing")
+      console.warn("startSequenceRemotely: shifting timing")
       sequenceService.shiftSequenceToNewStartTime(startTime);
     }
     // should this request start the sequence?

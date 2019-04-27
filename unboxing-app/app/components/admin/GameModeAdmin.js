@@ -133,7 +133,27 @@ class GameModeAdmin extends React.Component {
               {cancelable: true},
             );
           }}><Text>Restart App</Text>
-        </TouchableOpacity>        
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={globalStyles.button}
+          onPress={()=>{
+            Alert.alert(
+              'Confirm',
+              'Restart App (remove saved gameState)?',
+              [
+                {text: 'Yes', onPress: () => { 
+                  storageService.saveGameStateToFile({}, () => { RestartAndroid.restart() }); 
+                }},
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+              ],
+              {cancelable: true},
+            );
+          }}><Text>Restart App (without resume)</Text>
+        </TouchableOpacity>                
       </View>
     );
   }

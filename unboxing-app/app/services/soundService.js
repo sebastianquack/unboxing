@@ -47,7 +47,6 @@ class SoundSevice extends Service {
 	    	//console.warn("click loaded");
 	    });	
     }, 1000);
-
 	}
 
   runSoundTest() {

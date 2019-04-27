@@ -7,6 +7,7 @@ import RNFS from 'react-native-fs';
 persistentFile = RNFS.ExternalStorageDirectoryPath + '/unboxing/collections.json';
 
 gameStateFile = RNFS.ExternalStorageDirectoryPath + '/unboxing/gameState.json';
+timeSyncFile = RNFS.ExternalStorageDirectoryPath + '/unboxing/timeSync.json';
 
 const uuidv1 = require('uuid/v1');
 
@@ -104,12 +105,15 @@ class StorageService extends Service {
 		});
 	}
 
-  saveGameStateToFile(gameStateObj) {
+  saveGameStateToFile(gameStateObj, callback=null) {
     // write the file
     let gameStateJSON = JSON.stringify(gameStateObj);
     RNFS.writeFile(gameStateFile, gameStateJSON, 'utf8')
     .then((success) => {
       //console.warn("succesfully saved gameState data to file");
+      if(callback) {
+        callback();
+      }
     })
     .catch((err) => {
       console.log("error saving gameState data to file");
@@ -124,6 +128,31 @@ class StorageService extends Service {
     if(json) {
       let gameStateFromFile = JSON.parse(json);
       callback(gameStateFromFile);
+    } else {
+      callback(null);
+    }
+  }
+
+  saveTimeSyncToFile(syncObj) {
+    // write the file
+    let json = JSON.stringify(syncObj);
+    RNFS.writeFile(timeSyncFile, json, 'utf8')
+    .then((success) => {
+      //console.warn("succesfully saved gameState data to file");
+    })
+    .catch((err) => {
+      console.log("error saving sync data to file");
+      console.log(err.message);
+    });
+  }
+
+  async loadTimySyncFromFile(callback) {
+    let json = await RNFS.readFile(timeSyncFile, 'utf8').catch((err)=>{
+      //console.warn("load gameState from file failed: " + err.message)
+    });
+    if(json) {
+      let syncObj = JSON.parse(json);
+      callback(syncObj);
     } else {
       callback(null);
     }

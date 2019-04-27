@@ -154,6 +154,9 @@ class SequenceService extends Service {
 			const sequenceEndsAt = this.state.playbackStartedAt + this.state.currentSequence.custom_duration
 			if (currentTime >= sequenceEndsAt) {
 				//console.warn("playbackStartedAt", this.state.playbackStartedAt);
+        //console.warn("duration", this.state.currentSequence.custom_duration);
+        //console.warn("end of sequence, diff: ", currentTime - sequenceEndsAt);
+
         this.resetSequence();
         this.resetTrack();
         this.updateActionInterface(); 
@@ -814,6 +817,8 @@ class SequenceService extends Service {
       this.setReactive({
         playbackStartedAt: startTime
       });
+      console.warn(this.state.scheduledItem);
+      console.warn(this.state.nextItem);
       this.setupNextSequenceItem();
   }
 		

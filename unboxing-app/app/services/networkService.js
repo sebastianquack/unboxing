@@ -68,6 +68,17 @@ class NetworkService extends Service {
       this.setupImei();
     }, 2000);
 
+
+    setTimeout(()=>{
+      storageService.loadTimySyncFromFile((result)=> {
+        if(result) {
+          //console.warn("setting delta from file", result);
+          soundService.setDelta(result.delta);
+          this.setReactive({timeSyncStatus: "synced"})  
+        }
+      });  
+    }, 1000);
+
 	}
 
   setupImei = ()=> {
@@ -230,6 +241,7 @@ class NetworkService extends Service {
       soundService.setDelta(delta);
       this.setReactive({timeSyncStatus: "synced"})
       // alert("Time sync completed");
+      storageService.saveTimeSyncToFile({delta:delta})
     });
   }
 

@@ -80,6 +80,7 @@ class SequenceAdmin extends React.Component {
           <Text>
             currentSequence: {currentSequence ? JSON.stringify(currentSequence) : "none"} {"\n"}{"\n"}
             controlStatus: { controlStatus } {"\n"}
+            playbackStartedAt: { this.props.sequenceService.playbackStartedAt }{"\n"}
             currentTrack: {currentTrack ? currentTrack.name : "none"} {"\n"}{"\n"}
             Playback time: {Math.floor(this.state.playbackTime / 1000)} {"\n"}
             Loop Counter: {loopCounter} {"\n"}
