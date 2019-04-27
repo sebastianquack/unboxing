@@ -166,10 +166,12 @@ class GameService extends Service {
         activeChallenge: null,
         activeWalk: null,
         activePath: null,
+        activePlace: null,
         pathLength: null,
         pathIndex: null,
         walkStatus: "off",
         walkStartTime: null,
+        minutesToEnd: null,
         challengeStatus: "off",
         statusBarTitle: "Choose what to play next!",
       });
@@ -244,7 +246,7 @@ class GameService extends Service {
   }
 
   walkTracker = ()=>{
-    if(this.state.activeWalk && this.state.activePath && this.state.walkStatus == "ongoing") {
+    if(this.state.gameMode == "walk" && this.state.activeWalk && this.state.activePath && this.state.walkStatus == "ongoing") {
 
       // update pathIndex to correct time
       let oldPathIndex = this.state.pathIndex;
