@@ -182,8 +182,24 @@ Migrations.add({
   down: function() {}
 });
 
+Migrations.add({
+  version: 16,
+  name: 'add item to path of files in sequences',
+  up: function() {
+    let sequences = Sequences.find().fetch();
+    sequences.forEach((sequence)=>{
+      let items = sequence.items;
+      for(let i = 0; i < items.length; i++) {
+        items[i].path = "/items" +  items[i].path;
+      }
+      Meteor.call("updateSequence", sequence._id, {items: items});
+    });
+  },
+  down: function() {}
+});
 
-const version = 15;
+
+const version = 16;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);
