@@ -29,12 +29,23 @@ class InstallationOverview extends React.Component {
     this.state = {};
   }
 
-  renderChallenge = (challenge, index) => {
+  shouldComponentUpdate(nextProps, nextState) {
+    if(this.props.installation != nextProps.installation) {
+      return true;
+    }
+    if(JSON.stringify(this.props.gameService.installationActivityMap) !== JSON.stringify(nextProps.gameService.installationActivityMap)) {
+      return true;
+    }
+    return false;
+  }
+
+  renderChallenge = (challenge, index, activityMap) => {
+    const available = !activityMap || activityMap[challenge._id] == "active";
     return(
       <TouchableOpacity
         key={challenge._id}
         onPress={()=>{
-          gameService.joinChallengeInstallation(challenge);
+          if(available) gameService.joinChallengeInstallation(challenge);
         }}
         style = {{
           margin: 20, 
@@ -46,17 +57,18 @@ class InstallationOverview extends React.Component {
           width: 160
         }}
       >
+      <View style={{opacity: available ? 1 : 0.5}}>
         <ImageBackground 
             imageStyle={{resizeMode: 'stretch'}}
             style={{height: 60, width: 60, alignItems: "center", justifyContent: "center"}}
             source={challengeBackground}>
             <UIText size="xl" verticalCenter>{challenge.shorthand}</UIText>
-            { (this.props.gameService.installationActivityMap && this.props.gameService.installationActivityMap[challenge._id] == "active") && 
+            { (activityMap && activityMap[challenge._id] == "active") && 
               <Image style={{position: "absolute", bottom: -8, left: 11}} source={userMarker}/>
             }
         </ImageBackground>
-        
-        <UIText size="m" style={{textAlign: "center"}}>{storageService.getSequenceNameFromChallenge(challenge).toUpperCase()}</UIText>    
+        <UIText size="m" style={{textAlign: "center"}}>{storageService.getSequenceNameFromChallenge(challenge).toUpperCase()}</UIText>
+      </View>
       </TouchableOpacity>
     )
   }
@@ -65,7 +77,7 @@ class InstallationOverview extends React.Component {
   render() {
 
     const challenges = this.props.installation ? this.props.installation.challenges : [];
-    const challengeButtons = challenges.map((challenge, index) => {return this.renderChallenge(challenge, index)});
+    const challengeButtons = challenges.map((challenge, index) => {return this.renderChallenge(challenge, index, this.props.gameService.installationActivityMap)});
     
     return (
       <View style={{width: "100%", height: "100%"}}> 

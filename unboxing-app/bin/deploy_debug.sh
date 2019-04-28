@@ -26,9 +26,11 @@ do
    ping -o -n -W 2 -i 2  $NETWORK_PREFIX${i} &> /dev/null
    echo "device discovered"
 
+   sleep 3
+
    echo "connecting to device ${i}"
    adb connect "$NETWORK_PREFIX${i}:5555"
-   sleep 1
+   sleep 2
    
    echo "stopping app"
    adb shell am force-stop com.unboxing

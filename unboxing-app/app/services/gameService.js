@@ -27,7 +27,8 @@ class GameService extends Service {
       infoStream: [],
       numChallengeParticipants: 1, // number of people in the challenge
       numChallengeParticipantsWithInstrument: 0,
-      installationActivityMap: {}
+      installationActivityMap: null,
+      installationConnected: false
 		});
 
 		// not reactive vars
@@ -174,6 +175,8 @@ class GameService extends Service {
         minutesToEnd: null,
         challengeStatus: "off",
         statusBarTitle: "Choose what to play next!",
+        installationConnected: false,
+        installationActivityMap: null
       });
       this.initInfoStream();
       storageService.saveGameStateToFile(this.state);  
@@ -441,11 +444,15 @@ class GameService extends Service {
   }
 
   updateInstallationActivity = (deviceMap) => {
-    this.state.installationActivityMap = {};
+    this.state.installationActivityMap = null;
     Object.keys(deviceMap).forEach((key)=>{
+      if(!this.state.installationActivityMap) this.state.installationActivityMap = {};
       this.state.installationActivityMap[deviceMap[key].challengeId] = "active"
     });
-    this.setReactive({installationActivityMap:this.state.installationActivityMap});
+    this.setReactive({
+      installationActivityMap: this.state.installationActivityMap,
+      installationConencted: true
+    });
   }
 
   onMessageReceived = (msgObj) => {

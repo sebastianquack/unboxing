@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Meteor, { ReactiveDict, withTracker, MeteorListView } from 'react-native-meteor';
 import {globalStyles} from '../../config/globalStyles';
 
-import {withGameService, withSequenceService, withPeakService} from './ServiceConnector';
+import {withGameService, withSequenceService, withPeakService, withRelayService} from './ServiceConnector';
 import {gameService, sequenceService, storageService} from '../services';
 
 import ScreenContainer from './ScreenContainer'
@@ -13,6 +13,8 @@ import StatusBar from './StatusBar'
 import Button from './Button'
 import ConnectionIndicator from './ConnectionIndicator'
 import VideoPlayer from './VideoPlayer'
+import UIText from './UIText'
+
 
 import ChallengeView from './ChallengeView';
 import TrackSelector from './TrackSelector';
@@ -112,6 +114,7 @@ class GameContainer extends React.Component {
 
     // special case: installation home screen 
     if(this.props.gameService.gameMode == "installation" && !this.props.gameService.activeChallenge) {
+      if(this.props.gameService.installationConencted) {
         mainContent = <InstallationOverview installation={this.props.gameService.activeInstallation}/>
         statusBar = <StatusBar 
           title={this.props.gameService.statusBarTitle} 
@@ -119,6 +122,9 @@ class GameContainer extends React.Component {
           steps={7}
           currentStep={0}
         />
+      } else {
+        mainContent = <UIText>connecting...</UIText>
+      }
     }
 
     
@@ -221,4 +227,4 @@ class GameContainer extends React.Component {
   }
 }
 
-export default withPeakService(withGameService(withSequenceService(GameContainer)));
+export default withRelayService(withPeakService(withGameService(withSequenceService(GameContainer))));
