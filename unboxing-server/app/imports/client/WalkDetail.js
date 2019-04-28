@@ -169,7 +169,7 @@ class WalkDetail extends React.Component {
 					{Object.entries(this.props.walk).map(this.renderAttribute)}	            
 			 		<label key="json-valid"><span>JSON valid</span><span>{this.state.JSONValid}</span></label>
           <label key="json-integrity"><span>JSON integrity</span><span>{this.state.JSONIntegrity}</span></label>
-          <button onClick={()=>Meteor.call('removeWalk',this.props.walk._id)}>
+          <button onClick={()=>{if(confirm("really?")) Meteor.call('removeWalk',this.props.walk._id)}}>
 	            	Delete Walk
 	        </button>     
 	    	</div>

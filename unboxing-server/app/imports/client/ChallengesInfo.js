@@ -8,13 +8,16 @@ import ChallengeDetail from './ChallengeDetail';
 class ChallengesInfo extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+    }
+
+    this.li = this.li.bind(this);
+
   }
 
 
   ChallengesInfoCss = css`
     ul {
-      display: flex;
-      flex-wrap: wrap;
     }
     li {
       margin-right: 1em;
@@ -29,8 +32,33 @@ class ChallengesInfo extends React.Component {
   li(c) {
     return (
       <li key={c._id}>
-        <ChallengeDetail challenge={c} />
+        {!this.show(c._id) ? <span>{c.name}</span> : null}
+        {this.renderSwitch(c._id)}        
+        {this.show(c._id) ? <ChallengeDetail challenge={c} /> : null}
       </li>
+    );
+  }
+
+  show = (id) => {
+    return this.state["show" + id]
+  }
+
+  toggle = (id) => {
+    let value = this.state["show" + id];
+    this.setState({
+        ["show" + id]: !value
+    })
+  }
+
+
+  renderSwitch = (id) => {
+    return (
+        <div>
+          <input
+                type="button"
+                value={this.show(id) ? "hide" : "show"}
+                onClick={  value => this.toggle(id) } />
+        </div>
     );
   }
 

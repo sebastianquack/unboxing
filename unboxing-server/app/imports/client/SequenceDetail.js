@@ -158,7 +158,7 @@ class Sequence extends React.Component {
               Add Item
             </button>            
             &nbsp;&nbsp;    
-            <button onClick={()=>Meteor.call('removeSequence',this.props.sequence._id)}>
+            <button onClick={()=>{if(confirm("really?")) Meteor.call('removeSequence',this.props.sequence._id)}}>
               Delete Sequence
             </button>
           </div>

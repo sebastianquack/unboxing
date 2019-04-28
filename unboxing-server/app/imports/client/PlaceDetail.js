@@ -85,7 +85,7 @@ class PlaceDetail extends React.Component {
 	    return (
 	    	<div className={this.PlaceDetailCss}>
 					{Object.entries(this.props.place).map(this.renderAttribute)}	            
-			 		<button onClick={()=>Meteor.call('removePlace',this.props.place._id)}>
+			 		<button onClick={()=>{if(confirm("really?")) Meteor.call('removePlace',this.props.place._id)}}>
 	            	Delete Place
 	        </button>     
 	    	</div>

@@ -174,7 +174,7 @@ class ChallengeDetail extends React.Component {
 					{Object.entries(this.props.challenge).map(this.renderAttribute)}	            
 			 		<label key="json-valid"><span>JSON check</span><span>{this.state.JSONValid}</span></label>
           <label key="json-integrity"><span>JSON integrity</span><span>{this.state.JSONIntegrity}</span></label>
-          <button onClick={()=>Meteor.call('removeChallenge',this.props.challenge._id)}>
+          <button onClick={()=>{ if(confirm("really?")) Meteor.call('removeChallenge',this.props.challenge._id)}}>
 	            	Delete Challenge
 	        </button>     
 	    	</div>

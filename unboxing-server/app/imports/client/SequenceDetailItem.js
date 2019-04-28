@@ -211,9 +211,9 @@ class SequenceDetailItem extends React.Component {
         </div>
         <br />
         <button onClick={
-          ()=>Meteor.call('removeSequenceItem', this.props.item._id, 
+          ()=>{if(confirm("really?")) Meteor.call('removeSequenceItem', this.props.item._id, 
             ()=>{this.props.validateInstruments()}
-          )
+          )}
         }>
           Delete Item
         </button>   
