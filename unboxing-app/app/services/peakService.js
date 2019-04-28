@@ -79,6 +79,7 @@ class PeakService extends Service {
       if(Math.abs(data.acc.y - this.lastData.acc.y) > 0.01) {
         if(this.state.still) {
           this.setReactive({still: false});
+          gameService.handleMoveEvent();  
         }
         this.lastData = data;
         this.lastChange = soundService.getSyncTime();

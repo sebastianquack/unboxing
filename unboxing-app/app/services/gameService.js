@@ -176,9 +176,9 @@ class GameService extends Service {
         challengeStatus: "off",
         statusBarTitle: "Choose what to play next!",
         installationConnected: false,
-        installationActivityMap: null
+        installationActivityMap: null,
+        tutorialStatus: null,
       });
-      this.initInfoStream();
       storageService.saveGameStateToFile(this.state);  
     }    
   }
@@ -451,8 +451,19 @@ class GameService extends Service {
     });
     this.setReactive({
       installationActivityMap: this.state.installationActivityMap,
-      installationConencted: true
-    });
+      installationConencted: true,
+    })
+    // set tutorial to complete if people are there and we haven't started the tutorial
+    if((!this.state.tutorialStatus || 
+      (this.state.tutorialStatus == "tutorial-installation-1" && peakService.state.still)) 
+      && this.state.installationActivityMap) {
+      this.setReactive({tutorialStatus: "tutorial-installation-complete"});
+    }
+    // reset the tutorial if we connect or are still and no one is there
+    if((!this.state.tutorialStatus || peakService.state.still) && !this.state.installationActivityMap) {
+     this.setReactive({tutorialStatus: "tutorial-installation-1"}); 
+    }
+    this.initInfoStream();
   }
 
   onMessageReceived = (msgObj) => {
@@ -702,7 +713,22 @@ class GameService extends Service {
     if(this.state.gameMode == "installation" && this.state.activeChallenge) {
       this.leaveChallenge();
     }
+    if(this.state.gameMode == "installation" && !this.state.installationActivityMap) {
+      this.setReactive({
+        tutorialStatus: "tutorial-installation-1"
+      });
+      this.initInfoStream();
+    }
   }
+
+  handleMoveEvent = ()=> {
+    if(this.state.gameMode == "installation" && this.state.tutorialStatus == "tutorial-installation-1") {
+      this.setReactive({
+        tutorialStatus: "tutorial-installation-2"
+      });
+      this.initInfoStream();
+    }
+  } 
 
   // big left button on game container
   handleLeftButton = ()=> {
@@ -822,6 +848,25 @@ class GameService extends Service {
 
   initInfoStream = ()=> {
     this.clearInfoStream();    
+
+    // special case - intro for installation
+    if(this.state.gameMode == "installation") {
+      switch(this.state.tutorialStatus) {
+        case "tutorial-installation-1":
+          this.addItemToInfoStream(storageService.t("welcome"), storageService.t("tutorial-installation-1"));
+          break;
+        case "tutorial-installation-2":
+          soundService.preloadSoundfiles([this.getPracticeSoundFile("1", "viola1")], ()=>{
+            //console.warn("practice sound loaded");
+          });
+          this.addItemToInfoStream(storageService.t("welcome"), storageService.t("tutorial-installation-2"));
+          this.activatePeakTutorial(()=>{
+            this.playPracticeSound(this.getPracticeSoundFile("1", "viola1"), storageService.t("info"), storageService.t("tutorial-installation-playing"), "tutorial-installation-complete", "tutorial-installation-playing");
+            this.showInfoStreamAlert(storageService.t("good"), "blue", 4000);
+          });
+          break;
+      }
+    }
     
     // spcial case - intro before beginning of tutorial walk
     if(this.state.walkStatus == "tutorial-intro") {
@@ -896,9 +941,9 @@ class GameService extends Service {
         this.addItemToInfoStream(storageService.t("info"), storageService.t("tutorial-instructions-1a"));  
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-1b"));  
         this.preloadPracticeSound(1);
-        this.preloadPracticeSound(1);
+        this.preloadPracticeSound(2);
         this.activatePeakTutorial(()=>{
-          this.playPracticeSound("1", storageService.t("info"), storageService.t("tutorial-instructions-playing-1"), "step-2", "step-1-playing");
+          this.playPracticeSound(this.getPracticeSoundFile("1"), storageService.t("info"), storageService.t("tutorial-instructions-playing-1"), "step-2", "step-1-playing");
           this.showInfoStreamAlert(storageService.t("good"), "blue", 4000);
         });
         break;
@@ -906,7 +951,7 @@ class GameService extends Service {
         this.clearInfoStream();
         this.addItemToInfoStream(storageService.t("tutorial"), storageService.t("tutorial-instructions-2"));  
         this.activatePeakTutorial(()=>{
-          this.playPracticeSound("2", storageService.t("info"), storageService.t("tutorial-instructions-playing-2"), "complete", "step-2-playing");
+          this.playPracticeSound(this.getPracticeSoundFile("2"), storageService.t("info"), storageService.t("tutorial-instructions-playing-2"), "complete", "step-2-playing");
           this.showInfoStreamAlert(storageService.t("good"), "blue", 4000);
         });
         break;
@@ -917,18 +962,21 @@ class GameService extends Service {
     }
   }
 
-  getPracticeSoundFile = (index) => {
-    return instruments[this.state.activePath.startInstrument]["practiceSoundPath" + index]; 
+  getPracticeSoundFile = (index, instrument=null) => {
+    if(!instrument) {
+      instrument = this.state.activePath.startInstrument
+    }
+    return instruments[instrument]["practiceSoundPath" + index]; 
   }
 
   preloadPracticeSound = (index) => {
     soundService.preloadSoundfiles([this.getPracticeSoundFile(index)], ()=>{
-      //console.warn("practice sound loaded");
+      console.warn("practice sound loaded");
     }); 
   }
 
-  playPracticeSound = (index, playInstructionsHeader, playInstructions, endStatus, playingStatus=null) => {
-    soundService.scheduleSound(this.getPracticeSoundFile(index), soundService.getSyncTime(), {
+  playPracticeSound = (path, playInstructionsHeader, playInstructions, endStatus, playingStatus=null) => {
+    soundService.scheduleSound(path, soundService.getSyncTime(), {
       onPlayStart: ()=>{
         if(playingStatus) this.setReactive({tutorialStatus: playingStatus});
         this.addItemToInfoStream(playInstructionsHeader, playInstructions);

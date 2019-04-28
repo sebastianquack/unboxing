@@ -47,7 +47,7 @@ class GameContainer extends React.Component {
     let backgroundContent = null;
 
     // show info stream?
-    if(this.props.gameService.infoStream && this.props.gameService.infoStream.length > 0) {
+    if(this.props.gameService.gameMode == "walk" && this.props.gameService.infoStream && this.props.gameService.infoStream.length > 0) {
       infoStreamContent = <InfoStream/>
     }
     
@@ -115,16 +115,31 @@ class GameContainer extends React.Component {
     // special case: installation home screen 
     if(this.props.gameService.gameMode == "installation" && !this.props.gameService.activeChallenge) {
       if(this.props.gameService.installationConencted) {
-        mainContent = <InstallationOverview installation={this.props.gameService.activeInstallation}/>
-        statusBar = <StatusBar 
-          title={this.props.gameService.statusBarTitle} 
-          description={""} 
-          steps={7}
-          currentStep={0}
-        />
+        if(this.props.gameService.tutorialStatus == "tutorial-installation-complete") {
+          mainContent = <InstallationOverview installation={this.props.gameService.activeInstallation}/>
+          statusBar = <StatusBar 
+            title={this.props.gameService.statusBarTitle} 
+            description={""} 
+            steps={7}
+            currentStep={0}
+          />  
+        } else {
+          infoStreamContent = <InfoStream/>
+          switch(this.props.gameService.tutorialStatus) {
+            case "tutorial-installation-1":
+              overlayContent = <Instructor mode={"volume"}/>   
+              break;
+            case "tutorial-installation-2":
+              overlayContent = <Instructor mode={"einsatz"}/>   
+              break;
+            case "tutorial-installation-playing":
+              overlayContent = <Instructor mode={"volume"}/>   
+              mainContent = <SensorModulator mode={"volume tilt"} item={{path: gameService.getPracticeSoundFile("1", "viola1")}}/>     
+          }
+        }
       } else {
         mainContent = <UIText>connecting...</UIText>
-      }
+      }      
     }
 
     
@@ -163,12 +178,16 @@ class GameContainer extends React.Component {
         break;
 
       case "tutorial":
+        if(this.props.gameService.tutorialStatus == "step-2" || this.props.gameService.tutorialStatus == "step-1") {
+          overlayContent = <Instructor mode={"einsatz"}/>
+        }
         if(this.props.gameService.tutorialStatus == "step-2-playing") {
           mainContent = <SensorModulator mode={"volume tilt"} item={{path: gameService.getPracticeSoundFile(2)}}/>     
+          overlayContent = <Instructor mode={"volume"}/>
         }
         buttonRight = this.props.gameService.tutorialStatus == "complete" ?
           <Button text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/> : null;  
-        overlayContent = <Instructor mode={this.props.gameService.tutorialStatus}/>   
+           
         break;
       
       case "prepare":

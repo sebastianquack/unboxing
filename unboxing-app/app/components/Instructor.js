@@ -202,7 +202,7 @@ const imagesVolume = [
   require(`../../assets/imgAnim/Volume/Volume_00042.png`),
   require(`../../assets/imgAnim/Volume/Volume_00043.png`),
   require(`../../assets/imgAnim/Volume/Volume_00044.png`),
-  require(`../../assets/imgAnim/Volume/Volume_00045.png`),  
+  require(`../../assets/imgAnim/Volume/Volume_00045.png`), 
 ]
 
 /*
@@ -214,9 +214,9 @@ const videos = {
 */
 
 const images = {
-  "step-1": imagesEinsatz,
-  "step-2": imagesEinsatz,
-  "step-2-playing": imagesVolume 
+  "einsatz": imagesEinsatz,
+  "stop": imagesStop,
+  "volume": imagesVolume 
 }
 
 const makeNumbers = (min, max, strLen) => {

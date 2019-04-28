@@ -66,6 +66,7 @@ class SensorInfo extends React.Component {
         <Text>deltaUpDown: { this.props.peakService.deltaUpDown }</Text>
         <Text>isFacingDown: { this.props.peakService.isFacingDown ? "true" : "false" }</Text>
         <Text>bpm: { this.props.peakService.bpm }</Text>
+        <Text>still: { this.props.peakService.still ? "true" : "false" }</Text>
       </View>
     );
   }
