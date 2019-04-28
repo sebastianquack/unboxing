@@ -20,7 +20,7 @@
     "react-native-android-wifi": "0.0.39",
     "react-native-clock-sync": "^1.0.0",
     "react-native-fs": "^2.11.15",
-    "react-native-image-sequence": "git+https://github.com/intergestalt/react-native-image-sequence.git",
+    "react-native-image-sequence": "0.6.1",
     "react-native-imei": "^0.1.2",
     "react-native-keep-awake": "^3.1.0",
     "react-native-linear-gradient": "^2.5.3",
