@@ -194,7 +194,7 @@ position: relative;
 background-color: white;
 .tracks_list {
   padding-left: 0;
-  margin-bottom: 5em;
+  margin-bottom: 1em;
   list-style-type: none;
   li {
     &, .title {

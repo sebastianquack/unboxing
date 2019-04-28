@@ -6,14 +6,43 @@ import {SequenceDetail} from './';
 class SequencesInfo extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+    }
+
+    this.li = this.li.bind(this);
   }
 
-  li(d) {
+  li = (d) => {
     return (
-      <li key={d._id}>
-        <SequenceDetail sequence={d} />
+      <li key={d._id} style={{marginBottom: "1em"}}>
+        {!this.showSequence(d._id) ? <span>{d.name}</span> : null}
+        {this.renderSequenceSwitch(d._id)}        
+        {this.showSequence(d._id) ? <SequenceDetail sequence={d} /> : null}
       </li>
     )
+  }
+
+  showSequence = (id) => {
+    return this.state["show" + id]
+  }
+
+  toggleSequence = (id) => {
+    let value = this.state["show" + id];
+    this.setState({
+        ["show" + id]: !value
+    })
+  }
+
+
+  renderSequenceSwitch = (id) => {
+    return (
+        <div style={{display: "inline-block", paddingLeft: "0.25em"}}>
+          <input
+                type="button"
+                value={this.showSequence(id) ? "hide" : "show"}
+                onClick={  value => this.toggleSequence(id) } />
+        </div>
+    );
   }
 
   handleAdd() {
