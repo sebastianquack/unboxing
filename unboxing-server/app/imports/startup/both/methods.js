@@ -185,6 +185,7 @@ Meteor.methods({
       deviceGroups: `[<br>{<br>
         "name":"name",<br>
         "devices":[1, 2, 3],<br>
+        "startInstruments":["viola1", "viola1", "viola1"],<br>
         "relayServerName": "raspi-master"<br>
       }<br>]
       `

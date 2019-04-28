@@ -4,14 +4,17 @@ import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import { css } from 'emotion'
 
-import cleanJSON from '../helper/both/cleanJSON';
+import { Places, Challenges, Servers } from '../collections'
+
+import {cleanJSON, trackNames} from '../helper/both/cleanJSON';
 
 class InstallationDetail extends React.Component {
 	constructor(props) {
     	super(props);
 
       this.state = {
-        JSONValid: ""
+        JSONValid: "",
+        JSONIntegrity: ""
       }
   }
 
@@ -46,7 +49,11 @@ class InstallationDetail extends React.Component {
   handleAttributeChange = (attributeName, value) => {
     $set = {}
     $set[attributeName] = value
-    Meteor.call('updateInstallation', this.props.installation._id, $set )
+    Meteor.call('updateInstallation', this.props.installation._id, $set, ()=> {
+      if(attributeName == "challenges") {
+        this.checkJSON(this.props.installation.deviceGroups);
+      }  
+    });
   }
 
   cleanJSON(string) {
@@ -58,14 +65,58 @@ class InstallationDetail extends React.Component {
   checkJSON = (value)=> {
     cleanText = cleanJSON(value);
     console.log(cleanText);
+    let jsonObj = "";
     try {
-      JSON.parse(cleanText);
+      jsonObj = JSON.parse(cleanText);
       this.setState({JSONValid: "valid"});
     }
     catch(e) {
       this.setState({JSONValid: "error"});
     }
+    if(jsonObj) {
+      this.checkIntegrity(jsonObj);  
+    }
     return value;
+  }
+
+  checkIntegrity = (installationObj) => {
+    // run over all devices
+    let error = "";
+
+    // check challenges
+    let challenges = [];
+    let split = this.props.installation.challenges.split(" ");   
+    for(let i = 0; i < split.length; i++) {
+      split[i].trim();
+      let challenge = Challenges.find({shorthand: split[i]}).fetch();
+      if(challenge.length != 1) {
+        error += "challenge " + split[i] + " not identified";
+      }
+    }
+
+    // iterate over deviceGroups
+    installationObj.forEach((deviceGroup)=>{
+
+      // relayServerName
+      let server = Servers.find({name: deviceGroup.relayServerName}).fetch();
+      if(server.length != 1) {
+        error += "server " + deviceGroup.relayServerName + " not identified";
+      }
+
+      // check startInstruments
+      if(deviceGroup.startInstruments.length != deviceGroup.devices.length) {
+        error += "server " + deviceGroup.relayServerName + " not identified";  
+      }
+
+      deviceGroup.startInstruments.forEach((instrument)=>{
+        if(trackNames.indexOf(instrument) == -1) {
+          error += "startInstrument " + instrument + " unknown";
+        }  
+      })
+    });
+
+    this.setState({JSONIntegrity: error ? error : "ok"});
+
   }
 
 	renderInput = (attributeName, value)=> {
@@ -121,6 +172,7 @@ class InstallationDetail extends React.Component {
 	    	<div className={this.DetailCss}>
 					{Object.entries(this.props.installation).map(this.renderAttribute)}	            
 			 		<label key="json-valid"><span>JSON check</span><span>{this.state.JSONValid}</span></label>
+          <label key="json-integrity"><span>JSON integrity</span><span>{this.state.JSONIntegrity}</span></label>
           <button onClick={()=>Meteor.call('removeInstallation',this.props.installation._id)}>
 	            	Delete Installation
 	        </button>     
@@ -134,6 +186,11 @@ InstallationDetail.propTypes = {
 };
 
 export default withTracker(props => {
+  const sub1 = Meteor.subscribe('challenges.all')
+  const sub2 = Meteor.subscribe('places.all')
+  const sub3 = Meteor.subscribe('servers.all')
+  
 	return {
+    ready: sub1.ready() && sub2.ready(),
   };
 })(InstallationDetail);

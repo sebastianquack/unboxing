@@ -5,7 +5,7 @@ import objectHash from 'object-hash'
 import { importExportConfig, importExportConfigTranslationsOnly } from '../../helper/server/importexport';
 import { receiveFiles } from '../../helper/server/files';
 
-import cleanJSON from '../../helper/both/cleanJSON';
+import {cleanJSON} from '../../helper/both/cleanJSON';
 
 async function getEverything(req, res) {  
   const challenges = await Challenges.find().fetch();

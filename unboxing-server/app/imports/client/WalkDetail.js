@@ -4,16 +4,17 @@ import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import { css } from 'emotion'
 
-import { Places } from '../collections'
+import { Places, Challenges } from '../collections'
 
-import cleanJSON from '../helper/both/cleanJSON';
+import {cleanJSON, trackNames} from '../helper/both/cleanJSON';
 
 class WalkDetail extends React.Component {
 	constructor(props) {
     	super(props);
 
       this.state = {
-        JSONValid: ""
+        JSONValid: "",
+        JSONIntegrity: ""
       }
   }
 
@@ -61,8 +62,9 @@ class WalkDetail extends React.Component {
     cleanText = cleanJSON(value);
     console.log(cleanText);
     try {
-      JSON.parse(cleanText);
+      let jsonObj = JSON.parse(cleanText);
       this.setState({JSONValid: "valid"});
+      this.checkIntegrity(jsonObj);
     }
     catch(e) {
       this.setState({JSONValid: "error"});
@@ -70,6 +72,41 @@ class WalkDetail extends React.Component {
     return value;
   }
 
+  checkIntegrity = (walkObj) => {
+    // run over all devices
+    let error = "";
+
+    Object.keys(walkObj).forEach((key)=>{
+
+      walkObj[key].places.forEach((placeEntry)=>{
+
+        console.log(this.props.walk.tag, placeEntry.challenge, placeEntry.place);
+
+        // find challenge by placeEntry.challenge
+        let challenge = Challenges.find({shorthand: placeEntry.challenge, tag: this.props.walk.tag}).fetch();
+        console.log("challenge", challenge);
+        if(challenge.length != 1) {
+          error = "challenge " + placeEntry.challenge + " not identified";
+        }
+
+        // find place by placeEntry.place
+        let place = Places.find({shorthand: placeEntry.place, tag: this.props.walk.tag}).fetch();
+        console.log("place", place);
+        if(place.length != 1) {
+          error = "place " + placeEntry.place + " not identified";
+        }
+      })
+
+      if(trackNames.indexOf(walkObj[key].startInstrument) == -1) {
+        error = "startInstrument " + walkObj[key].startInstrument + " unknown";
+      }
+    });
+  
+
+    this.setState({JSONIntegrity: error ? error : "ok"});
+
+  }
+    
 	renderInput = (attributeName, value)=> {
     const emptyOption = <option key="empty" value="">&lt;none&gt;</option>;
     switch(attributeName) {
@@ -132,7 +169,8 @@ class WalkDetail extends React.Component {
 	    return (
 	    	<div className={this.DetailCss}>
 					{Object.entries(this.props.walk).map(this.renderAttribute)}	            
-			 		<label key="json-valid"><span>JSON check</span><span>{this.state.JSONValid}</span></label>
+			 		<label key="json-valid"><span>JSON valid</span><span>{this.state.JSONValid}</span></label>
+          <label key="json-integrity"><span>JSON integrity</span><span>{this.state.JSONIntegrity}</span></label>
           <button onClick={()=>Meteor.call('removeWalk',this.props.walk._id)}>
 	            	Delete Walk
 	        </button>     
@@ -146,9 +184,10 @@ WalkDetail.propTypes = {
 };
 
 export default withTracker(props => {
-	const sub = Meteor.subscribe('challenges.all')
+	const sub1 = Meteor.subscribe('challenges.all')
+  const sub2 = Meteor.subscribe('places.all')
   return {
   	places: Places.find().fetch(),
-    ready: sub.ready(),
+    ready: sub1.ready() && sub2.ready(),
   };
 })(WalkDetail);
