@@ -90,7 +90,7 @@ class InstallationDetail extends React.Component {
       split[i].trim();
       let challenge = Challenges.find({shorthand: split[i]}).fetch();
       if(challenge.length != 1) {
-        error += "challenge " + split[i] + " not identified";
+        error += "challenge " + split[i] + " not identified. ";
       }
     }
 
@@ -100,17 +100,17 @@ class InstallationDetail extends React.Component {
       // relayServerName
       let server = Servers.find({name: deviceGroup.relayServerName}).fetch();
       if(server.length != 1) {
-        error += "server " + deviceGroup.relayServerName + " not identified";
+        error += "server " + deviceGroup.relayServerName + " not identified. ";
       }
 
       // check startInstruments
       if(deviceGroup.startInstruments.length != deviceGroup.devices.length) {
-        error += "server " + deviceGroup.relayServerName + " not identified";  
+        error += "server " + deviceGroup.relayServerName + " not identified. ";  
       }
 
       deviceGroup.startInstruments.forEach((instrument)=>{
         if(trackNames.indexOf(instrument) == -1) {
-          error += "startInstrument " + instrument + " unknown";
+          error += "startInstrument " + instrument + " unknown. ";
         }  
       })
     });

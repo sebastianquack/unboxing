@@ -80,25 +80,23 @@ class WalkDetail extends React.Component {
 
       walkObj[key].places.forEach((placeEntry)=>{
 
-        console.log(this.props.walk.tag, placeEntry.challenge, placeEntry.place);
-
         // find challenge by placeEntry.challenge
-        let challenge = Challenges.find({shorthand: placeEntry.challenge, tag: this.props.walk.tag}).fetch();
+        let challenge = Challenges.find({shorthand: placeEntry.challenge}).fetch();
         console.log("challenge", challenge);
         if(challenge.length != 1) {
-          error = "challenge " + placeEntry.challenge + " not identified";
+          error += "challenge " + placeEntry.challenge + " not identified. ";
         }
 
         // find place by placeEntry.place
         let place = Places.find({shorthand: placeEntry.place, tag: this.props.walk.tag}).fetch();
         console.log("place", place);
         if(place.length != 1) {
-          error = "place " + placeEntry.place + " not identified";
+          error += "place " + placeEntry.place + " not identified. ";
         }
       })
 
       if(trackNames.indexOf(walkObj[key].startInstrument) == -1) {
-        error = "startInstrument " + walkObj[key].startInstrument + " unknown";
+        error += "startInstrument " + walkObj[key].startInstrument + " unknown. ";
       }
     });
   

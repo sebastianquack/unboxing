@@ -171,8 +171,19 @@ Migrations.add({
   down: function() {}
 });
 
+Migrations.add({
+  version: 15,
+  name: 'remove tag from challenges',
+  up: function() {
+    Challenges.find().forEach( challenge => {
+      Meteor.call('updateChallenge', challenge._id, {}, {tag: ""});
+    });  
+  },
+  down: function() {}
+});
 
-const version = 14;
+
+const version = 15;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);
