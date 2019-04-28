@@ -63,7 +63,7 @@ Meteor.methods({
         autoplay: "off",
         //sensorStart: true,
       } ], $sort: { startTime: 1 }, $slice: 1000 } } }
-    )
+    );
   },
   'sortSequenceItems'(sequence_id) {
     Sequences.update(

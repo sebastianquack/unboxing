@@ -7,6 +7,8 @@ import { css } from 'emotion'
 import { Files, Gestures, itemSchema } from '../collections'
 import { AudioPreview } from './'
 
+import { trackNames } from '../helper/both/cleanJSON';
+
 class SequenceDetailItem extends React.Component {
   constructor(props) {
     super(props);
@@ -41,7 +43,9 @@ class SequenceDetailItem extends React.Component {
   handleAttributeChange = (name, value) => {
     $set = {}
     $set[name] = value
-    Meteor.call('updateSequenceItem', this.props.item._id, $set )
+    Meteor.call('updateSequenceItem', this.props.item._id, $set, ()=>{
+      this.props.validateInstruments();
+    } )
 
     if(name == "path") {
       console.log(value);
@@ -92,7 +96,7 @@ class SequenceDetailItem extends React.Component {
       }
 
       // update startTime and track from filename
-      Meteor.call('updateSequenceItem', this.props.item._id, {startTime: startTime, track: track, name: name} );
+      Meteor.call('updateSequenceItem', this.props.item._id, {startTime: startTime, track: track, name: name});
 
     }
   }
@@ -206,7 +210,11 @@ class SequenceDetailItem extends React.Component {
           {Object.entries(this.props.item).map(this.renderAttribute)}
         </div>
         <br />
-        <button onClick={()=>Meteor.call('removeSequenceItem',this.props.item._id)}>
+        <button onClick={
+          ()=>Meteor.call('removeSequenceItem', this.props.item._id, 
+            ()=>{this.props.validateInstruments()}
+          )
+        }>
           Delete Item
         </button>   
       </div>

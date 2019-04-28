@@ -7,6 +7,8 @@ import { css } from 'emotion'
 import {SequenceDetailItem, InputLine} from './';
 import { inputTransform, inputType } from '../helper/both/input';
 
+import { trackNames } from '../helper/both/cleanJSON';
+
 const trackTitleWidth = 6
 const trackHeight = 2
 const unit = "rem"
@@ -18,8 +20,16 @@ class Sequence extends React.Component {
       track: "sequence_" + this.props.sequence._id + "_tracks",
     }
     this.state = {
-      active_item: null
+      active_item: null,
+      instrumentsValid: ""
     }
+
+    this.validateInstruments = this.validateInstruments.bind(this);
+    
+  }
+
+  componentDidMount() {
+    this.validateInstruments();
   }
 
  SequenceDetailCss = css`
@@ -54,7 +64,18 @@ class Sequence extends React.Component {
     $set = {}
     $set[attributeName] = value
     console.log($set)
-    Meteor.call('updateSequence', this.props.sequence._id, $set )
+    Meteor.call('updateSequence', this.props.sequence._id, $set);
+  }
+
+  validateInstruments = () => {
+    let error = "";
+    this.props.sequence.tracks.forEach((track)=> {
+      if(trackNames.indexOf(track.name) == -1) {
+        error += "invalid instrument: " + track.name + ". ";
+      }
+    })
+    if(!error) error = "ok";
+    this.setState({instrumentsValid: error});
   }
 
   renderInput(attributeName, value) {
@@ -83,7 +104,9 @@ class Sequence extends React.Component {
   }
 
   handleAdd = () => {
-    Meteor.call('addSequenceItem', this.props.sequence._id)
+    Meteor.call('addSequenceItem', this.props.sequence._id, ()=>{
+      this.validateInstruments();
+    })
   }
 
   handleItemFocus(id, focus) {
@@ -116,6 +139,7 @@ class Sequence extends React.Component {
           item={d} 
           color={color} 
           datalists={this.datalists}
+          validateInstruments={this.validateInstruments}
           onFocusChange={ (focus) => this.handleItemFocus(d._id, focus) }
           />
       </li>
@@ -128,6 +152,7 @@ class Sequence extends React.Component {
         <pre>
           <div className={this.SequenceDetailCss}>
             {Object.entries(this.props.sequence).map(this.renderAttribute)}              
+            <label><span>validator: </span><span>{this.state.instrumentsValid}</span></label>
             <br />
             <button onClick={this.handleAdd}>
               Add Item
