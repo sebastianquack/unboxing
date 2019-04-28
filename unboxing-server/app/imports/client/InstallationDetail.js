@@ -105,7 +105,7 @@ class InstallationDetail extends React.Component {
 
       // check startInstruments
       if(deviceGroup.startInstruments.length != deviceGroup.devices.length) {
-        error += "server " + deviceGroup.relayServerName + " not identified. ";  
+        error += "devices and instruments do not match. ";  
       }
 
       deviceGroup.startInstruments.forEach((instrument)=>{
