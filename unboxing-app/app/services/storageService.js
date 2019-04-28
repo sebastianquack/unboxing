@@ -276,6 +276,17 @@ class StorageService extends Service {
     return null;
   }
 
+  findPracticeInstrumentForInstallation = (installation) => {
+    for(let i = 0; i < installation.deviceGroups.length; i++) {
+      for(let j = 0; j < installation.deviceGroups[i].devices.length; j++) {
+        if(installation.deviceGroups[i].devices[j].toString() == this.getDeviceId().toString()) {
+          return installation.deviceGroups[i].startInstruments[j];
+        } 
+      }
+    }
+    return null;
+  }
+
   getWalkByTag(tag) {
     for(let i = 0; i < this.state.collections.walks.length; i++) {
       if(this.state.collections.walks[i].tag == tag) {

@@ -158,12 +158,18 @@ class GameService extends Service {
         this.activateRelayCallbacks();
 
       } else {
-        this.showNotification("relay server not specified for this device")
+        this.showNotification("relay server not specified for this device - add device to a group?")
+      }
+
+      let practiceInstrument = storageService.findPracticeInstrumentForInstallation(installation);
+      if(!practiceInstrument) {
+        this.showNotification("practice instrument for device not found");
       }
       
       this.setReactive({
         activeInstallation: installation,
         gameMode: "installation",
+        installationStartInstrument: practiceInstrument,
         activeChallenge: null,
         activeWalk: null,
         activePath: null,
@@ -856,12 +862,12 @@ class GameService extends Service {
           this.addItemToInfoStream(storageService.t("welcome"), storageService.t("tutorial-installation-1"));
           break;
         case "tutorial-installation-2":
-          soundService.preloadSoundfiles([this.getPracticeSoundFile("1", "viola1")], ()=>{
+          soundService.preloadSoundfiles([this.getPracticeSoundFile("1", this.state.installationStartInstrument)], ()=>{
             //console.warn("practice sound loaded");
           });
           this.addItemToInfoStream(storageService.t("welcome"), storageService.t("tutorial-installation-2"));
           this.activatePeakTutorial(()=>{
-            this.playPracticeSound(this.getPracticeSoundFile("1", "viola1"), storageService.t("info"), storageService.t("tutorial-installation-playing"), "tutorial-installation-complete", "tutorial-installation-playing");
+            this.playPracticeSound(this.getPracticeSoundFile("1", this.state.installationStartInstrument), storageService.t("info"), storageService.t("tutorial-installation-playing"), "tutorial-installation-complete", "tutorial-installation-playing");
             this.showInfoStreamAlert(storageService.t("good"), "blue", 4000);
           });
           break;

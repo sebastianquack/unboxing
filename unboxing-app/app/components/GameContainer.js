@@ -125,16 +125,17 @@ class GameContainer extends React.Component {
           />  
         } else {
           infoStreamContent = <InfoStream/>
+          secondaryScreen = <SecondaryScreen type="instrument" instrument={this.props.gameService.installationStartInstrument} />;              
           switch(this.props.gameService.tutorialStatus) {
             case "tutorial-installation-1":
-              overlayContent = <Instructor mode={"volume"}/>   
+              overlayContent = <Instructor mode={"volume"}/>              
               break;
             case "tutorial-installation-2":
               overlayContent = <Instructor mode={"einsatz"}/>   
               break;
             case "tutorial-installation-playing":
               overlayContent = <Instructor mode={"volume"}/>   
-              mainContent = <SensorModulator mode={"volume tilt"} item={{path: gameService.getPracticeSoundFile("1", "viola1")}}/>     
+              mainContent = <SensorModulator mode={"volume tilt"} item={{path: gameService.getPracticeSoundFile("1", this.props.gameService.installationStartInstrument)}}/>     
           }
         }
       } else {
