@@ -473,7 +473,7 @@ class GameService extends Service {
       this.setReactive({tutorialStatus: "tutorial-installation-complete"});
     }
     // reset the tutorial if we connect or are still and no one is there
-    if((!this.state.tutorialStatus || peakService.state.still) && !this.state.installationActivityMap) {
+    if((!this.state.tutorialStatus || peakService.state.still) && !this.state.installationActivityMap && !this.state.debugMode) {
      this.setReactive({tutorialStatus: "tutorial-installation-1"}); 
     }
     this.initInfoStream();
