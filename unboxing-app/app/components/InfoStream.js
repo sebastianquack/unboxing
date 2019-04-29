@@ -52,8 +52,8 @@ class InfoStreamElement extends React.Component {
             }}
           />
         */}
-        <UIText size="s" strong em caps >{this.props.title}</UIText>
-        <UIText size={this.props.highlight ? "m" : "s"} style={{color: colors.warmWhite}}>{this.props.content}</UIText>
+        { this.props.title && <UIText size="s" strong em caps >{this.props.title}</UIText>}
+        <UIText size={this.props.highlight ? "l" : "m"}>{this.props.content}</UIText>
       </View>
     );
   }
@@ -135,8 +135,7 @@ class InfoStreamComponent extends React.Component {
           width: 326,
           flexDirection: "column",
           marginTop: 100,
-          marginBottom: 20 + (this.props.gameService.infoAlert ? 0 : 62),
-          backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          marginBottom: 0 + (this.props.gameService.infoAlert ? 0 : 62),
         }}>
           {elements}
           {this.props.gameService.infoAlert && 

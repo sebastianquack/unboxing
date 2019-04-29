@@ -30,6 +30,7 @@ class SequenceVisualizer extends React.PureComponent {
 
     this.manageAnimation = this.manageAnimation.bind(this)
     this.handleAnimationEnded = this.handleAnimationEnded.bind(this)
+    this.relativeOpacity = this.relativeOpacity.bind(this)
   }
 
   componentDidMount() {
@@ -51,6 +52,13 @@ class SequenceVisualizer extends React.PureComponent {
       containerWidth,
       sequenceWidth: containerWidth * this.speed
     })
+  }
+
+  relativeOpacity(i) {
+    const limit = this.props.trackIndex ? 4 + this.props.trackIndex : 6
+    const factor = 0.6
+    if (i<= limit) return 1
+    else return Math.pow(factor, i-limit)
   }
 
   manageAnimation(prevProps, prevState) {
@@ -147,16 +155,18 @@ class SequenceVisualizer extends React.PureComponent {
     }
   }
 
-  renderHeaderTrack = (track) => {
+  renderHeaderTrack = (track, i) => {
     // const backgroundColor = ( !this.props.track || this.props.track.name == track.name ? track.color : "transparent" )
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
     const activeStyle = active ? styles.track__active : {}
+    const opacity = this.relativeOpacity(i)
 
     return (
       <View style={{
           ...styles.track, 
           ...styles.headerTrack,
-          ...activeStyle
+          ...activeStyle,
+          opacity
           // backgroundColor,
         }} key={track.name}>
         <View>
@@ -168,15 +178,16 @@ class SequenceVisualizer extends React.PureComponent {
     )
   }
 
-  renderBodyTrack = (track) => {
+  renderBodyTrack = (track, i) => {
     // items belonging to this track
     sequenceItems = this.props.sequence.items.filter( item => item.track === track.name)
 
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
     const activeStyle = active ? styles.track__active : {}
+    //const opacity = this.relativeOpacity(i)
 
     return (
-      <View style={{...styles.track, ...activeStyle}} key={"body " + track.name}>
+      <View style={{...styles.track, ...activeStyle/*, opacity*/}} key={"body " + track.name}>
         { sequenceItems.map(sequenceItem => this.renderBodyTrackItem(sequenceItem, track) ) }
         { /* this.props.track && this.props.track.name == track.name && sequenceItems.map(sequenceItem => this.renderActionItem(sequenceItem, track) ) */ }
         { this.props.hasActionItem && this.props.track.name == track.name && this.renderActionItem(this.props.nextUserAction) }
@@ -293,9 +304,18 @@ renderActionItem = (item) => {
     }
 
     if(tracks) {
+
+      // move selected track to middle
+      offsetTop = 0
+      if (this.props.trackIndex){
+        const offsetLimit = 70
+        const trackPos = this.props.trackIndex * (styles.track.height + styles.track.marginBottom)
+        if (trackPos > offsetLimit) offsetTop = offsetLimit-trackPos
+      }
+
       return (
         <View>
-          <View style={styles.container}>
+          <View style={{...styles.container, marginTop: offsetTop}}>
             <View style={styles.header}>
               {tracks.map(this.renderHeaderTrack)}
             </View>
@@ -339,6 +359,10 @@ renderActionItem = (item) => {
 export default compose(
   withSequenceService,
   mapProps((props) => {
+    let trackIndex = 0
+    if (props.sequenceService.currentSequence && props.sequenceService.currentTrack) {
+      trackIndex = props.sequenceService.currentSequence.tracks.findIndex(t => t.name == props.sequenceService.currentTrack.name)
+    }
     return {
       // renamed
       sequence:     props.sequenceService.currentSequence,
@@ -355,6 +379,7 @@ export default compose(
 
       // derived prop
       hasActionItem: !!(props.sequenceService.currentTrack) && !!(props.sequenceService.nextUserAction.type),
+      trackIndex,
 
       ...props,
     };
@@ -370,7 +395,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   container: {
-    paddingTop: "10%",
+    paddingTop: "18%",
     flexDirection: "row",
   },
   header: {
@@ -383,23 +408,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   track: {
-    height: 20,
+    height: 22,
     justifyContent: "center",
-    marginBottom: 10,
+    marginBottom: 15,
   },
   track__active: {
-    height: 70,
+    height: 60,
   },
   headerTrack: {
     paddingHorizontal: 8,
-    color: "white",
+    color: colors.warmWhiteSoft,
   },
   bodyTrackItem: {
     backgroundColor: 'transparent',
     height: "100%",
     justifyContent: "center",
     borderRadius: 3,
-    borderColor: colors.warmWhite,
+    borderColor: colors.warmWhiteSoft,
     borderWidth: 2,
     position: "absolute",
     paddingHorizontal: 8,
@@ -407,6 +432,7 @@ const styles = StyleSheet.create({
   },
   bodyTrackItem__active: {
     borderColor: colors.turquoise,
+    borderWidth: 2,
   },
   bodyTrackItem__actionItem: {
     borderRadius: 3,

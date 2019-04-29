@@ -37,7 +37,7 @@ class ChallengeView extends React.Component {
         }
 
         {challengeStatus == "prepare" &&       
-          <View style={{opacity:0.4}}>
+          <View style={{opacity:0.25}}>
             <SequenceVisualizer />
           </View>
         }

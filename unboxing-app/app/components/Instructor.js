@@ -258,7 +258,6 @@ class Instructor extends React.PureComponent {
     if(images[this.props.mode]) {
       return(
           <View>
-            <Text>Instructor</Text>
             <ImageSequence
               images={images[this.props.mode]}
               startFrameIndex={0}
@@ -269,7 +268,6 @@ class Instructor extends React.PureComponent {
                 width: 284
               }}
             />
-            <Text>Instructor</Text>
           </View>
       );
     } else {

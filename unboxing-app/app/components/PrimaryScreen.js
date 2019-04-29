@@ -10,19 +10,17 @@ const verticalPadding = Math.floor(dimensions.screenWidth * 0.03)
 
 const imageWidth = dimensions.screenWidth * 0.25
 
-const shadeImg = require('../../assets/img/shade.png')
-
 const backgroundGradients = {
   "fire": {
     //colors: ['#000', '#DF4B47', '#FFCE51'],
     //locations: [0.5, 0.875, 1],
   },  
   "passive": { // = active
-    colors: ['#000', 'rgba(76,46,136,0.2)', 'rgba(0,175,161,1)'],
+    colors: ['rgba(0,0,0,0)', 'rgba(76,46,136,0.2)', 'rgba(0,175,161,1)'],
     locations: [0.3, 0.5, 1],    
   },
   "active": { // = passive
-    colors: ['#000', 'rgba(76,46,136,0.2)', 'rgba(0,175,161,0.5)'],
+    colors: ['rgba(0,0,0,0)', 'rgba(76,46,136,0.2)', 'rgba(0,175,161,0.5)'],
     locations: [0.5, 0.7, 1],    
   },
 }
@@ -37,49 +35,58 @@ class PrimaryScreen extends React.Component {
     this.renderOverlayContent = this.renderOverlayContent.bind(this)
     this.renderScrollContent = this.renderScrollContent.bind(this)
     this.renderBackgroundContent = this.renderBackgroundContent.bind(this)
+    this.renderInfoStreamShade = this.renderInfoStreamShade.bind(this)
   }
 
-  renderBackgroundColor() {
-    return <LinearGradient 
-      colors={backgroundGradients[this.props.backgroundColor].colors}
-      locations={backgroundGradients[this.props.backgroundColor].locations}
-      style={{
-        height: "100%",
-        width: "100%",
-      }}
+  renderBackgroundColor(zIndex) {
+    return <View pointerEvents="none" style={{
+      position: "absolute",
+      top:0,
+      zIndex,
+      width: "100%",
+      height: "100%",
+      }}>
+      <LinearGradient 
+        colors={backgroundGradients[this.props.backgroundColor].colors}
+        locations={backgroundGradients[this.props.backgroundColor].locations}
+        style={{
+          height: "100%",
+          width: "100%",
+        }}
       ></LinearGradient>
+    </View>
   }
 
-  renderBackgroundFlow() {
+  renderBackgroundContent(zIndex) {
     return <View style={{
       position: "absolute",
-      zIndex: 2,
       height: "100%",
       width: "100%",
+      zIndex,
+      }}>
+      { this.props.backgroundContent }
+    </View>          
+  }
+
+  renderBackgroundFlow(zIndex) {
+    return <View style={{
+      position: "absolute",
+      height: "100%",
+      width: "100%",
+      zIndex,
       backgroundColor: 'rgba(0,220,0,0.5)',
       justifyContent: "center",alignItems: "center"
     }}>
       <Text style={{textAlign: "center"}}>FLOW</Text>
     </View>        
   }
-
-  renderBackgroundContent() {
-    return <View style={{
-      position: "absolute",
-      zIndex: 1,
-      height: "100%",
-      width: "100%",
-      }}>
-      { this.props.backgroundContent }
-    </View>          
-  }
   
-  renderMainContent() {
+  renderMainContent(zIndex) {
     return <View style={{
       position: "absolute",
-      zIndex: 3,
       height: "100%",
       width: "100%",
+      zIndex,
       paddingHorizontal: horizontalPadding,
       paddingVertical: verticalPadding,
       }}>
@@ -87,14 +94,31 @@ class PrimaryScreen extends React.Component {
     </View>          
   }
 
-  renderOverlayContent() {
+  renderBottomShade(zIndex) {
+    return <View pointerEvents="none" style={{
+      position: "absolute",
+      top:0,
+      zIndex,
+      width: "100%",
+      height: "100%",
+      }}>
+      <LinearGradient 
+        colors={['rgba(0,0,0,0)','rgba(0,0,0,0.6)','rgba(0,0,0,1)']}
+        locations={[0.6,0.8,1]}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      />     
+    </View>
+  }
+
+  renderOverlayContent(zIndex) {
     return <View style={{
       position: "absolute",
-      zIndex: 4,
       height: "100%",
       width: "100%",
-      paddingHorizontal: horizontalPadding,
-      paddingVertical: verticalPadding,
+      zIndex,
       flex: 1,
       justifyContent: 'flex-end',
       alignItems: 'flex-end'
@@ -103,12 +127,12 @@ class PrimaryScreen extends React.Component {
     </View>            
   }
 
-  renderScrollContent() {
+  renderScrollContent(zIndex) {
     return <ScrollView pointer-events="auto" style={{
       position: "absolute",
-      zIndex: 5,
       width: "100%",
       height: "100%",
+      zIndex,
       paddingHorizontal: horizontalPadding,
       paddingVertical: verticalPadding,      
     }}>
@@ -116,12 +140,12 @@ class PrimaryScreen extends React.Component {
     </ScrollView>
   }
 
-  renderInfoStream() {
+  renderInfoStream(zIndex) {
     return <ScrollView pointer-events="auto" style={{
       position: "absolute",
-      zIndex: 6,
       width: "100%",
       height: "100%",
+      zIndex,
       paddingHorizontal: horizontalPadding,
       paddingVertical: verticalPadding,      
     }}
@@ -131,17 +155,43 @@ class PrimaryScreen extends React.Component {
     </ScrollView>
   }
 
-  renderShade() {
+  renderInfoStreamShade(zIndex) {
     return <View pointerEvents="none" style={{
       position: "absolute",
-      zIndex: 7,
+      top:0,
+      zIndex,
       width: "100%",
       height: "100%",
-      opacity: 0.5
       }}>
-      <Image resizeMode="contain" source={shadeImg} style={{
-        width: "100%",
-      }} />
+      <LinearGradient 
+        colors={['rgba(0,0,0,1)','rgba(0,0,0,0.1)']}
+        start={{x: 0.0, y: 1}}
+        end={{x: 0.4, y: 0}}
+        locations={[0.35,0.5]}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      />     
+    </View>
+  }
+
+  renderShade(zIndex) {
+    return <View pointerEvents="none" style={{
+      position: "absolute",
+      top:-2,
+      zIndex,
+      width: "100%",
+      height: "100%",
+      }}>
+      <LinearGradient 
+        colors={['rgba(0,0,0,1)','rgba(0,0,0,0.7)', 'rgba(0,0,0,0)']}
+        locations={[0,0.15,0.4]}
+        style={{
+          width: "100%",
+          height: "100%",
+        }}
+      />     
     </View>
   }
 
@@ -152,14 +202,17 @@ class PrimaryScreen extends React.Component {
       flexDirection: "row",
       // backgroundColor: 'rgba(255,0,0,0.5)',
     }}>
-      { this.props.backgroundColor && this.renderBackgroundColor() }
-      { this.props.backgroundContent && this.renderBackgroundContent() }
-      { this.props.backgroundFlow && this.renderBackgroundFlow() }
-      { this.props.mainContent && this.renderMainContent() }
-      { this.props.overlayContent && this.renderOverlayContent() }
-      { this.props.scrollContent && this.renderScrollContent() }
-      { this.props.infoStreamContent && this.renderInfoStream() }
-      { this.renderShade() }
+      { this.props.backgroundFlow && this.renderBackgroundFlow(1) }
+      { this.props.backgroundContent && this.renderBackgroundContent(2) }
+      { this.props.mainContent && this.renderMainContent(3) }
+      { this.renderShade(4) }
+      { this.renderBottomShade(5) }
+      { this.props.infoStreamContent && this.renderInfoStreamShade(6) }
+      { this.props.backgroundColor && this.renderBackgroundColor(7) }
+      { this.props.overlayContent && this.renderOverlayContent(8) }
+      { this.props.scrollContent && this.renderScrollContent(9) }
+      { this.props.infoStreamContent && this.renderInfoStream(10) }
+
     </View>
   }
 }
