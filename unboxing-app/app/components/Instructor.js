@@ -9,6 +9,10 @@ import UIText from './UIText'
 import RNFS from 'react-native-fs';
 const pathPrefix = RNFS.ExternalStorageDirectoryPath + '/unboxing/files';
 
+const imagesStill = [
+  require(`../../assets/imgAnim/Einsatz/Einsatz_00000.png`)
+]
+
 const imagesEinsatz = [
   require(`../../assets/imgAnim/Einsatz/Einsatz_00000.png`),
   require(`../../assets/imgAnim/Einsatz/Einsatz_00001.png`),
@@ -216,7 +220,8 @@ const videos = {
 const images = {
   "einsatz": imagesEinsatz,
   "stop": imagesStop,
-  "volume": imagesVolume 
+  "volume": imagesVolume,
+  "still": imagesStill
 }
 
 const makeNumbers = (min, max, strLen) => {

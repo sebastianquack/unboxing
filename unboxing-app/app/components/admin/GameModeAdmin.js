@@ -7,6 +7,8 @@ import {globalStyles} from '../../../config/globalStyles';
 import {gameService, storageService, soundService} from '../../services';
 import {withGameService, withStorageService, withSoundService} from '../ServiceConnector';
 
+import DebugToggle from './DebugToggle';
+
 class GameModeAdmin extends React.Component { 
   constructor(props) {
     super(props);
@@ -153,7 +155,8 @@ class GameModeAdmin extends React.Component {
               {cancelable: true},
             );
           }}><Text>Restart App (without resume)</Text>
-        </TouchableOpacity>                
+        </TouchableOpacity>            
+        <DebugToggle/>    
       </View>
     );
   }

@@ -11,16 +11,19 @@ import buttonChangeImg from '../../assets/img/changeButtonNew.png'
 import buttonWideImg from '../../assets/img/wideButton.png'
 import blankRoundButtonImg from '../../assets/img/blankRoundButton.png'
 
-
 import walkIcon from '../../assets/img/Walk.png'
+import playIcon from '../../assets/img/Play.png'
+import backIcon from '../../assets/img/Back.png'
 
 const buttons = {
-  "play": buttonPlayImg,
   "home": buttonHomeImg,
   "change": buttonChangeImg,
   "wide": buttonWideImg,
-  "round": blankRoundButtonImg
+  "check-in": blankRoundButtonImg,
+  "play": blankRoundButtonImg,
 }
+
+
 
 class Button extends React.Component { 
   constructor(props) {
@@ -53,14 +56,21 @@ class Button extends React.Component {
 
     return <TouchableOpacity onPress={this.props.onPress}>
       <Image source={buttons[type]} />
-      {this.props.walk &&
+      {type == "check-in" &&
           <Image 
             style={{position: "absolute", top: 47, left: 49}}
             source={walkIcon} 
           />
       }
-      <View style={textPosition}>
-        <UIText backIcon={this.props.back} caps wide strong align="center" style={textStyle}>{this.props.text}</UIText>
+      {type == "play" &&
+          <Image 
+            style={{position: "absolute", top: 47, left: 49}}
+            source={playIcon} 
+          />
+      }
+      <View style={{...textPosition, flexDirection: "row", justifyContent: "center"}}>
+        {this.props.back && <Image style={{width: 19, height: 19, marginTop: 5, marginRight: 8}} source={backIcon}/>}
+        <UIText caps wide strong align="center" style={textStyle}>{this.props.text}</UIText>
       </View>
     </TouchableOpacity>
   }

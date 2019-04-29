@@ -165,6 +165,8 @@ class GameService extends Service {
       if(!practiceInstrument) {
         this.showNotification("practice instrument for device not found");
       }
+
+      //console.warn(this.state.debugMode);
       
       this.setReactive({
         activeInstallation: installation,
@@ -183,7 +185,7 @@ class GameService extends Service {
         statusBarTitle: "Choose what to play next!",
         installationConnected: false,
         installationActivityMap: null,
-        tutorialStatus: null,
+        tutorialStatus: this.state.debugMode ? "tutorial-installation-complete" : null,
       });
       storageService.saveGameStateToFile(this.state);  
     }    
@@ -199,6 +201,10 @@ class GameService extends Service {
     storageService.loadGameStateFromFile(stateObj=>{
       //console.warn("loaded", stateObj);
       if (!stateObj) return
+
+      this.setReactive({
+        debugMode: stateObj.debugMode
+      });
 
       if(stateObj.activeWalk && stateObj.gameMode == "walk") {
         if(stateObj.pathIndex < stateObj.pathLength) {
@@ -346,7 +352,8 @@ class GameService extends Service {
 
   /** challenges **/
 
-	// called when user enters a challenge
+	// called when user enters a challenge 
+  // note: useChallengeConnection is set to false for installation mode where connection is specified in installation obj
 	setActiveChallenge = (challenge, useChallengeConnection=true)=> {
 
 		this.setReactive({
@@ -466,7 +473,7 @@ class GameService extends Service {
       this.setReactive({tutorialStatus: "tutorial-installation-complete"});
     }
     // reset the tutorial if we connect or are still and no one is there
-    if((!this.state.tutorialStatus || peakService.state.still) && !this.state.installationActivityMap) {
+    if((!this.state.tutorialStatus || peakService.state.still) && !this.state.installationActivityMap && !this.state.debugMode) {
      this.setReactive({tutorialStatus: "tutorial-installation-1"}); 
     }
     this.initInfoStream();
@@ -719,7 +726,7 @@ class GameService extends Service {
     if(this.state.gameMode == "installation" && this.state.activeChallenge) {
       this.leaveChallenge();
     }
-    if(this.state.gameMode == "installation" && !this.state.installationActivityMap) {
+    if(this.state.gameMode == "installation" && !this.state.installationActivityMap && !this.state.debugMode) {
       this.setReactive({
         tutorialStatus: "tutorial-installation-1"
       });
@@ -728,7 +735,7 @@ class GameService extends Service {
   }
 
   handleMoveEvent = ()=> {
-    if(this.state.gameMode == "installation" && this.state.tutorialStatus == "tutorial-installation-1") {
+    if(this.state.gameMode == "installation" && this.state.tutorialStatus == "tutorial-installation-1" && !this.state.debugMode) {
       this.setReactive({
         tutorialStatus: "tutorial-installation-2"
       });
@@ -767,13 +774,13 @@ class GameService extends Service {
   }
 
   // center button to close instrument selection modal
-  handleCloseModal = ()=> {
+  handleCloseModal = (cancel=false)=> {
     this.setReactive({
       showInstrumentSelector: false
     });
-    if(sequenceService.state.currentTrack) {
+    /*if(!cancel && sequenceService.state.currentTrack && this.state.challengeStatus == "prepare") {
       this.handleRightButton();  
-    }
+    }*/
   }
 
   // big right button on game container

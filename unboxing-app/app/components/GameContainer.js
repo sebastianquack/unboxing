@@ -47,7 +47,8 @@ class GameContainer extends React.Component {
     let backgroundContent = null;
 
     // show info stream?
-    if(this.props.gameService.gameMode == "walk" && this.props.gameService.infoStream && this.props.gameService.infoStream.length > 0) {
+    if((this.props.gameService.gameMode == "manual" || this.props.gameService.gameMode == "walk") 
+      && this.props.gameService.infoStream && this.props.gameService.infoStream.length > 0) {
       infoStreamContent = <InfoStream/>
     }
     
@@ -164,7 +165,7 @@ class GameContainer extends React.Component {
     // configure modal
     if(this.props.gameService.showInstrumentSelector) {
         modalContent = <TrackSelector selectedTracks={this.props.gameService.selectedTracks} sequence={this.props.sequenceService.currentSequence}/>
-        buttonModal = <Button type="wide" text={storageService.t("close")} onPress={()=>{gameService.handleCloseModal()}}/>
+        buttonModal = <Button type="wide" text={storageService.t("close")} onPress={()=>{gameService.handleCloseModal(true)}}/>
     }
     
     // configure secondary screen and buttons
@@ -173,7 +174,7 @@ class GameContainer extends React.Component {
     switch(this.props.gameService.challengeStatus) {
       case "navigate":
         if(this.props.gameService.allowCheckInButton) {
-          buttonRight = <Button type="round" walk text={storageService.t("check-in")} onPress={()=>{gameService.handleRightButton()}}/>;   
+          buttonRight = <Button type="check-in" text={storageService.t("check-in")} onPress={()=>{gameService.handleRightButton()}}/>;   
         } 
         secondaryScreen = this.props.gameService.activePlace ? <SecondaryScreen type="navigation" target={this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand} /> : null;
         break;
@@ -200,13 +201,10 @@ class GameContainer extends React.Component {
           buttonLeft = <Button back type="wide" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;   
         }
         
-        if(this.props.gameService.allowPlaceExit && this.props.gameService.activePath) {
-          buttonRight = <Button type="home" text={storageService.t("continue")} onPress={()=>{gameService.handleLeftButton()}}/>;
-        } else {
-          buttonRight = instrumentName ? <Button text={storageService.t("play")} onPress={()=>{gameService.handleRightButton()}}/> : null;  
-        }
+        buttonRight = instrumentName ? <Button type="play" text={storageService.t("play")} onPress={()=>{gameService.handleRightButton()}}/> : null;  
         
-        secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
+        secondaryScreen = <TouchableOpacity onPress={()=>{gameService.handleMidButton()}}>
+          <SecondaryScreen type="instrument" instrument={instrumentName} /></TouchableOpacity>;
         if(!gameService.nthPlaceInTutorial(0)) {
           buttonMid = <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;  
         }
@@ -215,9 +213,11 @@ class GameContainer extends React.Component {
       case "play":
         buttonLeft = <Button back type="wide" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
-        if(!gameService.nthPlaceInTutorial(0)) {
+        // only show middle button during loop challenge
+        if(!gameService.nthPlaceInTutorial(0) && this.props.sequenceService.isLooping) {
           buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
         }
+        overlayContent = <Instructor mode={this.props.sequenceService.instructorState}/>   
         break;
     }
 
@@ -225,7 +225,11 @@ class GameContainer extends React.Component {
       <View>
         <ScreenContainer
           primaryScreen = {<PrimaryScreen
-              backgroundColor={this.props.peakService.isUp ? "passive" : "active" }
+              backgroundColor={(
+                this.props.peakService.isUp && 
+                (this.props.gameService.tutorialStatus == "tutorial-installation-2" 
+                  || (this.props.gameService.challengeStatus == "play" && this.props.sequenceService.currentTrack))) 
+                  ? "passive" : "active" }
               // backgroundFlow
               backgroundContent = { backgroundContent }
               mainContent = { mainContent }
