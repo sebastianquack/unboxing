@@ -723,7 +723,7 @@ class GameService extends Service {
   /** interface actions **/
 
   handleStillEvent = ()=> {
-    if(this.state.gameMode == "installation" && this.state.activeChallenge) {
+    if(this.state.gameMode == "installation" && this.state.activeChallenge && !this.state.debugMode) {
       this.leaveChallenge();
     }
     if(this.state.gameMode == "installation" && !this.state.installationActivityMap && !this.state.debugMode) {
