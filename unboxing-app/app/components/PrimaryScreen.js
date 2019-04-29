@@ -13,15 +13,17 @@ const imageWidth = dimensions.screenWidth * 0.25
 const shadeImg = require('../../assets/img/shade.png')
 
 const backgroundGradients = {
-  "passive": {
+  "fire": {
     //colors: ['#000', '#DF4B47', '#FFCE51'],
     //locations: [0.5, 0.875, 1],
-    colors: ['#000', 'rgba(0,175,161,1)'],
-    locations: [0.5, 1],
+  },  
+  "passive": { // = active
+    colors: ['#000', 'rgba(76,46,136,0.2)', 'rgba(0,175,161,1)'],
+    locations: [0.3, 0.5, 1],    
   },
-  "active": {
-    colors: ['#000', 'rgba(0,175,161,0.5)'],
-    locations: [0.5, 1],
+  "active": { // = passive
+    colors: ['#000', 'rgba(76,46,136,0.2)', 'rgba(0,175,161,0.5)'],
+    locations: [0.5, 0.7, 1],    
   },
 }
 
