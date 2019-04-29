@@ -47,7 +47,8 @@ class GameContainer extends React.Component {
     let backgroundContent = null;
 
     // show info stream?
-    if(this.props.gameService.gameMode == "walk" && this.props.gameService.infoStream && this.props.gameService.infoStream.length > 0) {
+    if((this.props.gameService.gameMode == "manual" || this.props.gameService.gameMode == "walk") 
+      && this.props.gameService.infoStream && this.props.gameService.infoStream.length > 0) {
       infoStreamContent = <InfoStream/>
     }
     
