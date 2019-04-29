@@ -4,11 +4,10 @@ import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
 
-//import frameImg from '../../assets/img/frame.png'
-//import frameSecondaryImg from '../../assets/img/frameSecondary.png'
-
 import frameImg from '../../assets/img/ShapeScreenAlternative.png'
 import frameSecondaryImg from '../../assets/img/ShapeScreenMain.png'
+
+import LanguageSwitcher from './LanguageSwitcher';
 
 const primaryScreenWidth = Math.floor(dimensions.screenWidth * 0.91)
 const primaryScreenLeft = Math.floor((dimensions.screenWidth - primaryScreenWidth) / 2)
@@ -158,6 +157,17 @@ class ScreenContainer extends React.Component {
     </View>
   }
 
+  renderLanguageSwitcher() {
+    return <View style={{
+        position: 'absolute',
+        left:   0,
+        bottom:  0,
+        zIndex: 51,
+      }}>
+      <LanguageSwitcher/>
+    </View>
+  }
+
   render() {
     const source = this.props.secondaryScreen ? frameSecondaryImg : frameImg
     return (
@@ -185,6 +195,7 @@ class ScreenContainer extends React.Component {
         {this.renderModal()}
         {this.renderButtonModal()}
         {this.renderStatusBar()}
+        {this.renderLanguageSwitcher()}
       </View>
     );
   }

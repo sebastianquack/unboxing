@@ -346,7 +346,8 @@ class GameService extends Service {
 
   /** challenges **/
 
-	// called when user enters a challenge
+	// called when user enters a challenge 
+  // note: useChallengeConnection is set to false for installation mode where connection is specified in installation obj
 	setActiveChallenge = (challenge, useChallengeConnection=true)=> {
 
 		this.setReactive({

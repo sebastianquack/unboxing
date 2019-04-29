@@ -226,7 +226,7 @@ class GameContainer extends React.Component {
       <View>
         <ScreenContainer
           primaryScreen = {<PrimaryScreen
-              backgroundColor={this.props.peakService.isUp ? "passive" : "active" }
+              backgroundColor={(this.props.peakService.isUp && this.props.gameService.challengeStatus == "play" && this.props.sequenceService.currentTrack) ? "passive" : "active" }
               // backgroundFlow
               backgroundContent = { backgroundContent }
               mainContent = { mainContent }
