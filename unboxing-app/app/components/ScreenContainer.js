@@ -37,7 +37,7 @@ const buttonMidTop = Math.floor(dimensions.screenHeight * 0.76)
 const buttonRightLeft = Math.floor(dimensions.screenWidth * 0.7)
 const buttonRightTop = Math.floor(dimensions.screenHeight * 0.7)
 
-const buttonModalLeft = Math.floor(dimensions.screenWidth * 0.4)
+const buttonModalLeft = Math.floor(dimensions.screenWidth * 0.37)
 const buttonModalTop = Math.floor(dimensions.screenHeight * 0.8)
 
 class ScreenContainer extends React.Component { 
@@ -160,8 +160,8 @@ class ScreenContainer extends React.Component {
   renderLanguageSwitcher() {
     return <View style={{
         position: 'absolute',
-        left:   0,
-        bottom:  0,
+        left:   325,
+        bottom:  50,
         zIndex: 51,
       }}>
       <LanguageSwitcher/>
@@ -195,7 +195,7 @@ class ScreenContainer extends React.Component {
         {this.renderModal()}
         {this.renderButtonModal()}
         {this.renderStatusBar()}
-        {this.renderLanguageSwitcher()}
+        {!this.props.modalContent && this.renderLanguageSwitcher()}
       </View>
     );
   }

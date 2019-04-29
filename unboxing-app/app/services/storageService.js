@@ -1,6 +1,7 @@
 import Service from './Service';
 
 import { networkService } from './networkService'; // ATTENTION import from './' generates an error (undefined is not...)
+import { gameService } from './gameService';
 import { imeiIds } from '../../config/imei';
 
 import RNFS from 'react-native-fs';
@@ -332,6 +333,15 @@ class StorageService extends Service {
 
   setLanguage(code) {
     this.setReactive({language: code});
+    gameService.initInfoStream();
+  }
+
+  toggleLanguage() {
+    if(this.state.language == "de") {
+      this.setLanguage("en");
+    } else {
+      this.setLanguage("de");
+    }
   }
 
   // return tanslated string for its key
