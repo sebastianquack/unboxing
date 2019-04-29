@@ -193,11 +193,11 @@ class GameContainer extends React.Component {
       
       case "prepare":
         if(this.props.gameService.activePlace && !gameService.nthPlaceInTutorial(0)) {
-          buttonLeft = <Button back type="wide" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;  
+          buttonLeft = <Button type="leave" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;  
         }
 
         if(this.props.gameService.gameMode == "installation") {
-          buttonLeft = <Button back type="wide" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;   
+          buttonLeft = <Button type="leave" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;   
         }
         
         buttonRight = instrumentName ? <Button type="play" text={storageService.t("play")} onPress={()=>{gameService.handleRightButton()}}/> : null;  
@@ -210,13 +210,15 @@ class GameContainer extends React.Component {
         break;
  
       case "play":
-        buttonLeft = <Button back type="wide" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;
+        buttonLeft = <Button type="leave" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
         // only show middle button during loop challenge
         if(!gameService.nthPlaceInTutorial(0) && this.props.sequenceService.isLooping) {
           buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
         }
-        overlayContent = <Instructor mode={this.props.sequenceService.instructorState}/>   
+        if(this.props.sequenceService.instructorState) {
+          overlayContent = <Instructor mode={this.props.sequenceService.instructorState}/>     
+        }
         break;
     }
 

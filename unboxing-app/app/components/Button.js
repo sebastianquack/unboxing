@@ -14,6 +14,7 @@ import blankRoundButtonImg from '../../assets/img/blankRoundButton.png'
 import walkIcon from '../../assets/img/Walk.png'
 import playIcon from '../../assets/img/Play.png'
 import backIcon from '../../assets/img/Back.png'
+import walkLeft from '../../assets/img/WalkLeft.png'
 
 const buttons = {
   "home": buttonHomeImg,
@@ -21,8 +22,8 @@ const buttons = {
   "wide": buttonWideImg,
   "check-in": blankRoundButtonImg,
   "play": blankRoundButtonImg,
+  "leave": blankRoundButtonImg
 }
-
 
 
 class Button extends React.Component { 
@@ -66,6 +67,12 @@ class Button extends React.Component {
           <Image 
             style={{position: "absolute", top: 47, left: 49}}
             source={playIcon} 
+          />
+      }
+      {type == "leave" &&
+          <Image 
+            style={{position: "absolute", top: 47, left: 49}}
+            source={walkLeft} 
           />
       }
       <View style={{...textPosition, flexDirection: "row", justifyContent: "center"}}>

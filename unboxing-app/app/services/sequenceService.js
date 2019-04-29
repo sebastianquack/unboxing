@@ -176,11 +176,38 @@ class SequenceService extends Service {
     // guitar heroe mode: check if current item needs to be cancelled 
     if(this.state.currentItem && this.currentItemInfo.realStartTime && this.isGuitarHeroMode()) {
       let runningSince = soundService.getSyncTime() - this.currentItemInfo.realStartTime;
+
       console.log("runningSince: " + runningSince);
       if(runningSince > gameService.getGuitarHeroThreshold().post && !this.currentItemInfo.approved) {
         gameService.handleMissedGuitarHeroCue();
+        this.setReactive({instructorState: "still"});
+        instructorUpdated = true;
       } 
     }
+
+    // determine next scheduled item for instructor animation in guitar hero mode
+    let startTimeScheduled = null;
+    let instructorUpdated = false;
+    if(this.state.scheduledItem) {
+      startTimeScheduled = this.state.scheduledItem.startTime;
+    }
+    if(startTimeScheduled != null) {
+      const timeToNextItem = startTimeScheduled - currentTimeInSequence; 
+      // check if innstrusctor should be shown
+      if(timeToNextItem <= 4000 && !this.autoPlayNextItem()) {
+        if(!(this.state.scheduledItem.startTime == 0 && this.sequenceStartingLocally())) {
+          this.setReactive({instructorState: "einsatz"});  
+          instructorUpdated = true;
+        }
+      } else {
+        if(!this.currentItemInfo.approved) {
+          this.setReactive({instructorState: "still"});
+          instructorUpdated = true;  
+        }
+      }
+    }
+
+    // this is old code for non guitar hero countdowns:
 
 		// determine next item startime to count down to
 		let startTime = null;
@@ -198,7 +225,8 @@ class SequenceService extends Service {
 
 			// check if beats should be shown
 			if(beatsToNextItem > 0 && !this.state.currentItem && !this.autoPlayNextItem()) {
-				this.setReactive({beatsToNextItem: beatsToNextItem});	
+				this.setReactive({beatsToNextItem: beatsToNextItem});
+
 			} else {
 				this.setReactive({beatsToNextItem: ""});	
 
@@ -208,6 +236,7 @@ class SequenceService extends Service {
 						this.doBeatUpdate(); // jump back to start of beatUpdate, because sequence might have shifted to next loop
 						return;
 				}
+
 			}
 		} else {
 			this.setReactive({beatsToNextItem: ""});				
@@ -230,7 +259,7 @@ class SequenceService extends Service {
 			this.beatTimeout = setTimeout(this.doBeatUpdate, timeToNextBeat);		
 		}
 
-		this.updateActionInterface();
+		this.updateActionInterface(!instructorUpdated);
 	}
 
 
@@ -252,7 +281,7 @@ class SequenceService extends Service {
 
 	// analyse current state and display appropriate action message
 	// called on every beat and at special events (setupNextSequenceItem, sound ended)
-	updateActionInterface = ()=> {
+	updateActionInterface = (updateInstructor=true)=> {
 		//console.warn("updateActionInterface");
     //console.log(this.state.currentItem);
 
@@ -270,10 +299,11 @@ class SequenceService extends Service {
   				if(firstItem.startTime == 0) {				
   					this.setActionMessage(endedMessage + storageService.t("sequence-start-first"));
   					this.activateNextUserAction();
-  					
+  					this.setReactive({instructorState: "einsatz"});
   				} else {
   					this.setActionMessage(endedMessage + storageService.t("sequence-start-any"));
   					this.deactivateUserAction();
+            this.setReactive({instructorState: "einsatz"});
   				}
   			} else {
   				this.setActionMessage(endedMessage + storageService.t("sequence-start-none"));
@@ -281,6 +311,7 @@ class SequenceService extends Service {
   			}
       } else {
         this.setActionMessage(storageService.t("waiting-for-more-participants"));
+        this.setReactive({instructorState: "still"});
       }
 		}
 
@@ -298,6 +329,7 @@ class SequenceService extends Service {
           //if(this.state.currentItem.sensorModulation == "off") {
             this.setActionMessage(storageService.t("sequence-playing")); 
             this.deactivateUserAction();
+            this.setReactive({instructorState: "volume"});
           /*} else {
             this.setActionMessage("you're playing! see how you can modulate the sound..."); 
             this.deactivateUserAction();
@@ -333,14 +365,17 @@ class SequenceService extends Service {
           if(this.state.scheduledItem.startTime == 0 && this.sequenceStartingLocally()) {
             this.setActionMessage(storageService.t("autoplay-info"));  
             this.togglePlayButton(false);
+            if(updateInstructor) this.setReactive({instructorState: "still"});
           } else {
             if(this.isGuitarHeroMode()) {
               this.setActionMessage(storageService.t("guitar-hero-instruct"));  
               this.activateNextUserAction();
+              if(updateInstructor) this.setReactive({instructorState: "still"});
             }
             if(this.autoPlayItem(this.state.scheduledItem)) {
               this.setActionMessage(storageService.t("autoplay-instruct")); 
               this.deactivateUserAction();
+              if(updateInstructor) this.setReactive({instructorState: "still"});
             }
           }
 				} else {

@@ -778,9 +778,9 @@ class GameService extends Service {
     this.setReactive({
       showInstrumentSelector: false
     });
-    /*if(!cancel && sequenceService.state.currentTrack && this.state.challengeStatus == "prepare") {
+    if(!cancel && sequenceService.state.currentTrack && this.state.challengeStatus == "prepare") {
       this.handleRightButton();  
-    }*/
+    }
   }
 
   // big right button on game container
@@ -812,8 +812,10 @@ class GameService extends Service {
       case "prepare":
         this.setReactive({
           challengeStatus: "play",
-          tutorialStatus: "first-play"
         });
+        if(this.state.gameMode == "walk") {
+          this.setReactive({tutorialStatus: "first-play"})
+        }
         if(sequenceService.getControlStatus() == "playing") {
           sequenceService.turnOnVolumeCurrentItem();
         } else {
