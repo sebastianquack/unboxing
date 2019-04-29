@@ -64,7 +64,7 @@ class SecondaryScreen extends React.Component {
             {this.props.instrument}
           </UIText>    
         }
-        <UIText size="xs" align="center" caps wide em>{this.props.instrument ? storageService.t("current") : storageService.t("current")}</UIText>      
+        <UIText size="xs" align="center" caps wide em>{this.props.instrument ? storageService.t("current") : storageService.t("select-your-instrument")}</UIText>      
       </View>
     </View>
   }

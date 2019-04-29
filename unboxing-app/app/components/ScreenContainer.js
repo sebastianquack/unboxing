@@ -28,7 +28,7 @@ const statusBarWidth = Math.floor(dimensions.screenWidth * 0.8)
 const statusBarLeft = Math.floor((dimensions.screenWidth - statusBarWidth) / 2)
 const statusBarTop = Math.floor(dimensions.screenHeight * 0.05)
 
-const buttonLeftLeft = Math.floor(dimensions.screenWidth * 0.05)
+const buttonLeftLeft = Math.floor(dimensions.screenWidth * 0.1)
 const buttonLeftTop = Math.floor(dimensions.screenHeight * 0.7)
 
 const buttonMidLeft = Math.floor(dimensions.screenWidth * 0.4355)
