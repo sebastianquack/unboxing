@@ -165,6 +165,8 @@ class GameService extends Service {
       if(!practiceInstrument) {
         this.showNotification("practice instrument for device not found");
       }
+
+      //console.warn(this.state.debugMode);
       
       this.setReactive({
         activeInstallation: installation,
@@ -183,7 +185,7 @@ class GameService extends Service {
         statusBarTitle: "Choose what to play next!",
         installationConnected: false,
         installationActivityMap: null,
-        tutorialStatus: null,
+        tutorialStatus: this.state.debugMode ? "tutorial-installation-complete" : null,
       });
       storageService.saveGameStateToFile(this.state);  
     }    
@@ -199,6 +201,10 @@ class GameService extends Service {
     storageService.loadGameStateFromFile(stateObj=>{
       //console.warn("loaded", stateObj);
       if (!stateObj) return
+
+      this.setReactive({
+        debugMode: stateObj.debugMode
+      });
 
       if(stateObj.activeWalk && stateObj.gameMode == "walk") {
         if(stateObj.pathIndex < stateObj.pathLength) {
@@ -720,7 +726,7 @@ class GameService extends Service {
     if(this.state.gameMode == "installation" && this.state.activeChallenge) {
       this.leaveChallenge();
     }
-    if(this.state.gameMode == "installation" && !this.state.installationActivityMap) {
+    if(this.state.gameMode == "installation" && !this.state.installationActivityMap && !this.state.debugMode) {
       this.setReactive({
         tutorialStatus: "tutorial-installation-1"
       });
@@ -729,7 +735,7 @@ class GameService extends Service {
   }
 
   handleMoveEvent = ()=> {
-    if(this.state.gameMode == "installation" && this.state.tutorialStatus == "tutorial-installation-1") {
+    if(this.state.gameMode == "installation" && this.state.tutorialStatus == "tutorial-installation-1" && !this.state.debugMode) {
       this.setReactive({
         tutorialStatus: "tutorial-installation-2"
       });

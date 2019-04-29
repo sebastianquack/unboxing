@@ -12,8 +12,6 @@ import {globalStyles} from '../../../config/globalStyles';
 import {soundService, networkService} from '../../services';
 import {withSoundService, withNetworkService} from '../ServiceConnector';
 
-import DebugToggle from './DebugToggle';
-
 const clickFilename = '/misc/click.mp3';
 
 class TimeSync extends React.Component { 
@@ -80,7 +78,6 @@ class TimeSync extends React.Component {
           </View>
         </View>
 
-        <DebugToggle/>
          <TouchableOpacity 
           style={globalStyles.button}
           onPress={()=>{

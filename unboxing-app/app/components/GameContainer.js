@@ -217,6 +217,7 @@ class GameContainer extends React.Component {
         if(!gameService.nthPlaceInTutorial(0) && this.props.sequenceService.isLooping) {
           buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
         }
+        overlayContent = <Instructor mode={this.props.sequenceService.instructorState}/>   
         break;
     }
 
@@ -224,7 +225,11 @@ class GameContainer extends React.Component {
       <View>
         <ScreenContainer
           primaryScreen = {<PrimaryScreen
-              backgroundColor={(this.props.peakService.isUp && this.props.gameService.challengeStatus == "play" && this.props.sequenceService.currentTrack) ? "passive" : "active" }
+              backgroundColor={(
+                this.props.peakService.isUp && 
+                (this.props.gameService.tutorialStatus == "tutorial-installation-2" 
+                  || (this.props.gameService.challengeStatus == "play" && this.props.sequenceService.currentTrack))) 
+                  ? "passive" : "active" }
               // backgroundFlow
               backgroundContent = { backgroundContent }
               mainContent = { mainContent }
