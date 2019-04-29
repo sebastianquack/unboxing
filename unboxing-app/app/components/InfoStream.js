@@ -20,7 +20,7 @@ import RNThumbnail from 'react-native-thumbnail';
 
 const highlightStyle = {
   borderLeftColor: colors.turquoise,  
-  borderLeftWidth: 1,  
+  borderLeftWidth: 2,  
   marginBottom: 10
 }
 

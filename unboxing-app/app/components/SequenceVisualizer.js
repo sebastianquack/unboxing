@@ -13,7 +13,7 @@ import {withSequenceService} from './ServiceConnector';
 const actionImg = require('../../assets/img/triangle.png')
 
 const labelsWidth = 150
-const speedFactor = 0.07 // adjust the speed
+const speedFactor = 0.0000007 // adjust the speed
 
 const doAnim = true // useful for debugging
 
@@ -26,7 +26,8 @@ class SequenceVisualizer extends React.PureComponent {
       pulsate: new Animated.Value(1),
     };
 
-    this.speed = props.magnification && doAnim ? speedFactor * props.sequence.bpm : 1
+    const duration = props.sequence.custom_duration || props.sequence.duration
+    this.speed = props.magnification && doAnim ? speedFactor * props.sequence.bpm * duration : 1
 
     this.manageAnimation = this.manageAnimation.bind(this)
     this.handleAnimationEnded = this.handleAnimationEnded.bind(this)
@@ -314,7 +315,7 @@ renderActionItem = (item) => {
       }
 
       return (
-        <View>
+        <View style={{overflow: 'hidden'}} >
           <View style={{...styles.container, marginTop: offsetTop}}>
             <View style={styles.header}>
               {tracks.map(this.renderHeaderTrack)}
@@ -340,6 +341,18 @@ renderActionItem = (item) => {
               </Animated.View>
             </View>
           </View>
+          <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            colors={['rgba(0,0,0,0)', 'black']}
+            style={{
+              width: '45%',
+              height: '120%',
+              position: 'absolute',
+              top: '-10%',
+              right: 0,
+            }}
+          ></LinearGradient>          
           <View style={{opacity:0.5}}>
             {/*<UIText size="m">ctime {this.props.currentTime}</UIText>
             <UIText size="m">starAt {((this.props.playbackStartedAt)/1000)}</UIText>

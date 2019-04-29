@@ -10,7 +10,7 @@ import SensorModulator from './SensorModulator';
 
 import {gameService, sequenceService} from '../services';
 
-class ChallengeView extends React.Component { 
+class ChallengeView extends React.PureComponent { 
   constructor(props) {
     super(props);
     this.state = {};
