@@ -19,7 +19,8 @@ const fontSizes = {
 
 const colors = {
   turquoise: "#00AFA1",
-  warmWhite: "#F3DFD4"
+  warmWhite: "#F3DFD4",
+  warmWhiteSoft: "#E1CEC4"
 }
 
 const globalStyles = StyleSheet.create({

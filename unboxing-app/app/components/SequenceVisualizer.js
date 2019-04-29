@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, ScrollView, Animated, Easing } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, Animated, Easing, Image } from 'react-native';
 import PropTypes from 'prop-types';
 import { compose, mapProps } from 'recompose';
+import LinearGradient from 'react-native-linear-gradient';
 
 import UIText from './UIText'
 import {globalStyles, colors} from '../../config/globalStyles';
@@ -9,7 +10,10 @@ import {globalStyles, colors} from '../../config/globalStyles';
 import {soundService} from '../services';
 import {withSequenceService} from './ServiceConnector';
 
+const actionImg = require('../../assets/img/triangle.png')
+
 const labelsWidth = 150
+const speedFactor = 0.0000007 // adjust the speed
 
 const doAnim = true // useful for debugging
 
@@ -22,10 +26,12 @@ class SequenceVisualizer extends React.PureComponent {
       pulsate: new Animated.Value(1),
     };
 
-    this.speed = props.magnification && doAnim ? 2 : 1
+    const duration = props.sequence.custom_duration || props.sequence.duration
+    this.speed = props.magnification && doAnim ? speedFactor * props.sequence.bpm * duration : 1
 
     this.manageAnimation = this.manageAnimation.bind(this)
     this.handleAnimationEnded = this.handleAnimationEnded.bind(this)
+    this.relativeOpacity = this.relativeOpacity.bind(this)
   }
 
   componentDidMount() {
@@ -47,6 +53,13 @@ class SequenceVisualizer extends React.PureComponent {
       containerWidth,
       sequenceWidth: containerWidth * this.speed
     })
+  }
+
+  relativeOpacity(i) {
+    const limit = this.props.trackIndex ? 4 + this.props.trackIndex : 6
+    const factor = 0.6
+    if (i<= limit) return 1
+    else return Math.pow(factor, i-limit)
   }
 
   manageAnimation(prevProps, prevState) {
@@ -143,14 +156,18 @@ class SequenceVisualizer extends React.PureComponent {
     }
   }
 
-  renderHeaderTrack = (track) => {
+  renderHeaderTrack = (track, i) => {
     // const backgroundColor = ( !this.props.track || this.props.track.name == track.name ? track.color : "transparent" )
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
+    const activeStyle = active ? styles.track__active : {}
+    const opacity = this.relativeOpacity(i)
 
     return (
       <View style={{
           ...styles.track, 
-          ...styles.headerTrack, 
+          ...styles.headerTrack,
+          ...activeStyle,
+          opacity
           // backgroundColor,
         }} key={track.name}>
         <View>
@@ -162,14 +179,19 @@ class SequenceVisualizer extends React.PureComponent {
     )
   }
 
-  renderBodyTrack = (track) => {
+  renderBodyTrack = (track, i) => {
     // items belonging to this track
     sequenceItems = this.props.sequence.items.filter( item => item.track === track.name)
 
+    const active = this.props.track ? ( this.props.track.name == track.name ) : false
+    const activeStyle = active ? styles.track__active : {}
+    //const opacity = this.relativeOpacity(i)
+
     return (
-      <View style={{...styles.track}} key={"body " + track.name}>
+      <View style={{...styles.track, ...activeStyle/*, opacity*/}} key={"body " + track.name}>
         { sequenceItems.map(sequenceItem => this.renderBodyTrackItem(sequenceItem, track) ) }
-        {/* this.props.hasActionItem && this.props.track.name == track.name && this.renderActionItem(this.props.nextUserAction) */}
+        { /* this.props.track && this.props.track.name == track.name && sequenceItems.map(sequenceItem => this.renderActionItem(sequenceItem, track) ) */ }
+        { this.props.hasActionItem && this.props.track.name == track.name && this.renderActionItem(this.props.nextUserAction) }
       </View>
     )
   }
@@ -198,10 +220,10 @@ class SequenceVisualizer extends React.PureComponent {
     )
   }
 
+
   renderActionItem = (item) => {
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
-    let leftPercentage = 100 * item.startTime / sequenceDuration
-    const widthPercentage = 100 * item.duration / sequenceDuration
+    let leftPercentage = 100 * item.itemStartTime / sequenceDuration
 
     if(item.startTime < 0 && this.props.loopCounter >= 0) {
       leftPercentage += 100;  
@@ -209,19 +231,54 @@ class SequenceVisualizer extends React.PureComponent {
     
     return (
       <Animated.View key={item._id} style={{
-          ...styles.bodyTrackItem, 
-          ...styles.bodyTrackItem__actionItem,
-          width: widthPercentage+"%", 
+          width: 70, 
           left: leftPercentage+"%",
-          opacity: this.state.pulsate,
+          opacity: 1,
+          flexDirection: "row",
+          alignItems: "center",
+          position: "absolute",
         }}>
-        {/*<Text style={styles.bodyTrackItemText}>
-          { item.type }
-        </Text> */}   
+        <LinearGradient
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          colors={[colors.turquoise, 'rgba(0,0,0,0)']}
+          locations={[0,1]}
+          style={{
+            height: styles.track__active.height,
+            width: 20,
+          }}
+          ></LinearGradient>
+        {<Image source={actionImg}/>}
       </Animated.View>
     )
   }
 
+
+/*
+renderActionItem = (item) => {
+  const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
+  let leftPercentage = 100 * item.startTime / sequenceDuration
+  const widthPercentage = 100 * item.duration / sequenceDuration
+
+  if(item.startTime < 0 && this.props.loopCounter >= 0) {
+    leftPercentage += 100;  
+  }
+  
+  return (
+    <Animated.View key={item._id} style={{
+        ...styles.bodyTrackItem, 
+        ...styles.bodyTrackItem__actionItem,
+        width: widthPercentage+"%", 
+        left: leftPercentage+"%",
+        opacity: this.state.pulsate,
+      }}>
+      {<Text style={styles.bodyTrackItemText}>
+        { item.type }
+      </Text> }   
+    </Animated.View>
+  )
+}
+*/
   renderIndicator = () => {    
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
     const playing = this.props.controlStatus === "playing"
@@ -248,16 +305,25 @@ class SequenceVisualizer extends React.PureComponent {
     }
 
     if(tracks) {
+
+      // move selected track to middle
+      offsetTop = 0
+      if (this.props.trackIndex){
+        const offsetLimit = 70
+        const trackPos = this.props.trackIndex * (styles.track.height + styles.track.marginBottom)
+        if (trackPos > offsetLimit) offsetTop = offsetLimit-trackPos
+      }
+
       return (
-        <View>
-          <View style={styles.container}>
+        <View style={{overflow: 'hidden'}} >
+          <View style={{...styles.container, marginTop: offsetTop}}>
             <View style={styles.header}>
               {tracks.map(this.renderHeaderTrack)}
             </View>
             <Animated.View style={{ // indicator
               backgroundColor: colors.turquoise,
-              width: 2,
-              opacity: 0.7, //this.props.nextUserAction.type ? this.state.pulsate : 0.7,
+              width: 3,
+              opacity: 0.8, //this.props.nextUserAction.type ? this.state.pulsate : 0.7,
               height: "100%",
             }} />
             <View 
@@ -275,6 +341,18 @@ class SequenceVisualizer extends React.PureComponent {
               </Animated.View>
             </View>
           </View>
+          <LinearGradient
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            colors={['rgba(0,0,0,0)', 'black']}
+            style={{
+              width: '45%',
+              height: '120%',
+              position: 'absolute',
+              top: '-10%',
+              right: 0,
+            }}
+          ></LinearGradient>          
           <View style={{opacity:0.5}}>
             {/*<UIText size="m">ctime {this.props.currentTime}</UIText>
             <UIText size="m">starAt {((this.props.playbackStartedAt)/1000)}</UIText>
@@ -294,6 +372,10 @@ class SequenceVisualizer extends React.PureComponent {
 export default compose(
   withSequenceService,
   mapProps((props) => {
+    let trackIndex = 0
+    if (props.sequenceService.currentSequence && props.sequenceService.currentTrack) {
+      trackIndex = props.sequenceService.currentSequence.tracks.findIndex(t => t.name == props.sequenceService.currentTrack.name)
+    }
     return {
       // renamed
       sequence:     props.sequenceService.currentSequence,
@@ -310,6 +392,7 @@ export default compose(
 
       // derived prop
       hasActionItem: !!(props.sequenceService.currentTrack) && !!(props.sequenceService.nextUserAction.type),
+      trackIndex,
 
       ...props,
     };
@@ -325,7 +408,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   container: {
-    paddingTop: "10%",
+    paddingTop: "18%",
     flexDirection: "row",
   },
   header: {
@@ -338,20 +421,23 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   track: {
-    height: 30,
+    height: 22,
     justifyContent: "center",
-    marginVertical: 2,
+    marginBottom: 15,
+  },
+  track__active: {
+    height: 60,
   },
   headerTrack: {
     paddingHorizontal: 8,
-    color: "white",
+    color: colors.warmWhiteSoft,
   },
   bodyTrackItem: {
     backgroundColor: 'transparent',
     height: "100%",
     justifyContent: "center",
     borderRadius: 3,
-    borderColor: "#333",
+    borderColor: colors.warmWhiteSoft,
     borderWidth: 2,
     position: "absolute",
     paddingHorizontal: 8,
@@ -359,6 +445,7 @@ const styles = StyleSheet.create({
   },
   bodyTrackItem__active: {
     borderColor: colors.turquoise,
+    borderWidth: 2,
   },
   bodyTrackItem__actionItem: {
     borderRadius: 3,
@@ -366,7 +453,7 @@ const styles = StyleSheet.create({
     borderColor: colors.turquoise,
     borderWidth: 1,
     padding: 4,
-  }, 
+  },
   bodyTrackItemText: {
     flexWrap: "nowrap", // doesn't work
   },

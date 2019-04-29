@@ -268,7 +268,6 @@ class Instructor extends React.PureComponent {
                 width: 284
               }}
             />
-            <Text>Instructor</Text>
           </View>
       );
     } else {

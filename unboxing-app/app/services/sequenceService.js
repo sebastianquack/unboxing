@@ -414,7 +414,8 @@ class SequenceService extends Service {
           type: obj.type,
           startTime,
           stopTime,
-          duration: stopTime - startTime
+					duration: stopTime - startTime,
+					itemStartTime: startTimeInSequence
         }
       })
 
