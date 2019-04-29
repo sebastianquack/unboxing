@@ -11,15 +11,15 @@ import buttonChangeImg from '../../assets/img/changeButtonNew.png'
 import buttonWideImg from '../../assets/img/wideButton.png'
 import blankRoundButtonImg from '../../assets/img/blankRoundButton.png'
 
-
 import walkIcon from '../../assets/img/Walk.png'
+import playIcon from '../../assets/img/Play.png'
 
 const buttons = {
-  "play": buttonPlayImg,
   "home": buttonHomeImg,
   "change": buttonChangeImg,
   "wide": buttonWideImg,
-  "round": blankRoundButtonImg
+  "check-in": blankRoundButtonImg,
+  "play": blankRoundButtonImg,
 }
 
 class Button extends React.Component { 
@@ -53,10 +53,16 @@ class Button extends React.Component {
 
     return <TouchableOpacity onPress={this.props.onPress}>
       <Image source={buttons[type]} />
-      {this.props.walk &&
+      {type == "check-in" &&
           <Image 
             style={{position: "absolute", top: 47, left: 49}}
             source={walkIcon} 
+          />
+      }
+      {type == "play" &&
+          <Image 
+            style={{position: "absolute", top: 47, left: 49}}
+            source={playIcon} 
           />
       }
       <View style={textPosition}>

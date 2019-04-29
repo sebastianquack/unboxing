@@ -768,13 +768,13 @@ class GameService extends Service {
   }
 
   // center button to close instrument selection modal
-  handleCloseModal = ()=> {
+  handleCloseModal = (cancel=false)=> {
     this.setReactive({
       showInstrumentSelector: false
     });
-    if(sequenceService.state.currentTrack) {
+    /*if(!cancel && sequenceService.state.currentTrack && this.state.challengeStatus == "prepare") {
       this.handleRightButton();  
-    }
+    }*/
   }
 
   // big right button on game container
