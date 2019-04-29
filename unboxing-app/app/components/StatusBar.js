@@ -68,17 +68,18 @@ class StatusBar extends React.Component {
         {this.props.midSection}
       </View>    
 
-      {this.props.minutesToEnd && 
       <View className="thirdSection" style={{
           flexDirection: "column",
           flex: 1
       }}>
+      {this.props.minutesToEnd && <View>
           <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
             <UIText style={{textAlign: "right", paddingRight: 5}} size="m" em caps>{this.props.minutesToEnd < 1 ? (this.props.minutesToEnd > 0 ? "<1" : "0") : Math.floor(this.props.minutesToEnd) + 1} MIN</UIText>
             <Image source={timerImage}/>
           </View>
           <UIText style={{textAlign: "right"}} size="s" caps color="white">{this.props.endText}</UIText>
-      </View>}
+        </View>}
+      </View>
 
     </View>    
   }

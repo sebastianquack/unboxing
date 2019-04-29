@@ -49,8 +49,8 @@ class SecondaryScreen extends React.Component {
           muted
           resizeMode="contain"
           style={{
-            height: "80%",
-            width: "80%",
+            height: "100%",
+            width: "100%",
           }}
           onError={()=>{console.warn("video load error " + JSON.stringify(this.videoError))}}
         />}
@@ -58,13 +58,18 @@ class SecondaryScreen extends React.Component {
       <View style={{
           flex: 1,
           // backgroundColor: "blue",
+          position: "relative",
+          top: -20
         }}>
         {this.props.instrument &&
-          <UIText caps strong align="center">
+          <UIText caps strong size="m" align="center">
             {this.props.instrument}
           </UIText>    
         }
-        <UIText size="xs" align="center" caps wide em>{this.props.instrument ? storageService.t("current") : storageService.t("select-your-instrument")}</UIText>      
+        {this.props.instrument &&
+        <UIText size="s" align="center" caps wide em>{storageService.t("current")}</UIText>}
+        {!this.props.instrument &&
+        <UIText size="s" align="center" caps wide em>{storageService.t("select-your-instrument")}</UIText>}
       </View>
     </View>
   }

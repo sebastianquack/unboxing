@@ -21,8 +21,8 @@ class GameService extends Service {
 			activeChallenge: null, 		// active challenge saved here
 			tutorialStatus: "off",     // off -> step-1 -> complete
       showInstrumentSelector: false, // show the interface selector in the interface
-      statusBarTitle: defaultStatusBarTitle,
-      statusBarSubtitle: defaultStatusBarSubtitle,
+      statusBarTitle: null,
+      statusBarSubtitle: null,
       debugMode: false,          // show debugging info in interface
       infoStream: [],
       numChallengeParticipants: 1, // number of people in the challenge
@@ -182,7 +182,6 @@ class GameService extends Service {
         walkStartTime: null,
         minutesToEnd: null,
         challengeStatus: "off",
-        statusBarTitle: "Choose what to play next!",
         installationConnected: false,
         installationActivityMap: null,
         tutorialStatus: this.state.debugMode ? "tutorial-installation-complete" : null,
@@ -436,8 +435,6 @@ class GameService extends Service {
     soundService.unloadSoundfiles();
 
     this.setReactive({
-      statusBarTitle: defaultStatusBarTitle,
-      statusBarSubtitle: defaultStatusBarSubtitle,
       showInstrumentSelector: false
     })
     
@@ -778,9 +775,9 @@ class GameService extends Service {
     this.setReactive({
       showInstrumentSelector: false
     });
-    if(!cancel && sequenceService.state.currentTrack && this.state.challengeStatus == "prepare") {
+    /*if(!cancel && sequenceService.state.currentTrack && this.state.challengeStatus == "prepare") {
       this.handleRightButton();  
-    }
+    }*/
   }
 
   // big right button on game container

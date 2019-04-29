@@ -36,7 +36,8 @@ class LanguageSwitcher extends React.Component {
           height: 47, 
           position: "absolute",
           left: l == "de" ? 3 : 50,
-          top: 2
+          top: 2,
+          opacity: 1
           }}
         />
         <UIText style={{

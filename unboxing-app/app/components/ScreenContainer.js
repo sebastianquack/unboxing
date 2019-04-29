@@ -163,6 +163,7 @@ class ScreenContainer extends React.Component {
         left:   325,
         bottom:  50,
         zIndex: 51,
+        opacity: 1
       }}>
       <LanguageSwitcher/>
     </View>

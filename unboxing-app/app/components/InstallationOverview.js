@@ -49,15 +49,18 @@ class InstallationOverview extends React.Component {
         }}
         style = {{
           margin: 20, 
-          alignItems: "center", 
-          justifyContent: "center", 
           position: "absolute", 
           left: buttonPositions[index].x, 
           top: buttonPositions[index].y,
           width: 160
         }}
       >
-      <View style={{opacity: available ? 1 : 0.5}}>
+      <View style={{
+        opacity: available ? 1 : 0.5,
+        alignItems: "center", 
+        justifyContent: "center", 
+      }}
+      >
         <ImageBackground 
             imageStyle={{resizeMode: 'stretch'}}
             style={{height: 60, width: 60, alignItems: "center", justifyContent: "center"}}
