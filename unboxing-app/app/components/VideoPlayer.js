@@ -25,7 +25,7 @@ class VideoPlayer extends React.Component {
               height: "100%",
               width: "100%"
             }}
-            onBuffer={()=>{console.warn(this.onBuffer)}}
+            /*onBuffer={(error)=>{console.warn(JSON.stringify(error))}}*/
             onError={()=>{console.warn(JSON.stringify(this.videoError))}}
           />
         </View>
