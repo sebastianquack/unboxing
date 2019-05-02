@@ -198,8 +198,34 @@ Migrations.add({
   down: function() {}
 });
 
+Migrations.add({
+  version: 17,
+  name: 'add title and subtitle to sequence',
+  up: function() {
+    add_default_attributes_to_sequence({
+      title_en: "",
+      title_de: "",
+      subtitle_en: "",
+      subtitle_de: "",
+    });
+  }
+});
 
-const version = 16;
+Migrations.add({
+  version: 18,
+  name: 'remove tutorial bool from walk',
+  up: function() {
+    Walks.find().forEach( walk => {
+      Meteor.call('updateWalk', walk._id, {}, {tutorial: false});
+    });  
+  },
+  down: function() {}
+});
+
+
+
+
+const version = 18;
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);

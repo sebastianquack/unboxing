@@ -95,6 +95,12 @@ class WalkDetail extends React.Component {
         }
       })
 
+      let tutorialChallenge = Challenges.find({shorthand: walkObj[key].tutorialChallenge}).fetch();
+      console.log("tutorialChallenge", tutorialChallenge);
+      if(tutorialChallenge.length != 1) {
+        error += "tutorialChallenge " + walkObj[key].tutorialChallenge + " not found for device " + key + ". ";
+      }
+
       if(trackNames.indexOf(walkObj[key].startInstrument) == -1) {
         error += "startInstrument " + walkObj[key].startInstrument + " unknown. ";
       }

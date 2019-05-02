@@ -162,8 +162,7 @@ class StorageService extends Service {
 	// called when admin starts walk
 	getActivePath = (walk)=> {
 		console.log("paths");
-		console.log(walk.paths);
-
+		
 		let pathsObj = null;
 		try {
 			pathsObj = JSON.parse(walk.paths);	
@@ -179,10 +178,28 @@ class StorageService extends Service {
 			console.log(activePath);
 		
 			return activePath;
-		}
+		} else {
+      console.warn("path not found for this device");
+    }
 
 		return null;
 	}
+
+  getWalkInstrument = (walk) => {
+    let path = this.getActivePath(walk);
+    if(path) {
+      return path.startInstrument;      
+    }     
+  }
+
+  getTutorialChallengeFromWalk = (walk) => {
+    let path = this.getActivePath(walk);
+    if(path) {
+      return this.findChallengeByShorthand(path.tutorialChallenge);
+    } else {
+      this.showNotification("no path for device in walk");
+    }
+  }   
 
   getChallengeStages = (challenge)=> {
     let stagesObj = [];
@@ -288,9 +305,9 @@ class StorageService extends Service {
     return null;
   }
 
-  getWalkByTag(tag) {
+  getWalkById(id) {
     for(let i = 0; i < this.state.collections.walks.length; i++) {
-      if(this.state.collections.walks[i].tag == tag) {
+      if(this.state.collections.walks[i]._id == id) {
         return this.state.collections.walks[i];
       } 
     }
@@ -313,6 +330,14 @@ class StorageService extends Service {
       return s.name
     }
     return "sequence not found";
+  }
+
+  getLocalizedSequenceAttributeForChallenge = (challenge, attributeName) => {
+    let s = this.findSequence(challenge.sequence_id);
+    if(s) {
+      return s[attributeName + "_" + this.state.language];
+    }
+    return ""; 
   }
 
   findServerByName(name) {

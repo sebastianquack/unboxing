@@ -70,7 +70,8 @@ class InstallationOverview extends React.Component {
               <Image style={{position: "absolute", bottom: -8, left: 11}} source={userMarker}/>
             }
         </ImageBackground>
-        <UIText size="m" style={{textAlign: "center"}}>{storageService.getSequenceNameFromChallenge(challenge).toUpperCase()}</UIText>
+        <UIText size="m" style={{textAlign: "center"}}>{storageService.getLocalizedSequenceAttributeForChallenge(challenge, "title").toUpperCase()}</UIText>
+        <UIText size="m" style={{textAlign: "center"}}>{storageService.getLocalizedSequenceAttributeForChallenge(challenge, "subtitle").toUpperCase()}</UIText>
       </View>
       </TouchableOpacity>
     )

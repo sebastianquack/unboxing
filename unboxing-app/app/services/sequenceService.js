@@ -2,6 +2,9 @@ import Service from './Service';
 
 import {soundService, gameService, gestureService, peakService, storageService } from './';
 
+import loadInstruments from '../../config/instruments'
+const instruments = loadInstruments();
+
 class SequenceService extends Service {
 
 	constructor() {
@@ -57,8 +60,44 @@ class SequenceService extends Service {
     return null;
   }
 
+  getLocalizedSequenceAttribute = (attributeName)=> {
+    if(this.state.currentSequence) {
+      return this.state.currentSequence[attributeName + "_" + storageService.state.language];
+    }
+    return null;
+  }
+
   getCurrentTrackName = ()=> {
     return this.state.currentTrack ? this.state.currentTrack.name : null;
+  }
+
+  reduceTracksForVisualizer = (tracks)=>{
+    if(!tracks) return [];
+    myTrackName = null;
+    mySequenceGroup = null;
+    if(this.state.currentTrack) {
+      myTrackName = this.state.currentTrack.name;  
+      mySequenceGroup = instruments[myTrackName].sequenceGroup;
+    }
+    let tracksToShow = [];
+    for(let i = 0; i < tracks.length; i++) {      
+      if(instruments[tracks[i].name]) {
+        if(instruments[tracks[i].name].sequenceGroup != mySequenceGroup) {
+          tracksToShow.push(tracks[i]);
+        } else {
+          if(tracks[i].name == myTrackName) {
+            tracksToShow.push(tracks[i]);
+          }
+        }  
+      }
+    }
+    this.sortTracks(tracksToShow);
+    return tracksToShow;
+  }
+
+  sortTracks = (tracks) => {
+    tracks.sort((a, b) => {return instruments[a.name] && instruments[b.name] ? instruments[a.name].order - instruments[b.name].order : -1});
+    return tracks;
   }
 
 	// return the first item of a specified track in the current Sequence

@@ -115,9 +115,9 @@ class NetworkService extends Service {
       wifi.getSSID((ssid) => {
         self.setReactive({ssid})
 
-        if(ssid == "unboxing") {
+        //if(ssid == "unboxing") {
           this.initAdminSocket();
-        }
+        //}
       });
       
       wifi.getIP((ip) => {
@@ -212,9 +212,18 @@ class NetworkService extends Service {
           case "timeSync": this.doTimeSync(); break;
           case "updateFiles": fileService.updateFilesInfoAndDownload(); break;
           case "updateEverything": storageService.updateEverything(); break;
+          case "startTutorial": 
+            if(msgObj.payload.walkId) {
+              gameService.startTutorialForWalkById(msgObj.payload.walkId);
+            }
+            break;
           case "startWalk": 
-            if(msgObj.payload.tag && msgObj.payload.startTime) {
-              gameService.startWalkByTag(msgObj.payload.tag, msgObj.payload.startTime);
+            if(msgObj.payload.walkId) {
+              if(msgObj.payload.startTime) {
+                gameService.startWalkById(msgObj.payload.walkId, msgObj.payload.startTime);
+              } else {
+                gameService.startWalkById(msgObj.payload.walkId, soundService.getSyncTime() + (msgObj.payload.startTimeOffset * 1000));
+              }
             }
             break;
         }

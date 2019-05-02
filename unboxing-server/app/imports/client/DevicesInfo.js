@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { css } from 'emotion'
 
-import { Devices } from '../collections';
+import { Devices, Walks } from '../collections';
 
 class DevicesInfo extends React.Component {
   constructor(props) {
@@ -46,9 +46,19 @@ class DevicesInfo extends React.Component {
     this.sendMessage({
       code: 'startWalk',
       payload: {
-        tag: this.state.tag,
+        walkId: this.state.walkId,
         startTimeOffset: parseInt(this.state.startTimeOffset),
-        startTime: this.state.startTime,
+        startTime: parseInt(this.state.startTime),
+      }
+    })
+  }
+
+  sendTutorialMessage = (event) => {
+    event.preventDefault()
+    this.sendMessage({
+      code: 'startTutorial',
+      payload: {
+        walkId: this.state.walkId
       }
     })
   }
@@ -68,8 +78,25 @@ class DevicesInfo extends React.Component {
     const updateEverything = <button onClick={event => this.sendMessage({ code: "updateEverything"})}>updateEverything</button>
     const updateFiles = <button onClick={event => this.sendMessage({ code: "updateFiles"})}>updateFiles</button>
     const timeSync = <button onClick={event => this.sendMessage({ code: "timeSync"})}>timeSync</button>
+    
+    const emptyOption = <option key="empty" value="">&lt;none&gt;</option>;
+    
+    const startTutorial = <form onSubmit={ this.sendTutorialMessage }>
+        <label>tutorial for walk</label>
+        <select onChange={ e => this.setState({walkId: e.target.value}) }>
+          {emptyOption}
+          {this.props.ready && this.props.walks.map( w => <option key={w._id} value={w._id}>{w.description}</option>)}      
+        </select>
+        <input type="submit" value="startTutorial" />
+      </form>
+
+
     const startWalk = <form onSubmit={ this.sendWalkMessage }>
-        <label>tag: <input value={this.state.tag} onChange={event => this.setState({tag: event.target.value})} type="text"></input></label>
+        <label>walk</label>
+        <select onChange={ e => this.setState({walkId: e.target.value}) }>
+          {emptyOption}
+          {this.props.ready && this.props.walks.map( w => <option key={w._id} value={w._id}>{w.description}</option>)}      
+        </select>
         <label>seconds from now: <input value={this.state.startTimeOffset} onChange={event => this.setState({startTimeOffset: event.target.value})} type="text"></input></label>
         <label>or timestamp: <input value={this.state.startTime} onChange={event => this.setState({startTime: event.target.value})} type="text"></input></label>
         <input type="submit" value="startWalk" />
@@ -113,10 +140,13 @@ class DevicesInfo extends React.Component {
           { updateEverything }
           { updateFiles }
           { timeSync }
+          <br /><br />
+          { startTutorial }
+          <br />
           { startWalk }
           <br />
           { startBot }
-          <br />
+          <br /><br />
           { selectAll }
           { selectNone }
         </div>
@@ -136,10 +166,14 @@ class DevicesInfo extends React.Component {
 }
 
 export default withTracker(props => {
-  Meteor.subscribe('devices.all');
+  const sub1 = Meteor.subscribe('devices.all');
+  const sub2 = Meteor.subscribe('walks.all');
   const devices = Devices.find({},{sort:{deviceId: 1}}).fetch();
+  const walks = Walks.find({}).fetch()
 
   return {
-    devices
+    devices,
+    walks,
+    ready: sub1.ready() && sub2.ready(),
   };
 })(DevicesInfo);

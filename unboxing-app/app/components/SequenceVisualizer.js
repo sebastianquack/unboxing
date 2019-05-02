@@ -7,8 +7,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import UIText from './UIText'
 import {globalStyles, colors} from '../../config/globalStyles';
 
-import {soundService} from '../services';
+import {soundService, sequenceService, storageService} from '../services';
 import {withSequenceService} from './ServiceConnector';
+
+import loadInstruments from '../../config/instruments'
+const instruments = loadInstruments();
 
 const actionImg = require('../../assets/img/triangle.png')
 
@@ -172,7 +175,7 @@ class SequenceVisualizer extends React.PureComponent {
         }} key={track.name}>
         <View>
           <UIText size="s" caps em={active} color={"rgba(90,85,80,0.8)"}>
-            {track.name}
+            {instruments[track.name]["name_" + storageService.state.language]}
           </UIText>
         </View>
       </View>
@@ -301,7 +304,7 @@ renderActionItem = (item) => {
   render() {
     let tracks = null;
     if(this.props.sequence) {
-      tracks = this.props.sequence.tracks
+      tracks = sequenceService.reduceTracksForVisualizer(this.props.sequence.tracks);
     }
 
     if(tracks) {
@@ -364,6 +367,7 @@ renderActionItem = (item) => {
         </View>
       );
     } else {
+      console.warn("no tracks");
       return null;
     }
   }

@@ -4,7 +4,7 @@ import Video from 'react-native-video';
 import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
-import loadInstrumentIcons from '../../config/instruments'
+import loadInstruments from '../../config/instruments'
 import UIText from './UIText'
 
 import {storageService} from '../services';
@@ -16,7 +16,7 @@ const verticalPadding = Math.floor(dimensions.screenWidth * 0.016)
 
 const imageWidth = dimensions.screenWidth * 0.25
 
-const instruments = loadInstrumentIcons();
+const instruments = loadInstruments();
 
 class SecondaryScreen extends React.Component { 
   constructor(props) {
@@ -63,7 +63,7 @@ class SecondaryScreen extends React.Component {
         }}>
         {this.props.instrument &&
           <UIText caps strong size="m" align="center">
-            {this.props.instrument}
+            {instruments[this.props.instrument] ? instruments[this.props.instrument]["name_" + storageService.state.language] : null}
           </UIText>    
         }
         {this.props.instrument &&
