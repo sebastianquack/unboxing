@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { css } from 'emotion'
 
-import { Devices, Walks } from '../collections';
+import { Devices, Walks, Challenges } from '../collections';
 
 class DevicesInfo extends React.Component {
   constructor(props) {
@@ -63,6 +63,17 @@ class DevicesInfo extends React.Component {
     })
   }
 
+  sendJumpMessage = (event) => {
+    event.preventDefault()
+    this.sendMessage({
+      code: 'jumpToChallenge',
+      payload: {
+        challengeId: this.state.challengeId
+      }
+    })
+  }
+
+
   render() {
 
     const columnAccessors = {
@@ -100,6 +111,15 @@ class DevicesInfo extends React.Component {
         <label>seconds from now: <input value={this.state.startTimeOffset} onChange={event => this.setState({startTimeOffset: event.target.value})} type="text"></input></label>
         <label>or timestamp: <input value={this.state.startTime} onChange={event => this.setState({startTime: event.target.value})} type="text"></input></label>
         <input type="submit" value="startWalk" />
+      </form>
+
+    const jumpToChallenge = <form onSubmit={ this.sendJumpMessage }>
+        <label>jump to challenge</label>
+        <select onChange={ e => this.setState({challengeId: e.target.value}) }>
+          {emptyOption}
+          {this.props.ready && this.props.challenges.map( c => <option key={c._id} value={c._id}>{c.name}</option>)}      
+        </select>
+        <input type="submit" value="jumpToChallenge" />
       </form>
 
     const startBot = <button onClick={event => {
@@ -145,6 +165,8 @@ class DevicesInfo extends React.Component {
           <br />
           { startWalk }
           <br />
+          { jumpToChallenge }
+          <br />
           { startBot }
           <br /><br />
           { selectAll }
@@ -168,12 +190,15 @@ class DevicesInfo extends React.Component {
 export default withTracker(props => {
   const sub1 = Meteor.subscribe('devices.all');
   const sub2 = Meteor.subscribe('walks.all');
+  const sub3 = Meteor.subscribe('challenges.all');
   const devices = Devices.find({},{sort:{deviceId: 1}}).fetch();
   const walks = Walks.find({}).fetch()
+  const challenges = Challenges.find({}).fetch();
 
   return {
     devices,
     walks,
-    ready: sub1.ready() && sub2.ready(),
+    challenges,
+    ready: sub1.ready() && sub2.ready() && sub3.ready(),
   };
 })(DevicesInfo);

@@ -9,6 +9,9 @@ const baseState = {
       gameMode: "manual",     // manual, walk, installation
       activeWalk: null,
       pathIndex: 0,
+      activePath: null,
+      activePlace: null,
+      activePlaceReference: null,
       walkStatus: "off",      // off -> tutorial-intro -> ongoing -> ended
       challengeStatus: "off",   // off <-> navigate -> (tutorial->) prepare <-> play 
       activeChallenge: null,    // active challenge saved here
@@ -21,7 +24,8 @@ const baseState = {
       numChallengeParticipants: 1, // number of people in the challenge
       numChallengeParticipantsWithInstrument: 0,
       installationActivityMap: null,
-      installationConnected: false
+      installationConnected: false,
+
 }
 
 class GameService extends Service {
@@ -74,6 +78,7 @@ class GameService extends Service {
     this.walkTracker();
     this.setupActivePlace();
     this.initInfoStream();
+    this.saveGameStateToFile();
   }
 
   jumpToChallenge = (challenge) => {
@@ -81,6 +86,7 @@ class GameService extends Service {
     this.resetGamestate();
     this.setActiveChallenge(challenge) 
     this.initInfoStream();
+    this.saveGameStateToFile();
   }
 
   startTutorialForWalkById = (id) => {
@@ -99,6 +105,7 @@ class GameService extends Service {
         activeWalk: walk
       });
     this.initInfoStream();  
+    this.saveGameStateToFile();
   }
 
   startWalkById = (id, startTime) => {
@@ -185,12 +192,26 @@ class GameService extends Service {
 
   resumeGameFromFile = () => {
     storageService.loadGameStateFromFile(stateObj=>{
-      //console.warn("loaded", stateObj);
       if (!stateObj) return
 
       this.setReactive({
         debugMode: stateObj.debugMode
       });
+
+      if(stateObj.activeInstallation && stateObj.gameMode == "installation") {
+          this.startInstallationByName(stateObj.activeInstallation.name);
+          return;
+      }
+
+      if(stateObj.activeWalk && stateObj.gameMode == "manual") {
+        this.startTutorialForWalk(stateObj.activeWalk);
+        return;
+      }
+
+      if(stateObj.activeChallenge && stateObj.gameMode == "manual") {
+        this.jumpToChallenge(stateObj.activeChallenge);
+        return;
+      }
 
       if(stateObj.activeWalk && stateObj.gameMode == "walk") {
         if(stateObj.pathIndex < stateObj.pathLength) {
@@ -209,13 +230,9 @@ class GameService extends Service {
           }
           this.walkTracker();
           this.initInfoStream(); 
+          return;
         }        
       }
-
-      if(stateObj.activeInstallation && stateObj.gameMode == "installation") {
-          this.startInstallationByName(stateObj.activeInstallation.name);
-      }
-
     });
   }
 
@@ -846,7 +863,7 @@ class GameService extends Service {
     this.clearInfoStream();    
 
     // special case - intro for installation
-    if(this.state.gameMode == "installation") {
+    if(this.state.gameMode == "installation" && this.state.installationConencted) {
       switch(this.state.tutorialStatus) {
         case "tutorial-installation-1":
           this.addItemToInfoStream(storageService.t("welcome"), storageService.t("tutorial-installation-1"));
@@ -990,8 +1007,9 @@ class GameService extends Service {
     let stage = this.getActiveChallengeStage();
 
     let video = stage["video_" + storageService.state.language];
+    let thumb = stage["video_thumb"];
     if(video) {
-      return "/video/" + video;  
+      return {video: "/video/" + video, thumb: thumb ? "/video/" + thumb : "/video/testvideo.png"}  
     } else {
       return null;
     }

@@ -155,7 +155,7 @@ class GameContainer extends React.Component {
     }  
 
     if(this.props.gameService.tutorialStatus == "tutorial-intro") {
-      buttonRight = <Button type="check-in" text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>;
+      buttonRight = <Button type="play" text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>;
     }
     
     // configure modal
@@ -177,7 +177,7 @@ class GameContainer extends React.Component {
           overlayContent = <Instructor mode={"volume"}/>
         }
         if(this.props.gameService.tutorialStatus == "ready-for-practice") {
-          buttonRight = <Button type="check-in" text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>
+          buttonRight = <Button type="play" text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>
         }
         break;
       case "navigate":
@@ -201,7 +201,7 @@ class GameContainer extends React.Component {
         secondaryScreen = <TouchableOpacity onPress={()=>{gameService.handleMidButton()}}>
           <SecondaryScreen type="instrument" instrument={instrumentName} /></TouchableOpacity>;
         
-        if(!this.props.gameService.tutorialStatus == "practice-sequence") {
+        if(this.props.gameService.tutorialStatus != "practice-sequence") {
           buttonMid = <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;    
         }
         break;
@@ -230,7 +230,7 @@ class GameContainer extends React.Component {
                   || this.props.gameService.tutorialStatus == "step-2" 
                   || (this.props.gameService.challengeStatus == "play" && this.props.sequenceService.currentTrack))) 
                   ? "passive" : "active" }
-              // backgroundFlow
+              backgroundFlow = { this.props.gameService.challengeStatus == "off" || this.props.gameService.challengeStatus == "tutorial" }
               backgroundContent = { backgroundContent }
               mainContent = { mainContent }
               overlayContent = { overlayContent }

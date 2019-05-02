@@ -13,11 +13,6 @@ import videoThumbButton from '../../assets/img/videoThumb.png'
 import alertBlue from '../../assets/img/infoBlue.png'
 import alertRed from '../../assets/img/infoRed.png'
 
-import RNFS from 'react-native-fs';
-const pathPrefix = RNFS.ExternalStorageDirectoryPath + '/unboxing/files';
-
-import RNThumbnail from 'react-native-thumbnail';
-
 const highlightStyle = {
   borderLeftColor: colors.turquoise,  
   borderLeftWidth: 2,  
@@ -42,16 +37,6 @@ class InfoStreamElement extends React.Component {
 
     return(   
       <View style={style}>
-        {/*this.props.highlight &&
-          <Image
-            source={triangleIcon} 
-            style={{
-              position: "absolute",
-              left: -25,   
-              top: 0
-            }}
-          />
-        */}
         { this.props.title && <UIText size="s" strong em caps >{this.props.title}</UIText>}
         <UIText size={this.props.highlight ? "l" : "m"}>{this.props.content}</UIText>
       </View>
@@ -69,37 +54,6 @@ class InfoStreamComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.setPath = this.setPath.bind(this);
-  }
-
-  componentDidMount = () => {
-    //console.warn("mounting");
-    this._mounted = true;
-    let path = this.props.gameService.infoStreamVideo;
-    if(path) {
-      //console.warn("infoStreamVideo: " + this.props.gameService.infoStreamVideo);
-      RNFS.exists(pathPrefix + path)
-      .then( exists => {
-        if (exists) {
-          RNThumbnail.get(pathPrefix + path).then((result) => {
-            this.setPath(result.path)  
-          });    
-        }
-      });
-    }
-  }
-
-  componentWillUnmount = () => {
-    this._mounted = false;
-  }
-
-  setPath = (resultPath) => {
-    //console.warn("setting path... mounted: " + this._mounted + " " + this.props.gameService.infoStreamVideo);
-
-    if(this._mounted) {
-      this.setState({videoThumbPath: resultPath});    
-      this.forceUpdate();
-    }
   }
 
   render() {
@@ -113,20 +67,15 @@ class InfoStreamComponent extends React.Component {
 
     const videoThumb = this.props.gameService.infoStreamVideo ?       
       <TouchableOpacity
-        onPress={()=>{gameService.startVideo(this.props.gameService.infoStreamVideo)}}
+        onPress={()=>{gameService.startVideo(this.props.gameService.infoStreamVideo.video)}}
         style={{height: 177, width: "100%", zIndex: 1}}
       >
-        {this.state.videoThumbPath &&
         <Image
-              source={{uri: this.state.videoThumbPath}}
+              source={{uri: "file:///sdcard/unboxing/files/" + this.props.gameService.infoStreamVideo.thumb}}
               style={{width: 296, height: 177, top: 0, position: "absolute", marginRight: 20, marginBottom: 20}}
-        />}
-        <Image 
-              source={videoThumbButton} 
-              style={{width: 296, height: 177, position: "absolute", top: 0, marginRight: 20, marginBottom: 20}}
         />
       </TouchableOpacity> : null;
-    
+
     return(       
       <View style={{
         //backgroundColor: "blue"

@@ -159,15 +159,20 @@ class NetworkService extends Service {
 
   initAdminSocket = () => {
     //console.warn("connecting to admin socket " + this.state.server + ":" + adminSocketPort);
+    if(this.state.adminSocketConnected) return;
+
     this.adminSocket = io("http://" + this.state.server + ":" + adminSocketPort);
+    //console.warn("init admin socket on " + this.state.server);
     
     this.adminSocket.on('disconnect', ()=>{
+      //console.warn("admin socket disconnect");
       this.lastSentAdminPayload = null;
       this.setReactive({adminSocketConnected: false})
     });
     
     this.adminSocket.on('connect', ()=>{
       this.setReactive({adminSocketConnected: true})
+      //console.warn("connected to admin");
       setTimeout(this.sendAdminStatus, 3000)
     });
 
@@ -226,6 +231,16 @@ class NetworkService extends Service {
               }
             }
             break;
+          case "jumpToChallenge": 
+            if(msgObj.payload) {
+              let challenge = storageService.findChallenge(msgObj.payload.challengeId);
+              if(challenge) {
+                gameService.jumpToChallenge(challenge);
+              }
+              else {
+                this.showNotification("challenge not found");
+              }
+            }
         }
       }
     }

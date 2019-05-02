@@ -57,8 +57,8 @@ class StatusBar extends React.Component {
         }
 
         <View style={{marginTop: 5}}>
-          <UIText size="s" caps >{this.props.title}</UIText>
-          <UIText size="s" caps >{this.props.description}</UIText>
+          <UIText size="m" caps >{this.props.title}</UIText>
+          <UIText size="m" style={{lineHeight: 21}} caps >{this.props.description}</UIText>
         </View>
       </View>
 

@@ -29,7 +29,7 @@ class SequenceVisualizer extends React.PureComponent {
       pulsate: new Animated.Value(1),
     };
 
-    const duration = props.sequence.custom_duration || props.sequence.duration
+    const duration = props.sequence ? props.sequence.custom_duration || props.sequence.duration : 0
     this.speed = props.magnification && doAnim ? speedFactor * props.sequence.bpm * duration : 1
 
     this.manageAnimation = this.manageAnimation.bind(this)
@@ -367,7 +367,7 @@ renderActionItem = (item) => {
         </View>
       );
     } else {
-      console.warn("no tracks");
+      //console.warn("no tracks");
       return null;
     }
   }
