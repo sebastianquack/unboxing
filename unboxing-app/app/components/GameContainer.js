@@ -177,7 +177,7 @@ class GameContainer extends React.Component {
           overlayContent = <Instructor mode={"volume"}/>
         }
         if(this.props.gameService.tutorialStatus == "ready-for-practice") {
-          buttonRight = <Button text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>
+          buttonRight = <Button type="check-in" text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>
         }
         break;
       case "navigate":
