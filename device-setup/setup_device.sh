@@ -97,6 +97,7 @@ echo
 
 echo "setting time, disabling NTP"
 adb shell 'settings put global auto_time 0'
+adb shell 'settings put global auto_time_zone 0'
 adb shell 'setprop persist.sys.timezone "Europe/Berlin"'
 adb shell 'date @`date +%s`'
 adb shell 'am broadcast -a android.intent.action.TIME_SET'

@@ -31,7 +31,9 @@ for (let i = 1 ; i <= 42; i++)  {
   devices.push({
     _id: i,
     deviceId: i,
-    deviceStatus: {}
+    ip: "192.168.8.1"+(i.toString().padStart(2, '0')),
+    deviceStatus: {},
+    adb: {},
   })
 }
 

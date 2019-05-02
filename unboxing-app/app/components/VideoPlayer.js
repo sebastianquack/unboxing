@@ -8,7 +8,7 @@ import UIText from './UIText'
 import RNFS from 'react-native-fs';
 const pathPrefix = RNFS.ExternalStorageDirectoryPath + '/unboxing/files';
 
-class VideoPlayer extends React.Component { 
+class VideoPlayer extends React.PureComponent { 
   constructor(props) {
     super(props);
     this.state = {};
