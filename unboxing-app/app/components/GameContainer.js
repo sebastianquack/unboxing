@@ -155,7 +155,7 @@ class GameContainer extends React.Component {
     }  
 
     if(this.props.gameService.tutorialStatus == "tutorial-intro") {
-      buttonRight = <Button text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>;
+      buttonRight = <Button type="check-in" text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>;
     }
     
     // configure modal

@@ -69,7 +69,7 @@ class GameService extends Service {
         pathLength: 1,
         pathIndex: 0,
         gameMode: "walk",
-        walkStartTime: Date.now(),
+        walkStartTime: soundService.getSyncTime(),
       });
     this.walkTracker();
     this.setupActivePlace();
@@ -79,7 +79,7 @@ class GameService extends Service {
   jumpToChallenge = (challenge) => {
     this.leaveChallenge();
     this.resetGamestate();
-    this.setActiveChallenge(itemValue) 
+    this.setActiveChallenge(challenge) 
     this.initInfoStream();
   }
 
