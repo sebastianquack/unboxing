@@ -214,8 +214,11 @@ class SequenceService extends Service {
 
       console.log("runningSince: " + runningSince);
       if(runningSince > gameService.getGuitarHeroThreshold().post && !this.state.currentItem.approved) {
-        gameService.handleMissedGuitarHeroCue();
-        this.setReactive({instructorState: "still"});
+        this.setReactive({
+					missedItem: { ...this.state.currentItem },
+					instructorState: "still"
+				});
+				gameService.handleMissedGuitarHeroCue();
         instructorUpdated = true;
       } 
     }
@@ -267,7 +270,8 @@ class SequenceService extends Service {
 
         // check if we are already past the next item, skip item
 				if(beatsToNextItem < -1 && currentTimeInSequence > 0 && !this.autoPlayNextItem() && !this.isGuitarHeroMode()) {
-						gameService.handleMissedCue();		
+						this.setReactive({ missedItem: { ...this.state.currentItem }})
+						gameService.handleMissedCue();
 						this.doBeatUpdate(); // jump back to start of beatUpdate, because sequence might have shifted to next loop
 						return;
 				}
@@ -911,6 +915,7 @@ class SequenceService extends Service {
 			nextItem: null,
 			scheduledItem: null,
 			currentItem: null,
+			missedItem: null,
 			playbackStartedAt: null,	    	
 			loopStartedAt: null,
 			showPlayItemButton: false,
@@ -951,6 +956,7 @@ class SequenceService extends Service {
 			nextItem: null,
 			scheduledItem: null,
 			currentItem: null,
+			missedItem: null,
 			playbackStartedAt: null,	    	
 			loopStartedAt: null,
 			beatsToNextItem: "",
