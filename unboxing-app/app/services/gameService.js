@@ -845,6 +845,7 @@ class GameService extends Service {
   }
 
   showInfoStreamAlert = (text, color="blue", duration=2000) => {
+    //console.warn(soundService.getSyncTime() + " showInfoStreamAlert: ", text);
     this.setReactive({
       infoAlert: {
         text: text,
@@ -855,6 +856,7 @@ class GameService extends Service {
       clearTimeout(this.infoAlertTimeout);
     }
     this.infoAlertTimeout = setTimeout(()=>{
+      //console.warn(soundService.getSyncTime() + " infoAlert: null");
       this.setReactive({infoAlert: null});
     }, duration)
   }

@@ -531,7 +531,7 @@ class SequenceService extends Service {
       }
       soundService.unloadSoundfiles();
 
-      console.warn("loading sound files...");
+      //console.warn("loading sound files...");
 
       // preload sound files for track
       let soundfilesToLoad = [];

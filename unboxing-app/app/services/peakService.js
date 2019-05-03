@@ -130,7 +130,7 @@ class PeakService extends Service {
 		this.setReactive({
 			isUp: this.isUp(data),
 			isDown: this.isDown(data),
-			startTime: this.peakStartTime,
+			//startTime: this.peakStartTime,
 			isFacingDown: this.isFacingDown
 		})
 

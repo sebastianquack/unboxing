@@ -16,15 +16,27 @@ export default class Service {
 
 	setReactive(newState) {
 		// iterate over keys in object, update values
+    let changed = false;
 		Object.keys(newState).forEach((key) => {
-			this.state[key] = newState[key];
+      if(typeof newState[key] == "number" || typeof newState[key] == "string" || typeof newState[key] == "boolean") {
+        if(newState[key] != this.state[key]) {
+          this.state[key] = newState[key];
+          changed = true;
+        }
+      } else {
+        //console.warn(key);
+        this.state[key] = newState[key];
+        changed = true;
+      }
 		});
-		// send to react
-		this.onChange(this.serviceName, this.state);
-		// send to other services
-		for (let handle in this.reactiveUpdateCallbacks) {
-			this.reactiveUpdateCallbacks[handle](this.state)
-		}
+		// send to react only if changed
+    if(changed) {
+      this.onChange(this.serviceName, this.state);
+      // send to other services
+      for (let handle in this.reactiveUpdateCallbacks) {
+        this.reactiveUpdateCallbacks[handle](this.state)
+      }
+    }
 	}
 
 	registerNotification = (func) => {
