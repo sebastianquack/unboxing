@@ -163,7 +163,8 @@ class SequenceService extends Service {
 
   isGuitarHeroMode() {
     let c = gameService.getActiveChallenge()
-    return c.item_manual_mode == "guitar hero";
+    if(c) return c.item_manual_mode == "guitar hero";
+    else return false;
   }
 
 

@@ -966,9 +966,11 @@ class GameService extends Service {
   }
 
   getPracticeSoundFile = (index, instrument=null) => {
-    instrument = this.state.walkInstrument
+    if(!instrument) {
+      instrument = this.state.walkInstrument  
+    }
     if(!instruments[instrument]) {
-      this.showNotification("practice instrument for walk not found");
+      this.showNotification("practice instrument sound file not found for " + instrument);
       return null;
     }
     return instruments[instrument]["practiceSoundPath" + index]; 
