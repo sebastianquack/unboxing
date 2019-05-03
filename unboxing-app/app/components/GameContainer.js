@@ -46,10 +46,8 @@ class GameContainer extends React.Component {
     let buttonModal = null;
     let backgroundContent = null;
 
-    // show info stream?
-    if(this.props.gameService.infoStream && this.props.gameService.infoStream.length > 0) {
-      infoStreamContent = <InfoStream/>
-    }
+    // standard is to show info stream
+    infoStreamContent = <InfoStream/>
     
     // configure content
     if(this.props.gameService.activeChallenge) {
@@ -121,7 +119,8 @@ class GameContainer extends React.Component {
             description={""} 
             steps={7}
             currentStep={0}
-          />  
+          />
+          infoStreamContent = null;  
         } else {
           infoStreamContent = <InfoStream/>
           secondaryScreen = <SecondaryScreen type="instrument" instrument={this.props.gameService.installationStartInstrument} />;              
@@ -219,6 +218,8 @@ class GameContainer extends React.Component {
         break;
     }
 
+    //console.warn("render GameContainer");
+
     return (
       <View>
         <ScreenContainer
@@ -252,3 +253,4 @@ class GameContainer extends React.Component {
 }
 
 export default withRelayService(withPeakService(withGameService(withSequenceService(GameContainer))));
+//export default withRelayService(withGameService(withSequenceService(GameContainer)));

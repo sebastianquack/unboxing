@@ -144,7 +144,7 @@ class SoundSevice extends Service {
 					status: "pending",
 					soundObj: null
 				});
-        console.warn(this.getSyncTime() + " adding new pending sound:" + filename);
+        //console.warn(this.getSyncTime() + " adding new pending sound:" + filename);
         this.setReactive({soundCounter: this.state.soundCounter + 1});	
 			} 
 		});
@@ -338,7 +338,7 @@ class SoundSevice extends Service {
 	}
 
   releaseSound = (index) => {
-    console.warn(this.getSyncTime() + ": releasing soundObj " + index);
+    //console.warn(this.getSyncTime() + ": releasing soundObj " + index);
     this.sounds[index].status = "released";
     if(this.sounds[index].soundObj) {
       this.sounds[index].soundObj.release();      

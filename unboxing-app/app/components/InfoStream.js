@@ -22,7 +22,6 @@ const highlightStyle = {
 class InfoStreamElement extends React.Component { 
   constructor(props) {
     super(props);
-    this.state = {};
   }
 
   render() {
@@ -53,17 +52,14 @@ InfoStreamElement.propTypes = {
 class InfoStreamComponent extends React.Component { 
   constructor(props) {
     super(props);
-    this.state = {};
   }
 
   render() {
     let infoStream = this.props.gameService.infoStream;
-    if(!infoStream) return null;
-    if(infoStream.length == 0) return null;
     
-    const elements = infoStream.map((element, index)=>
+    const elements = infoStream ? infoStream.map((element, index)=>
       <InfoStreamElement highlight={index >= infoStream.length -1} key={index} title={element.title} content={element.content}/> 
-    );
+    ) : null;
 
     const videoThumb = this.props.gameService.infoStreamVideo ?       
       <TouchableOpacity
@@ -77,9 +73,7 @@ class InfoStreamComponent extends React.Component {
       </TouchableOpacity> : null;
 
     return(       
-      <View style={{
-        //backgroundColor: "blue"
-      }}>
+      <View>
         <View style={{
           width: 326,
           flexDirection: "column",
@@ -87,7 +81,7 @@ class InfoStreamComponent extends React.Component {
           marginBottom: 0 + (this.props.gameService.infoAlert ? 0 : 62),
         }}>
           {elements}
-          {this.props.gameService.infoAlert && 
+          {this.props.gameService.infoAlert &&
             <ImageBackground 
               imageStyle={{resizeMode: 'stretch'}}
               style={{marginLeft: 10, marginTop: 10, marginBottom: 10, height: 42, width: this.props.gameService.infoAlert.text.length * 15, alignItems: "center", justifyContent: "center"}}
