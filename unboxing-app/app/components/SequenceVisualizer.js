@@ -8,7 +8,7 @@ import UIText from './UIText'
 import {globalStyles, colors} from '../../config/globalStyles';
 
 import {soundService, sequenceService, storageService} from '../services';
-import {withSequenceService} from './ServiceConnector';
+import {withSequenceService, withGameService} from './ServiceConnector';
 
 import loadInstruments from '../../config/instruments'
 const instruments = loadInstruments();
@@ -194,7 +194,7 @@ class SequenceVisualizer extends React.PureComponent {
       <View style={{...styles.track, ...activeStyle/*, opacity*/}} key={"body " + track.name}>
         { sequenceItems.map(sequenceItem => this.renderBodyTrackItem(sequenceItem, track) ) }
         { /* this.props.track && this.props.track.name == track.name && sequenceItems.map(sequenceItem => this.renderActionItem(sequenceItem, track) ) */ }
-        { this.props.hasActionItem && this.props.track.name == track.name && this.renderActionItem(this.props.nextUserAction) }
+        { this.props.gameService.debugMode && this.props.hasActionItem && this.props.track.name == track.name && this.renderActionItem(this.props.nextUserAction) }
       </View>
     )
   }
@@ -207,6 +207,7 @@ class SequenceVisualizer extends React.PureComponent {
     const backgroundColor = ( !this.props.track || this.props.track.name == track.name ? track.color : styles.bodyTrackItem.backgroundColor )
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
     const activeStyle = active ? styles.bodyTrackItem__active : {}
+    const hasActionIndicator = active && item.autoplay == "off"
 
     return (
       <View key={item._id} style={{
@@ -216,6 +217,18 @@ class SequenceVisualizer extends React.PureComponent {
           width: widthPercentage+"%", 
           left: leftPercentage+"%",
         }}>
+        { hasActionIndicator && <LinearGradient
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          colors={[colors.turquoise, 'rgba(0,0,0,0)']}
+          locations={[0,1]}
+          style={{
+            height: styles.track__active.height,
+            width: 20,
+            left:0,
+            position: "absolute"
+          }}
+          ></LinearGradient>}
         {/*<Text style={styles.bodyTrackItemText}>
           { item.name }
         </Text>*/}
@@ -302,10 +315,7 @@ renderActionItem = (item) => {
   }
 
   render() {
-    let tracks = null;
-    if(this.props.sequence) {
-      tracks = sequenceService.reduceTracksForVisualizer(this.props.sequence.tracks);
-    }
+    let tracks = this.props.sequence.tracks
 
     if(tracks) {
 
@@ -375,15 +385,28 @@ renderActionItem = (item) => {
 
 export default compose(
   withSequenceService,
+  withGameService,
   mapProps((props) => {
-    let trackIndex = 0
-    if (props.sequenceService.currentSequence && props.sequenceService.currentTrack) {
-      trackIndex = props.sequenceService.currentSequence.tracks.findIndex(t => t.name == props.sequenceService.currentTrack.name)
+
+    const sequence = props.sequenceService.currentSequence
+    const track = props.sequenceService.currentTrack
+
+    let tracks = null
+    if (sequence) {
+      // mutate tracks
+      tracks = sequenceService.reduceTracksForVisualizer(sequence.tracks);
     }
+
+    let trackIndex = 0
+
+    if (sequence && track) {
+      trackIndex = tracks.findIndex(t => t.name == track.name)
+    }
+
     return {
       // renamed
-      sequence:     props.sequenceService.currentSequence,
-      track:        props.sequenceService.currentTrack,
+      sequence:     { ...sequence, tracks }, // mutate tracks
+      track,
       item:         props.sequenceService.currentItem,
       currentTime:  props.sequenceService.sequenceTimeVisualizer,
 
@@ -453,7 +476,7 @@ const styles = StyleSheet.create({
   },
   bodyTrackItem__actionItem: {
     borderRadius: 3,
-    backgroundColor: colors.turquoise,
+    backgroundColor: "orange",
     borderColor: colors.turquoise,
     borderWidth: 1,
     padding: 4,

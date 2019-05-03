@@ -173,7 +173,7 @@ class DevicesInfo extends React.Component {
       'timeSync': row => row.deviceStatus.timeSyncStatus,
       'walk': row => row.deviceStatus.activeWalk ? row.deviceStatus.activeWalk.tag + "@" + row.deviceStatus.activeWalk.startTime : "-",
       'adbStatus': row => row.adb.status,
-      'adbRetries': row => row.adb.retries,
+      // 'adbRetries': row => row.adb.retries,
       'adbCommand': row => row.adb.command,
       'adbMessage': row => row.adb.message,
     }
@@ -212,7 +212,7 @@ class DevicesInfo extends React.Component {
         <input type="submit" value="runAdb" />
       </form>
 
-    const adbPresetSelector = <div>Preset:<select onChange={ event => {console.log(event.target.value); this.setState({
+    const adbPresetSelector = <div>ADB Preset:<select onChange={ event => {console.log(event.target.value); this.setState({
         adbCommand: adbPresets.find(p => p.name == event.target.value).command,
         adbParallel: adbPresets.find(p => p.name == event.target.value).parallel,
         adbRetries: adbPresets.find(p => p.name == event.target.value).retries
@@ -270,14 +270,14 @@ class DevicesInfo extends React.Component {
           <br />
           { startWalk }
           <br />
+          { jumpToChallenge }
+          <br /><br />
           { adbPresetSelector }    
           { adb }
+          <br /><br />
           { startBot }
           { stopBot }
-          <br /><br />
-          { jumpToChallenge }
-          <br />
-          { startBot }
+
           <br /><br />
           { selectAll }
           { selectNone }
