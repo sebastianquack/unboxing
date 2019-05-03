@@ -222,10 +222,28 @@ Migrations.add({
   down: function() {}
 });
 
+const oldTrackNames = ["cello1", "violin1", "violin2", "bass1", "viola1"];
+const newTrackNames = ["cello1.1", "violin1.1", "violin2.1", "bass1.1", "viola1.1"];
 
+Migrations.add({
+  version: 19,
+  name: 'replace old track names',
+  up: function() {
+    Sequences.find().forEach( sequence => {
+      let items = sequence.items;
+      for(let i = 0; i < items.length; i++) {
+        let index = oldTrackNames.indexOf(items[i].track);
+        if(index > -1) {
+          items[i].track = newTrackNames[index];
+        }
+      }
+      Meteor.call('updateSequence', sequence._id, {items: items});
+    });  
+  },
+  down: function() {}
+});
 
-
-const version = 18;
+const version = 19; 
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);
