@@ -223,7 +223,7 @@ class SequenceVisualizer extends React.PureComponent {
     )
   }
 
-
+/*
   renderActionItem = (item) => {
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
     let leftPercentage = 100 * item.itemStartTime / sequenceDuration
@@ -255,9 +255,9 @@ class SequenceVisualizer extends React.PureComponent {
       </Animated.View>
     )
   }
+*/
 
 
-/*
 renderActionItem = (item) => {
   const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
   let leftPercentage = 100 * item.startTime / sequenceDuration
@@ -273,7 +273,7 @@ renderActionItem = (item) => {
         ...styles.bodyTrackItem__actionItem,
         width: widthPercentage+"%", 
         left: leftPercentage+"%",
-        opacity: this.state.pulsate,
+        opacity: 0.5//this.state.pulsate,
       }}>
       {<Text style={styles.bodyTrackItemText}>
         { item.type }
@@ -281,7 +281,7 @@ renderActionItem = (item) => {
     </Animated.View>
   )
 }
-*/
+
   renderIndicator = () => {    
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
     const playing = this.props.controlStatus === "playing"

@@ -263,7 +263,7 @@ class NetworkService extends Service {
     this.setReactive({timeSyncStatus: "syncing"})
     this.avgTimeDeltas((delta)=>{
       soundService.setDelta(delta);
-      this.setReactive({timeSyncStatus: "synced"})
+      this.setReactive({timeSyncStatus: delta})
       // alert("Time sync completed");
       storageService.saveTimeSyncToFile({delta:delta})
     });
