@@ -22,7 +22,7 @@ cd $TEMPDIR
 npm i --target_arch=arm --target_platform=linux
 
 echo "Uploading..."
-rsync -r --links --delete ./* $USERNAME@$1:/home/pi/unboxing/unboxing-relay/
+rsync -i $IDENTITY -r --links --delete ./* $USERNAME@$1:/home/pi/unboxing/unboxing-relay/
 
 # continuing remotely:
 echo "Continuing remotely:"

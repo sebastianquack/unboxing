@@ -37,6 +37,10 @@ Meteor.methods({
   'addSequence'() {
     Sequences.insert({
       name: "new",
+      title_en: "",
+      title_de: "",
+      subtitle_en: "",
+      subtitle_de: "",
       custom_duration: 0,
       items: [],
       bpm: 60
@@ -160,9 +164,17 @@ Meteor.methods({
   'addWalk'() {
     Walks.insert({
       description: "new",
-      tag: "",
-      tutorial: true,
-      paths: "",
+      tag: "berlin",
+      paths: `{<br>
+        "1": {<br>
+          "startInstrument": "viola1.1",<br>
+          "tutorialChallenge": "1",<br>
+          "places": [<br>
+          {"challenge": "2", "place": "1", "duration": 10}<br>
+          ]<br>
+        }<br>
+      }<br>
+      `,
     });
   },
   'removeWalk'(id) {

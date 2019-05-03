@@ -8,8 +8,8 @@ import {withSequenceService} from './ServiceConnector';
 
 import UIText from './UIText'
 
-import loadInstrumentIcons from '../../config/instruments'
-const instruments = loadInstrumentIcons();
+import loadInstruments from '../../config/instruments'
+const instruments = loadInstruments();
 
 const instrumentBackgroundSelected = require('../../assets/img/Rectangle.png')
 const instrumentBackgroundFigure = require('../../assets/img/trackSelectedMarker.png')
@@ -76,7 +76,7 @@ class TrackSelector extends React.Component {
           color: "#F3DFD4",
           marginTop: 100
         }}>
-          {track.name}
+          {instruments[track.name] ? instruments[track.name]["name_" + storageService.state.language] : track.name + " not found"}
         </UIText>    
       </TouchableOpacity>
     )
@@ -85,11 +85,12 @@ class TrackSelector extends React.Component {
   render() {
     if(!this.props.sequence) return <View><Text>sequence not found</Text></View>;
 
-    const tracks = this.props.sequence.tracks.filter(track => gameService.instrumentAllowedInStage(track.name))
-    .map((t, index)=>this.renderTrack(this.props.sequence, t, index));
+    let tracks = this.props.sequence.tracks.filter(track => gameService.instrumentAllowedInStage(track.name));
+    sequenceService.sortTracks(tracks);
+    const trackButtons = tracks.map((t, index)=>this.renderTrack(this.props.sequence, t, index));
     return (
       <View style={{paddingTop: 20, paddingLeft: 64, paddingRight: 64, flexDirection: 'row', flexWrap: 'wrap'}}>
-        {tracks}
+        {trackButtons}
       </View>
     );
   }

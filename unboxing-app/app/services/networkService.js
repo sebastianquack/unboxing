@@ -115,9 +115,9 @@ class NetworkService extends Service {
       wifi.getSSID((ssid) => {
         self.setReactive({ssid})
 
-        if(ssid == "unboxing") {
+        //if(ssid == "unboxing") {
           this.initAdminSocket();
-        }
+        //}
       });
       
       wifi.getIP((ip) => {
@@ -159,15 +159,20 @@ class NetworkService extends Service {
 
   initAdminSocket = () => {
     //console.warn("connecting to admin socket " + this.state.server + ":" + adminSocketPort);
+    if(this.state.adminSocketConnected) return;
+
     this.adminSocket = io("http://" + this.state.server + ":" + adminSocketPort);
+    //console.warn("init admin socket on " + this.state.server);
     
     this.adminSocket.on('disconnect', ()=>{
+      //console.warn("admin socket disconnect");
       this.lastSentAdminPayload = null;
       this.setReactive({adminSocketConnected: false})
     });
     
     this.adminSocket.on('connect', ()=>{
       this.setReactive({adminSocketConnected: true})
+      //console.warn("connected to admin");
       setTimeout(this.sendAdminStatus, 3000)
     });
 
@@ -212,11 +217,30 @@ class NetworkService extends Service {
           case "timeSync": this.doTimeSync(); break;
           case "updateFiles": fileService.updateFilesInfoAndDownload(); break;
           case "updateEverything": storageService.updateEverything(); break;
-          case "startWalk": 
-            if(msgObj.payload.tag && msgObj.payload.startTime) {
-              gameService.startWalkByTag(msgObj.payload.tag, msgObj.payload.startTime);
+          case "startTutorial": 
+            if(msgObj.payload.walkId) {
+              gameService.startTutorialForWalkById(msgObj.payload.walkId);
             }
             break;
+          case "startWalk": 
+            if(msgObj.payload.walkId) {
+              if(msgObj.payload.startTime) {
+                gameService.startWalkById(msgObj.payload.walkId, msgObj.payload.startTime);
+              } else {
+                gameService.startWalkById(msgObj.payload.walkId, soundService.getSyncTime() + (msgObj.payload.startTimeOffset * 1000));
+              }
+            }
+            break;
+          case "jumpToChallenge": 
+            if(msgObj.payload) {
+              let challenge = storageService.findChallenge(msgObj.payload.challengeId);
+              if(challenge) {
+                gameService.jumpToChallenge(challenge);
+              }
+              else {
+                this.showNotification("challenge not found");
+              }
+            }
         }
       }
     }

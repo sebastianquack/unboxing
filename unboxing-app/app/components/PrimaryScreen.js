@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, Image, ScrollView } from 'react-native';
+import Video from 'react-native-video';
+
 import LinearGradient from 'react-native-linear-gradient';
 import PropTypes from 'prop-types';
 
@@ -9,6 +11,8 @@ const horizontalPadding = Math.floor(dimensions.screenWidth * 0.04)
 const verticalPadding = Math.floor(dimensions.screenWidth * 0.03)
 
 const imageWidth = dimensions.screenWidth * 0.25
+
+const mozartFlow = require('../../assets/video/Mozartfeld.mp4');
 
 const backgroundGradients = {
   "fire": {
@@ -74,11 +78,19 @@ class PrimaryScreen extends React.Component {
       height: "100%",
       width: "100%",
       zIndex,
-      backgroundColor: 'rgba(0,220,0,0.5)',
-      justifyContent: "center",alignItems: "center"
+      justifyContent: "center", alignItems: "center"
     }}>
-      <Text style={{textAlign: "center"}}>FLOW</Text>
-    </View>        
+      <Video 
+            source={mozartFlow} 
+            resizeMode="cover"
+            style={{
+              height: "100%",
+              width: "100%"
+            }}
+            /*onBuffer={(error)=>{console.warn(JSON.stringify(error))}}*/
+            onError={()=>{console.warn(JSON.stringify(this.videoError))}}
+          />
+      </View>        
   }
   
   renderMainContent(zIndex) {

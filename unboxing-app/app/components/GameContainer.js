@@ -66,8 +66,7 @@ class GameContainer extends React.Component {
         mainContent = <ChallengeView/>        
       }
 
-      if(!gameService.nthPlaceInTutorial(0) 
-        && this.props.gameService.challengeStatus != "navigate") {
+      if(this.props.gameService.challengeStatus != "navigate") {
         statusBar = <StatusBar 
           title={this.props.gameService.statusBarTitle} 
           description={this.props.gameService.statusBarSubtitle} 
@@ -84,9 +83,10 @@ class GameContainer extends React.Component {
         />  
       }
 
-      if(gameService.nthPlaceInTutorial(0) 
-        && (this.props.gameService.challengeStatus == "prepare" || this.props.gameService.challengeStatus == "play")
-        ) {
+      if(this.props.gameService.tutorialStatus == "tutorial-complete" && 
+        (this.props.gameService.challengeStatus == "prepare" 
+        || this.props.gameService.challengeStatus == "play"))
+        {
        statusBar = <StatusBar 
           title={storageService.t("practice-sequence-title")} 
           description={storageService.t("practice-sequence-subtitle")} 
@@ -99,8 +99,7 @@ class GameContainer extends React.Component {
       
       if(this.props.gameService.gameMode == "manual" || this.props.gameService.gameMode == "walk") {
         // home screen
-        if(this.props.gameService.walkStatus != "ended" 
-          && this.props.gameService.walkStatus != "tutorial-intro"
+        if(this.props.gameService.walkStatus != "ended"         
           && this.props.gameService.challengeStatus != "tutorial") {
           mainContent = <Welcome
             supertitle={storageService.t("main-title-super")}
@@ -151,14 +150,12 @@ class GameContainer extends React.Component {
     }
 
     // special case: tutorial
-    if(
-      this.props.gameService.walkStatus == "tutorial-intro" || 
-      this.props.gameService.challengeStatus == "tutorial") {
-      secondaryScreen = this.props.gameService.activePath.startInstrument ? <SecondaryScreen type="instrument" instrument={this.props.gameService.activePath.startInstrument} /> : null;
+    if(this.props.gameService.challengeStatus == "tutorial") {
+      secondaryScreen = this.props.gameService.walkInstrument ? <SecondaryScreen type="instrument" instrument={this.props.gameService.walkInstrument} /> : null;
     }  
 
-    if(this.props.gameService.walkStatus == "tutorial-intro") {
-      buttonRight = <Button text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>;
+    if(this.props.gameService.tutorialStatus == "tutorial-intro") {
+      buttonRight = <Button type="play" text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>;
     }
     
     // configure modal
@@ -171,13 +168,6 @@ class GameContainer extends React.Component {
     const instrumentName = this.props.sequenceService.currentTrack ? this.props.sequenceService.currentTrack.name : null
     
     switch(this.props.gameService.challengeStatus) {
-      case "navigate":
-        if(this.props.gameService.allowCheckInButton) {
-          buttonRight = <Button type="check-in" text={storageService.t("check-in")} onPress={()=>{gameService.handleRightButton()}}/>;   
-        } 
-        secondaryScreen = this.props.gameService.activePlace ? <SecondaryScreen type="navigation" target={this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand} /> : null;
-        break;
-
       case "tutorial":
         if(this.props.gameService.tutorialStatus == "step-2" || this.props.gameService.tutorialStatus == "step-1") {
           overlayContent = <Instructor mode={"einsatz"}/>
@@ -186,13 +176,19 @@ class GameContainer extends React.Component {
           mainContent = <SensorModulator mode={"volume tilt"} item={{path: gameService.getPracticeSoundFile(2)}}/>     
           overlayContent = <Instructor mode={"volume"}/>
         }
-        buttonRight = this.props.gameService.tutorialStatus == "complete" ?
-          <Button text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/> : null;  
-           
+        if(this.props.gameService.tutorialStatus == "ready-for-practice") {
+          buttonRight = <Button type="play" text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>
+        }
         break;
-      
+      case "navigate":
+        if(this.props.gameService.allowCheckInButton) {
+          buttonRight = <Button type="check-in" text={storageService.t("check-in")} onPress={()=>{gameService.handleRightButton()}}/>;   
+        } 
+        secondaryScreen = this.props.gameService.activePlace ? <SecondaryScreen type="navigation" target={this.props.gameService.activePlace.tag + this.props.gameService.activePlace.shorthand} /> : null;
+        break;
+
       case "prepare":
-        if(this.props.gameService.activePlace && !gameService.nthPlaceInTutorial(0)) {
+        if(this.props.gameService.activePlace) {
           buttonLeft = <Button type="leave" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;  
         }
 
@@ -204,8 +200,9 @@ class GameContainer extends React.Component {
         
         secondaryScreen = <TouchableOpacity onPress={()=>{gameService.handleMidButton()}}>
           <SecondaryScreen type="instrument" instrument={instrumentName} /></TouchableOpacity>;
-        if(!gameService.nthPlaceInTutorial(0)) {
-          buttonMid = <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;  
+        
+        if(this.props.gameService.tutorialStatus != "practice-sequence") {
+          buttonMid = <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;    
         }
         break;
  
@@ -213,7 +210,7 @@ class GameContainer extends React.Component {
         buttonLeft = <Button type="leave" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;
         secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
         // only show middle button during loop challenge
-        if(!gameService.nthPlaceInTutorial(0) && this.props.sequenceService.isLooping) {
+        if(this.props.sequenceService.isLooping) {
           buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
         }
         if(this.props.sequenceService.instructorState) {
@@ -229,9 +226,11 @@ class GameContainer extends React.Component {
               backgroundColor={(
                 this.props.peakService.isUp && 
                 (this.props.gameService.tutorialStatus == "tutorial-installation-2" 
+                  || this.props.gameService.tutorialStatus == "step-1" 
+                  || this.props.gameService.tutorialStatus == "step-2" 
                   || (this.props.gameService.challengeStatus == "play" && this.props.sequenceService.currentTrack))) 
                   ? "passive" : "active" }
-              // backgroundFlow
+              backgroundFlow = { this.props.gameService.challengeStatus == "off" || this.props.gameService.challengeStatus == "tutorial" }
               backgroundContent = { backgroundContent }
               mainContent = { mainContent }
               overlayContent = { overlayContent }

@@ -7,8 +7,11 @@ import LinearGradient from 'react-native-linear-gradient';
 import UIText from './UIText'
 import {globalStyles, colors} from '../../config/globalStyles';
 
-import {soundService} from '../services';
+import {soundService, sequenceService, storageService} from '../services';
 import {withSequenceService} from './ServiceConnector';
+
+import loadInstruments from '../../config/instruments'
+const instruments = loadInstruments();
 
 const actionImg = require('../../assets/img/triangle.png')
 
@@ -26,7 +29,7 @@ class SequenceVisualizer extends React.PureComponent {
       pulsate: new Animated.Value(1),
     };
 
-    const duration = props.sequence.custom_duration || props.sequence.duration
+    const duration = props.sequence ? props.sequence.custom_duration || props.sequence.duration : 0
     this.speed = props.magnification && doAnim ? speedFactor * props.sequence.bpm * duration : 1
 
     this.manageAnimation = this.manageAnimation.bind(this)
@@ -172,7 +175,7 @@ class SequenceVisualizer extends React.PureComponent {
         }} key={track.name}>
         <View>
           <UIText size="s" caps em={active} color={"rgba(90,85,80,0.8)"}>
-            {track.name}
+            {instruments[track.name]["name_" + storageService.state.language]}
           </UIText>
         </View>
       </View>
@@ -220,7 +223,7 @@ class SequenceVisualizer extends React.PureComponent {
     )
   }
 
-
+/*
   renderActionItem = (item) => {
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
     let leftPercentage = 100 * item.itemStartTime / sequenceDuration
@@ -252,9 +255,9 @@ class SequenceVisualizer extends React.PureComponent {
       </Animated.View>
     )
   }
+*/
 
 
-/*
 renderActionItem = (item) => {
   const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
   let leftPercentage = 100 * item.startTime / sequenceDuration
@@ -270,7 +273,7 @@ renderActionItem = (item) => {
         ...styles.bodyTrackItem__actionItem,
         width: widthPercentage+"%", 
         left: leftPercentage+"%",
-        opacity: this.state.pulsate,
+        opacity: 0.5//this.state.pulsate,
       }}>
       {<Text style={styles.bodyTrackItemText}>
         { item.type }
@@ -278,7 +281,7 @@ renderActionItem = (item) => {
     </Animated.View>
   )
 }
-*/
+
   renderIndicator = () => {    
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
     const playing = this.props.controlStatus === "playing"
@@ -301,7 +304,7 @@ renderActionItem = (item) => {
   render() {
     let tracks = null;
     if(this.props.sequence) {
-      tracks = this.props.sequence.tracks
+      tracks = sequenceService.reduceTracksForVisualizer(this.props.sequence.tracks);
     }
 
     if(tracks) {
@@ -364,6 +367,7 @@ renderActionItem = (item) => {
         </View>
       );
     } else {
+      //console.warn("no tracks");
       return null;
     }
   }

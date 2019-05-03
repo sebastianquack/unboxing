@@ -67,31 +67,31 @@ class GameModeAdmin extends React.Component {
         >
               {installationItems}
         </Picker>
-        <Text style={{marginTop: 20}}>start a walk:</Text>
+        <Text style={{marginTop: 20}}>start tutorial for walk:</Text>
         <Picker
               mode="dropdown"
               onValueChange={(itemValue, itemIndex) => {if(itemValue) {
-                gameService.startWalkByTag(itemValue.tag, Date.now());
+                gameService.startTutorialForWalk(itemValue);
                 this.props.adminClose();
               }}}
         >
               {walkItems}
         </Picker>
-        <TouchableOpacity 
-          style={globalStyles.button}
-          onPress={()=>{
-            if(this.props.storageService.collections.places.length >= 2) {
-              gameService.setupTutorialWalk()
-              this.props.adminClose();  
-            }
-          }}><Text>Test Tutorial</Text>
-        </TouchableOpacity>
+        <Text style={{marginTop: 20}}>start walk:</Text>
+        <Picker
+              mode="dropdown"
+              onValueChange={(itemValue, itemIndex) => {if(itemValue) {
+                gameService.startWalkById(itemValue._id, soundService.getSyncTime());
+                this.props.adminClose();
+              }}}
+        >
+              {walkItems}
+        </Picker>        
         <Text style={{marginTop: 20}}>navigate to a place:</Text>
         <Picker
               mode="dropdown"
               onValueChange={(itemValue, itemIndex) => {if(itemValue) {
                 gameService.setupMinimalWalk(itemValue) 
-                gameService.initInfoStream();
                 this.props.adminClose();
               }}}
         >
@@ -101,23 +101,13 @@ class GameModeAdmin extends React.Component {
         <Picker
               mode="dropdown"
               onValueChange={(itemValue, itemIndex) => {if(itemValue) {
-                gameService.setGameMode("manual");                
-                gameService.leaveChallenge();
-                gameService.setActiveChallenge(itemValue) 
-                gameService.initInfoStream();
+                gameService.jumpToChallenge(itemValue);
                 this.props.adminClose();
               }}}
         >
               {challengeItems}
         </Picker>
-
-        {/*<TouchableOpacity 
-          style={globalStyles.button}
-          onPress={()=>{
-            gameService.resumeWalkFromFile();
-          }}><Text>Resume Walk from file</Text>
-        </TouchableOpacity>*/}
-
+        
         <TouchableOpacity 
           style={globalStyles.button}
           onPress={()=>{
