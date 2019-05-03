@@ -19,7 +19,7 @@ const baseState = {
       showInstrumentSelector: false, // show the interface selector in the interface
       statusBarTitle: null,
       statusBarSubtitle: null,
-      debugMode: false,          // show debugging info in interface
+      //debugMode: false,          // show debugging info in interface
       infoStream: [],
       numChallengeParticipants: 1, // number of people in the challenge
       numChallengeParticipantsWithInstrument: 0,
