@@ -26,12 +26,12 @@ class InfoStreamElement extends React.Component {
   }
 
   render() {
-    if(!this.props.title || !this.props.content) return null;
+    if(!this.props.content) return null;
     
     let style = {
       paddingLeft: 10,
       marginLeft: 10, 
-      marginTop: 20,
+      marginTop: this.props.title ? 20 : 0,
     }
     if(this.props.highlight) style = { ...style, ...highlightStyle }   
 
