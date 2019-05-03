@@ -32,7 +32,7 @@ class StorageService extends Service {
 
 	// called from ServerConnector component
 	updateEverything = async () => {
-		const result = await networkService.apiRequest('getEverything')
+		let result = await networkService.apiRequest('getEverything')
 		if (result) {
 			this.setReactive(result)
 			this.writeToFile();
