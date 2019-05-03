@@ -206,13 +206,17 @@ class SequenceVisualizer extends React.PureComponent {
 
     const backgroundColor = ( !this.props.track || this.props.track.name == track.name ? track.color : styles.bodyTrackItem.backgroundColor )
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
-    const activeStyle = active ? styles.bodyTrackItem__active : {}
     const hasActionIndicator = active && item.autoplay == "off"
+    const isApproved = this.props.item && this.props.item._id == item._id
+
+    const activeStyle = active ? styles.bodyTrackItem__active : {}
+    const approvedStyle = isApproved ? {borderColor:'green'} : {}
 
     return (
       <View key={item._id} style={{
           ...styles.bodyTrackItem, 
           ...activeStyle,
+          ...approvedStyle,
           // backgroundColor,
           width: widthPercentage+"%", 
           left: leftPercentage+"%",
