@@ -4,6 +4,7 @@ import Service from './Service';
 import Sound from 'react-native-sound';
 
 import { storageService } from './storageService';
+import { gameService } from './gameService';
 
 // Enable playback in silence mode
 Sound.setCategory('Playback');
@@ -34,8 +35,9 @@ class SoundSevice extends Service {
 		filename: string 
 		path: string 	// full system path
 		status: string 	// "pending" -> "loading" -> "ready" -> "starting" -> playing"
-		soundObj: obj
     */
+    // save the players separately at same index
+    this.soundPlayers = [];
 
     this.volume = 0.5;
     this.speed = 1;
@@ -112,12 +114,18 @@ class SoundSevice extends Service {
     //console.warn(this.getSyncTime() + " findSoundIndices: ", filename, status);
     let indices = []
 		for(let i = 0; i < this.sounds.length; i++) {
-      if(!status) {
+      if(filename && !status) {
         //console.warn(this.getSyncTime() + ": ", this.sounds[i].filename, filename);
         if(this.sounds[i].filename == filename) {
           indices.push(i);
         }
-      } else {
+      }
+      if(!filename && status) {
+        if(this.sounds[i].status == status) {
+          indices.push(i);
+        }
+      }
+      if(filename && status) {
         if(this.sounds[i].filename == filename && this.sounds[i].status == status) {
           indices.push(i);
         }
@@ -130,6 +138,12 @@ class SoundSevice extends Service {
 	// preload an array of soundfiles, callback is called when all are ready
 	preloadSoundfiles (filenames, callback, allowDuplicates=false) {
 		//console.warn(this.getSyncTime() + ": preloadSoundfiles", filenames);
+    if(!filenames.length) {
+      //console.warn(this.getSyncTime() + ": nothing to do, cancelling");
+      if(callback)
+        callback();
+      return;
+    }
 		filenames.forEach((filename)=>{
 			// only load sounds we don't know about yet 
 			// unless allowDuplicates specified
@@ -141,9 +155,10 @@ class SoundSevice extends Service {
       if(allowDuplicates || (n == 0) || (n > 0 && n == n_released)) { 
 				this.sounds.push({
 					filename: filename,
-					status: "pending",
-					soundObj: null
+					status: "pending"
 				});
+        this.soundPlayers.push(null); // prepare array for sound player
+
         //console.warn(this.getSyncTime() + " adding new pending sound:" + filename);
         this.setReactive({soundCounter: this.state.soundCounter + 1});	
 			} 
@@ -160,7 +175,8 @@ class SoundSevice extends Service {
 	// if successful or sound already loaded, proceeds to next sound
 	// when last sound loaded, execute callback
 	loadNextSoundfile = (index, callback) => {
-		//console.warn(this.getSyncTime() + ": checking sound at index " + index);
+		//console.warn(this.getSyncTime() + ": checking sound at index " + index + " " + JSON.stringify(this.sounds));
+
 		if(index >= this.sounds.length) {
 			if(typeof callback === 'function') {
         //console.warn(this.getSyncTime() + ": no more sounds to load - checking if all are loaded...");
@@ -171,7 +187,7 @@ class SoundSevice extends Service {
           }
         }
         if(allLoaded) {
-          //console.warn(this.getSyncTime() + ": all loaded!");
+          //console.warn(this.getSyncTime() + ": all loaded! going to callback");
           callback(index - 1);    
         } else {
           //console.warn(this.getSyncTime(), ": nope", this.sounds);
@@ -180,7 +196,7 @@ class SoundSevice extends Service {
 			return;
 		}
 		if(this.sounds[index].status != "pending") {
-			console.log("sound status past pending, skip loading");
+			//console.warn(this.getSyncTime() + ": sound status past pending, skip loading");
       this.loadNextSoundfile(index + 1, callback);  
       return;	
 		}
@@ -193,7 +209,7 @@ class SoundSevice extends Service {
 		  filename = filename.substr(1);
 		}
 		filename = pathPrefix + '/' + filename;
-		console.log("loading sound from file " + filename);
+		//console.warn(this.getSyncTime() + ": loading sound from file " + filename);
 		this.sounds[index].status = "loading";
 
     let loadingTimeout = setTimeout(()=>{
@@ -201,19 +217,23 @@ class SoundSevice extends Service {
       this.releaseSound(index);   
     }, 2000);
 		try {
-      var newSound = new Sound(filename, Sound.MAIN_BUNDLE, (error) => {
-        if (error) {
-          this.showNotification('aborting, failed to load sound ' + filename, error);
-  		    return;
-  		  }
-  		  // loaded successfully
-  		  // console.warn(this.getSyncTime() + ': succesfully loaded ' + this.sounds[index].filename + ' duration in seconds: ' + newSound.getDuration() + 'number of channels: ' + newSound.getNumberOfChannels());
-  		  clearTimeout(loadingTimeout);
-        this.sounds[index].status = "ready";
-  		  this.sounds[index].soundObj = newSound;
-  		  this.sounds[index].soundObj.setVolume(this.getReactive("volume"));	
-  		  this.loadNextSoundfile(index + 1, callback);
-  		});
+      //if(this.findSoundIndices(null, "playing").length == 0) {
+        let newSound = new Sound(filename, Sound.MAIN_BUNDLE, (error) => {
+          if (error) {
+            this.showNotification('aborting, failed to load sound ' + filename, error);
+    		    return;
+    		  }
+    		  // loaded successfully
+    		  //console.warn(this.getSyncTime() + ': succesfully loaded index ' + index + " " + this.sounds[index].filename + ' duration in seconds: ' + newSound.getDuration() + 'number of channels: ' + newSound.getNumberOfChannels());
+    		  clearTimeout(loadingTimeout);
+          this.sounds[index].status = "ready";
+    		  this.soundPlayers[index] = newSound
+    		  this.soundPlayers[index].setVolume(this.getReactive("volume"));	
+    		  this.loadNextSoundfile(index + 1, callback);
+    		});
+      /*} else {
+        console.warn("aborting loading, sound is currently playing");
+      }*/
     } catch(e) {
       console.warn(e);
     }
@@ -221,15 +241,14 @@ class SoundSevice extends Service {
 
 	// release memory for all currently loaded sound files
 	unloadSoundfiles() {
-		this.sounds.forEach((sound)=>{
-			if(sound.soundObj) {
-				sound.soundObj.stop();
-				sound.soundObj.release();
-			}
-			sound.soundObj = null;
-			sound = null;
-		});
-  		this.sounds = [];
+		for(let i = 0; i < this.soundPlayers.length; i++) {
+      if(this.soundPlayers[i]) {
+        this.soundPlayers[i].stop();
+        this.soundPlayers[i].release();
+      }
+    }
+  	this.sounds = [];
+    this.soundPlayers = [];
 	}
 
 	// public - check what a sound's status is - todo: update to findSoundIndices
@@ -245,45 +264,50 @@ class SoundSevice extends Service {
 	// schedule playback of preloaded soundfile
 	scheduleSound = (soundfile, targetTime, callbacks={}, startSilent=false, unload=false) => {
 
+    // experiment - reuse playing players
+    let indices = this.findSoundIndices(soundfile, "playing");
+    if(indices.length) {
+      console.warn("reusing player " + indices[0]);
+    }
+    
 		// find sound index of a ready version for this sound
-		let indices = this.findSoundIndices(soundfile, "ready");
-    //console.warn(indices);
-		
+    if(indices.length == 0)
+		  indices = this.findSoundIndices(soundfile, "ready");
+    
 		if(indices.length == 0) {
-			//console.warn("no ready sound found - attempting to load a new version");
-			this.preloadSoundfile(soundfile, ()=>{
-					console.log("finished loading duplicate sound, setting index to last sound loaded")
-					this.scheduleSound(soundfile, targetTime, callbacks, startSilent);
-				}, true); // allow duplicates			
-
+		  //console.warn(this.getSyncTime() + ": no ready sound found for " + soundfile + " - attempting to load");
+      this.preloadSoundfile(soundfile, ()=>{
+        //console.warn("finished loading sound, going to scheduling...")
+        this.scheduleSound(soundfile, targetTime, callbacks, startSilent);
+      }, false); // don't allow duplicates     
 			return;
 		}
 		
     //console.warn(this.getSyncTime() + ": indices found " + indices);
-    //console.warn(this.getSyncTime() + ": scheduling sound " + soundfile + " for " + targetTime);  
+    //console.warn(this.getSyncTime() + ": scheduling sound " + indices[0] + " " + soundfile + " for " + targetTime);  
     const timeToRunStartingLoop = targetTime - this.getSyncTime();
 
     this.schedulingIntervals.push(setTimeout(()=>{
 			this.runStartingLoop(indices[0], targetTime, callbacks, startSilent, unload);
-    }, timeToRunStartingLoop - 34)); // set timeout to a bit less to allow for loop
+    }, timeToRunStartingLoop - 50)); // set timeout to a bit less to allow for loop
   }
 
   // run loop for preloaded, scheduled sound at index to playback precisely at target time
   runStartingLoop = (index, targetTime, callbacks, startSilent=false) => {
 		const loopStartTime = this.getSyncTime(); // get the synchronized time
 		this.sounds[index].status = "starting";
-		let targetSoundStartTime = targetTime + 34; // aim for a bit later to allow for loop to be precise
+		let targetSoundStartTime = targetTime + 50; // aim for a bit later to allow for loop to be precise
 		let counter = 0;
 		let now = null;
 		let loopCutoff = 5000;
 		do {
 			now = this.getSyncTime();
 			if(counter == 0) {
-  				console.log("went into loop at " + now);
+  				//console.warn("went into loop at " + now);
 			}
 			counter++;
 		} while(now < targetSoundStartTime && (now - loopStartTime < loopCutoff));
-		console.log("left loop after " + counter + " cycles at " + now);
+		//console.warn("left loop after " + counter + " cycles at " + now);
 		
 		if(now - loopStartTime >= loopCutoff) {
 			console.log("aborting playback - loop cutoff exceeded");
@@ -301,47 +325,85 @@ class SoundSevice extends Service {
 			console.log("sound obj not ready to play - trying anyway...")
 		}
 
-		//console.warn(this.getSyncTime() + ": starting to play " + this.sounds[index].filename);
+    console.warn(this.getSyncTime() + ": starting to play " + index + " " + this.sounds[index].filename + " " + startSilent);
 		this.sounds[index].status = "playing";
     
-		this.sounds[index].soundObj.setVolume(startSilent ? 0.0 : 0.3).play((success) => {
-		  	
-		  	if (success) {
-		    	console.log('successfully finished playing at', this.getSyncTime());
-		    	
+		this.soundPlayers[index].setCurrentTime(0).setVolume(startSilent ? 0.0 : 0.3).play((success) => {
+
+        if(gameService.isChallengeLooping()) {
+          console.warn("reset sound index " + index);
+          this.sounds[index].status = "ready";
+          console.warn(JSON.stringify(this.sounds));
+        }
+
+        if (success) {
+		    	console.warn('successfully finished playing ' + index + ' at ', this.getSyncTime());
+          
           // calling callback
           if(typeof callbacks.onPlayEnd == "function") {
             callbacks.onPlayEnd();
           }
 
         } else {
-		    	console.warn('playback error');		    	
+		    	console.warn(this.getSyncTime() + ': playback error ' + index);		    	
           let errorLog = this.state.errorLog;
           errorLog.push({time: this.getSyncTime(), error: "playback error"});
 		  	}
 
-        if(this.sounds[index].filename != clickFilename) {
+        if(this.sounds[index].filename != clickFilename)
           this.releaseSound(index);
-        }
-        
+
 		});
-		this.sounds[index].soundObj.getCurrentTime((seconds) => {
+		this.soundPlayers[index].getCurrentTime((seconds) => {
 			console.log('getCurrentTime ' + seconds)
-			this.sounds[index].soundObj.setSpeed(1);
+			this.soundPlayers[index].setSpeed(1);
 		});
 
     if(typeof callbacks.onPlayStart == "function") {
     	console.log("onPlayStart callback");
-      callbacks.onPlayStart();
+      callbacks.onPlayStart(index);
     }
     		
 	}
 
+	// public - stops playback of all sounds
+	stopAllSounds() {
+		console.log("stopping all sounds");
+    for(let i = 0; i < this.sounds.length; i++) {
+			this.stopSound(i);
+    }
+		this.schedulingIntervals.forEach((interval)=> {
+			clearInterval(interval);
+		});
+		this.schedulingIntervals = [];
+	}
+
+	// public - stops playback of a single sound and removes callback
+	stopSound(index) {
+		//console.warn("stopping sound at index " + index);
+    if(!this.sounds[index]) {
+      console.warn("sound at " + index + " not found, aborting");
+      return;
+    }
+    if(this.sounds[index].status == "playing") {
+			if(this.soundPlayers[index]) {
+        this.soundPlayers[index].stop(); // this weirdly tries to playback sound again
+        this.soundPlayers[index].setVolume(0.0); // fix to prevent restart
+        this.sounds[index].status = "ready";
+			}
+			this.sounds[index].onPlayEnd = undefined;
+			this.sounds[index].onPlayStart = undefined;
+			this.releaseSound(index);
+		}
+	}
+
   releaseSound = (index) => {
-    //console.warn(this.getSyncTime() + ": releasing soundObj " + index);
+    if(gameService.isChallengeLooping()) return;
+
+    console.warn(this.getSyncTime() + ": releasing soundObj " + index);
     this.sounds[index].status = "released";
-    if(this.sounds[index].soundObj) {
-      this.sounds[index].soundObj.release();      
+    if(this.soundPlayers[index]) {
+      this.soundPlayers[index].release();      
     }
     let soundCounter = 0;
     for(let i = 0; i < this.sounds.length; i++) {
@@ -352,41 +414,12 @@ class SoundSevice extends Service {
     this.setReactive({soundCounter: soundCounter});
   }
 
-	// public - stops playback of all sounds
-	stopAllSounds() {
-		console.log("stopping all sounds");
-		this.sounds.forEach((sound)=>{
-			this.stopSound(sound.filename);
-		});
-		this.schedulingIntervals.forEach((interval)=> {
-			clearInterval(interval);
-		});
-		this.schedulingIntervals = [];
-	}
-
-	// public - stops playback of a single sound and removes callback
-	stopSound(filename) {
-		console.log("stopping sound", filename);
-		let indices = this.findSoundIndices(filename);
-		indices.forEach(index=>{
-			if(this.sounds[index].status == "playing") {
-				if(this.sounds[index].soundObj) {
-          this.sounds[index].soundObj.stop(); // this weirdly tries to playback sound again
-          this.sounds[index].soundObj.setVolume(0.0); // fix to prevent restart
-				}
-				this.sounds[index].onPlayEnd = undefined;
-				this.sounds[index].onPlayStart = undefined;
-				this.releaseSound(index);
-			}
-		});
-	}
-
 	setVolumeFor(filename, v, onlyWhilePlaying=false) {
 		let indices = this.findSoundIndices(filename);
 		indices.forEach((index)=>{
-			if( (this.sounds[index].soundObj && !onlyWhilePlaying)
-          || (this.sounds[index].soundObj && onlyWhilePlaying && this.sounds[index].status == "playing")) {
-				this.sounds[index].soundObj.setVolume(v);
+			if( (this.soundPlayers[index] && !onlyWhilePlaying)
+          || (this.soundPlayers[index] && onlyWhilePlaying && this.sounds[index].status == "playing")) {
+				this.soundPlayers[index].setVolume(v);
 			}
 		});
 	}
@@ -394,9 +427,9 @@ class SoundSevice extends Service {
 	setSpeedFor(filename, s) {
 		let indices = this.findSoundIndices(filename);
 		indices.forEach((index)=>{
-			if(this.sounds[index].soundObj) {
-				if(this.sounds[index].status == "playing" && sound.soundObj.isPlaying()) {
-					this.sounds[index].soundObj.setSpeed(s);
+			if(this.soundPlayers[index]) {
+				if(this.sounds[index].status == "playing" && this.soundPlayers[index].isPlaying()) {
+					this.soundPlayers[index].setSpeed(s);
 				}
 			}
 		});
@@ -405,11 +438,11 @@ class SoundSevice extends Service {
 	setVolume(v) {
 		if(typeof(v) == "number") {
 		  if(v != this.getReactive("volume")) {
-		  	this.sounds.forEach((sound)=>{
-					if(sound.soundObj) {
-		  			sound.soundObj.setVolume(v);	
-		  		}
-				});
+        for(let i = 0; i < this.sounds.length; i++) {
+          if(this.soundPlayers[i]) {
+            this.soundPlayers[i].setVolume(v);  
+          }
+        }
 		    //console.log("setting reactive volume to " + v);          
 		    this.setReactive({volume: v});
 		  }
@@ -419,11 +452,11 @@ class SoundSevice extends Service {
 	setSpeed(s) {
 		if(typeof(s) == "number") {
 		  if(s != this.getReactive("speed")) {
-		  	this.sounds.forEach((sound)=>{
-			  	if(sound.status == "playing") {
-			  		sound.soundObj.setSpeed(s);    	
-			  	}
-			  });
+		  	for(let i = 0; i < this.sounds.length; i++) {
+          if(this.sounds[i].status == "playing") {
+            this.soundPlayers[i].setSpeed(s);      
+          }
+        }
 		    this.setReactive({speed: s});
 		  }
 		}

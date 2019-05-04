@@ -32,7 +32,7 @@ class GameService extends Service {
 
 	constructor() {
 		// initialize with reactive vars
-		super("gameService", baseState);
+		super("gameService", {...baseState, debugMode: false, autoplayMode: false});
     
 		// not reactive vars
 
@@ -59,8 +59,12 @@ class GameService extends Service {
       debugMode: !this.state.debugMode
     });
   }
-  
 
+  toggleAutoplayMode = ()=> {
+    this.setReactive({
+      autoplayMode: !this.state.autoplayMode
+    });
+  }
 
   /** game mode management **/
 
@@ -195,7 +199,8 @@ class GameService extends Service {
       if (!stateObj) return
 
       this.setReactive({
-        debugMode: stateObj.debugMode
+        debugMode: stateObj.debugMode,
+        autoplayMode: stateObj.autoplayMode
       });
 
       if(stateObj.activeInstallation && stateObj.gameMode == "installation") {
@@ -642,7 +647,7 @@ class GameService extends Service {
   handleMissedGuitarHeroCue() {
     this.showInfoStreamAlert(storageService.t("too-late"), "red");
     //this.showNotification("guitar hero too late!");
-    console.log("guitar hero missed cue");
+    console.warn("guitar hero missed cue");
     sequenceService.stopCurrentSound();
   }
 
@@ -667,7 +672,7 @@ class GameService extends Service {
         
         let difference = now - officialTime;
 				
-        console.log("handlePlayNextItem with difference: " + difference);
+        console.warn("handlePlayNextItem with difference: " + difference);
         console.log(sequenceService.state.currentItem);
 
         if(this.state.activeChallenge.item_manual_mode == "guitar hero") {

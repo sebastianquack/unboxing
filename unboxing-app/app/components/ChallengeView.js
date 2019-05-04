@@ -38,13 +38,13 @@ class ChallengeView extends React.PureComponent {
 
         {challengeStatus == "prepare" &&       
           <View style={{opacity:0.25}}>
-            <SequenceVisualizer />
+            {/*<SequenceVisualizer />*/}
           </View>
         }
         
         {challengeStatus == "play" &&       
           <View>
-            <SequenceVisualizer magnification />
+            {<SequenceVisualizer magnification />}
             <SensorModulator mode={"volume tilt"} item={this.props.sequenceService.currentItem}/>
           </View>
         }
