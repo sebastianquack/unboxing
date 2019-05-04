@@ -65,7 +65,6 @@ class SoundSevice extends Service {
     console.warn(testSounds);
 
     this.preloadSoundfiles(testSounds, ()=>{
-      console.warn(this.getSyncTime() + ": loaded callback");
       for(let i = 0; i < testSounds.length; i++) {
         this.scheduleSound(testSounds[i], this.getSyncTime(), {
           onPlayEnd: ()=>{
@@ -77,7 +76,6 @@ class SoundSevice extends Service {
 
       setTimeout(()=>{
         this.preloadSoundfiles(testSounds, ()=>{
-          console.warn(this.getSyncTime() + ": loaded callback 2");
           for(let i = 0; i < testSounds.length; i++) {
             this.scheduleSound(testSounds[i], this.getSyncTime(), {
               onPlayEnd: ()=>{

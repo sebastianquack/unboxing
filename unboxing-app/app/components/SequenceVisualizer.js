@@ -207,16 +207,25 @@ class SequenceVisualizer extends React.PureComponent {
     const backgroundColor = ( !this.props.track || this.props.track.name == track.name ? track.color : styles.bodyTrackItem.backgroundColor )
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
     const hasActionIndicator = active && item.autoplay == "off"
-    const isApproved = this.props.item && this.props.item._id == item._id
+    const isCurrentItem = this.props.item && this.props.item._id == item._id
+    const isMissed = this.props.missedItem && this.props.missedItem._id == item._id
+    const isNext = this.props.nextItem && this.props.nextItem._id == item._id 
+    const isNextAndLoaded = isNext && this.props.nextItem.loaded
 
     const activeStyle = active ? styles.bodyTrackItem__active : {}
-    const approvedStyle = isApproved ? {borderColor:'green'} : {}
+    const missedStyle = isMissed ? {borderColor:'red'} : {}
+
+    const currentStyle = this.props.gameService.debugMode && isCurrentItem ? {borderColor:'green'} : {}
+    const nextStyle = this.props.gameService.debugMode && isNext ? {borderColor: isNextAndLoaded ? 'yellow' : 'orange'} : {}
+
 
     return (
       <View key={item._id} style={{
           ...styles.bodyTrackItem, 
           ...activeStyle,
-          ...approvedStyle,
+          ...currentStyle,
+          ...nextStyle,
+          ...missedStyle,
           // backgroundColor,
           width: widthPercentage+"%", 
           left: leftPercentage+"%",
@@ -415,6 +424,8 @@ export default compose(
       currentTime:  props.sequenceService.sequenceTimeVisualizer,
 
       // not renamed
+      nextItem:       props.sequenceService.nextItem,
+      missedItem:     props.sequenceService.missedItem,
       controlStatus:  props.sequenceService.controlStatus,
       nextUserAction: props.sequenceService.nextUserAction,
       loopCounter :   props.sequenceService.loopCounter,
