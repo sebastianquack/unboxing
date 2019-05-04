@@ -206,10 +206,19 @@ class GameContainer extends React.Component {
         break;
  
       case "play":
-        buttonLeft = <Button type="leave" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;
-        secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;
-        // only show middle button during loop challenge
+        if(this.props.gameService.debugMode || this.props.gameService.gameMode == "installation") {
+          buttonLeft = <Button type="leave" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;  
+        }
         if(this.props.sequenceService.isLooping) {
+          secondaryScreen = 
+          <TouchableOpacity onPress={()=>{gameService.handleMidButton()}}>
+            <SecondaryScreen type="instrument" instrument={instrumentName} />
+          </TouchableOpacity>;
+        } else {
+          secondaryScreen = <SecondaryScreen type="instrument" instrument={instrumentName} />;  
+        }
+        // only show middle button during loop challenge
+        if(gameService.isChallengeLooping()) {
           buttonMid= <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;
         }
         if(this.props.sequenceService.instructorState) {
@@ -231,7 +240,11 @@ class GameContainer extends React.Component {
                   || this.props.gameService.tutorialStatus == "step-2" 
                   || (this.props.gameService.challengeStatus == "play" && this.props.sequenceService.currentTrack))) 
                   ? "passive" : "active" }
-              backgroundFlow = { this.props.gameService.challengeStatus == "off" || this.props.gameService.challengeStatus == "tutorial" }
+              backgroundFlow = { 
+                this.props.gameService.challengeStatus == "off" 
+                || this.props.gameService.challengeStatus == "prepare" 
+                || this.props.gameService.challengeStatus == "tutorial" 
+              }
               backgroundContent = { backgroundContent }
               mainContent = { mainContent }
               overlayContent = { overlayContent }

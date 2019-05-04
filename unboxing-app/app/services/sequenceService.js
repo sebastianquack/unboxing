@@ -112,9 +112,13 @@ class SequenceService extends Service {
 	}
 
   guitarHeroStartTimeAbsolute = ()=> {
+    let now = soundService.getSyncTime();
+    
     if(this.state.currentItem) {
-      return this.state.currentItem.realStartTime;   
-    } 
+      if(now - this.state.currentItem.realStartTime < 2000) { // only use currentItem if that just started
+        return this.state.currentItem.realStartTime;   
+      } 
+    }
     if(this.state.scheduledItem) {
       console.log("using scheduledItem");
       return this.getStartTimeAbsolute(this.state.scheduledItem);   
@@ -140,12 +144,10 @@ class SequenceService extends Service {
 	autoPlayItem = (item) => {
 		if(!item) return false;
 
+    if(gameService.state.autoplayMode) return true;
+
 		if(item.autoplay == "off") {
 			return false;
-		}
-
-		if(item.autoplay == "first" && this.state.loopCounter == 0) {
-			return true;
 		}
 
 		if(item.autoplay == "on") {
@@ -173,6 +175,7 @@ class SequenceService extends Service {
 	}
 
 	doBeatUpdate = ()=> {
+    //console.warn("beat");
 		
 		// calculate time to next item
 		const currentTime = soundService.getSyncTime();
@@ -213,12 +216,15 @@ class SequenceService extends Service {
       let runningSince = soundService.getSyncTime() - this.state.currentItem.realStartTime;
 
       console.log("runningSince: " + runningSince);
-      if(runningSince > gameService.getGuitarHeroThreshold().post && !this.state.currentItem.approved) {
+      if(runningSince > gameService.getGuitarHeroThreshold().post 
+        && !this.state.currentItem.approved
+        && !this.autoPlayItem(this.state.currentItem)
+      ) {
+        gameService.handleMissedGuitarHeroCue();
         this.setReactive({
-					missedItem: { ...this.state.currentItem },
-					instructorState: "still"
-				});
-				gameService.handleMissedGuitarHeroCue();
+          missedItem: { ...this.state.currentItem },
+          instructorState: "still"
+        });
         instructorUpdated = true;
       } 
     }
@@ -233,7 +239,7 @@ class SequenceService extends Service {
       const timeToNextItem = startTimeScheduled - currentTimeInSequence; 
       // check if innstrusctor should be shown
       if(timeToNextItem <= 4000 && !this.autoPlayNextItem()) {
-        if(!(this.state.scheduledItem.startTime == 0 && this.sequenceStartingLocally())) {
+        if(!(this.state.scheduledItem.startTime == 0 && this.sequenceStartingLocally()) && !this.autoPlayItem(this.state.scheduledItem)) {
           this.setReactive({instructorState: "einsatz"});  
           instructorUpdated = true;
         }
@@ -363,16 +369,24 @@ class SequenceService extends Service {
 				peakService.waitForStop(() => {
 					gameService.handleStopItem()
 				});				
-				
-        if(this.state.currentItem.approved || !this.isGuitarHeroMode()) {
-          //if(this.state.currentItem.sensorModulation == "off") {
-            this.setActionMessage(storageService.t("sequence-playing")); 
+
+        if(!this.isGuitarHeroMode()) {
+          this.setActionMessage(storageService.t("sequence-playing")); 
+          this.deactivateUserAction();
+          this.setReactive({instructorState: "volume"});
+        }
+
+        if(this.isGuitarHeroMode()) {
+
+          this.setActionMessage(storageService.t("sequence-playing")); 
+          this.setReactive({instructorState: "volume"});  
+
+          // check if another item has already been scheduled
+          if(this.state.scheduledItem && !this.autoPlayItem(this.state.scheduledItem)) {
+            this.activateNextUserAction();
+          } else {
             this.deactivateUserAction();
-            this.setReactive({instructorState: "volume"});
-          /*} else {
-            this.setActionMessage("you're playing! see how you can modulate the sound..."); 
-            this.deactivateUserAction();
-          }*/  
+          }
         }
 
 				// check if the start time of the next item is directly after end of current item
@@ -552,18 +566,25 @@ class SequenceService extends Service {
       });
   }
 
-  loadFirstSound = (trackName)=> {
+  loadFirstSounds = (trackName, callback)=> {
+    let numSounds = 1;
+    let maxEach = 1;
     if(!this.state.currentSequence) {
         console.warn("no current sequence - cannot load");
         return;
     }
+    paths = [];
     for(let i = 0; i < this.state.currentSequence.items.length; i++) {
       let item = this.state.currentSequence.items[i];
       if(item.track == trackName) {
-          soundService.preloadSoundfiles([item.path]);        
-          break;
+        if(soundService.findSoundIndices(item.path, "ready").length < maxEach) {
+          paths.push(item.path); 
+          if(i >= numSounds) break;
+        }
       }
     }
+    console.warn(soundService.getSyncTime() + ": " + JSON.stringify(soundService.sounds));
+    soundService.preloadSoundfiles(paths, callback, false);        
   }
 
   // on coming back to a sequence
@@ -583,29 +604,24 @@ class SequenceService extends Service {
 
 	// invoked from track selector component
 	trackSelect = (track)=> {
-
+    
     if(!track) {
       this.setReactive({currentTrack: null});
       return;
     }
 
-    // loading sounds on the fly...
-    /*if(this.state.currentTrack) {
-      if(track.name != this.state.currentTrack.name) {
-        this.loadSoundFiles(track.name);  
-      }  
-    } else {
-      this.loadSoundFiles(track.name);  
-    }*/
-    this.loadFirstSound(track.name);
-		
-  	this.setReactive({currentTrack: track});
+    if(this.state.controlStatus == "playing") {
+      this.cancelItemsAndSounds()
+    }
 
-  	// if sequence is already running - just this.setupNextSequenceItem(); and quit
+    this.setReactive({currentTrack: track});
+    this.loadFirstSounds(track.name, ()=>{
+      this.setupNextSequenceItem();
+      this.updateActionInterface();
+    }); // load the first sound    
+
+    // if sequence is already running - just this.setupNextSequenceItem(); and quit
   	if(this.state.controlStatus == "playing") {
-			this.cancelItemsAndSounds()
-			this.setupNextSequenceItem();
-			this.updateActionInterface();
 			return
   	}
 
@@ -680,7 +696,7 @@ class SequenceService extends Service {
 	-> doesn't matter if called multiple times
 	*/
 	setupNextSequenceItem = ()=> {
-			console.log("setupNextSequenceItem");
+			//console.warn(soundService.getSyncTime() + ": setupNextSequenceItem");
 
 			if(!this.state.currentSequence) {
 				console.log("sequence has ended, aborting");
@@ -703,7 +719,8 @@ class SequenceService extends Service {
     	
 			// figure out what loop we are on - only save this locally in function
 			let loopCounter = Math.floor(currentTimeInPlayback / this.state.currentSequence.custom_duration)
-    	if(loopCounter < 0) loopCounter = 0
+      //console.warn(soundService.getSyncTime() + " loopcounter: " + loopCounter);
+    	//if(loopCounter < 0) loopCounter = 0
 
       let loopStartedAt = this.state.playbackStartedAt + (loopCounter * this.state.currentSequence.custom_duration);
 
@@ -727,8 +744,8 @@ class SequenceService extends Service {
 
     	// if we don't find an item on first pass, take the first item in next loop
     	if(!nextItem) {    		
-    		if(gameService.isChallengeLooping()) {
-    			console.log("looking in next loop");
+    		if(gameService.isChallengeLooping() || loopCounter == -1) {
+    			//console.warn(soundService.getSyncTime() + ": looking in next loop");
 					for(let i = 0; i < items.length; i++) {
 		    		if(items[i].track == this.state.currentTrack.name) {
 		    			nextItem = items[i];
@@ -736,6 +753,7 @@ class SequenceService extends Service {
 		    			// update sequence loop info
               loopCounter++;
 		    			loopStartedAt = this.state.playbackStartedAt + loopCounter * this.state.currentSequence.custom_duration;
+              //console.warn(soundService.getSyncTime() + " loopStartedAt: " + loopStartedAt);
   						
 		    			break;
 		    		}
@@ -752,12 +770,14 @@ class SequenceService extends Service {
 
     	if(nextItem) {
 				
-        //console.warn(soundService.getSyncTime() + " loading..." + nextItem.path);
-        soundService.preloadSoundfiles([nextItem.path], ()=>{
-          //console.warn(soundService.getSyncTime() + " loaded");
+        
+        //soundService.preloadSoundfiles([nextItem.path], ()=>{
+          //console.warn(soundService.getSyncTime() + " nextItem loaded");
           this.setReactive({
             nextItem: {...nextItem, loaded: true}, // make a shallow copy
           });
+
+          //console.warn("should schedule?");
       
       		// schedule sound for item, if necessary
   				if(this.state.controlStatus == "playing" && (
@@ -774,7 +794,7 @@ class SequenceService extends Service {
               this.setReactive({
   							nextItem: {
   								...this.state.nextItem,
-  								approved: (this.sequenceStartingLocally() && this.state.nextItem.startTime == 0)
+  								approved: (this.sequenceStartingLocally() && this.state.nextItem.startTime == 0) || this.autoPlayItem(this.state.nextItem)
   							}
   						})
               this.scheduleSoundForNextItem(targetTime);
@@ -787,7 +807,7 @@ class SequenceService extends Service {
 
             this.updateActionInterface();
 
-        });
+        //}, false);
         				
     	}
 
@@ -801,12 +821,18 @@ class SequenceService extends Service {
 			console.log("scheduleSoundForNextItem: nothing to schedule")
 			return
 		}
+    if(gameService.state.challengeStatus != "play") {
+      console.warn("not in play mode, aborting schedule");
+    }
+    //console.warn(soundService.getSyncTime() + ": scheduleSoundForNextItem", targetTime);
     soundService.scheduleSound(this.state.nextItem.path, targetTime, {
-			onPlayStart: () => {
+			onPlayStart: (index) => {
+        //console.warn("received index for current sound " + index);
         this.setReactive({
 					currentItem: {
 						...this.state.scheduledItem, 							// scheduledItem ---> currentItem
-						targetTime, 															
+						targetTime,
+            soundIndex: index, 															
 						realStartTime: soundService.getSyncTime()	
 					},
 					scheduledItem: null
@@ -814,7 +840,7 @@ class SequenceService extends Service {
         if(this.state.currentItem.approved) {
           this.turnOnVolumeCurrentItem();
         }
-        this.setupNextSequenceItem();  
+        this.setupNextSequenceItem();
 			},
 			onPlayEnd: () => {
         // make sure we are not deleting a newer item that is now in place
@@ -823,7 +849,7 @@ class SequenceService extends Service {
         }
         this.setupNextSequenceItem();
 			},
-		}, this.isGuitarHeroMode());  // startSilent
+		}, this.isGuitarHeroMode() && !this.autoPlayItem(this.state.nextItem));  // startSilent
 		this.setReactive({
 			scheduledItem: this.state.nextItem,              // nextItem ---> scheduledItem
 			nextItem: null,
@@ -855,6 +881,7 @@ class SequenceService extends Service {
 
   // approve the next item
   approveScheduledOrCurrentItem() {
+    console.warn("approved");
     if(this.state.currentItem) {
       this.setReactive({
 				currentItem: {
@@ -885,8 +912,8 @@ class SequenceService extends Service {
 
 	stopCurrentSound() {
 		if(this.state.currentItem) {
-			console.log("stopping", this.state.currentItem);
-			soundService.stopSound(this.state.currentItem.path);
+			console.log("stopCurrentSound: stopping sound at index ", this.state.currentItem.soundIndex);
+			soundService.stopSound(this.state.currentItem.soundIndex);
 			this.setReactive({currentItem: null});
 			this.setupNextSequenceItem();
 			this.updateActionInterface();
