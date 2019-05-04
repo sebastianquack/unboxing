@@ -35,6 +35,7 @@ class SequenceVisualizer extends React.PureComponent {
     this.manageAnimation = this.manageAnimation.bind(this)
     this.handleAnimationEnded = this.handleAnimationEnded.bind(this)
     this.relativeOpacity = this.relativeOpacity.bind(this)
+    this.renderHeaderTrack = this.renderHeaderTrack.bind(this)
   }
 
   componentDidMount() {
@@ -163,14 +164,27 @@ class SequenceVisualizer extends React.PureComponent {
     // const backgroundColor = ( !this.props.track || this.props.track.name == track.name ? track.color : "transparent" )
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
     const activeStyle = active ? styles.track__active : {}
-    const opacity = this.relativeOpacity(i)
+    const opacity = 1 //this.relativeOpacity(i)
+
+    console.warn(this.props.playingItem)
+
+    const playingIndicator = <LinearGradient
+      start={{x: 1, y: 0}}
+      end={{x: 0, y: 0}}
+      colors={[colors.turquoise, 'rgba(0,0,0,0)']}
+      locations={[0,1]}
+      style={{
+        ...styles.playingIndicator,
+        opacity: active && this.props.playingItem ? 1 : 0
+      }}
+    />
 
     return (
       <View style={{
           ...styles.track, 
           ...styles.headerTrack,
           ...activeStyle,
-          opacity
+          //opacity
           // backgroundColor,
         }} key={track.name}>
         <View>
@@ -178,6 +192,7 @@ class SequenceVisualizer extends React.PureComponent {
             {instruments[track.name]["name_" + storageService.state.language]}
           </UIText>
         </View>
+        { playingIndicator }
       </View>
     )
   }
@@ -308,7 +323,7 @@ renderActionItem = (item) => {
   )
 }
 
-  renderIndicator = () => {    
+  /*renderIndicator = () => {    
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
     const playing = this.props.controlStatus === "playing"
     const color = playing ? "red" : "transparent"
@@ -325,7 +340,7 @@ renderActionItem = (item) => {
         width
         }} />
     )
-  }
+  }*/
 
   render() {
     let tracks = this.props.sequence.tracks
@@ -346,7 +361,7 @@ renderActionItem = (item) => {
             <View style={styles.header}>
               {tracks.map(this.renderHeaderTrack)}
             </View>
-            <Animated.View style={{ // indicator
+            <View style={{ // indicator
               backgroundColor: colors.turquoise,
               width: 3,
               opacity: 0.8, //this.props.nextUserAction.type ? this.state.pulsate : 0.7,
@@ -426,6 +441,7 @@ export default compose(
       // not renamed
       nextItem:       props.sequenceService.nextItem,
       missedItem:     props.sequenceService.missedItem,
+      playingItem:    props.sequenceService.playingItem,
       controlStatus:  props.sequenceService.controlStatus,
       nextUserAction: props.sequenceService.nextUserAction,
       loopCounter :   props.sequenceService.loopCounter,
@@ -471,8 +487,15 @@ const styles = StyleSheet.create({
     height: 60,
   },
   headerTrack: {
-    paddingHorizontal: 8,
+    paddingLeft: 8,
     color: colors.warmWhiteSoft,
+  },
+  playingIndicator: {
+    width: 50,
+    right: -3, // move over border
+    top: 0,
+    height: "100%",
+    position: "absolute"    
   },
   bodyTrackItem: {
     backgroundColor: 'transparent',

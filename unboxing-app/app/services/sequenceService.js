@@ -14,7 +14,9 @@ class SequenceService extends Service {
 			controlStatus: "idle", // idle -> playing
       loadingStatus: "idle", // idle <-> loading
 			currentSequence: null, // sequence object
-      currentTrack: null, // track object
+			currentTrack: null, // track object
+			missedItem: null,
+			playingItem: null,
 			playbackStartedAt: null, // start time of first loop of this sequence
 			loopStartedAt: null, // absolute start time of current sequence (in each loop)
 			nextItem: null, // next item to play, if available
@@ -845,7 +847,10 @@ class SequenceService extends Service {
 			onPlayEnd: () => {
         // make sure we are not deleting a newer item that is now in place
         if(this.state.currentItem && targetTime == this.state.currentItem.targetTime) {
-          this.setReactive({currentItem: null});
+					this.setReactive({
+						currentItem: null,
+						playingItem: null,
+					});
         }
         this.setupNextSequenceItem();
 			},
@@ -862,8 +867,9 @@ class SequenceService extends Service {
 
   turnOnVolumeCurrentItem() {
     if(this.state.currentItem) {
-      soundService.setVolumeFor(this.state.currentItem.path, 0.3);
-    }
+			soundService.setVolumeFor(this.state.currentItem.path, 0.3);
+			this.setReactive({ playingItem: this.state.currentItem })
+		}
     /*setTimeout(()=>{
       // make sure volume isn't turned off again by starting sound
       if(this.state.currentItem) {
@@ -914,7 +920,7 @@ class SequenceService extends Service {
 		if(this.state.currentItem) {
 			console.log("stopCurrentSound: stopping sound at index ", this.state.currentItem.soundIndex);
 			soundService.stopSound(this.state.currentItem.soundIndex);
-			this.setReactive({currentItem: null});
+			this.setReactive({currentItem: null, playingItem: null});
 			this.setupNextSequenceItem();
 			this.updateActionInterface();
 		}
@@ -925,7 +931,8 @@ class SequenceService extends Service {
 		this.setReactive({
 	    nextItem: null,
 			scheduledItem: null,
-	    currentItem: null
+			currentItem: null,
+			playingItem: null,
 	  });
 	  soundService.stopAllSounds();
 	}
@@ -943,6 +950,7 @@ class SequenceService extends Service {
 			scheduledItem: null,
 			currentItem: null,
 			missedItem: null,
+			playingItem: null,
 			playbackStartedAt: null,	    	
 			loopStartedAt: null,
 			showPlayItemButton: false,
@@ -984,6 +992,7 @@ class SequenceService extends Service {
 			scheduledItem: null,
 			currentItem: null,
 			missedItem: null,
+			playingItem: null,
 			playbackStartedAt: null,	    	
 			loopStartedAt: null,
 			beatsToNextItem: "",

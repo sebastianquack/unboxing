@@ -165,6 +165,22 @@ function receiveFiles(callback) {
 
 }
 
+async function downloadFilesFromOtherServer(serverUrl) {
+  const everythingUrl = serverUrl + 'api/getEverything.json'
+  try {
+    const response = await fetch(everythingUrl);
+    const json = await response.json();
+    const remoteFiles = json.collections.files
+    const localFiles = Files.find()
+    const desiredFiles = remoteFiles.filter( f => remoteFiles.findIndex({size: f.size, path: f.path}) < 0 )
+    for (let file of desiredFiles) {
+      // ...
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 /********* helpers ***********/
 
 function filesEqual(file1, file2) {
