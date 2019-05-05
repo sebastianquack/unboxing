@@ -45,6 +45,7 @@ do
    adb shell pm grant com.unboxing android.permission.READ_PHONE_STATE
 
    adb shell 'settings  put  global  data_roaming0 1'
+   adb shell 'su -c "settings put global captive_portal_mode 0"'
    
    echo "starting app"
    adb shell am start -n com.unboxing/com.unboxing.MainActivity

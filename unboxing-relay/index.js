@@ -5,6 +5,8 @@ server = app.listen(process.env.PORT || 3005);
 
 const io = require('socket.io')(server);
 
+// const mockInternet = require('./mock-internet-server')
+
 let deviceMap = {}; // {deviceId: {challengeId: id, track: name}} -- used to store where devices are
 let challengeState = {} // {challengeId: {sequenceControlStatus: startTime: }}
 
