@@ -184,8 +184,9 @@ class SequenceService extends Service {
     const currentTimeInSequence = currentTime - this.state.loopStartedAt;
 
 		this.setReactive({sequenceTimeVisualizer: 
-        currentTimeInSequence >= 0 || this.state.loopCounter == 0 ? currentTimeInSequence : 
-        currentTimeInSequence + this.state.currentSequence.custom_duration
+				currentTimeInSequence >= 0 || this.state.loopCounter == 0 
+				? currentTimeInSequence
+        : currentTimeInSequence + this.state.currentSequence.custom_duration
     });      
     
 		//console.log("beat update - currentTimeInSequence", currentTimeInSequence);

@@ -18,6 +18,8 @@ const actionImg = require('../../assets/img/triangle.png')
 const labelsWidth = 150
 const speedFactor = 0.0000007 // adjust the speed
 
+const refreshWidth = 2
+
 const doAnim = true // useful for debugging
 
 class SequenceVisualizer extends React.Component { 
@@ -29,15 +31,17 @@ class SequenceVisualizer extends React.Component {
       pulsate: new Animated.Value(1),
       containerWidth: null,
       sequenceWidth: null,
+      visibleMillis: null,
     };
 
-    const duration = props.sequence ? props.sequence.custom_duration || props.sequence.duration : 0
-    this.speed = props.magnification && doAnim ? speedFactor * props.sequence.bpm * duration : 1
+    this.duration = props.sequence ? props.sequence.custom_duration || props.sequence.duration : 0
+    this.speed = props.magnification && doAnim ? speedFactor * props.sequence.bpm * this.duration : 1
 
     this.manageAnimation = this.manageAnimation.bind(this)
     this.handleAnimationEnded = this.handleAnimationEnded.bind(this)
     this.relativeOpacity = this.relativeOpacity.bind(this)
     this.renderHeaderTrack = this.renderHeaderTrack.bind(this)
+    this.renderBodyTrack = this.renderBodyTrack.bind(this)
   }
 
   componentDidMount() {
@@ -54,6 +58,15 @@ class SequenceVisualizer extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
+    // special compare - let currentTime through if the last render was too long ago, so new elements can be rendered
+    if (nextProps.currentTime) {
+      // console.warn(nextProps.currentTime, this.lastRenderCurrentTime, nextProps.currentTime - this.lastRenderCurrentTime, (this.state.visibleMillis * refreshWidth) )
+      if ( (nextProps.currentTime - this.lastRenderCurrentTime) >= (refreshWidth * this.state.visibleMillis) ) {
+        //console.warn("currentTime updated to ", nextProps.currentTime)
+        return true
+      }
+    }
+
     // compare state values
     for (let stateVar of Object.keys(this.state)) {
       if (this.state[stateVar] !== nextState[stateVar]) {
@@ -82,14 +95,18 @@ class SequenceVisualizer extends React.Component {
         }
       }
     }
+    //console.warn("nothing to update")
     return false
   }
 
   setWidth = (event) => {
+    const duration = this.props.sequence.custom_duration || this.props.sequence.duration
     const containerWidth = event.nativeEvent.layout.width
+    const sequenceWidth = containerWidth * this.speed
     this.setState({
       containerWidth,
-      sequenceWidth: containerWidth * this.speed,
+      sequenceWidth,
+      visibleMillis: duration * ( containerWidth / sequenceWidth )
     })
   }
 
@@ -232,8 +249,13 @@ class SequenceVisualizer extends React.Component {
   }
 
   renderBodyTrack = (track, i) => {
+    // console.warn("currentTime: " + this.props.currentTime, this.state.visibleMillis)
     // items belonging to this track
-    sequenceItems = this.props.sequence.items.filter( item => item.track === track.name )
+    const sequenceItems = this.props.sequence.items.filter(item =>  
+      item.track === track.name 
+      && item.startTime <= ( this.props.currentTime + (refreshWidth * this.state.visibleMillis) )
+      && item.startTime >= ( this.props.currentTime - (refreshWidth * this.state.visibleMillis) )
+    )
 
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
     const activeStyle = active ? styles.track__active : {}
@@ -266,7 +288,6 @@ class SequenceVisualizer extends React.Component {
 
     const currentStyle = this.props.debugMode && isCurrentItem ? {borderColor:'green'} : {}
     const nextStyle = this.props.debugMode && isNext ? {borderColor: isNextAndLoaded ? 'yellow' : 'orange'} : {}
-
 
     return (
       <View key={item._id} style={{
@@ -377,10 +398,10 @@ renderActionItem = (item) => {
   }*/
 
   render() {
+    console.log("render")
+    this.lastRenderCurrentTime = this.props.currentTime // keep track of the currentTime
 
-    let tracks = this.props.sequence.tracks
-
-    //console.log("render")
+    let tracks = this.props.sequence.tracks    
 
     if(tracks) {
 
@@ -467,7 +488,7 @@ export default compose(
       sequence:     { ...sequence, tracks }, // mutate tracks
       track,
       item:         props.sequenceService.currentItem,
-      //currentTime:  props.sequenceService.sequenceTimeVisualizer,
+      currentTime:  props.sequenceService.sequenceTimeVisualizer,
 
       // not renamed
       nextItem:       props.sequenceService.nextItem,
@@ -524,7 +545,8 @@ const styles = StyleSheet.create({
   track: {
     height: 22,
     justifyContent: "center",
-    marginBottom: 15,
+    marginTop: 5,
+    marginBottom: 10,
   },
   track__active: {
     height: 60,
