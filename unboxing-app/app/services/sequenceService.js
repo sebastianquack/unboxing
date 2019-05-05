@@ -222,11 +222,11 @@ class SequenceService extends Service {
         && !this.state.currentItem.approved
         && !this.autoPlayItem(this.state.currentItem)
       ) {
-        gameService.handleMissedGuitarHeroCue();
         this.setReactive({
           missedItem: { ...this.state.currentItem },
           instructorState: "still"
-        });
+				});
+				gameService.handleMissedGuitarHeroCue();
         instructorUpdated = true;
       } 
     }
@@ -585,7 +585,7 @@ class SequenceService extends Service {
         }
       }
     }
-    console.warn(soundService.getSyncTime() + ": " + JSON.stringify(soundService.sounds));
+    // console.warn(soundService.getSyncTime() + ": " + JSON.stringify(soundService.sounds));
     soundService.preloadSoundfiles(paths, callback, false);        
   }
 
@@ -630,9 +630,9 @@ class SequenceService extends Service {
   	// vvvvv from here on we assume that sequence has not started yet vvvvv
 
 		// listen for gestures if first item in track is at beginning of sequence
-		console.log("checking firstItem in track " + track.name);
+		// console.log("checking firstItem in track " + track.name);
 		const firstItem = this.firstItemInTrack(track.name);
-		console.log(firstItem);
+		// console.log(firstItem);
 		if(firstItem) {
 			//if(firstItem.startTime == 0) {				
 				
@@ -658,7 +658,7 @@ class SequenceService extends Service {
   // start sequence playback - localStart marks if sequence was started on this device
  	startSequence = (startTime, localStart) => {
 		if(this.state.controlStatus != "idle") {
-			console.warn("sequence already running");
+			// console.warn("sequence already running");
 			return;
 		}
 
@@ -674,7 +674,7 @@ class SequenceService extends Service {
 			isLooping: gameService.isChallengeLooping()
     });
 
-  	console.log("started sequence at", this.state.loopStartedAt, "localStart:", localStart);
+  	// console.log("started sequence at", this.state.loopStartedAt, "localStart:", localStart);
     // this.showNotification("sequence started");
 		this.localStart = localStart;
 
@@ -974,8 +974,8 @@ class SequenceService extends Service {
       this.setReactive({
         playbackStartedAt: startTime
       });
-      console.warn(this.state.scheduledItem);
-      console.warn(this.state.nextItem);
+      // console.warn(this.state.scheduledItem);
+      // console.warn(this.state.nextItem);
       this.setupNextSequenceItem();
   }
 		

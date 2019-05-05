@@ -20,13 +20,15 @@ const speedFactor = 0.0000007 // adjust the speed
 
 const doAnim = true // useful for debugging
 
-class SequenceVisualizer extends React.PureComponent { 
+class SequenceVisualizer extends React.Component { 
   constructor(props) {
     super(props);
     
     this.state = {
       scrollX: new Animated.Value(0),
       pulsate: new Animated.Value(1),
+      containerWidth: null,
+      sequenceWidth: null,
     };
 
     const duration = props.sequence ? props.sequence.custom_duration || props.sequence.duration : 0
@@ -51,11 +53,43 @@ class SequenceVisualizer extends React.PureComponent {
     //this.state.pulsate.stopAnimation()
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    // compare state values
+    for (let stateVar of Object.keys(this.state)) {
+      if (this.state[stateVar] !== nextState[stateVar]) {
+        //console.warn("state changed value: " + stateVar)
+        return true
+      }
+    }
+    const rules = this.props.shouldRenderRules
+    // compare props values
+    for (let prop of rules.shallowCompare) {
+      if (this.props[prop] !== nextProps[prop]) {
+        //console.warn("prop changed value: " + prop)
+        return true
+      }
+    }
+    // compare props objects
+    for (let attr of Object.keys(rules.propCompare)) {
+      for (let prop of rules.propCompare[attr]) {
+        if (typeof this.props[prop] != typeof nextProps[prop]) {
+          //console.warn("prop changed type: " + prop)
+          return true
+        }
+        if (this.props[prop] && nextProps[prop] && this.props[prop][attr] !== nextProps[prop][attr]) {
+          //console.warn("prop changed attr: " + prop)
+          return true
+        }
+      }
+    }
+    return false
+  }
+
   setWidth = (event) => {
     const containerWidth = event.nativeEvent.layout.width
     this.setState({
       containerWidth,
-      sequenceWidth: containerWidth * this.speed
+      sequenceWidth: containerWidth * this.speed,
     })
   }
 
@@ -166,7 +200,7 @@ class SequenceVisualizer extends React.PureComponent {
     const activeStyle = active ? styles.track__active : {}
     const opacity = 1 //this.relativeOpacity(i)
 
-    console.warn(this.props.playingItem)
+    //console.warn(this.props.playingItem)
 
     const playingIndicator = <LinearGradient
       start={{x: 1, y: 0}}
@@ -199,7 +233,7 @@ class SequenceVisualizer extends React.PureComponent {
 
   renderBodyTrack = (track, i) => {
     // items belonging to this track
-    sequenceItems = this.props.sequence.items.filter( item => item.track === track.name)
+    sequenceItems = this.props.sequence.items.filter( item => item.track === track.name )
 
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
     const activeStyle = active ? styles.track__active : {}
@@ -209,7 +243,7 @@ class SequenceVisualizer extends React.PureComponent {
       <View style={{...styles.track, ...activeStyle/*, opacity*/}} key={"body " + track.name}>
         { sequenceItems.map(sequenceItem => this.renderBodyTrackItem(sequenceItem, track) ) }
         { /* this.props.track && this.props.track.name == track.name && sequenceItems.map(sequenceItem => this.renderActionItem(sequenceItem, track) ) */ }
-        { this.props.gameService.debugMode && this.props.hasActionItem && this.props.track.name == track.name && this.renderActionItem(this.props.nextUserAction) }
+        { this.props.debugMode && this.props.hasActionItem && this.props.track.name == track.name && this.renderActionItem(this.props.nextUserAction) }
       </View>
     )
   }
@@ -230,8 +264,8 @@ class SequenceVisualizer extends React.PureComponent {
     const activeStyle = active ? styles.bodyTrackItem__active : {}
     const missedStyle = isMissed ? {borderColor:'red'} : {}
 
-    const currentStyle = this.props.gameService.debugMode && isCurrentItem ? {borderColor:'green'} : {}
-    const nextStyle = this.props.gameService.debugMode && isNext ? {borderColor: isNextAndLoaded ? 'yellow' : 'orange'} : {}
+    const currentStyle = this.props.debugMode && isCurrentItem ? {borderColor:'green'} : {}
+    const nextStyle = this.props.debugMode && isNext ? {borderColor: isNextAndLoaded ? 'yellow' : 'orange'} : {}
 
 
     return (
@@ -343,7 +377,10 @@ renderActionItem = (item) => {
   }*/
 
   render() {
+
     let tracks = this.props.sequence.tracks
+
+    //console.log("render")
 
     if(tracks) {
 
@@ -368,7 +405,7 @@ renderActionItem = (item) => {
               height: "100%",
             }} />
             <View 
-              style={styles.body} 
+              style={{...styles.body, opacity: this.state.sequenceWidth ? 1 : 0 }} 
               onLayout={ this.setWidth }
               >
               <Animated.View style={{  
@@ -393,15 +430,7 @@ renderActionItem = (item) => {
               top: '-10%',
               right: 0,
             }}
-          ></LinearGradient>          
-          <View style={{opacity:0.5}}>
-            {/*<UIText size="m">ctime {this.props.currentTime}</UIText>
-            <UIText size="m">starAt {((this.props.playbackStartedAt)/1000)}</UIText>
-            <UIText size="m">loopAt {((this.props.loopStartedAt)/1000)}</UIText>
-            <UIText size="m">diff.. {((this.props.loopStartedAt-this.props.playbackStartedAt)/1000)}</UIText>
-            <UIText size="m">sLengh {this.props.sequence.custom_duration/1000}</UIText>
-              */}
-            </View>
+          />
         </View>
       );
     } else {
@@ -432,11 +461,13 @@ export default compose(
     }
 
     return {
+      debugMode:    props.gameService.debugMode,
+
       // renamed
       sequence:     { ...sequence, tracks }, // mutate tracks
       track,
       item:         props.sequenceService.currentItem,
-      currentTime:  props.sequenceService.sequenceTimeVisualizer,
+      //currentTime:  props.sequenceService.sequenceTimeVisualizer,
 
       // not renamed
       nextItem:       props.sequenceService.nextItem,
@@ -452,7 +483,19 @@ export default compose(
       hasActionItem: !!(props.sequenceService.currentTrack) && !!(props.sequenceService.nextUserAction.type),
       trackIndex,
 
-      ...props,
+      // other props
+      magnification: props.magnification,
+
+      // should render?
+      shouldRenderRules: {
+        shallowCompare: ["debugMode", "loopCounter", "controlStatus", "isLooping", "playbackStartedAt", "hasActionItem", "trackIndex", "magnification"],
+        propCompare: {
+          _id: ["item", "nextItem", "missedItem", "playingItem"],
+          startTime: ["nextUserAction"],
+          name: ["track"]
+        }
+      }
+
     };
   })
 )(SequenceVisualizer);

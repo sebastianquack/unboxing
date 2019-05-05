@@ -647,7 +647,7 @@ class GameService extends Service {
   handleMissedGuitarHeroCue() {
     this.showInfoStreamAlert(storageService.t("too-late"), "red");
     //this.showNotification("guitar hero too late!");
-    console.warn("guitar hero missed cue");
+    // console.warn("guitar hero missed cue");
     sequenceService.stopCurrentSound();
   }
 
