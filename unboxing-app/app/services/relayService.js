@@ -1,6 +1,6 @@
 
 import Service from './Service';
-import {storageService, gameService} from './';
+import {storageService, gameService, sequenceService} from './';
 
 import io from 'socket.io-client';
 
@@ -71,6 +71,15 @@ class RelayService extends Service {
       this.setReactive({connected: true})
       if(gameService.state.gameMode == "installation") {
         this.emitMessage({code: 'installationInfo'})
+      }
+
+      if(gameService.state.activeChallenge) {
+        relayService.emitMessage({
+            code: "joinChallenge", 
+            challengeId: gameService.state.activeChallenge._id, 
+            deviceId: storageService.getDeviceId(),
+            track: sequenceService.currentTrack ? sequenceService.currentTrack : null
+        });
       }
     });
 
