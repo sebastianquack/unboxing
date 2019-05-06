@@ -35,25 +35,11 @@ class TimeSync extends React.Component {
   handleTestClickSwitch(value) {
     this.setState({testClick: value}, ()=>{
       if(value == true) {
-      
-        this.initClickLoop();
-        
+        soundService.startTestClick()
       } else {
-        soundService.stopSound(clickFilename);
+        soundService.stopTestClick()
       }
     });    
-  }
-
-  initClickLoop() {
-    if(this.state.testClick) {
-      // schedule first playback for next second
-      soundService.click(Math.ceil(soundService.getSyncTime()/1000)*1000, {
-        onPlayEnd: ()=>{
-          // callback called after end of playback, schedule new playback for next second
-          this.initClickLoop();
-        }
-      });    
-    }
   }
 
   render() {

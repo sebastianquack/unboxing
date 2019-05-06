@@ -72,6 +72,9 @@ class ServerConnector extends React.Component {
 				</Text>					
 
         <Text style={{marginTop: 10}}>
+          AdminServer URL: {this.props.networkService.adminServer }
+        </Text>   
+        <Text>
           AdminSocket status: {this.props.networkService.adminSocketConnected ? "connected" : "disconnected"}
         </Text>                       							
 

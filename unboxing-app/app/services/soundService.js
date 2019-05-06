@@ -504,6 +504,28 @@ class SoundSevice extends Service {
 		}
     this.scheduleSound(clickFilename, targetTime, callbacks);
   }
+
+  startTestClick() {
+    this.setReactive({ testClick: true })
+    this.initClickLoop()
+  }
+
+  stopTestClick() {
+    this.setReactive({ testClick: false })
+  }
+
+  initClickLoop() {
+    if(this.state.testClick) {
+      // schedule first playback for next second
+      this.click(Math.ceil(this.getSyncTime()/1000)*1000, {
+        onPlayEnd: ()=>{
+          // callback called after end of playback, schedule new playback for next second
+          this.initClickLoop();
+        }
+      });    
+    }
+  }
+
 }
 
 const soundService = new SoundSevice();

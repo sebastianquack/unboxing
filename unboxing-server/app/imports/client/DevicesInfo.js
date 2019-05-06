@@ -194,6 +194,9 @@ class DevicesInfo extends React.Component {
     const updateFiles = <button onClick={event => this.sendMessage({ code: "updateFiles"})}>updateFiles</button>
     const timeSync = <button onClick={event => this.sendMessage({ code: "timeSync"})}>timeSync</button>
     
+    const clickOn = <button onClick={event => this.sendMessage({ code: "clickOn"})}>Click On</button>
+    const clickOff = <button onClick={event => this.sendMessage({ code: "clickOff"})}>Click Off</button>
+
     const emptyOption = <option key="empty" value="">&lt;none&gt;</option>;
     
     const startTutorial = <form onSubmit={ this.sendTutorialMessage }>
@@ -277,6 +280,9 @@ class DevicesInfo extends React.Component {
           { updateEverything }
           { updateFiles }
           { timeSync }
+          { '     ' }
+          { clickOn }
+          { clickOff }
           <br /><br />
           { startTutorial }
           <br />

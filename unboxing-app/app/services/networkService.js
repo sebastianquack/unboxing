@@ -107,10 +107,10 @@ class NetworkService extends Service {
     }
     relayService.updateDefaultServer()
 
-    this.setReactive({adminServer: server});
-    //console.warn("admin server set to " + server);
     if(server != this.state.adminServer) {
-      this.initAdminSocket();
+      //console.warn("admin server set to " + server);
+      this.setReactive({adminServer: server});
+      this.initAdminSocket(server);
     }
   }	
 
@@ -171,6 +171,7 @@ class NetworkService extends Service {
   }
 
   initAdminSocket = (server) => {
+    //console.warn(server)
     if(!server) return;
     
     // don't reinit with same server if we are connected
@@ -241,6 +242,8 @@ class NetworkService extends Service {
           case "timeSync": this.doTimeSync(); break;
           case "updateFiles": fileService.updateFilesInfoAndDownload(); break;
           case "updateEverything": storageService.updateEverything(); break;
+          case "clickOn": soundService.startTestClick(); break;
+          case "clickOff": soundService.stopTestClick(); break;
           case "startTutorial": 
             if(msgObj.payload.walkId) {
               gameService.startTutorialForWalkById(msgObj.payload.walkId);
