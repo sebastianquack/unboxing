@@ -254,7 +254,7 @@ class SequenceVisualizer extends React.Component {
     const sequenceItems = this.props.sequence.items.filter(item =>  
       item.track === track.name 
       && item.startTime <= ( this.props.currentTime + (refreshWidth * this.state.visibleMillis) )
-      && item.startTime >= ( this.props.currentTime - (refreshWidth * this.state.visibleMillis) )
+      && (item.startTime + item.duration) >= ( this.props.currentTime - (refreshWidth * this.state.visibleMillis) )
     )
 
     const active = this.props.track ? ( this.props.track.name == track.name ) : false

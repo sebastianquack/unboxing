@@ -2,7 +2,6 @@ const exec = require('await-exec')
 const Timeout = require('await-timeout');
 
 async function cut(cues, beats, filePath, outputDir, filePrefix, cutStartOffsetMs=0, cutEndOffsetMs=0, sequenceStartOffsetMs=0) {
-  console.log(filePath)
   for (let cue of cues) {
     
     const startBeat = beats.find( b => b.bar == cue.start.bar && b.barBeat == cue.start.barBeat)

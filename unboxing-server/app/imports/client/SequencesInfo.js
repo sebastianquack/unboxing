@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+
 import {Sequences} from '../collections';
 import {SequenceDetail} from './';
 
@@ -15,9 +16,10 @@ class SequencesInfo extends React.Component {
   li = (d) => {
     return (
       <li key={d._id} style={{marginBottom: "1em"}}>
+        {this.renderSequenceSwitch(d._id)}
+        {' '}
         {!this.showSequence(d._id) ? <span>{d.name}</span> : null}
-        {this.renderSequenceSwitch(d._id)}        
-        {this.showSequence(d._id) ? <SequenceDetail sequence={d} /> : null}
+        {this.showSequence(d._id) ? <SequenceDetail sequenceId={d._id} /> : null}
       </li>
     )
   }
@@ -36,7 +38,7 @@ class SequencesInfo extends React.Component {
 
   renderSequenceSwitch = (id) => {
     return (
-        <div style={{display: "inline-block", paddingLeft: "0.25em"}}>
+        <div style={{display: "inline-block", paddingLeft: "0.25em", position: "relative", zIndex: 10}}>
           <input
                 type="button"
                 value={this.showSequence(id) ? "hide" : "show"}
@@ -54,7 +56,6 @@ class SequencesInfo extends React.Component {
     const listItems = this.props.sequences.map(this.li)
 
     return <div className="SequencesInfo">
-    
       <button onClick={this.handleAdd}>
         Add Sequence
       </button>
@@ -66,7 +67,7 @@ class SequencesInfo extends React.Component {
 }
 
 export default withTracker(props => {
-  Meteor.subscribe('sequences.all');
+  Meteor.subscribe('sequences.meta');
   const sequences = Sequences.find({},{sort: {name: -1}}).fetch();
 
   return {
