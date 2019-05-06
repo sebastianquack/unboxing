@@ -825,11 +825,7 @@ class GameService extends Service {
         this.setReactive({
           challengeStatus: "play",
         });
-        if(sequenceService.getControlStatus() == "playing") {
-          sequenceService.turnOnVolumeCurrentItem();
-        } else {
-          sequenceService.resetTrack();  
-        }
+        sequenceService.resetTrack();  
         this.activateRelayCallbacks();
         this.initInfoStream();
         break;

@@ -206,7 +206,10 @@ class GameContainer extends React.Component {
         break;
  
       case "play":
-        if(this.props.gameService.debugMode || this.props.gameService.gameMode == "installation") {
+        if(this.props.gameService.debugMode 
+          || this.props.gameService.gameMode == "installation" 
+          || (this.props.sequenceService.controlStatus == "idle" && (this.props.gameService.gameMode == "manual" || this.props.gameService.gameMode == "walk"))
+        ) {
           buttonLeft = <Button type="leave" text={storageService.t("back")} onPress={()=>{gameService.handleLeftButton()}}/>;  
         }
         if(this.props.sequenceService.isLooping) {
@@ -242,7 +245,6 @@ class GameContainer extends React.Component {
                   ? "passive" : "active" }
               backgroundFlow = { 
                 this.props.gameService.challengeStatus == "off" 
-                || this.props.gameService.challengeStatus == "prepare" 
                 || this.props.gameService.challengeStatus == "tutorial" 
               }
               backgroundContent = { backgroundContent }
