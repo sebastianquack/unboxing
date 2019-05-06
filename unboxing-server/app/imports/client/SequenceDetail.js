@@ -4,6 +4,8 @@ import PropTypes from 'prop-types';
 import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
+import { parseFilePathToItem } from '../helper/both/sequence'
+import {Sequences, Files} from '../collections';
 import {SequenceDetailItem, InputLine} from './';
 import { inputTransform, inputType } from '../helper/both/input';
 
@@ -21,7 +23,8 @@ class Sequence extends React.Component {
     }
     this.state = {
       active_item: null,
-      instrumentsValid: ""
+      instrumentsValid: "",
+      inputImport: ""
     }
 
     this.validateInstruments = this.validateInstruments.bind(this);
@@ -33,6 +36,8 @@ class Sequence extends React.Component {
   }
 
  SequenceDetailCss = css`
+    margin-top: -10px;
+    position: relative;
     display: inline-block;
     background-color: white;
     padding: 1em 1ex 1em 1ex;
@@ -113,6 +118,25 @@ class Sequence extends React.Component {
     this.setState({active_item: focus ? id : null})
   }
 
+  handleInputImport = (event) => {
+    this.setState({ inputImport: event.target.value })
+  } 
+
+  handleButtonImport = (event) => {
+    const filePrefix = this.state.inputImport
+    if (!filePrefix) { alert("please input the beginning of a path to identify the files"); return false }
+    console.log(this.props.filePaths)
+    const files = this.props.filePaths.filter( path => path.indexOf(filePrefix) === 0 )
+    this.setState({ filesForImport: files })
+    console.log(files)
+    this.importFiles(files)
+  }
+
+  importFiles = (filePaths) => {
+    const items = filePaths.map( path => parseFilePathToItem(path) )
+    Meteor.call('addSequenceItems',{ items, sequence_id: this.props.sequenceId })
+  }
+
   liTracks = (t) => {
     return (
       <li className="item" key={t.name} style={{height: trackHeight + unit}}>
@@ -154,6 +178,8 @@ class Sequence extends React.Component {
             {Object.entries(this.props.sequence).map(this.renderAttribute)}              
             <label><span>validator: </span><span>{this.state.instrumentsValid}</span></label>
             <br />
+            <label><span>import files: </span><input placeholder="/1_16-32_" onInput={this.handleInputImport} value={this.state.inputImport}/>&hellip; <button onClick={this.handleButtonImport}>import</button></label>
+            <br />
             <button onClick={this.handleAdd}>
               Add Item
             </button>            
@@ -180,11 +206,19 @@ class Sequence extends React.Component {
 }
 
 Sequence.propTypes = {
-  sequence: PropTypes.object
+  sequenceId: PropTypes.string
 };
 
 export default withTracker(props => {
+  Meteor.subscribe('sequence', props.sequenceId);
+  const sequence = Sequences.findOne({_id: props.sequenceId});
+
+  Meteor.subscribe('files.all.paths');
+  const filePaths = Files.find({}).map(file => file.path);
+
   return {
+    sequence,
+    filePaths
   };
 })(Sequence);
 

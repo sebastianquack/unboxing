@@ -31,6 +31,13 @@ Meteor.publish('files.all', function (query={}) {
   return Files.find(query, options)
 });
 
+Meteor.publish('files.all.paths', function (query={}) {
+  let options = {
+    fields: {'path':1}
+  }
+  return Files.find(query, options)
+});
+
 Meteor.publish('places.all', function (query={}) {
   let options = {}
   return Places.find(query, options)
@@ -40,7 +47,6 @@ Meteor.publish('walks.all', function (query={}) {
   let options = {}
   return Walks.find(query, options)
 });
-
 
 Meteor.publish('gestures.all', function (data) {
   let options = {}
@@ -57,6 +63,17 @@ Meteor.publish('sequences.all', function (data) {
   return Sequences.find({}, options)
 });
 
+Meteor.publish('sequence', function (id) {
+  let options = {}
+  return Sequences.find({_id: id}, options)
+});
+
+Meteor.publish('sequences.meta', function (data) {
+  let options = {
+    fields: {'items':0}
+  }
+  return Sequences.find({}, options)
+});
 
 Meteor.publish('translations.all', function (data) {
   let options = {}
