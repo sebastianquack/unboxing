@@ -105,6 +105,13 @@ function checkChallengeState(challengeId) {
   }
 }
 
+function trackSelect(deviceId, challengeId, track) {
+  if(!deviceMap[deviceId]) deviceMap[deviceId] = {};
+    deviceMap[deviceId].challengeId = challengeId;
+    deviceMap[deviceId].track = track;
+    deviceMap[deviceId].timestamp = Date.now() / 1000;
+}
+
 
 function init(io) {
 
@@ -115,7 +122,10 @@ function init(io) {
     socket.on('disconnect', (reason) => {
       console.log('\nClient disconnected, reason: ' + reason);
       if(socket.deviceId && socket.challengeId) {
-        leaveChallenge(socket, socket.deviceId, socket.challengeId)  
+        let now = Date.now() / 1000;
+        if(deviceMap[socket.deviceId] && (now - deviceMap[socket.deviceId].timestamp) > 1200) { // 20 minutes
+          leaveChallenge(socket, socket.deviceId, socket.challengeId)    
+        }
       }
     });
     
@@ -125,10 +135,7 @@ function init(io) {
       if(msg.code == "selectTrack") {
         if(msg.challengeId && msg.deviceId && msg.track) {
           console.log("selectTrack " + msg.track);
-          if(!deviceMap[msg.deviceId]) deviceMap[msg.deviceId] = {};
-          deviceMap[msg.deviceId].challengeId = msg.challengeId;
-          deviceMap[msg.deviceId].track = msg.track;
-          deviceMap[msg.deviceId].timestamp = Date.now() / 1000;
+          trackSelect(msg.deviceId, msg.challengeId, msg.track);
           updateDeviceMap(socket, msg.challengeId);
         }
       }
@@ -145,6 +152,7 @@ function init(io) {
       if(msg.code == "joinChallenge") {
         if(msg.challengeId && msg.deviceId) {
           joinChallenge(msg.deviceId, msg.challengeId);
+          trackSelect(msg.deviceId, msg.challengeId, msg.track);
           updateDeviceMap(socket, msg.challengeId);
           socket.deviceId = msg.deviceId
           socket.challengeId = msg.challengeId

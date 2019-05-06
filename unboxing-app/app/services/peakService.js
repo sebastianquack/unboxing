@@ -86,7 +86,7 @@ class PeakService extends Service {
         this.stillEventFired = false;
       } else {
         if(!this.state.still) {
-          if(soundService.getSyncTime() - this.lastChange > 10000) {
+          if(soundService.getSyncTime() - this.lastChange > 20000) {
             this.setReactive({still: true});
             if(!this.stillEventFired) {
               gameService.handleStillEvent();  

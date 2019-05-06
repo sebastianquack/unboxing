@@ -381,8 +381,10 @@ class SequenceService extends Service {
 
         if(this.isGuitarHeroMode()) {
 
-          this.setActionMessage(storageService.t("sequence-playing")); 
-          this.setReactive({instructorState: "volume"});  
+          if(this.state.currentItem.approved) {
+            this.setActionMessage(storageService.t("sequence-playing")); 
+            this.setReactive({instructorState: "volume"});  
+          }
 
           // check if another item has already been scheduled
           if(this.state.scheduledItem && !this.autoPlayItem(this.state.scheduledItem)) {
@@ -766,7 +768,7 @@ class SequenceService extends Service {
 
       // only here we publish data to state!!
     	this.setReactive({
-          nextItem: {...nextItem}, // make a shallow copy
+          nextItem: nextItem ? {...nextItem} : null, // make a shallow copy
           loopCounter,
           loopStartedAt,
       });
