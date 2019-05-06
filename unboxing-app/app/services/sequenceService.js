@@ -583,7 +583,7 @@ class SequenceService extends Service {
         }
       }
     }
-    console.warn(soundService.getSyncTime() + ": " + JSON.stringify(soundService.sounds));
+    //console.warn(soundService.getSyncTime() + ": " + JSON.stringify(soundService.sounds));
     soundService.preloadSoundfiles(paths, callback, false);        
   }
 
@@ -963,11 +963,16 @@ class SequenceService extends Service {
 
   // shifts sequence to new start time
   shiftSequenceToNewStartTime = (startTime) => {
+      let diff = startTime - this.state.playbackStartedAt;
+      console.warn("difference in sequence start times: " + diff);
       this.setReactive({
         playbackStartedAt: startTime
       });
       console.warn(this.state.scheduledItem);
-      console.warn(this.state.nextItem);
+      if(this.state.scheduledItem) {
+        soundService.shiftScheduledSounds(diff);
+      }
+      //console.warn(this.state.nextItem);
       this.setupNextSequenceItem();
   }
 		

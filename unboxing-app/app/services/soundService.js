@@ -265,7 +265,7 @@ class SoundSevice extends Service {
     // experiment - reuse playing players
     let indices = this.findSoundIndices(soundfile, "playing");
     if(indices.length) {
-      console.warn("reusing player " + indices[0]);
+      //console.warn("reusing player " + indices[0]);
     }
     
 		// find sound index of a ready version for this sound
@@ -285,9 +285,43 @@ class SoundSevice extends Service {
     //console.warn(this.getSyncTime() + ": scheduling sound " + indices[0] + " " + soundfile + " for " + targetTime);  
     const timeToRunStartingLoop = targetTime - this.getSyncTime();
 
-    this.schedulingIntervals.push(setTimeout(()=>{
-			this.runStartingLoop(indices[0], targetTime, callbacks, startSilent, unload);
-    }, timeToRunStartingLoop - 50)); // set timeout to a bit less to allow for loop
+    this.schedulingIntervals.push({
+      interval: setTimeout(()=>{
+			 this.runStartingLoop(indices[0], targetTime, callbacks, startSilent, unload);
+      }, timeToRunStartingLoop - 50), // set timeout to a bit less to allow for loop
+      index: indices[0],
+      targetTime: targetTime,
+      callbacks: callbacks,
+      startSilent: startSilent,
+      unload: unload
+    });
+  }
+
+  shiftScheduledSounds = (diff) => {
+    console.warn("shifting sounds...");
+
+    // shift intervals and target times
+    for(let i = 0; i < this.schedulingIntervals.length; i++) {
+      
+      let oldIntervalObj = this.schedulingIntervals[i];
+      clearInterval(oldIntervalObj.interval);
+
+      const timeToRunStartingLoop = (oldIntervalObj.targetTime - this.getSyncTime()) + diff;
+      const newTargetTime = oldIntervalObj.targetTime + diff;
+
+      let newIntervalObj = {
+        interval: setTimeout(()=>{
+         this.runStartingLoop(oldIntervalObj.index, newTargetTime, oldIntervalObj.callbacks, oldIntervalObj.startSilent, oldIntervalObj.unload);
+        }, timeToRunStartingLoop - 50), // set timeout to a bit less to allow for loop
+        index: oldIntervalObj.index,
+        targetTime: newTargetTime,
+        callbacks: oldIntervalObj.callbacks,
+        startSilent: oldIntervalObj.startSilent,
+        unload: oldIntervalObj.unload
+      }
+      this.schedulingIntervals[i] = newIntervalObj;
+    }
+  
   }
 
   // run loop for preloaded, scheduled sound at index to playback precisely at target time
@@ -323,7 +357,7 @@ class SoundSevice extends Service {
 			console.log("sound obj not ready to play - trying anyway...")
 		}
 
-    console.warn(this.getSyncTime() + ": starting to play " + index + " " + this.sounds[index].filename + " " + startSilent);
+    //console.warn(this.getSyncTime() + ": starting to play " + index + " " + this.sounds[index].filename + " " + startSilent);
 		this.sounds[index].status = "playing";
     
 		this.soundPlayers[index].setCurrentTime(0).setVolume(startSilent ? 0.0 : 0.3).play((success) => {
@@ -335,7 +369,7 @@ class SoundSevice extends Service {
         }
 
         if (success) {
-		    	console.warn('successfully finished playing ' + index + ' at ', this.getSyncTime());
+		    	//console.warn('successfully finished playing ' + index + ' at ', this.getSyncTime());
           
           // calling callback
           if(typeof callbacks.onPlayEnd == "function") {
@@ -370,8 +404,8 @@ class SoundSevice extends Service {
     for(let i = 0; i < this.sounds.length; i++) {
 			this.stopSound(i);
     }
-		this.schedulingIntervals.forEach((interval)=> {
-			clearInterval(interval);
+		this.schedulingIntervals.forEach((intervalObj)=> {
+			clearInterval(intervalObj.interval);
 		});
 		this.schedulingIntervals = [];
 	}
@@ -398,7 +432,7 @@ class SoundSevice extends Service {
   releaseSound = (index) => {
     if(gameService.isChallengeLooping()) return;
 
-    console.warn(this.getSyncTime() + ": releasing soundObj " + index);
+    //console.warn(this.getSyncTime() + ": releasing soundObj " + index);
     this.sounds[index].status = "released";
     if(this.soundPlayers[index]) {
       this.soundPlayers[index].release();      

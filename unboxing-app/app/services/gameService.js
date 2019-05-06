@@ -19,7 +19,6 @@ const baseState = {
       showInstrumentSelector: false, // show the interface selector in the interface
       statusBarTitle: null,
       statusBarSubtitle: null,
-      //debugMode: false,          // show debugging info in interface
       infoStream: [],
       numChallengeParticipants: 1, // number of people in the challenge
       numChallengeParticipantsWithInstrument: 0,
@@ -468,10 +467,11 @@ class GameService extends Service {
 
   updateInstallationActivity = (deviceMap) => {
     this.state.installationActivityMap = null;
-    Object.keys(deviceMap).forEach((key)=>{
-      if(!this.state.installationActivityMap) this.state.installationActivityMap = {};
-      this.state.installationActivityMap[deviceMap[key].challengeId] = "active"
-    });
+    if(deviceMap)
+      Object.keys(deviceMap).forEach((key)=>{
+        if(!this.state.installationActivityMap) this.state.installationActivityMap = {};
+        this.state.installationActivityMap[deviceMap[key].challengeId] = "active"
+      });
     this.setReactive({
       installationActivityMap: this.state.installationActivityMap,
       installationConencted: true,
@@ -647,7 +647,7 @@ class GameService extends Service {
   handleMissedGuitarHeroCue() {
     this.showInfoStreamAlert(storageService.t("too-late"), "red");
     //this.showNotification("guitar hero too late!");
-    console.warn("guitar hero missed cue");
+    //console.warn("guitar hero missed cue");
     sequenceService.stopCurrentSound();
   }
 
@@ -677,7 +677,12 @@ class GameService extends Service {
 
         if(this.state.activeChallenge.item_manual_mode == "guitar hero") {
             if(difference <= -this.guitarHeroThreshold.pre) {
-              this.showInfoStreamAlert(storageService.t("too-early"));
+              if(sequenceService.state.scheduledItem.startTime == 0 && sequenceService.state.loopCounter == 0) {
+                sequenceService.approveScheduledOrCurrentItem(); // always approve first item at start of sequence
+              } else {
+                this.showInfoStreamAlert(storageService.t("too-early"));  
+              }
+              
               //this.showNotification("guitar hero: too early!");    
             }
             if(difference > -this.guitarHeroThreshold.pre && difference <= this.guitarHeroThreshold.post) {
