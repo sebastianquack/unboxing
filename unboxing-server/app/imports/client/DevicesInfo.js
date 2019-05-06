@@ -172,6 +172,7 @@ class DevicesInfo extends React.Component {
       'file': row => (row.deviceStatus.fileStatus ? row.deviceStatus.fileStatus + ( !!row.downloadBot ? " <- "+row.downloadBot : '' ) : null),
       'timeSync': row => row.deviceStatus.timeSyncStatus,
       'walk': row => row.deviceStatus.activeWalk ? row.deviceStatus.activeWalk.tag + "@" + row.deviceStatus.activeWalk.startTime : "-",
+      'challenge': row => row.deviceStatus.activeChallenge,
       'adbStatus': row => row.adb.status,
       // 'adbRetries': row => row.adb.retries,
       'adbCommand': row => row.adb.command,

@@ -2,7 +2,7 @@ express = require('express');
 import { Devices } from '../../collections'
 
 const app = express();
-server = app.listen(3004);
+server = app.listen(62901);
 
 const io = require('socket.io')(server);
 
