@@ -357,7 +357,7 @@ class SoundSevice extends Service {
 			console.log("sound obj not ready to play - trying anyway...")
 		}
 
-    //console.warn(this.getSyncTime() + ": starting to play " + index + " " + this.sounds[index].filename + " " + startSilent);
+    // console.warn(this.getSyncTime() + ": starting to play " + index + " " + this.sounds[index].filename + " " + startSilent);
 		this.sounds[index].status = "playing";
     
 		this.soundPlayers[index].setCurrentTime(0).setVolume(startSilent ? 0.0 : 0.3).play((success) => {
@@ -432,7 +432,7 @@ class SoundSevice extends Service {
   releaseSound = (index) => {
     if(gameService.isChallengeLooping()) return;
 
-    //console.warn(this.getSyncTime() + ": releasing soundObj " + index);
+    // console.warn(this.getSyncTime() + ": releasing soundObj " + index);
     this.sounds[index].status = "released";
     if(this.soundPlayers[index]) {
       this.soundPlayers[index].release();      

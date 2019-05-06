@@ -57,6 +57,7 @@ do
    adb shell "mkdir /sdcard/unboxing"   
 
    adb shell settings put system screen_off_timeout 300000
+   adb shell 'su -c "settings put global captive_portal_mode 0"'
 
    echo "starting app"
    adb shell am start -n com.unboxing/com.unboxing.MainActivity

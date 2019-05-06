@@ -98,7 +98,7 @@ class FileService extends Service {
 			{
 				fromUrl: 'http://'+networkService.state.server+':3000' + file.url_path,
 				toFile: folder + file.path,
-				progressDivider: 5,
+				progressDivider: 10,
 				cacheable: false,
 				progress: p => {
 					// console.log("download progress", p.bytesWritten)

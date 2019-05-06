@@ -628,7 +628,7 @@ class GameService extends Service {
     // should this request start the sequence?
     // yes, if sequence is ready to play
     else if (sequenceService.state.controlStatus === "idle") {
-      console.log("startSequenceRemotely: starting sequence")
+      console.warn("startSequenceRemotely: starting sequence")
       sequenceService.startSequence(startTime, false)
     } else {
       console.log("startSequenceRemotely: ignored, time diff:", startTime, sequenceService.state.playbackStartedAt)

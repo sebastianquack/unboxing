@@ -19,7 +19,11 @@ const adbPresets = [
   },  
   {
     name: "wifi keep-awake",
-    command: "shell \"su -c 'settings put global wifi_sleep_policy 2 &&  settings put global wifi_scan_always_enabled 1'\"",
+    command: `
+      shell "su -c 'settings put global wifi_sleep_policy 2'"
+      shell "su -c 'settings put global wifi_scan_always_enabled 1'"
+      shell 'su -c "settings put global captive_portal_mode 0"'
+      `,
     retries: 5,
     parallel: 5,
   },
@@ -29,6 +33,12 @@ const adbPresets = [
     retries: 5,
     parallel: 10,
   },
+  {
+    name: "remove gameState",
+    command: "shell 'rm -f /sdcard/unboxing/gameState.json'",
+    retries: 5,
+    parallel: 10,
+  }, 
   {
     name: "install production",
     command: `
@@ -40,6 +50,7 @@ const adbPresets = [
       shell pm grant com.unboxing android.permission.READ_EXTERNAL_STORAGE
       shell pm grant com.unboxing android.permission.WRITE_EXTERNAL_STORAGE
       shell pm grant com.unboxing android.permission.READ_PHONE_STATE
+      shell 'su -c "settings put global captive_portal_mode 0"'
       shell am start -n com.unboxing/com.unboxing.MainActivity  
     `,
     retries: 1,
