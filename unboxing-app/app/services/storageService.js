@@ -277,10 +277,29 @@ class StorageService extends Service {
     }
 
     return {
+      _id: installation._id,
       name: installation.name,
       challenges: challenges,
       deviceGroups: deviceGroupsObj 
     }
+  }
+
+  installationContainsChallenge(installation, challengeId) {
+    for(let i = 0; i < installation.challenges.length; i++) {
+      if(installation.challenges[i]._id == challengeId) return true;
+    }
+    return false;
+  }
+
+  findDeviceGroupForInstallation = (installation) => {
+    for(let i = 0; i < installation.deviceGroups.length; i++) {
+      for(let j = 0; j < installation.deviceGroups[i].devices.length; j++) {
+        if(installation.deviceGroups[i].devices[j].toString() == this.getDeviceId().toString()) {
+          return installation.deviceGroups[i];
+        } 
+      }
+    }
+    return null;
   }
 
   findRelayServerForInstallation = (installation) => {

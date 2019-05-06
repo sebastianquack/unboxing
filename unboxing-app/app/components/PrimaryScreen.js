@@ -19,11 +19,11 @@ const backgroundGradients = {
     colors: ['#000', '#DF4B47', '#FFCE51'],
     locations: [0.5, 0.875, 1],
   },  
-  "passive": { // = active
+  "active": {
     colors: ['rgba(0,0,0,0)', 'rgba(76,46,136,0.2)', 'rgba(0,175,161,1)'],
     locations: [0.3, 0.5, 1],    
   },
-  "active": { // = passive
+  "passive": { 
     colors: ['rgba(0,0,0,0)', 'rgba(76,46,136,0.2)', 'rgba(0,175,161,0.5)'],
     locations: [0.5, 0.7, 1],    
   },

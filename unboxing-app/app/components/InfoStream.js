@@ -79,6 +79,7 @@ class InfoStreamComponent extends React.Component {
           flexDirection: "column",
           marginTop: 100,
           marginBottom: 0 + (this.props.gameService.infoAlert ? 0 : 62),
+          //backgroundColor: "yellow"
         }}>
           {elements}
           {this.props.gameService.infoAlert &&
