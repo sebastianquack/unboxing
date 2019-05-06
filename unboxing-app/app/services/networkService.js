@@ -15,7 +15,9 @@ defaultConnection = {
   psk: "87542000",
 }
 
-adminSocketPort = "3004";
+adminSocketPort = "62901";
+
+const mobileAdminServerUrl = "unboxing.sebquack.perseus.uberspace.de";
 
 const IMEI = require('react-native-imei')
 
@@ -35,6 +37,7 @@ class NetworkService extends Service {
       targetConnection: {},
       adminSocketConnected: false,
       adminSocketInitialized: false,
+      adminServer: defaultServer
 		});
 
     this.initNetInfo()
@@ -103,6 +106,12 @@ class NetworkService extends Service {
       storageService.setServer(server);  
     }
     relayService.updateDefaultServer()
+
+    this.setReactive({adminServer: server});
+    //console.warn("admin server set to " + server);
+    if(server != this.state.adminServer) {
+      this.initAdminSocket();
+    }
   }	
 
   initNetInfo = () => {
@@ -112,12 +121,16 @@ class NetworkService extends Service {
     });
     handleConnectivityChange = (connectionInfo) => {
       self.setReactive({connectionType: connectionInfo.type})
+      
+      if(connectionInfo.type == "cellular") {
+        this.initAdminSocket(mobileAdminServerUrl);
+      }
+      if(connectionInfo.type == "wifi") {
+        this.initAdminSocket(this.state.server); 
+      }
+
       wifi.getSSID((ssid) => {
         self.setReactive({ssid})
-
-        //if(ssid == "unboxing") {
-          this.initAdminSocket();
-        //}
       });
       
       wifi.getIP((ip) => {
@@ -157,11 +170,21 @@ class NetworkService extends Service {
     this.setReactive({targetConnection: connection})
   }
 
-  initAdminSocket = () => {
-    //console.warn("connecting to admin socket " + this.state.server + ":" + adminSocketPort);
-    if(this.state.adminSocketConnected) return;
+  initAdminSocket = (server) => {
+    if(!server) return;
+    
+    // don't reinit with same server if we are connected
+    if(this.adminSocketConnected && (server == this.state.adminServer)) return;
 
-    this.adminSocket = io("http://" + this.state.server + ":" + adminSocketPort);
+    //console.warn("initAdminSocket", server);
+
+    if(this.adminSocketConnected && this.adminSocket) {
+      this.adminSocket.disconnect();
+    }
+
+    this.setReactive({adminServer: server});
+
+    this.adminSocket = io("http://" + this.state.adminServer + ":" + adminSocketPort);
     //console.warn("init admin socket on " + this.state.server);
     
     this.adminSocket.on('disconnect', ()=>{
@@ -173,7 +196,7 @@ class NetworkService extends Service {
     this.adminSocket.on('connect', ()=>{
       this.setReactive({adminSocketConnected: true})
       //console.warn("connected to admin");
-      setTimeout(this.sendAdminStatus, 3000)
+      setTimeout(()=>this.sendAdminStatus(true), 3000)
     });
 
     this.adminSocket.on('reconnect_attempt', () => {
@@ -195,15 +218,16 @@ class NetworkService extends Service {
     }, 2000);
   }
 
-  sendAdminStatus = () => {
+  sendAdminStatus = (override=false) => {
     let walk = gameService.state.activeWalk ? {tag: gameService.state.activeWalk.tag, startTime: gameService.state.walkStartTime} : null
     let payload = {
       everythingVersion: storageService.state.version,      
       fileStatus: fileService.state.status,
       timeSyncStatus: this.state.timeSyncStatus,
       activeWalk: walk,
+      activeChallenge: gameService.state.activeChallenge ? gameService.state.activeChallenge.shorthand + " " + gameService.state.activeChallenge.name : "none"
     }
-    if(JSON.stringify(this.lastSentAdminPayload) !== JSON.stringify(payload)) {
+    if(override || JSON.stringify(this.lastSentAdminPayload) !== JSON.stringify(payload)) {
       let msgObj = {code: "statusUpdate", payload: payload, deviceId: storageService.getDeviceId()};
       this.adminSocket.emit('message', msgObj);
       this.lastSentAdminPayload = payload;

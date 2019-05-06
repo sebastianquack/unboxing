@@ -17,6 +17,10 @@ export default class Service {
 	setReactive(newState) {
 		// iterate over keys in object, update values
     let changed = false;
+    if(typeof newState != "object") {
+      console.warn("bad setReactive", newState)
+      return;
+    }
 		Object.keys(newState).forEach((key) => {
       if(typeof newState[key] == "number" || typeof newState[key] == "string" || typeof newState[key] == "boolean") {
         if(newState[key] != this.state[key]) {

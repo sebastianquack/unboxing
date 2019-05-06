@@ -19,7 +19,6 @@ const baseState = {
       showInstrumentSelector: false, // show the interface selector in the interface
       statusBarTitle: null,
       statusBarSubtitle: null,
-      //debugMode: false,          // show debugging info in interface
       infoStream: [],
       numChallengeParticipants: 1, // number of people in the challenge
       numChallengeParticipantsWithInstrument: 0,
@@ -468,10 +467,11 @@ class GameService extends Service {
 
   updateInstallationActivity = (deviceMap) => {
     this.state.installationActivityMap = null;
-    Object.keys(deviceMap).forEach((key)=>{
-      if(!this.state.installationActivityMap) this.state.installationActivityMap = {};
-      this.state.installationActivityMap[deviceMap[key].challengeId] = "active"
-    });
+    if(deviceMap)
+      Object.keys(deviceMap).forEach((key)=>{
+        if(!this.state.installationActivityMap) this.state.installationActivityMap = {};
+        this.state.installationActivityMap[deviceMap[key].challengeId] = "active"
+      });
     this.setReactive({
       installationActivityMap: this.state.installationActivityMap,
       installationConencted: true,
@@ -622,13 +622,13 @@ class GameService extends Service {
         // && sequenceService.state.playbackStartedAt > nowTime
         && startTime < sequenceService.state.playbackStartedAt
       ) {
-      console.warn("startSequenceRemotely: shifting timing")
+      //console.warn("startSequenceRemotely: shifting timing")
       sequenceService.shiftSequenceToNewStartTime(startTime);
     }
     // should this request start the sequence?
     // yes, if sequence is ready to play
     else if (sequenceService.state.controlStatus === "idle") {
-      console.log("startSequenceRemotely: starting sequence")
+      //console.warn("startSequenceRemotely: starting sequence")
       sequenceService.startSequence(startTime, false)
     } else {
       console.log("startSequenceRemotely: ignored, time diff:", startTime, sequenceService.state.playbackStartedAt)
@@ -647,7 +647,7 @@ class GameService extends Service {
   handleMissedGuitarHeroCue() {
     this.showInfoStreamAlert(storageService.t("too-late"), "red");
     //this.showNotification("guitar hero too late!");
-    // console.warn("guitar hero missed cue");
+    //console.warn("guitar hero missed cue");
     sequenceService.stopCurrentSound();
   }
 
@@ -672,12 +672,17 @@ class GameService extends Service {
         
         let difference = now - officialTime;
 				
-        console.warn("handlePlayNextItem with difference: " + difference);
+        //console.warn("handlePlayNextItem with difference: " + difference);
         console.log(sequenceService.state.currentItem);
 
         if(this.state.activeChallenge.item_manual_mode == "guitar hero") {
             if(difference <= -this.guitarHeroThreshold.pre) {
-              this.showInfoStreamAlert(storageService.t("too-early"));
+              if(sequenceService.state.scheduledItem.startTime == 0 && sequenceService.state.loopCounter == 0) {
+                sequenceService.approveScheduledOrCurrentItem(); // always approve first item at start of sequence
+              } else {
+                this.showInfoStreamAlert(storageService.t("too-early"));  
+              }
+              
               //this.showNotification("guitar hero: too early!");    
             }
             if(difference > -this.guitarHeroThreshold.pre && difference <= this.guitarHeroThreshold.post) {

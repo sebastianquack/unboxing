@@ -3,12 +3,40 @@ express = require('express');
 const app = express();
 server = app.listen(process.env.PORT || 3005);
 
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+  pingTimeout: 30000,
+});
 
 // const mockInternet = require('./mock-internet-server')
 
 let deviceMap = {}; // {deviceId: {challengeId: id, track: name}} -- used to store where devices are
 let challengeState = {} // {challengeId: {sequenceControlStatus: startTime: }}
+
+
+function joinChallenge(deviceId, challengeId) {
+  if(!deviceMap[deviceId]) deviceMap[deviceId] = {};
+  deviceMap[deviceId].challengeId = challengeId;
+  deviceMap[deviceId].track = undefined; // reset track of device that just joined
+  deviceMap[deviceId].timestamp = Date.now() / 1000;
+  
+  console.log(deviceMap);
+  console.log("purging...");
+
+  let now = Date.now() / 1000;
+
+  // purge old devices from deviceMap
+  for(let deviceId in deviceMap) {  
+    if(now - deviceMap[deviceId].timestamp > 7200) { // 2 hours
+      delete deviceMap[deviceId];
+    }
+  }
+  checkChallengeState(challengeId);
+
+
+  console.log(deviceMap);
+  console.log(challengeState);
+}
+
 
 // returns {withInstrument: x, total: y}
 function countParticipants(challengeId) {
@@ -25,6 +53,7 @@ function countParticipants(challengeId) {
   return {withInstrument: numParticipantsWithInstrument, total: numParticipantsTotal}
 }
 
+
 // returns {piano: 2, violin1: 4}
 function countSelectedTracks(challengeId) {
   let selectedTracks = {};
@@ -36,6 +65,7 @@ function countSelectedTracks(challengeId) {
   }
   return selectedTracks; 
 }
+
 
 function updateDeviceMap(socket, challengeId) {
   let numParticipants = countParticipants(challengeId);
@@ -53,6 +83,7 @@ function updateDeviceMap(socket, challengeId) {
   socket.broadcast.emit('message', msgObj);
 }
 
+
 function leaveChallenge(socket, deviceId, challengeId) {
   console.log(deviceId, "leave challenge", challengeId)
   if(deviceId) {
@@ -60,14 +91,20 @@ function leaveChallenge(socket, deviceId, challengeId) {
   }
   if(challengeId) {
      updateDeviceMap(socket, challengeId);
-     if(countParticipants(challengeId).total == 0) {
-       if(challengeState[challengeId]) {
-        challengeState[challengeId].sequenceControlStatus = "idle";   
-       }
-     }
+     checkChallengeState(challengeId);
   }
   console.log("challengeState", challengeState)
 }
+
+
+function checkChallengeState(challengeId) {
+  if(countParticipants(challengeId).total == 0) {
+    if(challengeState[challengeId]) {
+      challengeState[challengeId].sequenceControlStatus = "idle";   
+    }
+  }
+}
+
 
 function init(io) {
 
@@ -75,8 +112,8 @@ function init(io) {
   io.on('connection', function(socket) {
     console.log('\nClient connected');
     
-    socket.on('disconnect', () => {
-      console.log('\nClient disconnected');
+    socket.on('disconnect', (reason) => {
+      console.log('\nClient disconnected, reason: ' + reason);
       if(socket.deviceId && socket.challengeId) {
         leaveChallenge(socket, socket.deviceId, socket.challengeId)  
       }
@@ -91,6 +128,7 @@ function init(io) {
           if(!deviceMap[msg.deviceId]) deviceMap[msg.deviceId] = {};
           deviceMap[msg.deviceId].challengeId = msg.challengeId;
           deviceMap[msg.deviceId].track = msg.track;
+          deviceMap[msg.deviceId].timestamp = Date.now() / 1000;
           updateDeviceMap(socket, msg.challengeId);
         }
       }
@@ -106,8 +144,7 @@ function init(io) {
 
       if(msg.code == "joinChallenge") {
         if(msg.challengeId && msg.deviceId) {
-          if(!deviceMap[msg.deviceId]) deviceMap[msg.deviceId] = {};
-          deviceMap[msg.deviceId].challengeId = msg.challengeId;
+          joinChallenge(msg.deviceId, msg.challengeId);
           updateDeviceMap(socket, msg.challengeId);
           socket.deviceId = msg.deviceId
           socket.challengeId = msg.challengeId
