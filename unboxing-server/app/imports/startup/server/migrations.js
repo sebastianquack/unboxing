@@ -189,10 +189,12 @@ Migrations.add({
     let sequences = Sequences.find().fetch();
     sequences.forEach((sequence)=>{
       let items = sequence.items;
-      for(let i = 0; i < items.length; i++) {
-        items[i].path = "/items" +  items[i].path;
+      if (items) {
+        for(let i = 0; i < items.length; i++) {
+          items[i].path = "/items" +  items[i].path;
+        }
+        Meteor.call("updateSequence", sequence._id, {items: items});
       }
-      Meteor.call("updateSequence", sequence._id, {items: items});
     });
   },
   down: function() {}
@@ -231,6 +233,7 @@ Migrations.add({
   up: function() {
     Sequences.find().forEach( sequence => {
       let items = sequence.items;
+      if (!items) return
       for(let i = 0; i < items.length; i++) {
         let index = oldTrackNames.indexOf(items[i].track);
         if(index > -1) {
