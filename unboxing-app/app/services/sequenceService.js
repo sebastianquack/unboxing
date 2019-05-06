@@ -889,7 +889,7 @@ class SequenceService extends Service {
 
   // approve the next item
   approveScheduledOrCurrentItem() {
-    console.warn("approved");
+    //console.warn("approved");
     if(this.state.currentItem) {
       this.setReactive({
 				currentItem: {
@@ -974,11 +974,11 @@ class SequenceService extends Service {
   // shifts sequence to new start time
   shiftSequenceToNewStartTime = (startTime) => {
       let diff = startTime - this.state.playbackStartedAt;
-      console.warn("difference in sequence start times: " + diff);
+      //console.warn("difference in sequence start times: " + diff);
       this.setReactive({
         playbackStartedAt: startTime
       });
-      console.warn(this.state.scheduledItem);
+      //console.warn(this.state.scheduledItem);
       if(this.state.scheduledItem) {
         soundService.shiftScheduledSounds(diff);
       }

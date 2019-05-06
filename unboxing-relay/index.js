@@ -3,7 +3,9 @@ express = require('express');
 const app = express();
 server = app.listen(process.env.PORT || 3005);
 
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+  pingTimeout: 30000,
+});
 
 // const mockInternet = require('./mock-internet-server')
 
@@ -110,8 +112,8 @@ function init(io) {
   io.on('connection', function(socket) {
     console.log('\nClient connected');
     
-    socket.on('disconnect', () => {
-      console.log('\nClient disconnected');
+    socket.on('disconnect', (reason) => {
+      console.log('\nClient disconnected, reason: ' + reason);
       if(socket.deviceId && socket.challengeId) {
         leaveChallenge(socket, socket.deviceId, socket.challengeId)  
       }

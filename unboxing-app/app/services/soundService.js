@@ -288,7 +288,7 @@ class SoundSevice extends Service {
     this.schedulingIntervals.push({
       interval: setTimeout(()=>{
 			 this.runStartingLoop(indices[0], targetTime, callbacks, startSilent, unload);
-      }, timeToRunStartingLoop - 50), // set timeout to a bit less to allow for loop
+      }, timeToRunStartingLoop - 200), // set timeout to a bit less to allow for loop
       index: indices[0],
       targetTime: targetTime,
       callbacks: callbacks,
@@ -298,7 +298,7 @@ class SoundSevice extends Service {
   }
 
   shiftScheduledSounds = (diff) => {
-    console.warn("shifting sounds...");
+    //console.warn("shifting sounds...");
 
     // shift intervals and target times
     for(let i = 0; i < this.schedulingIntervals.length; i++) {
@@ -342,14 +342,18 @@ class SoundSevice extends Service {
 		//console.warn("left loop after " + counter + " cycles at " + now);
 		
 		if(now - loopStartTime >= loopCutoff) {
-			console.log("aborting playback - loop cutoff exceeded");
+			this.showNotification("aborting playback - loop cutoff exceeded");
 		} else {
-			this.playSound(index, callbacks, startSilent);	
+      let precision = now - targetSoundStartTime;
+      if(gameService.state.debugMode) {
+        this.showNotification("playing sound with precision " + precision)
+      }
+			this.playSound(index, callbacks, startSilent, precision);	
 		}
 	}
 
   // finally, initiate playback of sound and call callback on comepletion
-	playSound = (index, callbacks, startSilent=false) => {
+	playSound = (index, callbacks, startSilent=false, precision=0) => {
 		if(!this.sounds[index]) return;
 
 		// check if sound is ready to play? maybe not necessary
@@ -360,7 +364,7 @@ class SoundSevice extends Service {
     // console.warn(this.getSyncTime() + ": starting to play " + index + " " + this.sounds[index].filename + " " + startSilent);
 		this.sounds[index].status = "playing";
     
-		this.soundPlayers[index].setCurrentTime(0).setVolume(startSilent ? 0.0 : 0.3).play((success) => {
+		this.soundPlayers[index].setCurrentTime(precision / 1000).setVolume(startSilent ? 0.0 : 0.3).play((success) => {
 
         if(gameService.isChallengeLooping()) {
           console.warn("reset sound index " + index);
