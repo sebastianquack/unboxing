@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { css } from 'emotion'
 
-import { Devices, Walks, Challenges } from '../collections';
+import { cleanJSON } from '../helper/both/cleanJSON'
+import { Devices, Walks, Challenges, Installations } from '../collections';
 
 const adbPresets = [
   {
@@ -33,6 +34,24 @@ const adbPresets = [
     retries: 5,
     parallel: 10,
   },
+  {
+    name: "press home",
+    command: "shell input keyevent KEYCODE_HOME",
+    retries: 5,
+    parallel: 10,
+  },
+  {
+    name: "stop app",
+    command: "shell 'am force-stop com.unboxing'",
+    retries: 5,
+    parallel: 10,
+  },     
+  {
+    name: "start app",
+    command: "shell am start -n com.unboxing/com.unboxing.MainActivity",
+    retries: 5,
+    parallel: 10,
+  },       
   {
     name: "remove gameState",
     command: "shell 'rm -f /sdcard/unboxing/gameState.json'",
@@ -115,6 +134,20 @@ class DevicesInfo extends React.Component {
         [deviceId]: checked 
       }
     }))
+  }
+
+  selectInstallation = () => {
+    const installation = Installations.findOne({_id: this.state.selectInstallation})
+    const json = JSON.parse(cleanJSON(installation.deviceGroups))
+    const devices = json[0].devices
+    const selected = {}
+    for (let d of devices) {
+      selected[d] = true
+    }
+    console.log(devices)
+    this.setState({
+      selected
+    })
   }
 
   sendMessage = message => {
@@ -263,12 +296,20 @@ class DevicesInfo extends React.Component {
       }
     }>clear downloadBot</button>
 
+    const selectInstallation = <span>
+        <select value={this.state.selectInstallation} onChange={event => this.setState({selectInstallation: event.target.value})}>
+          {emptyOption}
+          {this.props.installations.map(i => <option key={i._id} value={i._id}>{i.name}</option>)}
+        </select>
+        <button onClick={this.selectInstallation}>select</button>
+      </span>
+
     const selectAll = <button onClick={event => this.setState({selected: this.props.devices.map(d=>d.deviceId)})}>select all</button>
     const selectNone = <button onClick={event => this.setState({selected:[]})}>select none</button>
 
     const headerRows = Object.keys(columnAccessors).map(c => <th key={c}>{c}</th>)
 
-    const rows = this.props.devices.map(device => <tr key={device._id}>
+    const rows = this.props.devices.map(device => <tr key={device._id} style={{backgroundColor: this.state.selected[device.deviceId] ? '#ffa' : 'transparent'}}>
       { Object.entries(columnAccessors).map(
         ([key, accessor]) => <td className={'td-'+key} title={accessor(device)} key={device._id+key}>{ accessor(device) || '-' }</td>
         )}
@@ -295,8 +336,9 @@ class DevicesInfo extends React.Component {
           <br /><br />
           { startBot }
           { stopBot }
-
           <br /><br />
+          { selectInstallation }
+          < br />
           { selectAll }
           { selectNone }
         </div>
@@ -319,14 +361,17 @@ export default withTracker(props => {
   const sub1 = Meteor.subscribe('devices.all');
   const sub2 = Meteor.subscribe('walks.all');
   const sub3 = Meteor.subscribe('challenges.all');
+  const sub4 = Meteor.subscribe('installations.all');
   const devices = Devices.find({},{sort:{deviceId: 1}}).fetch();
   const walks = Walks.find({}).fetch()
   const challenges = Challenges.find({}).fetch();
+  const installations = Installations.find({}).fetch();
 
   return {
     devices,
     walks,
     challenges,
-    ready: sub1.ready() && sub2.ready() && sub3.ready(),
+    installations,
+    ready: sub1.ready() && sub2.ready() && sub3.ready() && sub4.ready(),
   };
 })(DevicesInfo);
