@@ -232,17 +232,23 @@ class GameContainer extends React.Component {
 
     //console.warn("render GameContainer");
 
+    let backgroundColor = "passive";
+    if(this.props.peakService.isUp && 
+      (this.props.gameService.tutorialStatus == "tutorial-installation-2" 
+        || this.props.gameService.tutorialStatus == "step-1" 
+        || this.props.gameService.tutorialStatus == "step-2" 
+        || (this.props.gameService.challengeStatus == "play" && this.props.sequenceService.currentTrack))) {
+      backgroundColor = "active";
+    } 
+    if(this.props.gameService.challengeStatus == "prepare") {
+      backgroundColor = "fire"
+    }
+
     return (
       <View>
         <ScreenContainer
           primaryScreen = {<PrimaryScreen
-              backgroundColor={(
-                this.props.peakService.isUp && 
-                (this.props.gameService.tutorialStatus == "tutorial-installation-2" 
-                  || this.props.gameService.tutorialStatus == "step-1" 
-                  || this.props.gameService.tutorialStatus == "step-2" 
-                  || (this.props.gameService.challengeStatus == "play" && this.props.sequenceService.currentTrack))) 
-                  ? "passive" : "active" }
+              backgroundColor={backgroundColor}
               backgroundFlow = { 
                 this.props.gameService.challengeStatus == "off" 
                 || this.props.gameService.challengeStatus == "tutorial" 

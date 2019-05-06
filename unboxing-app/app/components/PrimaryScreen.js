@@ -16,8 +16,8 @@ const mozartFlow = require('../../assets/video/Mozartfeld.mp4');
 
 const backgroundGradients = {
   "fire": {
-    //colors: ['#000', '#DF4B47', '#FFCE51'],
-    //locations: [0.5, 0.875, 1],
+    colors: ['#000', '#DF4B47', '#FFCE51'],
+    locations: [0.5, 0.875, 1],
   },  
   "passive": { // = active
     colors: ['rgba(0,0,0,0)', 'rgba(76,46,136,0.2)', 'rgba(0,175,161,1)'],
