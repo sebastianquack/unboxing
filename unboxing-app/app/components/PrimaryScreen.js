@@ -208,22 +208,29 @@ class PrimaryScreen extends React.Component {
   }
 
   render() {
+    const backgroundLayer = this.props.backgroundOnTop ? 70 : 25;
+
     return <View style={{
       height: "100%",
       width: "100%",
       flexDirection: "row",
       // backgroundColor: 'rgba(255,0,0,0.5)',
     }}>
-      { this.props.backgroundFlow && this.renderBackgroundFlow(1) }
-      { this.props.backgroundContent && this.renderBackgroundContent(2) }
-      { this.props.mainContent && this.renderMainContent(3) }
-      { this.renderShade(4) }
-      { this.renderBottomShade(5) }
-      { this.props.infoStreamContent && this.renderInfoStreamShade(6) }
-      { this.props.backgroundColor && this.renderBackgroundColor(7) }
-      { this.props.overlayContent && this.renderOverlayContent(8) }
-      { this.props.scrollContent && this.renderScrollContent(9) }
-      { this.props.infoStreamContent && this.renderInfoStream(10) }
+      { this.props.backgroundFlow && this.renderBackgroundFlow(10) }
+      
+
+
+      { this.props.backgroundContent && this.renderBackgroundContent(20) }
+      { this.props.mainContent && this.renderMainContent(30) }
+      { this.renderShade(40) }
+      { this.renderBottomShade(50) }
+      { this.props.infoStreamContent && this.renderInfoStreamShade(60) }
+      
+      { this.props.backgroundColor && this.renderBackgroundColor(70) } 
+ 
+      { this.props.overlayContent && this.renderOverlayContent(80) }
+      { this.props.scrollContent && this.renderScrollContent(90) }
+      { this.props.infoStreamContent && this.renderInfoStream(100) }
 
     </View>
   }
@@ -235,6 +242,7 @@ PrimaryScreen.propTypes = {
   mainContent: PropTypes.node,
   overlayContent: PropTypes.node,
   scrollContent: PropTypes.node,
+  backgroundLayer: PropTypes.bool
 };
 
 export default PrimaryScreen;

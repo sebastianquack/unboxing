@@ -286,10 +286,16 @@ class SequenceVisualizer extends React.Component {
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
     const isCurrentItem = this.props.item && this.props.item._id == item._id
     const isPlayingItem = this.props.playingItem && this.props.playingItem._id == item._id
+    
+    //const isPlayingItem = this.props.item && this.props.item.approved && this.props.item._id == item._id
+
+    const isScheduledItem = this.props.scheduledItem && this.props.scheduledItem._id == item._id
     const isMissed = this.props.missedItem && this.props.missedItem._id == item._id
     const isNext = this.props.nextItem && this.props.nextItem._id == item._id 
     const isNextAndLoaded = isNext && this.props.nextItem.loaded
-    const showActionIndicator = active && item.autoplay == "off" && !isPlayingItem && !(isCurrentItem && this.props.item.approved) && (isCurrentItem || isNext)
+    //const showActionIndicator = active && item.autoplay == "off" && !isPlayingItem && (isCurrentItem && !this.props.item.approved) && (isCurrentItem || isNext)
+
+    const showActionIndicator = active && item.autoplay == "off" && ((isScheduledItem && !this.props.scheduledItem.approved) || (isCurrentItem && !this.props.item.approved))
 
     const activeStyle = active ? styles.bodyTrackItem__active : {}
     const missedStyle = isMissed ? {borderColor:'red'} : {}
@@ -521,6 +527,7 @@ export default compose(
       nextItem:       props.sequenceService.nextItem,
       missedItem:     props.sequenceService.missedItem,
       playingItem:    props.sequenceService.playingItem,
+      scheduledItem:  props.sequenceService.scheduledItem,
       controlStatus:  props.sequenceService.controlStatus,
       nextUserAction: props.sequenceService.nextUserAction,
       loopCounter :   props.sequenceService.loopCounter,
@@ -536,9 +543,10 @@ export default compose(
 
       // should render?
       shouldRenderRules: {
-        shallowCompare: ["debugMode", "loopCounter", "controlStatus", "isLooping", "playbackStartedAt", "hasActionItem", "trackIndex", "magnification"],
+        shallowCompare: ["currentTime", "debugMode", "loopCounter", "controlStatus", "isLooping", "playbackStartedAt", "hasActionItem", "trackIndex", "magnification"],
         propCompare: {
-          _id: ["item", "nextItem", "missedItem", "playingItem"],
+          _id: ["item", "nextItem", "missedItem", "playingItem", "scheduledItem"],
+          approved: ["item", "scheduledItem"],
           startTime: ["nextUserAction"],
           name: ["track"]
         }
