@@ -286,6 +286,7 @@ class StorageService extends Service {
 
   installationContainsChallenge(installation, challengeId) {
     for(let i = 0; i < installation.challenges.length; i++) {
+      if(installation.challenges[i]._id + "@" + installation._id == challengeId) return true;
       if(installation.challenges[i]._id == challengeId) return true;
     }
     return false;

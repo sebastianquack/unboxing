@@ -22,6 +22,7 @@ const baseState = {
       infoStream: [],
       numChallengeParticipants: 1, // number of people in the challenge
       numChallengeParticipantsWithInstrument: 0,
+      activeInstallation: null,
       installationActivityMap: null,
       installationConnected: false,
 
@@ -139,8 +140,9 @@ class GameService extends Service {
 	}
 
   startInstallationByName = (name) => {
+    this.leaveChallenge();
     this.resetGamestate();
-    
+
     let installation = storageService.loadInstallationByName(name);
     if(installation) {
       //console.warn(installation);
@@ -450,7 +452,12 @@ class GameService extends Service {
 
   leaveChallenge() {
     if(!this.state.activeChallenge) return;
-    relayService.emitMessage({code: "leaveChallenge", challengeId: this.state.activeChallenge ? this.state.activeChallenge._id : null, deviceId: storageService.getDeviceId()});  
+    relayService.emitMessage({
+      code: "leaveChallenge", 
+      challengeId: this.state.activeChallenge ? this.state.activeChallenge._id : null, 
+      installationId: this.state.activeInstallation ? this.state.activeInstallation._id : null,
+      deviceId: storageService.getDeviceId()
+    });  
     
     sequenceService.stopSequence();
     soundService.unloadSoundfiles();
@@ -479,7 +486,6 @@ class GameService extends Service {
     this.state.installationActivityMap = null;
     if(deviceMap)
       Object.keys(deviceMap).forEach((key)=>{
-        // only observe device if part of my deviceGroup
         if(storageService.installationContainsChallenge(this.state.activeInstallation, deviceMap[key].challengeId)) {
           if(!this.state.installationActivityMap) this.state.installationActivityMap = {};
           this.state.installationActivityMap[deviceMap[key].challengeId] = "active"    
@@ -515,7 +521,7 @@ class GameService extends Service {
 
     if(msgObj.code == "challengeParticipantUpdate") {
       if(this.state.activeChallenge) {
-        if(msgObj.challengeId == this.state.activeChallenge._id) {
+        if(msgObj.challengeId == this.state.activeChallenge._id + (this.state.activeInstallation ? "@" + this.state.activeInstallation._id : "")) {
           //console.warn(msgObj);
           this.setReactive({
             numChallengeParticipants: msgObj.numParticipants,
@@ -606,7 +612,12 @@ class GameService extends Service {
       this.setReactive({numChallengeParticipantsWithInstrument: this.state.numChallengeParticipantsWithInstrument - 1});
     }
     this.initInfoStream();
-    relayService.emitMessage({code: "selectTrack", deviceId: storageService.getDeviceId(), challengeId: this.state.activeChallenge._id, track: track ? track.name : null});
+    relayService.emitMessage({code: "selectTrack", 
+      deviceId: storageService.getDeviceId(), 
+      challengeId: this.state.activeChallenge._id, 
+      installationId: this.state.activeInstallation ? this.state.activeInstallation._id : null,      
+      track: track ? track.name : null
+    });
   }
 
   startSequence = () => {
@@ -620,7 +631,12 @@ class GameService extends Service {
         sequenceService.startSequence(startTime, true); // set local start flag to true 
 
         // send start_sequence message to all players connected via nearby
-        relayService.emitMessage({code: "startSequence", challengeId: this.state.activeChallenge._id, startTime: startTime});  
+        relayService.emitMessage({
+          code: "startSequence", 
+          challengeId: this.state.activeChallenge._id, 
+          installationId: this.state.activeInstallation ? this.state.activeInstallation._id : null,
+          startTime: startTime
+        });  
       }
   }
 
