@@ -2,10 +2,7 @@ import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { css } from 'emotion'
 
-<<<<<<< HEAD
 import { cleanJSON } from '../helper/both/cleanJSON'
-=======
->>>>>>> 4231e1bcb277384f2ff2d97fca5606ff56dd0469
 import { Devices, Walks, Challenges, Installations } from '../collections';
 
 const adbPresets = [
