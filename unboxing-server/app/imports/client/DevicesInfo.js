@@ -24,10 +24,24 @@ const adbPresets = [
       shell "su -c 'settings put global wifi_sleep_policy 2'"
       shell "su -c 'settings put global wifi_scan_always_enabled 1'"
       shell 'su -c "settings put global captive_portal_mode 0"'
+      shell 'su -c "settings put global wifi_wakeup_enabled 0"'
+      shell 'su -c "svc power stayon true"'
       `,
     retries: 5,
     parallel: 5,
   },
+  {
+    name: "setup time",
+    command: `
+      shell 'su -c "settings put global auto_time 0"'
+      shell 'su -c "settings put global auto_time_zone 0"'
+      shell 'su -c "setprop persist.sys.timezone Europe/Berlin"'
+      shell 'su -c "date @{{timestamp}}"'
+      shell 'su -c "am broadcast -a android.intent.action.TIME_SET"'
+    `,
+    retries: 2,
+    parallel: 5,
+  },  
   {
     name: "volume max",
     command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP'",
@@ -35,8 +49,45 @@ const adbPresets = [
     parallel: 10,
   },
   {
+    name: "volume 80%",
+    command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_DOWN && input keyevent KEYCODE_VOLUME_DOWN && input keyevent KEYCODE_VOLUME_DOWN && input keyevent KEYCODE_VOLUME_DOWN'",
+    retries: 5,
+    parallel: 10,
+  },  
+  {
+    name: "volume up by 1",
+    command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP' && sleep 1",
+    retries: 5,
+    parallel: 10,
+  },
+  {
+    name: "volume down by 1",
+    command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP' && sleep 1",
+    retries: 5,
+    parallel: 10,
+  },  
+  {
     name: "press home",
     command: "shell input keyevent KEYCODE_HOME",
+    retries: 5,
+    parallel: 10,
+  },
+  {
+    name: "restart app",
+    command: `
+      shell 'am force-stop com.unboxing'
+      shell am start -n com.unboxing/com.unboxing.MainActivity
+      `,
+    retries: 5,
+    parallel: 10,
+  },
+  {
+    name: "restart app (without resume)",
+    command: `
+      shell 'am force-stop com.unboxing'
+      shell 'rm -f /sdcard/unboxing/gameState.json'
+      shell am start -n com.unboxing/com.unboxing.MainActivity
+      `,
     retries: 5,
     parallel: 10,
   },
@@ -51,7 +102,7 @@ const adbPresets = [
     command: "shell am start -n com.unboxing/com.unboxing.MainActivity",
     retries: 5,
     parallel: 10,
-  },       
+  },      
   {
     name: "remove gameState",
     command: "shell 'rm -f /sdcard/unboxing/gameState.json'",
@@ -72,20 +123,8 @@ const adbPresets = [
       shell 'su -c "settings put global captive_portal_mode 0"'
       shell am start -n com.unboxing/com.unboxing.MainActivity  
     `,
-    retries: 1,
+    retries: 5,
     parallel: 2,
-  },
-  {
-    name: "setup time",
-    command: `
-      shell 'su -c "settings put global auto_time 0"'
-      shell 'su -c "settings put global auto_time_zone 0"'
-      shell 'su -c "setprop persist.sys.timezone Europe/Berlin"'
-      shell 'su -c "date @{{timestamp}}"'
-      shell 'su -c "am broadcast -a android.intent.action.TIME_SET"'
-    `,
-    retries: 2,
-    parallel: 5,
   },
   {
     name: "disconnect",
