@@ -216,8 +216,9 @@ class SequenceVisualizer extends React.Component {
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
     const activeStyle = active ? styles.track__active : {}
     const opacity = 1 //this.relativeOpacity(i)
+    const showActionIndicator = active && this.props.hasActionItem && !this.props.playingItem
 
-    //console.warn(this.props.playingItem)
+    console.warn(this.props.playingItem)
 
     const playingIndicator = <LinearGradient
       start={{x: 1, y: 0}}
@@ -229,6 +230,11 @@ class SequenceVisualizer extends React.Component {
         opacity: active && this.props.playingItem ? 1 : 0
       }}
     />
+
+    const actionIndicator = showActionIndicator ? <View style={styles.actionIndicatorHeader}>
+      <Image source={require("../../assets/img/Indicator/Timing/Empty/left.png")} />
+      <Image source={require("../../assets/img/Indicator/Timing/Empty/right.png")} />
+    </View> : null
 
     return (
       <View style={{
@@ -244,6 +250,7 @@ class SequenceVisualizer extends React.Component {
           </UIText>
         </View>
         { playingIndicator }
+        { actionIndicator }
       </View>
     )
   }
@@ -277,17 +284,23 @@ class SequenceVisualizer extends React.Component {
 
     const backgroundColor = ( !this.props.track || this.props.track.name == track.name ? track.color : styles.bodyTrackItem.backgroundColor )
     const active = this.props.track ? ( this.props.track.name == track.name ) : false
-    const hasActionIndicator = active && item.autoplay == "off"
     const isCurrentItem = this.props.item && this.props.item._id == item._id
+    const isPlayingItem = this.props.playingItem && this.props.playingItem._id == item._id
     const isMissed = this.props.missedItem && this.props.missedItem._id == item._id
     const isNext = this.props.nextItem && this.props.nextItem._id == item._id 
     const isNextAndLoaded = isNext && this.props.nextItem.loaded
+    const showActionIndicator = active && item.autoplay == "off" && !isPlayingItem && !(isCurrentItem && this.props.item.approved) && (isCurrentItem || isNext)
 
     const activeStyle = active ? styles.bodyTrackItem__active : {}
     const missedStyle = isMissed ? {borderColor:'red'} : {}
 
     const currentStyle = this.props.debugMode && isCurrentItem ? {borderColor:'green'} : {}
     const nextStyle = this.props.debugMode && isNext ? {borderColor: isNextAndLoaded ? 'yellow' : 'orange'} : {}
+
+    const actionIndicator = showActionIndicator ? <View style={styles.actionIndicatorItem}>
+      <Image source={require("../../assets/img/Indicator/Timing/Full/left.png")} />
+      <Image source={require("../../assets/img/Indicator/Timing/Full/right.png")} />
+    </View> : null
 
     return (
       <View key={item._id} style={{
@@ -300,7 +313,8 @@ class SequenceVisualizer extends React.Component {
           width: widthPercentage+"%", 
           left: leftPercentage+"%",
         }}>
-        { hasActionIndicator && <LinearGradient
+        { actionIndicator }
+        {/* hasActionIndicator && <LinearGradient
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}
           colors={[colors.turquoise, 'rgba(0,0,0,0)']}
@@ -311,7 +325,7 @@ class SequenceVisualizer extends React.Component {
             left:0,
             position: "absolute"
           }}
-          ></LinearGradient>}
+        ></LinearGradient> */}
         {/*<Text style={styles.bodyTrackItemText}>
           { item.name }
         </Text>*/}
@@ -452,6 +466,19 @@ renderActionItem = (item) => {
               right: 0,
             }}
           />
+          <LinearGradient
+            start={{x: 1, y: 0}}
+            end={{x: 0, y: 0}}
+            colors={['rgba(0,0,0,0)', 'black']}
+            locations={[0,0.4]}
+            style={{
+              width: '25%',
+              height: '120%',
+              position: 'absolute',
+              top: '-10%',
+              left: 0,
+            }}
+          />          
         </View>
       );
     } else {
@@ -555,6 +582,26 @@ const styles = StyleSheet.create({
     paddingLeft: 8,
     color: colors.warmWhiteSoft,
   },
+  actionIndicatorHeader:  {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    position: "absolute",
+    // backgroundColor: "rgba(233,0,0,0.5)",
+    right: -31,
+    width: 60,
+    height: "100%"
+  },
+  actionIndicatorItem:  {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    position: "absolute",
+    // backgroundColor: "rgba(233,0,0,0.5)",
+    left: -31,
+    width: 60,
+    height: "100%"
+  },  
   playingIndicator: {
     width: 50,
     right: -3, // move over border
@@ -571,7 +618,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     position: "absolute",
     paddingHorizontal: 8,
-    overflow: "hidden",
+    //overflow: "hidden",
   },
   bodyTrackItem__active: {
     borderColor: colors.turquoise,

@@ -302,7 +302,6 @@ class SequenceService extends Service {
 
         // check if we are already past the next item, skip item
 				if(beatsToNextItem < -1 && currentTimeInSequence > 0 && !this.autoPlayNextItem() && !this.isGuitarHeroMode()) {
-						this.setReactive({ missedItem: { ...this.state.currentItem }})
 						gameService.handleMissedCue();
 						this.doBeatUpdate(); // jump back to start of beatUpdate, because sequence might have shifted to next loop
 						return;
@@ -903,7 +902,7 @@ class SequenceService extends Service {
   turnOnVolumeCurrentItem() {
     if(this.state.currentItem) {
 			soundService.setVolumeFor(this.state.currentItem.path, 0.3);
-			this.setReactive({ playingItem: this.state.currentItem })
+			this.setReactive({ playingItem: {...this.state.currentItem} })
 		}
     /*setTimeout(()=>{
       // make sure volume isn't turned off again by starting sound
@@ -971,7 +970,7 @@ class SequenceService extends Service {
 	  });
 	  soundService.stopAllSounds();
 	}
-	
+
 	// stops sequence playback and sound and clears sequence
 	stopSequence() {
 		soundService.stopAllSounds();

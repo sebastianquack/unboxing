@@ -1,25 +1,66 @@
 #!/bin/bash
 
-# copy app-release to raspi
-
 set -e
 
-command=`basename "$0"`
-if [ $# -lt 1 ]
+if [ $# -eq 0 ]
   then
-    echo "usage: $command <host>"
-    echo "example: $command 192.168.8.1"
+    echo "usage: bin/deploy-to-raspi <host>"
     exit
 fi
 
 USERNAME=pi
+TEMPDIR=/tmp/unboxing-server_`base64 /dev/urandom | tr -d '/+' | dd bs=32 count=1 2>/dev/null`
 
 IDENTITY=$(git rev-parse --show-toplevel)/unboxing-raspi/id_rsa
 
 echo "deloying to $USERNAME@$1"
 
-cd $(git rev-parse --show-toplevel)/unboxing-app
+cd $(git rev-parse --show-toplevel)/unboxing-server
+cd app
+
+echo "Building..."
+meteor build --directory $TEMPDIR --server-only --architecture os.linux.x86_32
+
+echo "compiling npm modules locally..."
+cd $TEMPDIR/bundle/programs/server/
+npm i --target_arch=arm --target_platform=linux
+
+echo "zipping..."
+cd $TEMPDIR
+zip -rq bundle.zip bundle
 
 echo "Uploading..."
-scp -i $IDENTITY android/app/build/outputs/apk/release/app-release.apk $USERNAME@$1:/home/pi/
+cd $TEMPDIR
+scp -i $IDENTITY bundle.zip $USERNAME@$1:/home/pi/bundle.zip
 
+# continuing remotely:
+echo "Continuing remotely:"
+
+ssh -i $IDENTITY $USERNAME@$1 /bin/bash << EOF
+echo "Stopping server..."
+sudo systemctl stop unboxing-server
+sudo systemctl stop mongodb
+sleep 1
+
+echo "installing..."
+mkdir -p bundle
+mkdir -p bundle/files
+mv bundle/files /tmp/files
+rm -rf bundle
+unzip -q bundle.zip
+rm -rf bundle/files
+mv /tmp/files bundle/files
+
+echo "compiling..."
+cd bundle/programs/server/node_modules/fibers
+npm install --prefer-offline
+cd ~
+
+echo "Starting server..."
+sudo systemctl start mongodb
+sudo systemctl start unboxing-server
+
+EOF
+
+echo "Cleaning up..."
+rm -rf $TEMPDIR

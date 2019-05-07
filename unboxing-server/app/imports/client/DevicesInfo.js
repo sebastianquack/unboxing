@@ -2,6 +2,10 @@ import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { css } from 'emotion'
 
+<<<<<<< HEAD
+import { cleanJSON } from '../helper/both/cleanJSON'
+=======
+>>>>>>> 4231e1bcb277384f2ff2d97fca5606ff56dd0469
 import { Devices, Walks, Challenges, Installations } from '../collections';
 
 const adbPresets = [
@@ -23,16 +27,85 @@ const adbPresets = [
       shell "su -c 'settings put global wifi_sleep_policy 2'"
       shell "su -c 'settings put global wifi_scan_always_enabled 1'"
       shell 'su -c "settings put global captive_portal_mode 0"'
+      shell 'su -c "settings put global wifi_wakeup_enabled 0"'
+      shell 'su -c "svc power stayon true"'
       `,
     retries: 5,
     parallel: 5,
   },
+  {
+    name: "setup time",
+    command: `
+      shell 'su -c "settings put global auto_time 0"'
+      shell 'su -c "settings put global auto_time_zone 0"'
+      shell 'su -c "setprop persist.sys.timezone Europe/Berlin"'
+      shell 'su -c "date @{{timestamp}}"'
+      shell 'su -c "am broadcast -a android.intent.action.TIME_SET"'
+    `,
+    retries: 2,
+    parallel: 5,
+  },  
   {
     name: "volume max",
     command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP'",
     retries: 5,
     parallel: 10,
   },
+  {
+    name: "volume 80%",
+    command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_DOWN && input keyevent KEYCODE_VOLUME_DOWN && input keyevent KEYCODE_VOLUME_DOWN && input keyevent KEYCODE_VOLUME_DOWN'",
+    retries: 5,
+    parallel: 10,
+  },  
+  {
+    name: "volume up by 1",
+    command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP' && sleep 1",
+    retries: 5,
+    parallel: 10,
+  },
+  {
+    name: "volume down by 1",
+    command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP' && sleep 1",
+    retries: 5,
+    parallel: 10,
+  },  
+  {
+    name: "press home",
+    command: "shell input keyevent KEYCODE_HOME",
+    retries: 5,
+    parallel: 10,
+  },
+  {
+    name: "restart app",
+    command: `
+      shell 'am force-stop com.unboxing'
+      shell am start -n com.unboxing/com.unboxing.MainActivity
+      `,
+    retries: 5,
+    parallel: 10,
+  },
+  {
+    name: "restart app (without resume)",
+    command: `
+      shell 'am force-stop com.unboxing'
+      shell 'rm -f /sdcard/unboxing/gameState.json'
+      shell am start -n com.unboxing/com.unboxing.MainActivity
+      `,
+    retries: 5,
+    parallel: 10,
+  },
+  {
+    name: "stop app",
+    command: "shell 'am force-stop com.unboxing'",
+    retries: 5,
+    parallel: 10,
+  },     
+  {
+    name: "start app",
+    command: "shell am start -n com.unboxing/com.unboxing.MainActivity",
+    retries: 5,
+    parallel: 10,
+  },      
   {
     name: "remove gameState",
     command: "shell 'rm -f /sdcard/unboxing/gameState.json'",
@@ -53,20 +126,8 @@ const adbPresets = [
       shell 'su -c "settings put global captive_portal_mode 0"'
       shell am start -n com.unboxing/com.unboxing.MainActivity  
     `,
-    retries: 1,
+    retries: 5,
     parallel: 2,
-  },
-  {
-    name: "setup time",
-    command: `
-      shell 'su -c "settings put global auto_time 0"'
-      shell 'su -c "settings put global auto_time_zone 0"'
-      shell 'su -c "setprop persist.sys.timezone Europe/Berlin"'
-      shell 'su -c "date @{{timestamp}}"'
-      shell 'su -c "am broadcast -a android.intent.action.TIME_SET"'
-    `,
-    retries: 2,
-    parallel: 5,
   },
   {
     name: "disconnect",
@@ -115,6 +176,20 @@ class DevicesInfo extends React.Component {
         [deviceId]: checked 
       }
     }))
+  }
+
+  selectInstallation = () => {
+    const installation = Installations.findOne({_id: this.state.selectInstallation})
+    const json = JSON.parse(cleanJSON(installation.deviceGroups))
+    const devices = json[0].devices
+    const selected = {}
+    for (let d of devices) {
+      selected[d] = true
+    }
+    console.log(devices)
+    this.setState({
+      selected
+    })
   }
 
   sendMessage = message => {
@@ -319,12 +394,20 @@ class DevicesInfo extends React.Component {
       }
     }>clear downloadBot</button>
 
+    const selectInstallation = <span>
+        <select value={this.state.selectInstallation} onChange={event => this.setState({selectInstallation: event.target.value})}>
+          {emptyOption}
+          {this.props.installations.map(i => <option key={i._id} value={i._id}>{i.name}</option>)}
+        </select>
+        <button onClick={this.selectInstallation}>select</button>
+      </span>
+
     const selectAll = <button onClick={event => this.setState({selected: this.props.devices.map(d=>d.deviceId)})}>select all</button>
     const selectNone = <button onClick={event => this.setState({selected:[]})}>select none</button>
 
     const headerRows = Object.keys(columnAccessors).map(c => <th key={c}>{c}</th>)
 
-    const rows = this.props.devices.map(device => <tr key={device._id}>
+    const rows = this.props.devices.map(device => <tr key={device._id} style={{backgroundColor: this.state.selected[device.deviceId] ? '#ffa' : 'transparent'}}>
       { Object.entries(columnAccessors).map(
         ([key, accessor]) => <td className={'td-'+key} title={accessor(device)} key={device._id+key}>{ accessor(device) || '-' }</td>
         )}
@@ -357,8 +440,9 @@ class DevicesInfo extends React.Component {
           <br /><br />
           { startBot }
           { stopBot }
-
           <br /><br />
+          { selectInstallation }
+          < br />
           { selectAll }
           { selectNone }
         </div>
