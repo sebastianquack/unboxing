@@ -12,6 +12,8 @@ const baseState = {
       activePath: null,
       activePlace: null,
       activePlaceReference: null,
+      pathLength: 0,
+      minutesToEnd: null,
       walkStatus: "off",      // off -> tutorial-intro -> ongoing -> ended
       challengeStatus: "off",   // off <-> navigate -> (tutorial->) prepare <-> play 
       activeChallenge: null,    // active challenge saved here
@@ -22,6 +24,7 @@ const baseState = {
       infoStream: [],
       numChallengeParticipants: 1, // number of people in the challenge
       numChallengeParticipantsWithInstrument: 0,
+      activeInstallation: null,
       installationActivityMap: null,
       installationConnected: false,
 
@@ -138,9 +141,25 @@ class GameService extends Service {
 		}
 	}
 
-  startInstallationByName = (name) => {
+  startPracticeChallengeByWalkId(walkId) {
+    let walk = storageService.getWalkById(walkId);
+    let challenge = storageService.getTutorialChallengeFromWalk(walk);
+    this.jumpToChallenge(challenge);
+  }
+
+  startFinalChallengeByWalkId(walkId) {
+    let walk = storageService.getWalkById(walkId);
+    let challenge = storageService.getFinalChallengeFromWalk(walk);
     this.resetGamestate();
-    
+    this.setActiveChallenge(challenge);  
+    sequenceService.trackSelectByName(storageService.getWalkInstrument(walk));
+    this.setReactive({walkStatus: "final-challenge"});
+  }
+
+  startInstallationByName = (name) => {
+    this.leaveChallenge();
+    this.resetGamestate();
+
     let installation = storageService.loadInstallationByName(name);
     if(installation) {
       //console.warn(installation);
@@ -157,6 +176,10 @@ class GameService extends Service {
         this.showNotification("relay server not specified for this device - add device to a group?")
       }
 
+      if(this.state.activeChallenge) {
+        this.leaveChallenge();  
+      }
+      
       let practiceInstrument = storageService.findPracticeInstrumentForInstallation(installation);
       if(!practiceInstrument) {
         this.showNotification("practice instrument for device not found");
@@ -180,9 +203,14 @@ class GameService extends Service {
         challengeStatus: "off",
         installationConnected: false,
         installationActivityMap: null,
-        tutorialStatus: this.state.debugMode ? "tutorial-installation-complete" : null,
+        tutorialStatus: this.state.debugMode ? "tutorial-installation-complete" : "tutorial-installation-2",
+        statusBarTitle: storageService.t("installation-choose-a-passage")
+
       });
       storageService.saveGameStateToFile(this.state);  
+      if(!peakService.state.still) {
+        this.handleMoveEvent();
+      }
     }    
   }
 
@@ -356,7 +384,7 @@ class GameService extends Service {
 
 	// called when user enters a challenge 
   // note: useChallengeConnection is set to false for installation mode where connection is specified in installation obj
-	setActiveChallenge = (challenge, useChallengeConnection=true)=> {
+	setActiveChallenge = (challenge, useChallengeConnection=true, installationId=null)=> {
 
     if(!challenge) {
       this.showNotification("challenge not found, aborting...");
@@ -389,12 +417,12 @@ class GameService extends Service {
       statusBarSubtitle: sequenceService.getLocalizedSequenceAttribute("subtitle")
     })
     
-    relayService.emitMessage({code: "joinChallenge", challengeId: challenge._id, deviceId: storageService.getDeviceId()});
+    relayService.emitMessage({code: "joinChallenge", challengeId: challenge._id, installationId: installationId, deviceId: storageService.getDeviceId()});
     this.activateRelayCallbacks();
 	}
 
   joinChallengeInstallation = (challenge)=> {
-    this.setActiveChallenge(challenge, false);
+    this.setActiveChallenge(challenge, false, this.state.activeInstallation._id);
     this.initInfoStream(); 
     peakService.invalidateStill();
   }
@@ -441,7 +469,12 @@ class GameService extends Service {
 
   leaveChallenge() {
     if(!this.state.activeChallenge) return;
-    relayService.emitMessage({code: "leaveChallenge", challengeId: this.state.activeChallenge ? this.state.activeChallenge._id : null, deviceId: storageService.getDeviceId()});  
+    relayService.emitMessage({
+      code: "leaveChallenge", 
+      challengeId: this.state.activeChallenge ? this.state.activeChallenge._id : null, 
+      installationId: this.state.activeInstallation ? this.state.activeInstallation._id : null,
+      deviceId: storageService.getDeviceId()
+    });  
     
     sequenceService.stopSequence();
     soundService.unloadSoundfiles();
@@ -458,6 +491,7 @@ class GameService extends Service {
       this.setReactive({
         activeChallenge: null,
         challengeStatus: "off",
+        statusBarTitle: storageService.t('installation-choose-a-passage')
       });
     }
 
@@ -469,8 +503,10 @@ class GameService extends Service {
     this.state.installationActivityMap = null;
     if(deviceMap)
       Object.keys(deviceMap).forEach((key)=>{
-        if(!this.state.installationActivityMap) this.state.installationActivityMap = {};
-        this.state.installationActivityMap[deviceMap[key].challengeId] = "active"
+        if(storageService.installationContainsChallenge(this.state.activeInstallation, deviceMap[key].challengeId)) {
+          if(!this.state.installationActivityMap) this.state.installationActivityMap = {};
+          this.state.installationActivityMap[deviceMap[key].challengeId] = "active"    
+        }        
       });
     this.setReactive({
       installationActivityMap: this.state.installationActivityMap,
@@ -502,7 +538,7 @@ class GameService extends Service {
 
     if(msgObj.code == "challengeParticipantUpdate") {
       if(this.state.activeChallenge) {
-        if(msgObj.challengeId == this.state.activeChallenge._id) {
+        if(msgObj.challengeId == this.state.activeChallenge._id + (this.state.activeInstallation ? "@" + this.state.activeInstallation._id : "")) {
           //console.warn(msgObj);
           this.setReactive({
             numChallengeParticipants: msgObj.numParticipants,
@@ -593,7 +629,12 @@ class GameService extends Service {
       this.setReactive({numChallengeParticipantsWithInstrument: this.state.numChallengeParticipantsWithInstrument - 1});
     }
     this.initInfoStream();
-    relayService.emitMessage({code: "selectTrack", deviceId: storageService.getDeviceId(), challengeId: this.state.activeChallenge._id, track: track ? track.name : null});
+    relayService.emitMessage({code: "selectTrack", 
+      deviceId: storageService.getDeviceId(), 
+      challengeId: this.state.activeChallenge._id, 
+      installationId: this.state.activeInstallation ? this.state.activeInstallation._id : null,      
+      track: track ? track.name : null
+    });
   }
 
   startSequence = () => {
@@ -607,7 +648,12 @@ class GameService extends Service {
         sequenceService.startSequence(startTime, true); // set local start flag to true 
 
         // send start_sequence message to all players connected via nearby
-        relayService.emitMessage({code: "startSequence", challengeId: this.state.activeChallenge._id, startTime: startTime});  
+        relayService.emitMessage({
+          code: "startSequence", 
+          challengeId: this.state.activeChallenge._id, 
+          installationId: this.state.activeInstallation ? this.state.activeInstallation._id : null,
+          startTime: startTime
+        });  
       }
   }
 
@@ -738,6 +784,7 @@ class GameService extends Service {
   /** interface actions **/
 
   handleStillEvent = ()=> {
+    //console.warn("still");
     if(this.state.gameMode == "installation" && this.state.activeChallenge && !this.state.debugMode) {
       this.leaveChallenge();
     }
@@ -750,6 +797,7 @@ class GameService extends Service {
   }
 
   handleMoveEvent = ()=> {
+    //console.warn("move");
     if(this.state.gameMode == "installation" && this.state.tutorialStatus == "tutorial-installation-1" && !this.state.debugMode) {
       this.setReactive({
         tutorialStatus: "tutorial-installation-2"
@@ -779,12 +827,14 @@ class GameService extends Service {
 
   // center button for instrument selection
   handleMidButton = ()=> {
-    if((this.state.challengeStatus == "prepare" || this.state.challengeStatus == "play") && this.state.tutorialStatus != "practice-sequence") {
+    if((this.state.challengeStatus == "prepare" || this.state.challengeStatus == "play") 
+      && this.state.tutorialStatus != "practice-sequence"
+      && this.state.walkStatus != "final-challenge") {
       this.setReactive({
         showInstrumentSelector: !this.state.showInstrumentSelector
       });  
     } else {
-      this.showNotification("no current function");
+      //this.showNotification("no current function");
     }
   }
 
@@ -805,12 +855,6 @@ class GameService extends Service {
       case "tutorial":
         if(this.state.tutorialStatus == "tutorial-intro") {
           this.setReactive({tutorialStatus: "step-1"});
-        }
-        if(this.state.tutorialStatus == "ready-for-practice") {
-          let challenge = storageService.getTutorialChallengeFromWalk(this.state.activeWalk);
-          this.setActiveChallenge(challenge);  
-          sequenceService.trackSelectByName(this.state.walkInstrument);
-          this.setReactive({tutorialStatus: "practice-sequence"});
         }
         this.initInfoStream();
         break;
@@ -889,7 +933,7 @@ class GameService extends Service {
       }
     }
     
-    if(this.state.gameMode == "manual" || this.state.gameMode == "walk") {
+    if(this.state.gameMode == "manual" || this.state.gameMode == "walk" || this.state.gameMode == "installation") {
 
       switch(this.state.challengeStatus) {
         case "tutorial": 
@@ -917,7 +961,9 @@ class GameService extends Service {
               let textItem = stage[key + "_" + storageService.state.language]
               if(textItem) {
                 this.addItemToInfoStream(storageService.t("info"), textItem);  
-              }  
+              } else {
+                if(key == "text1") this.addItemToInfoStream(null, storageService.t("translation-missing"));  
+              } 
             });
             let video = this.getVideoPathForActiveChallengeStage();
             if(video) {

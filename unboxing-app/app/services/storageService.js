@@ -199,7 +199,16 @@ class StorageService extends Service {
     } else {
       this.showNotification("no path for device in walk");
     }
-  }   
+  }
+
+  getFinalChallengeFromWalk = (walk) => {
+    let path = this.getActivePath(walk);
+    if(path) {
+      return this.findChallengeByShorthand(path.finalChallenge);
+    } else {
+      this.showNotification("no path for device in walk");
+    }
+  }      
 
   getChallengeStages = (challenge)=> {
     let stagesObj = [];
@@ -248,6 +257,16 @@ class StorageService extends Service {
 		return null;
 	}
 
+  findInstallationById(id) {
+    let installation = null;
+    for(let i = 0; i < this.state.collections.installations.length; i++) {
+      if(this.state.collections.installations[i]._id == id) {
+        installation = this.state.collections.installations[i];
+      } 
+    }
+    return installation;
+  }
+
   loadInstallationByName = (name) => {
     let installation = null;
     for(let i = 0; i < this.state.collections.installations.length; i++) {
@@ -277,10 +296,30 @@ class StorageService extends Service {
     }
 
     return {
+      _id: installation._id,
       name: installation.name,
       challenges: challenges,
       deviceGroups: deviceGroupsObj 
     }
+  }
+
+  installationContainsChallenge(installation, challengeId) {
+    for(let i = 0; i < installation.challenges.length; i++) {
+      if(installation.challenges[i]._id + "@" + installation._id == challengeId) return true;
+      if(installation.challenges[i]._id == challengeId) return true;
+    }
+    return false;
+  }
+
+  findDeviceGroupForInstallation = (installation) => {
+    for(let i = 0; i < installation.deviceGroups.length; i++) {
+      for(let j = 0; j < installation.deviceGroups[i].devices.length; j++) {
+        if(installation.deviceGroups[i].devices[j].toString() == this.getDeviceId().toString()) {
+          return installation.deviceGroups[i];
+        } 
+      }
+    }
+    return null;
   }
 
   findRelayServerForInstallation = (installation) => {

@@ -32,7 +32,6 @@ function joinChallenge(deviceId, challengeId) {
   }
   checkChallengeState(challengeId);
 
-
   console.log(deviceMap);
   console.log(challengeState);
 }
@@ -132,11 +131,14 @@ function init(io) {
     socket.on('message', function(msg) {
       console.log('\nreceived message: ' + JSON.stringify(msg));
 
+      let challengeId = msg.challengeId + (msg.installationId ? "@" + msg.installationId : "");
+      console.log("using challengeId: " + challengeId);
+
       if(msg.code == "selectTrack") {
-        if(msg.challengeId && msg.deviceId && msg.track) {
+        if(challengeId && msg.deviceId && msg.track) {
           console.log("selectTrack " + msg.track);
-          trackSelect(msg.deviceId, msg.challengeId, msg.track);
-          updateDeviceMap(socket, msg.challengeId);
+          trackSelect(msg.deviceId, challengeId, msg.track);
+          updateDeviceMap(socket, challengeId);
         }
       }
 
@@ -151,18 +153,21 @@ function init(io) {
 
       if(msg.code == "joinChallenge") {
         if(msg.challengeId && msg.deviceId) {
-          joinChallenge(msg.deviceId, msg.challengeId);
-          trackSelect(msg.deviceId, msg.challengeId, msg.track);
-          updateDeviceMap(socket, msg.challengeId);
+          joinChallenge(msg.deviceId, challengeId);
+          trackSelect(msg.deviceId, challengeId, msg.track);
+          updateDeviceMap(socket, challengeId);
           socket.deviceId = msg.deviceId
-          socket.challengeId = msg.challengeId
+          socket.challengeId = challengeId
 
-          if(challengeState[msg.challengeId]) {
-            if(challengeState[msg.challengeId].sequenceControlStatus == "playing") {
-              socket.emit('message', {code: "startSequence", challengeId: msg.challengeId, startTime: challengeState[msg.challengeId].startTime});  
+          if(challengeState[challengeId]) {
+            if(challengeState[challengeId].sequenceControlStatus == "playing") {
+              socket.emit('message', {code: "startSequence", 
+                challengeId: msg.challengeId, 
+                installationId: installationId,
+                startTime: challengeState[challengeId].startTime});  
             }
           } else {
-            challengeState[msg.challengeId] = {
+            challengeState[challengeId] = {
               sequenceControlStatus: "idle"
             }
           }
@@ -172,17 +177,17 @@ function init(io) {
       }
 
       if(msg.code == "leaveChallenge") {
-        leaveChallenge(socket, msg.deviceId, msg.challengeId)
+        leaveChallenge(socket, msg.deviceId, challengeId)
       }
 
       if(msg.code == "startSequence") {
         if(msg.challengeId) {
-          if(!challengeState[msg.challengeId]) {
-            challengeState[msg.challengeId] = {};
+          if(!challengeState[challengeId]) {
+            challengeState[challengeId] = {};
           }
-          if(challengeState[msg.challengeId].sequenceControlStatus != "playing") {
-            challengeState[msg.challengeId].sequenceControlStatus = "playing";
-            challengeState[msg.challengeId].startTime = msg.startTime;
+          if(challengeState[challengeId].sequenceControlStatus != "playing") {
+            challengeState[challengeId].sequenceControlStatus = "playing";
+            challengeState[challengeId].startTime = msg.startTime;
           }
           console.log(JSON.stringify(challengeState));
         }

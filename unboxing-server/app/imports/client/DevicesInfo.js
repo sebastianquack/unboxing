@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { css } from 'emotion'
 
+<<<<<<< HEAD
 import { cleanJSON } from '../helper/both/cleanJSON'
+=======
+>>>>>>> 4231e1bcb277384f2ff2d97fca5606ff56dd0469
 import { Devices, Walks, Challenges, Installations } from '../collections';
 
 const adbPresets = [
@@ -224,6 +227,16 @@ class DevicesInfo extends React.Component {
     })
   }
 
+  sendInstallationMessage = (event) => {
+    event.preventDefault()
+    this.sendMessage({
+      code: 'startInstallation',
+      payload: {
+        installationId: this.state.installationId
+      }
+    })
+  }
+
   sendTutorialMessage = (event) => {
     event.preventDefault()
     this.sendMessage({
@@ -232,6 +245,26 @@ class DevicesInfo extends React.Component {
         walkId: this.state.walkId
       }
     })
+  }
+
+  sendPracticeChallengeMessage = (event) => {
+    event.preventDefault()
+    this.sendMessage({
+      code: 'startPracticeChallenge',
+      payload: {
+        walkId: this.state.walkId
+      }
+    }) 
+  }
+
+  sendFinalChallengeMessage = (event) => {
+    event.preventDefault()
+    this.sendMessage({
+      code: 'startFinalChallenge',
+      payload: {
+        walkId: this.state.walkId
+      }
+    }) 
   }
 
   sendJumpMessage = (event) => {
@@ -271,6 +304,15 @@ class DevicesInfo extends React.Component {
 
     const emptyOption = <option key="empty" value="">&lt;none&gt;</option>;
     
+    const startInstallation = <form onSubmit={ this.sendInstallationMessage }>
+        <label>start installation</label>
+        <select onChange={ e => this.setState({installationId: e.target.value}) }>
+          {emptyOption}
+          {this.props.ready && this.props.installations.map( i => <option key={i._id} value={i._id}>{i.name}</option>)}      
+        </select>
+        <input type="submit" value="startInstallation" />
+      </form>
+
     const startTutorial = <form onSubmit={ this.sendTutorialMessage }>
         <label>tutorial for walk</label>
         <select onChange={ e => this.setState({walkId: e.target.value}) }>
@@ -280,6 +322,14 @@ class DevicesInfo extends React.Component {
         <input type="submit" value="startTutorial" />
       </form>
 
+    const startPracticeChallenge = <form onSubmit={ this.sendPracticeChallengeMessage }>
+        <label>start practice challenge for walk</label>
+        <select onChange={ e => this.setState({walkId: e.target.value}) }>
+          {emptyOption}
+          {this.props.ready && this.props.walks.map( w => <option key={w._id} value={w._id}>{w.description}</option>)}      
+        </select>
+        <input type="submit" value="startPracticeChallenge" />
+      </form>
 
     const startWalk = <form onSubmit={ this.sendWalkMessage }>
         <label>walk</label>
@@ -290,6 +340,15 @@ class DevicesInfo extends React.Component {
         <label>seconds from now: <input value={this.state.startTimeOffset} onChange={event => this.setState({startTimeOffset: event.target.value})} type="text"></input></label>
         <label>or timestamp: <input value={this.state.startTime} onChange={event => this.setState({startTime: event.target.value})} type="text"></input></label>
         <input type="submit" value="startWalk" />
+      </form>
+
+    const startFinalChallenge = <form onSubmit={ this.sendFinalChallengeMessage }>
+        <label>start the final challenge of the walk</label>
+        <select onChange={ e => this.setState({walkId: e.target.value}) }>
+          {emptyOption}
+          {this.props.ready && this.props.walks.map( w => <option key={w._id} value={w._id}>{w.description}</option>)}      
+        </select>
+        <input type="submit" value="startFinalChallenge" />
       </form>
 
     const adb = <form onSubmit={ this.runAdb }>
@@ -364,7 +423,13 @@ class DevicesInfo extends React.Component {
           { clickOn }
           { clickOff }
           <br /><br />
+          { startInstallation }
+          <br />
           { startTutorial }
+          <br />
+          { startPracticeChallenge }
+          <br />
+          { startFinalChallenge }
           <br />
           { startWalk }
           <br />

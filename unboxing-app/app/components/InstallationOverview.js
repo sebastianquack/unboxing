@@ -40,7 +40,7 @@ class InstallationOverview extends React.Component {
   }
 
   renderChallenge = (challenge, index, activityMap) => {
-    const available = !activityMap || activityMap[challenge._id] == "active";
+    const available = !activityMap || activityMap[challenge._id + "@" + this.props.installation._id] == "active";
     return(
       <TouchableOpacity
         key={challenge._id}
@@ -65,8 +65,8 @@ class InstallationOverview extends React.Component {
             imageStyle={{resizeMode: 'stretch'}}
             style={{height: 60, width: 60, alignItems: "center", justifyContent: "center"}}
             source={challengeBackground}>
-            <UIText size="xl" verticalCenter>{challenge.shorthand}</UIText>
-            { (activityMap && activityMap[challenge._id] == "active") && 
+            <UIText size="xl" verticalCenter>{index + 1}</UIText>
+            { (activityMap && activityMap[challenge._id + "@" + this.props.installation._id] == "active") && 
               <Image style={{position: "absolute", bottom: -8, left: 11}} source={userMarker}/>
             }
         </ImageBackground>

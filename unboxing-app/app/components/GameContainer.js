@@ -117,8 +117,6 @@ class GameContainer extends React.Component {
           statusBar = <StatusBar 
             title={this.props.gameService.statusBarTitle} 
             description={""} 
-            steps={7}
-            currentStep={0}
           />
           infoStreamContent = null;  
         } else {
@@ -175,9 +173,9 @@ class GameContainer extends React.Component {
           mainContent = <SensorModulator mode={"volume tilt"} item={{path: gameService.getPracticeSoundFile(2)}}/>     
           overlayContent = <Instructor mode={"volume"}/>
         }
-        if(this.props.gameService.tutorialStatus == "ready-for-practice") {
+        /*if(this.props.gameService.tutorialStatus == "ready-for-practice") {
           buttonRight = <Button type="play" text={storageService.t("continue")} onPress={()=>{gameService.handleRightButton()}}/>
-        }
+        }*/
         break;
       case "navigate":
         if(this.props.gameService.allowCheckInButton) {
@@ -200,7 +198,8 @@ class GameContainer extends React.Component {
         secondaryScreen = <TouchableOpacity onPress={()=>{gameService.handleMidButton()}}>
           <SecondaryScreen type="instrument" instrument={instrumentName} /></TouchableOpacity>;
         
-        if(this.props.gameService.tutorialStatus != "practice-sequence") {
+        if(this.props.gameService.tutorialStatus != "practice-sequence"
+          && this.props.gameService.walkStatus != "final-challenge") {
           buttonMid = <Button type="change" onPress={()=>{gameService.handleMidButton()}} />;    
         }
         break;
