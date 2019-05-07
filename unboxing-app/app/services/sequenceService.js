@@ -26,7 +26,7 @@ class SequenceService extends Service {
 			beatTickActive: false, // should beat be played on the beat
 			nextUserAction: {}, // information about the next user action such as gesture start/end time
 			isLooping: null,
-			loopCounter: 0,
+			loopCounter: -1,
 			sequenceTimeVisualizer: 0,
 			endedFlag: false // set to true when sequence ended
 		});
@@ -731,6 +731,11 @@ class SequenceService extends Service {
 				return;
 			}
 
+      if(this.state.controlStatus != "playing") {
+        //console.warn("not playing, aborting setupNextSequenceItem");
+        return;
+      }
+
 			if(!this.state.currentTrack) {
 				console.log("no track found, aborting");
 				return;
@@ -747,8 +752,9 @@ class SequenceService extends Service {
     	
 			// figure out what loop we are on - only save this locally in function
 			let loopCounter = Math.floor(currentTimeInPlayback / this.state.currentSequence.custom_duration)
+      
       //console.warn(soundService.getSyncTime() + " loopcounter: " + loopCounter);
-    	//if(loopCounter < 0) loopCounter = 0
+    	if(loopCounter < 0) loopCounter = 0
 
       let loopStartedAt = this.state.playbackStartedAt + (loopCounter * this.state.currentSequence.custom_duration);
 
@@ -769,11 +775,13 @@ class SequenceService extends Service {
     			break;
     		}
     	}
+      //console.warn(nextItem);
 
     	// if we don't find an item on first pass, take the first item in next loop
     	if(!nextItem) {    		
-    		if(gameService.isChallengeLooping() || loopCounter == -1) {
-    			//console.warn(soundService.getSyncTime() + ": looking in next loop");
+
+    		if(gameService.isChallengeLooping()) {
+    			console.warn(soundService.getSyncTime() + ": looking in next loop");
 					for(let i = 0; i < items.length; i++) {
 		    		if(items[i].track == this.state.currentTrack.name) {
 		    			nextItem = items[i];
