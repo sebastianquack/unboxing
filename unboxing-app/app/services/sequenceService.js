@@ -77,19 +77,42 @@ class SequenceService extends Service {
       myTrackName = this.state.currentTrack.name;  
       mySequenceGroup = instruments[myTrackName].sequenceGroup;
     }
+
     let tracksToShow = [];
+    let groupTracker = {};
+
     for(let i = 0; i < tracks.length; i++) {      
       if(instruments[tracks[i].name]) {
-        if(instruments[tracks[i].name].sequenceGroup != mySequenceGroup) {
-          tracksToShow.push(tracks[i]);
+        // always show tracks with priority 1
+        if(instruments[tracks[i].name].priority == 1) {
+          
+          // always show my track
+          if(tracks[i].name == myTrackName) {
+            tracksToShow.push(tracks[i]);
+          } else {
+            // if it's not me, only show if I haven't covered this group
+            let sequenceGroup = instruments[tracks[i].name].sequenceGroup;
+            if(sequenceGroup != mySequenceGroup) {
+              if(!groupTracker[sequenceGroup]) {
+                groupTracker[sequenceGroup] = 1
+                tracksToShow.push(tracks[i]);
+              }
+            }
+          }
+
         } else {
+          // only show track with 2 priority if I am playing it
           if(tracks[i].name == myTrackName) {
             tracksToShow.push(tracks[i]);
           }
-        }  
+        }
       }
     }
+
     this.sortTracks(tracksToShow);
+
+    console.warn("priority combined with groups", tracksToShow);
+
     return tracksToShow;
   }
 

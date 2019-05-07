@@ -7,7 +7,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "flute1",
     image: require('../assets/img/instruments/flute_frame.png'),   
     video: require('../assets/video/instruments/Flute.mov'),
-    order: 1 
+    order: 1,
+    priority: 1
   },
   "oboe1": { 
     name_de: "Oboe 1", 
@@ -17,7 +18,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "oboe1",
     image: require('../assets/img/instruments/oboe_frame.png'),    
     video: require('../assets/video/instruments/Oboe.mov'),
-    order: 2 
+    order: 2,
+    priority: 1 
   },
   "oboe2": { 
     name_de: "Oboe 2", 
@@ -27,7 +29,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "oboe2",
     image: require('../assets/img/instruments/oboe_frame.png'),
     video: require('../assets/video/instruments/Oboe.mov'),
-    order: 3 
+    order: 3,
+    priority: 2
   },
   "fagott1": { 
     name_de: "Fagott 1", 
@@ -37,7 +40,8 @@ export default loadInstruments = () => {return {
     practiceSoundPath2: "/einspielen/sounds_fagott_einspielen1.mp3",
     image: require('../assets/img/instruments/fagott_frame.png'),  
     video: require('../assets/video/instruments/Fagott.mov'),
-    order: 4 
+    order: 4,
+    priority: 1 
   },
   "fagott2": { 
     name_de: "Fagott 2", 
@@ -47,7 +51,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "fagott2",
     image: require('../assets/img/instruments/fagott_frame.png'),  
     video: require('../assets/video/instruments/Fagott.mov'),
-    order: 5  
+    order: 5,
+    priority: 2  
   },
   "horn1": { 
     name_de: "Horn 1",
@@ -57,7 +62,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "horn1",
     image: require('../assets/img/instruments/horn_frame.png'),    
     video: require('../assets/video/instruments/Horn.mov'),
-    order: 6
+    order: 6,
+    priority: 1
   },
   "horn2": { 
     name_de: "Horn 2",
@@ -67,7 +73,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "horn2",
     image: require('../assets/img/instruments/horn_frame.png'),
     video: require('../assets/video/instruments/Horn.mov'),
-    order: 7 
+    order: 7,
+    priority: 2 
   },
   "trompete1": { 
     name_de: "Trompete 1",
@@ -77,7 +84,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "trompete1",
     image: require('../assets/img/instruments/trompete_frame.png'),
     video: require('../assets/video/instruments/Trompete.mov'),
-    order: 8 
+    order: 8,
+    priority: 1 
   },
   "trompete2": { 
     name_de: "Trompete 2",
@@ -87,7 +95,8 @@ export default loadInstruments = () => {return {
     practiceSoundPath2: "/einspielen/sounds_trumpet_einspielen.mp3",
     image: require('../assets/img/instruments/trompete_frame.png'),
     video: require('../assets/video/instruments/Trompete.mov'),
-    order: 9 
+    order: 9,
+    priority: 2 
   },
   "pauke1": { 
     name_de: "Pauke",
@@ -97,7 +106,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "pauke1",
     image: require('../assets/img/instruments/pauke_frame.png'),
     video: require('../assets/video/instruments/Pauke.mov'),
-    order: 10 
+    order: 10,
+    priority: 1
   },
   "piano1":  { 
     name_de: "Klavier", 
@@ -107,7 +117,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "piano1",
     image: require('../assets/img/instruments/piano_frame.png'),  
     video: require('../assets/video/instruments/Piano.mov'),
-    order: 11 
+    order: 11,
+    priority: 1 
   },
   "violin1.1": { 
     name_de: "Violine 1",
@@ -117,7 +128,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "violin1",
     image: require('../assets/img/instruments/violine_frame.png'), 
     video: require('../assets/video/instruments/Violine.mov'),
-    order: 12
+    order: 12,
+    priority: 1
   },
   "violin1.2": { 
     name_de: "Violine 1",
@@ -127,7 +139,8 @@ export default loadInstruments = () => {return {
     practiceSoundPath2: "/einspielen/sounds_violin_einspielen.mp3",
     image: require('../assets/img/instruments/violine_frame.png'), 
     video: require('../assets/video/instruments/Violine.mov'),
-    order: 13
+    order: 13,
+    priority: 1
   },
   "violin1.3": { 
     name_de: "Violine 1",
@@ -137,7 +150,8 @@ export default loadInstruments = () => {return {
     practiceSoundPath2: "/einspielen/sounds_violin_einspielen.mp3",
     image: require('../assets/img/instruments/violine_frame.png'), 
     video: require('../assets/video/instruments/Violine.mov'),
-    order: 14
+    order: 14,
+    priority: 1
   },
   "violin1.4": { 
     name_de: "Violine 1",
@@ -147,7 +161,8 @@ export default loadInstruments = () => {return {
     practiceSoundPath2: "/einspielen/sounds_violin_einspielen.mp3",
     image: require('../assets/img/instruments/violine_frame.png'), 
     video: require('../assets/video/instruments/Violine.mov'),
-    order: 15
+    order: 15,
+    priority: 1
   },
   "violin2.1": { 
     name_de: "Violine 2",
@@ -157,9 +172,10 @@ export default loadInstruments = () => {return {
     practiceSoundPath2: "/einspielen/sounds_violin_einspielen.mp3",
     image: require('../assets/img/instruments/violine_frame.png'), 
     video: require('../assets/video/instruments/Violine.mov'),
-    order: 16
+    order: 16,
+    priority: 2
   },
-  "violin2.1": { 
+  "violin2.2": { 
     name_de: "Violine 2",
     name_en: "Violin 2",
     practiceSoundPath1: "/einspielen/sounds_violin_stimmen.mp3",
@@ -167,9 +183,10 @@ export default loadInstruments = () => {return {
     sequenceGroup: "violin2",
     image: require('../assets/img/instruments/violine_frame.png'), 
     video: require('../assets/video/instruments/Violine.mov'),
-    order: 17
+    order: 17,
+    priority: 2
   },
-  "violin2.1": { 
+  "violin2.3": { 
     name_de: "Violine 2",
     name_en: "Violin 2",
     practiceSoundPath1: "/einspielen/sounds_violin_stimmen.mp3",
@@ -177,9 +194,10 @@ export default loadInstruments = () => {return {
     sequenceGroup: "violin2",
     image: require('../assets/img/instruments/violine_frame.png'), 
     video: require('../assets/video/instruments/Violine.mov'),
-    order: 18
+    order: 18,
+    priority: 2
   },
-  "violin2.1": { 
+  "violin2.4": { 
     name_de: "Violine 2",
     name_en: "Violin 2",
     practiceSoundPath1: "/einspielen/sounds_violin_stimmen.mp3",
@@ -187,7 +205,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "violin2",
     image: require('../assets/img/instruments/violine_frame.png'), 
     video: require('../assets/video/instruments/Violine.mov'),
-    order: 19
+    order: 19,
+    priority: 1
   },
   "viola1.1": { 
     name_de: "Viola 1",
@@ -197,7 +216,8 @@ export default loadInstruments = () => {return {
     practiceSoundPath2: "/einspielen/sounds_viola_einspielen.mp3",
     image: require('../assets/img/instruments/viola_frame.png'),   
     video: require('../assets/video/instruments/Viola.mov'),
-    order: 20 
+    order: 20,
+    priority: 1 
   },
   "viola1.2": { 
     name_de: "Viola 1",
@@ -207,7 +227,8 @@ export default loadInstruments = () => {return {
     practiceSoundPath2: "/einspielen/sounds_viola_einspielen.mp3",
     image: require('../assets/img/instruments/viola_frame.png'),   
     video: require('../assets/video/instruments/Viola.mov'),
-    order: 21 
+    order: 21,
+    priority: 1 
   },
   "viola1.3": { 
     name_de: "Viola 1",
@@ -217,7 +238,8 @@ export default loadInstruments = () => {return {
     practiceSoundPath2: "/sounds_viola_einspielen.mp3",
     image: require('../assets/img/instruments/viola_frame.png'),   
     video: require('../assets/video/instruments/Viola.mov'),
-    order: 22 
+    order: 22,
+    priority: 1 
   },
   "cello1.1": { 
     name_de: "Cello",
@@ -227,7 +249,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "cello",
     image: require('../assets/img/instruments/cello_frame.png'),   
     video: require('../assets/video/instruments/Cello.mov'),
-    order: 23 
+    order: 23,
+    priority: 1 
   },
   "cello1.2": { 
     name_de: "Cello",
@@ -237,7 +260,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "cello",
     image: require('../assets/img/instruments/cello_frame.png'),   
     video: require('../assets/video/instruments/Cello.mov'),
-    order: 24 
+    order: 24,
+    priority: 1 
   },
   "cello1.3": { 
     name_de: "Cello",
@@ -247,7 +271,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "cello",
     image: require('../assets/img/instruments/cello_frame.png'),
     video: require('../assets/video/instruments/Cello.mov'),
-    order: 25 
+    order: 25,
+    priority: 1 
   },
   "bass1.1": { 
     name_de: "Kontrabass",
@@ -257,7 +282,8 @@ export default loadInstruments = () => {return {
     sequenceGroup: "bass",
     image: require('../assets/img/instruments/bass_frame.png'),   
     video: require('../assets/video/instruments/Kontrabass.mov'),
-    order: 26 
+    order: 26,
+    priority: 1 
   },
   "bass1.2": { 
     name_de: "Kontrabass",
@@ -267,6 +293,7 @@ export default loadInstruments = () => {return {
     sequenceGroup: "bass",
     image: require('../assets/img/instruments/bass_frame.png'),   
     video: require('../assets/video/instruments/Kontrabass.mov'),
-    order: 27 
+    order: 27,
+    priority: 1 
   },
 }}
