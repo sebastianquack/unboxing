@@ -199,7 +199,16 @@ class StorageService extends Service {
     } else {
       this.showNotification("no path for device in walk");
     }
-  }   
+  }
+
+  getFinalChallengeFromWalk = (walk) => {
+    let path = this.getActivePath(walk);
+    if(path) {
+      return this.findChallengeByShorthand(path.finalChallenge);
+    } else {
+      this.showNotification("no path for device in walk");
+    }
+  }      
 
   getChallengeStages = (challenge)=> {
     let stagesObj = [];
@@ -247,6 +256,16 @@ class StorageService extends Service {
 		}
 		return null;
 	}
+
+  findInstallationById(id) {
+    let installation = null;
+    for(let i = 0; i < this.state.collections.installations.length; i++) {
+      if(this.state.collections.installations[i]._id == id) {
+        installation = this.state.collections.installations[i];
+      } 
+    }
+    return installation;
+  }
 
   loadInstallationByName = (name) => {
     let installation = null;

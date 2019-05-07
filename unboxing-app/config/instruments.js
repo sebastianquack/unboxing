@@ -209,8 +209,8 @@ export default loadInstruments = () => {return {
     priority: 1
   },
   "viola1.1": { 
-    name_de: "Viola 1",
-    name_en: "Viola 1",
+    name_de: "Viola",
+    name_en: "Viola",
     sequenceGroup: "viola1",
     practiceSoundPath1: "/einspielen/sounds_viola_stimmen.mp3",
     practiceSoundPath2: "/einspielen/sounds_viola_einspielen.mp3",
@@ -220,8 +220,8 @@ export default loadInstruments = () => {return {
     priority: 1 
   },
   "viola1.2": { 
-    name_de: "Viola 1",
-    name_en: "Viola 1",
+    name_de: "Viola",
+    name_en: "Viola",
     sequenceGroup: "viola1",
     practiceSoundPath1: "/einspielen/sounds_viola_stimmen.mp3",
     practiceSoundPath2: "/einspielen/sounds_viola_einspielen.mp3",
@@ -231,8 +231,8 @@ export default loadInstruments = () => {return {
     priority: 1 
   },
   "viola1.3": { 
-    name_de: "Viola 1",
-    name_en: "Viola 1",
+    name_de: "Viola",
+    name_en: "Viola",
     sequenceGroup: "viola1",
     practiceSoundPath1: "/sounds_viola_stimmen.mp3",
     practiceSoundPath2: "/sounds_viola_einspielen.mp3",

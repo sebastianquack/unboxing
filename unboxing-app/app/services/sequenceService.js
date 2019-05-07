@@ -111,7 +111,7 @@ class SequenceService extends Service {
 
     this.sortTracks(tracksToShow);
 
-    console.warn("priority combined with groups", tracksToShow);
+    //console.warn("priority combined with groups", tracksToShow);
 
     return tracksToShow;
   }

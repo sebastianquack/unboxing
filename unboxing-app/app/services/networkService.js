@@ -244,6 +244,16 @@ class NetworkService extends Service {
           case "updateEverything": storageService.updateEverything(); break;
           case "clickOn": soundService.startTestClick(); break;
           case "clickOff": soundService.stopTestClick(); break;
+          case "startInstallation": 
+            if(msgObj.payload.installationId) {
+              let installation = storageService.findInstallationById(msgObj.payload.installationId);
+              if(installation) {
+                gameService.startInstallationByName(installation.name);
+              } else {
+                this.showNotification("installation not found");
+              }
+            }
+            break;
           case "startTutorial": 
             if(msgObj.payload.walkId) {
               gameService.startTutorialForWalkById(msgObj.payload.walkId);
@@ -256,6 +266,16 @@ class NetworkService extends Service {
               } else {
                 gameService.startWalkById(msgObj.payload.walkId, soundService.getSyncTime() + (msgObj.payload.startTimeOffset * 1000));
               }
+            }
+            break;
+          case "startPracticeChallenge": 
+            if(msgObj.payload.walkId) {              
+              gameService.startPracticeChallengeByWalkId(msgObj.payload.walkId);
+            }
+            break;
+          case "startFinalChallenge": 
+            if(msgObj.payload.walkId) {              
+              gameService.startFinalChallengeByWalkId(msgObj.payload.walkId);
             }
             break;
           case "jumpToChallenge": 

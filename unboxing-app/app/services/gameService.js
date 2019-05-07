@@ -12,6 +12,8 @@ const baseState = {
       activePath: null,
       activePlace: null,
       activePlaceReference: null,
+      pathLength: 0,
+      minutesToEnd: null,
       walkStatus: "off",      // off -> tutorial-intro -> ongoing -> ended
       challengeStatus: "off",   // off <-> navigate -> (tutorial->) prepare <-> play 
       activeChallenge: null,    // active challenge saved here
@@ -138,6 +140,21 @@ class GameService extends Service {
       this.initInfoStream(); 
 		}
 	}
+
+  startPracticeChallengeByWalkId(walkId) {
+    let walk = storageService.getWalkById(walkId);
+    let challenge = storageService.getTutorialChallengeFromWalk(walk);
+    this.jumpToChallenge(challenge);
+  }
+
+  startFinalChallengeByWalkId(walkId) {
+    let walk = storageService.getWalkById(walkId);
+    let challenge = storageService.getFinalChallengeFromWalk(walk);
+    this.resetGamestate();
+    this.setActiveChallenge(challenge);  
+    sequenceService.trackSelectByName(storageService.getWalkInstrument(walk));
+    this.setReactive({walkStatus: "final-challenge"});
+  }
 
   startInstallationByName = (name) => {
     this.leaveChallenge();
@@ -810,12 +827,14 @@ class GameService extends Service {
 
   // center button for instrument selection
   handleMidButton = ()=> {
-    if((this.state.challengeStatus == "prepare" || this.state.challengeStatus == "play") && this.state.tutorialStatus != "practice-sequence") {
+    if((this.state.challengeStatus == "prepare" || this.state.challengeStatus == "play") 
+      && this.state.tutorialStatus != "practice-sequence"
+      && this.state.walkStatus != "final-challenge") {
       this.setReactive({
         showInstrumentSelector: !this.state.showInstrumentSelector
       });  
     } else {
-      this.showNotification("no current function");
+      //this.showNotification("no current function");
     }
   }
 
@@ -836,12 +855,6 @@ class GameService extends Service {
       case "tutorial":
         if(this.state.tutorialStatus == "tutorial-intro") {
           this.setReactive({tutorialStatus: "step-1"});
-        }
-        if(this.state.tutorialStatus == "ready-for-practice") {
-          let challenge = storageService.getTutorialChallengeFromWalk(this.state.activeWalk);
-          this.setActiveChallenge(challenge);  
-          sequenceService.trackSelectByName(this.state.walkInstrument);
-          this.setReactive({tutorialStatus: "practice-sequence"});
         }
         this.initInfoStream();
         break;
