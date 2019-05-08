@@ -5,7 +5,7 @@ import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
 import { parseFilePathToItem } from '../helper/both/sequence'
-import {Sequences, Files} from '../collections';
+import {Sequences, Files, Gestures} from '../collections';
 import {SequenceDetailItem, InputLine} from './';
 import { inputTransform, inputType } from '../helper/both/input';
 
@@ -170,6 +170,8 @@ class Sequence extends React.PureComponent {
           item={d} 
           color={color} 
           datalists={this.datalists}
+          gestures={this.props.gestures}
+          files={this.props.files}
           validateInstruments={this.validateInstruments}
           onFocusChange={ (focus) => this.handleItemFocus(d._id, focus) }
           />
@@ -205,7 +207,7 @@ class Sequence extends React.PureComponent {
               {this.props.sequence.items && this.props.sequence.items.map(this.liItems)}
             </ol>
           </div>
-          : <tt style={{color: "darkgreen"}}>loading...</tt>
+          : <tt style={{color: "darkgreen", fontSize: "200%"}}>loading items...</tt>
         }
         {/*<datalist id={this.datalists.tracks} >
           { this.props.sequence.tracks && this.props.sequence.tracks.map( t => <option key={t.name} value={t.name} />) }
@@ -223,12 +225,18 @@ export default withTracker(props => {
   sub1 = Meteor.subscribe('sequence', props.sequenceId);
   const sequence = Sequences.findOne({_id: props.sequenceId});
 
-  sub2 = Meteor.subscribe('files.all.paths');
-  const filePaths = Files.find({}).map(file => file.path);
+  sub2 = Meteor.subscribe('files.all');
+  const files = Files.find({}).fetch()
+  const filePaths = files.map(file => file.path);
+
+  sub3 = Meteor.subscribe('gestures.all');
+  const gestures = Gestures.find().fetch()
 
   return {
     sequence,
+    files,
     filePaths,
+    gestures,
     ready: sub1.ready() && sub2.ready()
   };
 })(Sequence);

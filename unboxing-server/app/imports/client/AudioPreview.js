@@ -14,14 +14,7 @@ class AudioPreview extends React.Component {
   }
 }
 AudioPreview.propTypes = {
-  dummy: PropTypes.array
+  file: PropTypes.object
 };
 
-export default withTracker(props => {
-  Meteor.subscribe('files.all');
-  const file = Files.findOne({path: props.path});
-
-  return {
-    file
-  };
-})(AudioPreview);
+export default AudioPreview;

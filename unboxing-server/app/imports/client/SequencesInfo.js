@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 
 import {Sequences} from '../collections';
 import {SequenceDetail} from './';
 
-class SequencesInfo extends React.Component {
+class SequencesInfo extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

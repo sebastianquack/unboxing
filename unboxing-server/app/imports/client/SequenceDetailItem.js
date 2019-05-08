@@ -5,7 +5,7 @@ import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
 import { parseFilePathToItem } from '../helper/both/sequence'
-import { Files, Gestures, itemSchema } from '../collections'
+import { itemSchema } from '../collections'
 import { AudioPreview } from './'
 
 import { trackNames } from '../helper/both/cleanJSON';
@@ -13,6 +13,7 @@ import { trackNames } from '../helper/both/cleanJSON';
 class SequenceDetailItem extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.renderAttribute = this.renderAttribute.bind(this)
   }
 
   SequenceDetailItemCss = css`
@@ -132,7 +133,7 @@ class SequenceDetailItem extends React.PureComponent {
     let special = null
     if (d[0] == "path") {
       special = <div key={`dt_special_${d[0]}`}>
-        <AudioPreview path={d[1]} />
+        <AudioPreview file={this.props.files.find( f => f.path==d[1] )} />
       </div>
     }
 
@@ -184,16 +185,9 @@ class SequenceDetailItem extends React.PureComponent {
 }
 
 SequenceDetailItem.propTypes = {
-  item: PropTypes.object
+  item: PropTypes.object,
+  gestures: PropTypes.array,
+  files: PropTypes.array,
 };
 
-export default withTracker(props => {
-  const sub = Meteor.subscribe('files.all' /*, {type: "audio"}*/)
-  const sub2 = Meteor.subscribe('gestures.all')
-
-  return {
-    ready: sub.ready() && sub2.ready(),
-    files: Files.find().fetch(/*{type: "audio"}*/),
-    gestures: Gestures.find().fetch()
-  };
-})(SequenceDetailItem);
+export default SequenceDetailItem;

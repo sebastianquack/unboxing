@@ -187,7 +187,7 @@ ChallengeDetail.propTypes = {
 };
 
 export default withTracker(props => {
-  const sub = Meteor.subscribe('sequences.all')
+  const sub = Meteor.subscribe('sequences.meta')
   const sub2 = Meteor.subscribe('servers.all')
   return {
     sequences: Sequences.find().fetch(),
