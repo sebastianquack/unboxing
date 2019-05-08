@@ -1,4 +1,8 @@
 rootProject.name = 'unboxing'
+include ':react-native-system-setting'
+project(':react-native-system-setting').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-system-setting/android')
+include ':react-native-exit-app'
+project(':react-native-exit-app').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-exit-app/android')
 include ':react-native-restart-android'
 project(':react-native-restart-android').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-restart-android/android')
 include ':react-native-image-sequence'
@@ -8,7 +12,7 @@ project(':react-native-android-wifi').projectDir = new File(rootProject.projectD
 include ':react-native-thumbnail'
 project(':react-native-thumbnail').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-thumbnail/android')
 include ':react-native-video'
-project(':react-native-video').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-video/android')
+project(':react-native-video').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-video/android-exoplayer')
 include ':react-native-linear-gradient'
 project(':react-native-linear-gradient').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-linear-gradient/android')
 include ':react-native-imei'

@@ -62,7 +62,7 @@ class SingleServiceProvider extends React.Component {
 	}
 
 	showNotification = (message) => {
-		console.log("notification", message);
+		console.warn("notification", message);
 		ToastAndroid.showWithGravity(message, ToastAndroid.SHORT, ToastAndroid.CENTER);
 		//ToastAndroid.show('message', ToastAndroid.SHORT);
 	}

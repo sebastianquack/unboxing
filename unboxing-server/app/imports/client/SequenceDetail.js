@@ -1,28 +1,50 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
+import { parseFilePathToItem } from '../helper/both/sequence'
+import {Sequences, Files, Gestures} from '../collections';
 import {SequenceDetailItem, InputLine} from './';
 import { inputTransform, inputType } from '../helper/both/input';
+
+import { trackNames } from '../helper/both/cleanJSON';
 
 const trackTitleWidth = 6
 const trackHeight = 2
 const unit = "rem"
 
-class Sequence extends React.Component {
+let sub1, sub2
+
+class Sequence extends React.PureComponent {
   constructor(props) {
     super(props);
     this.datalists = {
       track: "sequence_" + this.props.sequence._id + "_tracks",
     }
     this.state = {
-      active_item: null
+      active_item: null,
+      instrumentsValid: "",
+      inputImport: ""
     }
+
+    this.validateInstruments = this.validateInstruments.bind(this);
+    
+  }
+
+  componentDidMount() {
+    this.validateInstruments();
+  }
+
+  componentWillUnmount() {
+    sub1.stop()
+    sub2.stop()
   }
 
  SequenceDetailCss = css`
+    margin-top: -10px;
+    position: relative;
     display: inline-block;
     background-color: white;
     padding: 1em 1ex 1em 1ex;
@@ -54,7 +76,18 @@ class Sequence extends React.Component {
     $set = {}
     $set[attributeName] = value
     console.log($set)
-    Meteor.call('updateSequence', this.props.sequence._id, $set )
+    Meteor.call('updateSequence', this.props.sequence._id, $set);
+  }
+
+  validateInstruments = () => {
+    let error = "";
+    this.props.sequence.tracks.forEach((track)=> {
+      if(trackNames.indexOf(track.name) == -1) {
+        error += "invalid instrument: " + track.name + ". ";
+      }
+    })
+    if(!error) error = "ok";
+    this.setState({instrumentsValid: error});
   }
 
   renderInput(attributeName, value) {
@@ -83,11 +116,32 @@ class Sequence extends React.Component {
   }
 
   handleAdd = () => {
-    Meteor.call('addSequenceItem', this.props.sequence._id)
+    Meteor.call('addSequenceItem', this.props.sequence._id, ()=>{
+      this.validateInstruments();
+    })
   }
 
   handleItemFocus(id, focus) {
     this.setState({active_item: focus ? id : null})
+  }
+
+  handleInputImport = (event) => {
+    this.setState({ inputImport: event.target.value })
+  } 
+
+  handleButtonImport = (event) => {
+    const filePrefix = this.state.inputImport
+    if (!filePrefix) { alert("please input the beginning of a path to identify the files"); return false }
+    console.log(this.props.filePaths)
+    const files = this.props.filePaths.filter( path => path.indexOf(filePrefix) === 0 )
+    this.setState({ filesForImport: files })
+    console.log(files)
+    this.importFiles(files)
+  }
+
+  importFiles = (filePaths) => {
+    const items = filePaths.map( path => parseFilePathToItem(path) )
+    Meteor.call('addSequenceItems',{ items, sequence_id: this.props.sequenceId })
   }
 
   liTracks = (t) => {
@@ -116,6 +170,9 @@ class Sequence extends React.Component {
           item={d} 
           color={color} 
           datalists={this.datalists}
+          gestures={this.props.gestures}
+          files={this.props.files}
+          validateInstruments={this.validateInstruments}
           onFocusChange={ (focus) => this.handleItemFocus(d._id, focus) }
           />
       </li>
@@ -128,38 +185,59 @@ class Sequence extends React.Component {
         <pre>
           <div className={this.SequenceDetailCss}>
             {Object.entries(this.props.sequence).map(this.renderAttribute)}              
+            <label><span>validator: </span><span>{this.state.instrumentsValid}</span></label>
+            <br />
+            <label><span>import files: </span><input placeholder="/1_16-32_" onInput={this.handleInputImport} value={this.state.inputImport}/>&hellip; <button onClick={this.handleButtonImport}>import</button></label>
             <br />
             <button onClick={this.handleAdd}>
               Add Item
             </button>            
             &nbsp;&nbsp;    
-            <button onClick={()=>Meteor.call('removeSequence',this.props.sequence._id)}>
+            <button onClick={()=>{if(confirm("really?")) Meteor.call('removeSequence',this.props.sequence._id)}}>
               Delete Sequence
             </button>
           </div>
         </pre>
-        <div className={tracksCSS}>
-          <ol className="tracks_list">
-          {this.props.sequence.tracks && this.props.sequence.tracks.map(this.liTracks)}
-          </ol>
-          <ol className="tracks_items">
-            {this.props.sequence.items && this.props.sequence.items.map(this.liItems)}
-          </ol>
-        </div>
-        <datalist id={this.datalists.tracks} >
+        { this.props.ready ?
+          <div className={tracksCSS}>
+            <ol className="tracks_list">
+            {this.props.sequence.tracks && this.props.sequence.tracks.map(this.liTracks)}
+            </ol>
+            <ol className="tracks_items">
+              {this.props.sequence.items && this.props.sequence.items.map(this.liItems)}
+            </ol>
+          </div>
+          : <tt style={{color: "darkgreen", fontSize: "200%"}}>loading items...</tt>
+        }
+        {/*<datalist id={this.datalists.tracks} >
           { this.props.sequence.tracks && this.props.sequence.tracks.map( t => <option key={t.name} value={t.name} />) }
-        </datalist>
+        </datalist>*/}
       </div>
     );
   }
 }
 
 Sequence.propTypes = {
-  sequence: PropTypes.object
+  sequenceId: PropTypes.string
 };
 
 export default withTracker(props => {
+  sub1 = Meteor.subscribe('sequence', props.sequenceId);
+  const sequence = Sequences.findOne({_id: props.sequenceId});
+
+  sub2 = Meteor.subscribe('files.all');
+  const files = Files.find({}).fetch()
+  const filePaths = files.map(file => file.path);
+
+  sub3 = Meteor.subscribe('gestures.all');
+  const gestures = Gestures.find().fetch()
+
   return {
+    sequence,
+    files,
+    filePaths,
+    gestures,
+    ready: sub1.ready() && sub2.ready()
   };
 })(Sequence);
 
@@ -169,7 +247,7 @@ position: relative;
 background-color: white;
 .tracks_list {
   padding-left: 0;
-  margin-bottom: 5em;
+  margin-bottom: 1em;
   list-style-type: none;
   li {
     &, .title {

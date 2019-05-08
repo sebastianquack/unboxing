@@ -8,7 +8,7 @@ import UIText from './UIText'
 import RNFS from 'react-native-fs';
 const pathPrefix = RNFS.ExternalStorageDirectoryPath + '/unboxing/files';
 
-class VideoPlayer extends React.Component { 
+class VideoPlayer extends React.PureComponent { 
   constructor(props) {
     super(props);
     this.state = {};
@@ -25,7 +25,7 @@ class VideoPlayer extends React.Component {
               height: "100%",
               width: "100%"
             }}
-            onBuffer={()=>{console.warn(this.onBuffer)}}
+            /*onBuffer={(error)=>{console.warn(JSON.stringify(error))}}*/
             onError={()=>{console.warn(JSON.stringify(this.videoError))}}
           />
         </View>

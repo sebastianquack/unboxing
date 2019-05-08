@@ -1,7 +1,9 @@
 const exec = require('await-exec')
+const Timeout = require('await-timeout');
 
-async function cut(cues, beats, filePath, outputDir, filePrefix, cutStartOffsetMs=0) {
-  console.log(filePath)
+const ffmpeg_additional_args = ' -filter:a "volume=10dB"'
+
+async function cut(cues, beats, filePath, outputDir, filePrefix, cutStartOffsetMs=0, cutEndOffsetMs=0, sequenceStartOffsetMs=0) {
   for (let cue of cues) {
     
     const startBeat = beats.find( b => b.bar == cue.start.bar && b.barBeat == cue.start.barBeat)
@@ -25,11 +27,19 @@ async function cut(cues, beats, filePath, outputDir, filePrefix, cutStartOffsetM
 
     //console.log(startMs, lengthMs)
 
-    const outputFilename = `${filePrefix}${cue.start.bar}.${cue.start.barBeat}-${cue.end.bar}.${cue.end.barBeat}_@${Math.round(startMs)}.mp3`
+    const outputFilename = `${filePrefix}${cue.start.bar}.${cue.start.barBeat}-${cue.end.bar}.${cue.end.barBeat}_@${Math.round(startMs+sequenceStartOffsetMs-cutStartOffsetMs)}.mp3`
     const outputPath = outputDir + '/' + outputFilename
-    const command = `ffmpeg -ss ${(startMs/1000).toFixed(3)} -t ${(lengthMs/1000).toFixed(3)} -i "${filePath}" "${outputPath}"`
+    const command = `ffmpeg -ss ${(startMs/1000).toFixed(3)} -t ${(lengthMs/1000).toFixed(3)} -i "${filePath}" ${ffmpeg_additional_args} "${outputPath}"`
     console.log(command)
-    await exec(command)
+    //try {
+      await exec(command)
+      //await Timeout.set(2000)
+      //console.log(result)
+      //return result
+    //} catch(error) {
+      //console.warn(" FFMPEG ERROR", JSON.stringify(error))
+      //return false
+    //}
   }
   
   // console.log("generating " + outputDir + '/' + outputFilename)

@@ -1,22 +1,22 @@
 import { Meteor } from 'meteor/meteor'
 
-import { Challenges, Gestures, Sequences, Files, Walks, Places, Translations, Servers } from '../../collections/';
+import { Challenges, Gestures, Sequences, Files, Walks, Places, Translations, Servers, Installations } from '../../collections/';
 import objectHash from 'object-hash'
 import { importExportConfig, importExportConfigTranslationsOnly } from '../../helper/server/importexport';
 import { receiveFiles } from '../../helper/server/files';
 
-import cleanJSON from '../../helper/both/cleanJSON';
+import {cleanJSON} from '../../helper/both/cleanJSON';
 
 async function getEverything(req, res) {  
-  const challenges = await Challenges.find().fetch();
-  const sequences = await Sequences.find().fetch();
-  const gestures = await Gestures.find().fetch();
-  const files = await Files.find({},{sort: {path: 1}}).fetch();
-  const places = await Places.find().fetch();
-  const walks = await Walks.find().fetch();
-  const translations = await Translations.find().fetch();
-  const servers = await Servers.find().fetch();
-
+  const challenges = Challenges.find().fetch();
+  const sequences = Sequences.find().fetch();
+  const gestures = Gestures.find().fetch();
+  const files = Files.find().fetch();
+  const places = Places.find().fetch();
+  const walks = Walks.find().fetch();
+  const translations = Translations.find().fetch();
+  const servers = Servers.find().fetch();
+  const installations = Installations.find().fetch();
 
   // clean json
   for(let i = 0; i < walks.length; i++) {
@@ -25,6 +25,10 @@ async function getEverything(req, res) {
 
   for(let i = 0; i < challenges.length; i++) {
     challenges[i].stages = cleanJSON(challenges[i].stages);  
+  }
+
+  for(let i = 0; i < installations.length; i++) {
+    installations[i].deviceGroups = cleanJSON(installations[i].deviceGroups);  
   }
 
 
@@ -36,7 +40,8 @@ async function getEverything(req, res) {
     places,
     walks,
     translations,
-    servers
+    servers,
+    installations
   }
 
   const hash = objectHash(collections)

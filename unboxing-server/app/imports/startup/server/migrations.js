@@ -171,8 +171,82 @@ Migrations.add({
   down: function() {}
 });
 
+Migrations.add({
+  version: 15,
+  name: 'remove tag from challenges',
+  up: function() {
+    Challenges.find().forEach( challenge => {
+      Meteor.call('updateChallenge', challenge._id, {}, {tag: ""});
+    });  
+  },
+  down: function() {}
+});
 
-const version = 14;
+Migrations.add({
+  version: 16,
+  name: 'add item to path of files in sequences',
+  up: function() {
+    let sequences = Sequences.find().fetch();
+    sequences.forEach((sequence)=>{
+      let items = sequence.items;
+      if (items) {
+        for(let i = 0; i < items.length; i++) {
+          items[i].path = "/items" +  items[i].path;
+        }
+        Meteor.call("updateSequence", sequence._id, {items: items});
+      }
+    });
+  },
+  down: function() {}
+});
+
+Migrations.add({
+  version: 17,
+  name: 'add title and subtitle to sequence',
+  up: function() {
+    add_default_attributes_to_sequence({
+      title_en: "",
+      title_de: "",
+      subtitle_en: "",
+      subtitle_de: "",
+    });
+  }
+});
+
+Migrations.add({
+  version: 18,
+  name: 'remove tutorial bool from walk',
+  up: function() {
+    Walks.find().forEach( walk => {
+      Meteor.call('updateWalk', walk._id, {}, {tutorial: false});
+    });  
+  },
+  down: function() {}
+});
+
+const oldTrackNames = ["cello1", "violin1", "violin2", "bass1", "viola1"];
+const newTrackNames = ["cello1.1", "violin1.1", "violin2.1", "bass1.1", "viola1.1"];
+
+Migrations.add({
+  version: 19,
+  name: 'replace old track names',
+  up: function() {
+    Sequences.find().forEach( sequence => {
+      let items = sequence.items;
+      if (!items) return
+      for(let i = 0; i < items.length; i++) {
+        let index = oldTrackNames.indexOf(items[i].track);
+        if(index > -1) {
+          items[i].track = newTrackNames[index];
+        }
+      }
+      Meteor.call('updateSequence', sequence._id, {items: items});
+    });  
+  },
+  down: function() {}
+});
+
+const version = 19; 
 
 Meteor.startup(() => {
   Migrations.migrateTo(version);

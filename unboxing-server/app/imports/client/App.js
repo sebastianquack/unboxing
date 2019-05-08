@@ -1,6 +1,7 @@
 import React, { Component, Switch } from 'react';
+import ConnectionStatus from 'meteor-react-status'
 
-import {DevicesInfo, WalksInfo, EventsInfo, PlacesInfo, ChallengesInfo, NetworkInfo, ServersInfo, FilesInfo, GesturesInfo, SequencesInfo, ImportExport, TranslationsInfo} from './';
+import {DevicesInfo, InstallationsInfo, WalksInfo, EventsInfo, PlacesInfo, ChallengesInfo, NetworkInfo, ServersInfo, FilesInfo, GesturesInfo, SequencesInfo, ImportExport, TranslationsInfo} from './';
  
 const sections = [
   {
@@ -8,6 +9,11 @@ const sections = [
     component:DevicesInfo,
     default: false
   },  
+  {
+    name: "Installations",
+    component:InstallationsInfo,
+    default: false
+  },
   {
     name: "Walks",
     component:WalksInfo,
@@ -119,6 +125,7 @@ export default class App extends Component {
     console.log(this.state);
     return (
       <div className="container" style={{marginBottom: "5em"}}>
+        <ConnectionStatus fullWidth={true} />
         <header>
           <h1>Unboxing Server / {this.state.hostname}</h1>
         </header>

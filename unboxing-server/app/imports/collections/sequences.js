@@ -46,6 +46,7 @@ export {Sequences, itemSchema};
 
 
  updateTracksInfo = (userId, doc) => {
+  if (!doc.items) return
   const trackNames = [...new Set(doc.items.map( i => i.track))]
   const tracks = trackNames.map( t => ({
     name: t,
@@ -68,6 +69,7 @@ updateItemsDuration = (userId, doc,fieldNames, modifier, options) => {
 }
 
 updateTracksDuration = (userId, doc) => {
+  if (!doc.items) return
   const duration = doc.items.reduce( 
     (accumulator, item) => {
       const end = item.startTime + ( item.duration ? item.duration : 0 )
@@ -78,7 +80,7 @@ updateTracksDuration = (userId, doc) => {
   Sequences.direct.update({_id: doc._id},{
     $set: { duration }
   } )
-  // set cutom duration to duration if nothing is specified
+  // set custom duration to duration if nothing is specified
   if (!doc.custom_duration || doc.custom_duration === 0 || typeof doc.custom_duration !== "number" || doc.duration > doc.custom_duration ) {
     Sequences.direct.update({_id: doc._id},{
       $set: { custom_duration: duration }

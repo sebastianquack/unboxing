@@ -10,18 +10,11 @@ class AudioPreview extends React.Component {
 
   render() {
     if (!this.props.file) return null
-    return <audio controls className="AudioPreview" src={this.props.file.url_path} />
+    return <audio preload="none" controls className="AudioPreview" src={this.props.file.url_path} />
   }
 }
 AudioPreview.propTypes = {
-  dummy: PropTypes.array
+  file: PropTypes.object
 };
 
-export default withTracker(props => {
-  Meteor.subscribe('files.all');
-  const file = Files.findOne({path: props.path});
-
-  return {
-    file
-  };
-})(AudioPreview);
+export default AudioPreview;

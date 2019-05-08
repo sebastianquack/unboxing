@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random'
 
 import Events from '../../collections/events';
-import { Challenges, Gestures, Sequences, Places, Walks, Translations, Servers } from '../../collections/';
+import { Challenges, Installations, Gestures, Sequences, Places, Walks, Translations, Servers, Files } from '../../collections/';
 import { serverDefaults } from '../../collections'
 
 Meteor.methods({
@@ -37,6 +37,10 @@ Meteor.methods({
   'addSequence'() {
     Sequences.insert({
       name: "new",
+      title_en: "",
+      title_de: "",
+      subtitle_en: "",
+      subtitle_de: "",
       custom_duration: 0,
       items: [],
       bpm: 60
@@ -63,7 +67,31 @@ Meteor.methods({
         autoplay: "off",
         //sensorStart: true,
       } ], $sort: { startTime: 1 }, $slice: 1000 } } }
-    )
+    );
+  },
+  'addSequenceItems'({items, sequence_id}) {
+    for (let item of items) {
+      if (!item.duration) {
+        const file = Files.findOne({path: item.path})
+        // console.log("duration", item, file)
+        item.duration = file.duration
+      }
+      Sequences.update(
+        {_id: sequence_id},
+        { $push: { items: { $each: [ {
+          _id: Random.id(),
+          name: "new item",
+          startTime: 0,
+          track: "default",
+          path: "",
+          //gesture_id: "",
+          sensorModulation: "off",
+          autoplay: "off",
+          //sensorStart: true,
+          ...item,
+        } ], $sort: { startTime: 1 }, $slice: 1000 } } }
+      );
+    }
   },
   'sortSequenceItems'(sequence_id) {
     Sequences.update(
@@ -160,9 +188,17 @@ Meteor.methods({
   'addWalk'() {
     Walks.insert({
       description: "new",
-      tag: "",
-      tutorial: true,
-      paths: "",
+      tag: "berlin",
+      paths: `{<br>
+        "1": {<br>
+          "startInstrument": "viola1.1",<br>
+          "tutorialChallenge": "1",<br>
+          "places": [<br>
+          {"challenge": "2", "place": "1", "duration": 10}<br>
+          ]<br>
+        }<br>
+      }<br>
+      `,
     });
   },
   'removeWalk'(id) {
@@ -174,6 +210,32 @@ Meteor.methods({
       Walks.update({_id: id}, {$set})  
     } else {
       Walks.update({_id: id}, {$unset})  
+    }
+    
+  },
+
+  'addInstallation'() {
+    Installations.insert({
+      name: "new",
+      challenges: "1 2 3",
+      deviceGroups: `[<br>{<br>
+        "name":"name",<br>
+        "devices":[1, 2, 3],<br>
+        "startInstruments":["viola1", "viola1", "viola1"],<br>
+        "relayServerName": "raspi-master"<br>
+      }<br>]
+      `
+    });
+  },
+  'removeInstallation'(id) {
+    console.log("remove installation", id);
+    Installations.remove(id);
+  },
+  'updateInstallation'(id,$set, $unset=null) {
+    if(!$unset) {
+      Installations.update({_id: id}, {$set})  
+    } else {
+      Installations.update({_id: id}, {$unset})  
     }
     
   },

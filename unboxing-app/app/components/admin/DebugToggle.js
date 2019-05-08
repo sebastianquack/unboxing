@@ -17,6 +17,10 @@ class DebugToggle extends React.Component {
           <Text>Debugmode Off/On</Text>         
           <Switch value={this.props.gameService.debugMode} onValueChange={gameService.toggleDebugMode}/>
         </View>
+        <View style={{width:"25%"}}>
+          <Text>Autoplay Off/On</Text>         
+          <Switch value={this.props.gameService.autoplayMode} onValueChange={gameService.toggleAutoplayMode}/>
+        </View>
         
       </View>
     );

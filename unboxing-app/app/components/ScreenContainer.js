@@ -4,11 +4,10 @@ import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
 
-//import frameImg from '../../assets/img/frame.png'
-//import frameSecondaryImg from '../../assets/img/frameSecondary.png'
-
 import frameImg from '../../assets/img/ShapeScreenAlternative.png'
 import frameSecondaryImg from '../../assets/img/ShapeScreenMain.png'
+
+import LanguageSwitcher from './LanguageSwitcher';
 
 const primaryScreenWidth = Math.floor(dimensions.screenWidth * 0.91)
 const primaryScreenLeft = Math.floor((dimensions.screenWidth - primaryScreenWidth) / 2)
@@ -29,7 +28,7 @@ const statusBarWidth = Math.floor(dimensions.screenWidth * 0.8)
 const statusBarLeft = Math.floor((dimensions.screenWidth - statusBarWidth) / 2)
 const statusBarTop = Math.floor(dimensions.screenHeight * 0.05)
 
-const buttonLeftLeft = Math.floor(dimensions.screenWidth * 0.05)
+const buttonLeftLeft = Math.floor(dimensions.screenWidth * 0.1)
 const buttonLeftTop = Math.floor(dimensions.screenHeight * 0.7)
 
 const buttonMidLeft = Math.floor(dimensions.screenWidth * 0.4355)
@@ -38,7 +37,7 @@ const buttonMidTop = Math.floor(dimensions.screenHeight * 0.76)
 const buttonRightLeft = Math.floor(dimensions.screenWidth * 0.7)
 const buttonRightTop = Math.floor(dimensions.screenHeight * 0.7)
 
-const buttonModalLeft = Math.floor(dimensions.screenWidth * 0.4)
+const buttonModalLeft = Math.floor(dimensions.screenWidth * 0.37)
 const buttonModalTop = Math.floor(dimensions.screenHeight * 0.8)
 
 class ScreenContainer extends React.Component { 
@@ -158,6 +157,18 @@ class ScreenContainer extends React.Component {
     </View>
   }
 
+  renderLanguageSwitcher() {
+    return <View style={{
+        position: 'absolute',
+        left:   325,
+        bottom:  50,
+        zIndex: 51,
+        opacity: 1
+      }}>
+      <LanguageSwitcher/>
+    </View>
+  }
+
   render() {
     const source = this.props.secondaryScreen ? frameSecondaryImg : frameImg
     return (
@@ -185,6 +196,7 @@ class ScreenContainer extends React.Component {
         {this.renderModal()}
         {this.renderButtonModal()}
         {this.renderStatusBar()}
+        {!this.props.modalContent && this.renderLanguageSwitcher()}
       </View>
     );
   }

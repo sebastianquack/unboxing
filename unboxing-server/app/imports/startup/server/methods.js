@@ -7,6 +7,7 @@ import { Challenges, Gestures, Sequences, Devices } from '../../collections/';
 import {importExportConfig, importExportConfigTranslationsOnly} from '../../helper/server/importexport'
 import { updateFiles } from '../../helper/server/files';
 import { sendMessage } from '../../startup/server/devices'
+import { runAdb } from '../../startup/server/adb'
 
 function createChallenge(uuid) {
   console.log("creating new challenge");
@@ -171,12 +172,14 @@ Meteor.methods({
   'sendAdminMessage'(deviceIds, message) {
     console.log("sendMessage", deviceIds, message)
     sendMessage(deviceIds, message)
-  },
+  }, 
   async 'importEntries'(json) {
     const collections = Object.keys(json)
     console.log("received entries import", collections)
 
     let ie_collections = {...importExportConfig.collections, ...importExportConfigTranslationsOnly.collections};
+
+    delete ie_collections.files // remove remote files that dont't correspond to actual local files
 
     for (collection in ie_collections) {
       if (json[collection]) {
@@ -190,7 +193,8 @@ Meteor.methods({
         console.warn(collection + " not found")
       }
     }
-  }  
+  },
+  runAdb,
 
 });
 

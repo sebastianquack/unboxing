@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Text, Image } from 'react-native';
+import { Text, Image, View } from 'react-native';
 import PropTypes from 'prop-types';
 
 import {globalStyles, colors, fontSizes} from '../../config/globalStyles';
-import backIcon from '../../assets/img/Back.png'
+
 
 const letterSpacings = {
   normal: {
@@ -17,7 +17,7 @@ const letterSpacings = {
 }
 
 const defaultStyle = {
-  color: "white",
+  color: colors.warmWhite,
   fontFamily: "DINPro-Medium",
   fontSize: fontSizes.m
 }
@@ -71,7 +71,7 @@ class UIText extends React.Component {
     // capitalize
     if (this.props.caps && text && text.toUpperCase) text = text.toUpperCase()
 
-    return <Text style={style}>{this.props.backIcon && <Image style={{width: 19, height: 19}} source={backIcon}/>}{ text }</Text>
+    return <Text style={style}>{ text }</Text>
   }
 }
 
@@ -84,7 +84,6 @@ UIText.propTypes = {
   wide: PropTypes.bool, // larger letter-spacing
   color: PropTypes.string, // custom color
   style: PropTypes.object, // provide custom styles
-  backIcon: PropTypes.bool // back icon
 };
 
 export default UIText;

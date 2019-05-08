@@ -1,12 +1,21 @@
 express = require('express');
-import { Devices } from '../../collections'
+import { Devices, deviceSchema } from '../../collections'
 
 const app = express();
-server = app.listen(3004);
+server = app.listen(62901);
 
 const io = require('socket.io')(server);
 
 let sockets = []
+
+Meteor.setTimeout(() => {
+  const devices = Devices.find({}).fetch()
+  for (let device of devices) {
+    if (Date.now() - device.lastHeardOf > 6 * 60 * 60 * 1000) {// 6 hours
+      Devices.update({_id: device._id}, { $set: deviceSchema })
+    }
+  }
+}, 60000);
 
 function init(io) {
 
@@ -16,7 +25,7 @@ function init(io) {
   io.on('connection', (socket)=> {
     console.log('Client connected');
     
-    socket.on('disconnect', () => {
+    socket.on('disconnect', async function() {
       const deviceId = socket.deviceId
       console.log('Client disconnected: ' + deviceId);
       if (deviceId) {
@@ -28,7 +37,7 @@ function init(io) {
       console.log('Message received: ', msg);
       const deviceId = parseInt(msg.deviceId)
       socket.deviceId = deviceId // store deviceId
-      deviceId, Devices.update({ deviceId }, {$set:{connected: true}})
+      Devices.update({ deviceId }, {$set:{connected: true, lastHeardOf: Date.now()}})
 
       if (msg.code == "statusUpdate") {
         Devices.update({ deviceId }, {$set:{deviceStatus: msg.payload}})

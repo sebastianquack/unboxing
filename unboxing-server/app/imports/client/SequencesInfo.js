@@ -1,19 +1,50 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
+
 import {Sequences} from '../collections';
 import {SequenceDetail} from './';
 
-class SequencesInfo extends React.Component {
+class SequencesInfo extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.state = {
+    }
+
+    this.li = this.li.bind(this);
   }
 
-  li(d) {
+  li = (d) => {
     return (
-      <li key={d._id}>
-        <SequenceDetail sequence={d} />
+      <li key={d._id} style={{marginBottom: "1em"}}>
+        {this.renderSequenceSwitch(d._id)}
+        {' '}
+        {!this.showSequence(d._id) ? <span>{d.name}</span> : null}
+        {this.showSequence(d._id) ? <SequenceDetail sequenceId={d._id} /> : null}
       </li>
     )
+  }
+
+  showSequence = (id) => {
+    return this.state["show" + id]
+  }
+
+  toggleSequence = (id) => {
+    let value = this.state["show" + id];
+    this.setState({
+        ["show" + id]: !value
+    })
+  }
+
+
+  renderSequenceSwitch = (id) => {
+    return (
+        <div style={{display: "inline-block", paddingLeft: "0.25em", position: "relative", zIndex: 10}}>
+          <input
+                type="button"
+                value={this.showSequence(id) ? "hide" : "show"}
+                onClick={  value => this.toggleSequence(id) } />
+        </div>
+    );
   }
 
   handleAdd() {
@@ -25,7 +56,6 @@ class SequencesInfo extends React.Component {
     const listItems = this.props.sequences.map(this.li)
 
     return <div className="SequencesInfo">
-    
       <button onClick={this.handleAdd}>
         Add Sequence
       </button>
@@ -37,7 +67,7 @@ class SequencesInfo extends React.Component {
 }
 
 export default withTracker(props => {
-  Meteor.subscribe('sequences.all');
+  Meteor.subscribe('sequences.meta');
   const sequences = Sequences.find({},{sort: {name: -1}}).fetch();
 
   return {

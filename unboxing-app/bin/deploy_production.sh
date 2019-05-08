@@ -25,11 +25,10 @@ do
 
    echo "connecting to device ${i}"
    adb disconnect
+   sleep 1
    adb connect "$NETWORK_PREFIX${i}:5555"
    sleep 1
-
-   adb shell 'settings  put  global  data_roaming0  0'
-   
+ 
    echo "stopping app"
    adb shell am force-stop com.unboxing
 
@@ -44,6 +43,9 @@ do
    adb shell pm grant com.unboxing android.permission.READ_EXTERNAL_STORAGE
    adb shell pm grant com.unboxing android.permission.WRITE_EXTERNAL_STORAGE
    adb shell pm grant com.unboxing android.permission.READ_PHONE_STATE
+
+   adb shell 'settings  put  global  data_roaming0 1'
+   adb shell 'su -c "settings put global captive_portal_mode 0"'
    
    echo "starting app"
    adb shell am start -n com.unboxing/com.unboxing.MainActivity

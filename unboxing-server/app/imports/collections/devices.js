@@ -12,7 +12,9 @@ const schema = {
   deviceId: "",
   connected: false, // connection status
   deviceStatus: {}, // sent by device
-  downloadBot: null
+  downloadBot: null,
+  adb: {},
+  lastHeardOf: 0
 }
 
 const defaults = {

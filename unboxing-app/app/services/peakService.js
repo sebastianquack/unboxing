@@ -11,7 +11,8 @@ class PeakService extends Service {
 		// reactive vars
 		super(serviceName, {
 			bpm: 0,
-      peakMode: "gyr"
+      peakMode: "gyr",
+      still: true
 		});
 
 		this.sensorReceiverHandle = null;
@@ -61,11 +62,42 @@ class PeakService extends Service {
     }
   }
 
+  invalidateStill = ()=> {
+    this.setReactive({still: false});
+    this.lastChange = soundService.getSyncTime();
+  }
+
 	// handle incoming sensor data for recognition
 	handleSensorDataForRecognition = (data) => {
 		//console.log("sensor data received", data)
 		//const y = data.acc.y
 		// const x = data.acc.x
+    if(!this.lastData) {
+      this.lastData = data;
+      this.lastChange = soundService.getSyncTime();
+    } else {
+      if(Math.abs(data.acc.y - this.lastData.acc.y) > 0.01) {
+        if(this.state.still) {
+          this.setReactive({still: false});
+          gameService.handleMoveEvent();  
+        }
+        this.lastData = data;
+        this.lastChange = soundService.getSyncTime();
+        this.stillEventFired = false;
+      } else {
+        if(!this.state.still) {
+          if(soundService.getSyncTime() - this.lastChange > 10000) {
+            this.setReactive({still: true});
+            if(!this.stillEventFired) {
+              gameService.handleStillEvent();  
+              this.stillEventFired = true;
+            }
+          }  
+        }
+      }  
+    }
+    
+
 		// detect Up and set start time
 		if (this.isUp(data)) {
 			this.peakStartTime = soundService.getSyncTime()
@@ -98,7 +130,7 @@ class PeakService extends Service {
 		this.setReactive({
 			isUp: this.isUp(data),
 			isDown: this.isDown(data),
-			startTime: this.peakStartTime,
+			//startTime: this.peakStartTime,
 			isFacingDown: this.isFacingDown
 		})
 
@@ -110,7 +142,7 @@ class PeakService extends Service {
 		this.peakStartTime = null
 		
 		if(gameService.state.debugMode) {
-			this.showNotification("PEAK")
+			//this.showNotification("PEAK")
 				if(typeof this.detectionCallback != "function") {
 				//soundService.scheduleSound(clickFilename, soundService.getSyncTime());	
 				soundService.click();

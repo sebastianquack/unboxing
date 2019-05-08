@@ -77,7 +77,7 @@
   <setting id="89" name="multi_sim_sms" value="1" package="com.android.phone" defaultValue="1" defaultSysSet="true" />
   <setting id="90" name="multi_sim_voice_call" value="1" package="com.android.phone" defaultValue="1" defaultSysSet="true" />
   <setting id="40" name="call_auto_retry" value="0" package="android" defaultValue="0" defaultSysSet="true" />
-  <setting id="77" name="audio_safe_volume_state" value="3" package="android" defaultValue="3" defaultSysSet="true" />
+  <setting id="77" name="audio_safe_volume_state" value="2" package="android" defaultValue="2" defaultSysSet="true" />
   <setting id="109" name="boot_count" value="4" package="android" defaultValue="4" defaultSysSet="true" />
   <setting id="31" name="desk_dock_sound" value="/system/media/audio/ui/Dock.ogg" package="android" defaultValue="/system/media/audio/ui/Dock.ogg" defaultSysSet="true" />
 </settings>

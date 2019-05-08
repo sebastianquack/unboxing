@@ -5,6 +5,8 @@ import fs from 'fs';
 
 const Files = new Mongo.Collection('files');
 
+Files.rawCollection().createIndex({ path: 1 })
+
 Files.allow({
   insert: () => true,
   update: () => true,

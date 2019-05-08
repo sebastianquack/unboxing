@@ -7,13 +7,14 @@ import { css } from 'emotion'
 import { Sequences, Servers } from '../collections'
 import { inputTransform, inputType } from '../helper/both/input';
 
-import cleanJSON from '../helper/both/cleanJSON';
+import { trackNames, cleanJSON } from '../helper/both/cleanJSON';
 
 class ChallengeDetail extends React.Component {
 	constructor(props) {
     	super(props);
       this.state = {
-        JSONValid: ""
+        JSONValid: "",
+        JSONIntegrity: ""
       }
   }
 
@@ -48,14 +49,47 @@ class ChallengeDetail extends React.Component {
   checkJSON = (value)=> {
     cleanText = cleanJSON(value);
     console.log(cleanText);
+    let jsonObj = null;
     try {
-      JSON.parse(cleanText);
+      jsonObj = JSON.parse(cleanText);
       this.setState({JSONValid: "valid"});
     }
     catch(e) {
       this.setState({JSONValid: "error"});
     }
+    if(jsonObj) {
+      this.checkIntegrity(jsonObj);  
+    }
     return value;
+  }
+
+  checkIntegrity = (stagesObj) => {
+    let error = "";
+
+    // iterate over deviceGroups
+    stagesObj.forEach((stageObj)=>{
+
+      if(stageObj.instruments) {
+        stageObj.instruments.forEach((instrument)=>{
+          if(trackNames.indexOf(instrument) == -1) {
+            error += "instrument " + instrument + " unknown. ";
+          }
+
+          // also check if it corresponds to sequence  
+          let sequence = Sequences.findOne({_id: this.props.challenge.sequence_id});
+          console.log(sequence);
+          let instrumentFound = false;
+          sequence.tracks.forEach((track)=> {
+            console.log(track.name);
+            if(track.name == instrument) instrumentFound = true;
+          })
+          if(!instrumentFound) error += "instrument " + instrument + " not found in sequence. ";
+
+        })  
+      }
+    });
+
+    this.setState({JSONIntegrity: error ? error : "ok"});
   }
 
   handleAttributeChange = (attributeName, value) => {
@@ -139,7 +173,8 @@ class ChallengeDetail extends React.Component {
 	    	<div className={this.ChallengeDetailCss}>
 					{Object.entries(this.props.challenge).map(this.renderAttribute)}	            
 			 		<label key="json-valid"><span>JSON check</span><span>{this.state.JSONValid}</span></label>
-          <button onClick={()=>Meteor.call('removeChallenge',this.props.challenge._id)}>
+          <label key="json-integrity"><span>JSON integrity</span><span>{this.state.JSONIntegrity}</span></label>
+          <button onClick={()=>{ if(confirm("really?")) Meteor.call('removeChallenge',this.props.challenge._id)}}>
 	            	Delete Challenge
 	        </button>     
 	    	</div>
@@ -152,7 +187,7 @@ ChallengeDetail.propTypes = {
 };
 
 export default withTracker(props => {
-  const sub = Meteor.subscribe('sequences.all')
+  const sub = Meteor.subscribe('sequences.meta')
   const sub2 = Meteor.subscribe('servers.all')
   return {
     sequences: Sequences.find().fetch(),

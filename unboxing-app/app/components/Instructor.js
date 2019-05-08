@@ -9,6 +9,10 @@ import UIText from './UIText'
 import RNFS from 'react-native-fs';
 const pathPrefix = RNFS.ExternalStorageDirectoryPath + '/unboxing/files';
 
+const imagesStill = [
+  require(`../../assets/imgAnim/Einsatz/Einsatz_00000.png`)
+]
+
 const imagesEinsatz = [
   require(`../../assets/imgAnim/Einsatz/Einsatz_00000.png`),
   require(`../../assets/imgAnim/Einsatz/Einsatz_00001.png`),
@@ -202,7 +206,7 @@ const imagesVolume = [
   require(`../../assets/imgAnim/Volume/Volume_00042.png`),
   require(`../../assets/imgAnim/Volume/Volume_00043.png`),
   require(`../../assets/imgAnim/Volume/Volume_00044.png`),
-  require(`../../assets/imgAnim/Volume/Volume_00045.png`),  
+  require(`../../assets/imgAnim/Volume/Volume_00045.png`), 
 ]
 
 /*
@@ -214,9 +218,10 @@ const videos = {
 */
 
 const images = {
-  "step-1": imagesEinsatz,
-  "step-2": imagesEinsatz,
-  "step-2-playing": imagesVolume 
+  "einsatz": imagesEinsatz,
+  "stop": imagesStop,
+  "volume": imagesVolume,
+  "still": imagesStill
 }
 
 const makeNumbers = (min, max, strLen) => {
@@ -253,7 +258,6 @@ class Instructor extends React.PureComponent {
     if(images[this.props.mode]) {
       return(
           <View>
-            <Text>Instructor</Text>
             <ImageSequence
               images={images[this.props.mode]}
               startFrameIndex={0}
@@ -264,7 +268,6 @@ class Instructor extends React.PureComponent {
                 width: 284
               }}
             />
-            <Text>Instructor</Text>
           </View>
       );
     } else {

@@ -4,7 +4,7 @@ import Video from 'react-native-video';
 import PropTypes from 'prop-types';
 
 import {globalStyles, dimensions} from '../../config/globalStyles';
-import loadInstrumentIcons from '../../config/instruments'
+import loadInstruments from '../../config/instruments'
 import UIText from './UIText'
 
 import {storageService} from '../services';
@@ -16,7 +16,7 @@ const verticalPadding = Math.floor(dimensions.screenWidth * 0.016)
 
 const imageWidth = dimensions.screenWidth * 0.25
 
-const instruments = loadInstrumentIcons();
+const instruments = loadInstruments();
 
 class SecondaryScreen extends React.Component { 
   constructor(props) {
@@ -49,8 +49,8 @@ class SecondaryScreen extends React.Component {
           muted
           resizeMode="contain"
           style={{
-            height: "80%",
-            width: "80%",
+            height: "100%",
+            width: "100%",
           }}
           onError={()=>{console.warn("video load error " + JSON.stringify(this.videoError))}}
         />}
@@ -58,13 +58,18 @@ class SecondaryScreen extends React.Component {
       <View style={{
           flex: 1,
           // backgroundColor: "blue",
+          position: "relative",
+          top: -20
         }}>
         {this.props.instrument &&
-          <UIText caps strong align="center">
-            {this.props.instrument}
+          <UIText caps strong size="m" align="center">
+            {instruments[this.props.instrument] ? instruments[this.props.instrument]["name_" + storageService.state.language] : null}
           </UIText>    
         }
-        <UIText size="xs" align="center" caps wide em>{this.props.instrument ? storageService.t("current") : storageService.t("current")}</UIText>      
+        {this.props.instrument &&
+        <UIText size="s" align="center" caps wide em>{storageService.t("current")}</UIText>}
+        {!this.props.instrument &&
+        <UIText size="s" align="center" caps wide em>{storageService.t("select-your-instrument")}</UIText>}
       </View>
     </View>
   }

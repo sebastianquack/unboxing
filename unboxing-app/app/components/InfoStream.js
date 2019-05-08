@@ -13,47 +13,31 @@ import videoThumbButton from '../../assets/img/videoThumb.png'
 import alertBlue from '../../assets/img/infoBlue.png'
 import alertRed from '../../assets/img/infoRed.png'
 
-import RNFS from 'react-native-fs';
-const pathPrefix = RNFS.ExternalStorageDirectoryPath + '/unboxing/files';
-
-import RNThumbnail from 'react-native-thumbnail';
-
 const highlightStyle = {
   borderLeftColor: colors.turquoise,  
-  borderLeftWidth: 1,  
+  borderLeftWidth: 2,  
   marginBottom: 10
 }
 
 class InfoStreamElement extends React.Component { 
   constructor(props) {
     super(props);
-    this.state = {};
   }
 
   render() {
-    if(!this.props.title || !this.props.content) return null;
+    if(!this.props.content) return null;
     
     let style = {
       paddingLeft: 10,
       marginLeft: 10, 
-      marginTop: 20,
+      marginTop: this.props.title ? 20 : 0,
     }
     if(this.props.highlight) style = { ...style, ...highlightStyle }   
 
     return(   
       <View style={style}>
-        {/*this.props.highlight &&
-          <Image
-            source={triangleIcon} 
-            style={{
-              position: "absolute",
-              left: -25,   
-              top: 0
-            }}
-          />
-        */}
-        <UIText size="s" strong em caps >{this.props.title}</UIText>
-        <UIText size={this.props.highlight ? "m" : "s"} style={{color: colors.warmWhite}}>{this.props.content}</UIText>
+        { this.props.title && <UIText size="s" strong em caps >{this.props.title}</UIText>}
+        <UIText size={this.props.highlight ? "l" : "m"}>{this.props.content}</UIText>
       </View>
     );
   }
@@ -68,76 +52,37 @@ InfoStreamElement.propTypes = {
 class InfoStreamComponent extends React.Component { 
   constructor(props) {
     super(props);
-    this.state = {};
-    this.setPath = this.setPath.bind(this);
-  }
-
-  componentDidMount = () => {
-    //console.warn("mounting");
-    this._mounted = true;
-    let path = this.props.gameService.infoStreamVideo;
-    if(path) {
-      //console.warn("infoStreamVideo: " + this.props.gameService.infoStreamVideo);
-      RNFS.exists(pathPrefix + path)
-      .then( exists => {
-        if (exists) {
-          RNThumbnail.get(pathPrefix + path).then((result) => {
-            this.setPath(result.path)  
-          });    
-        }
-      });
-    }
-  }
-
-  componentWillUnmount = () => {
-    this._mounted = false;
-  }
-
-  setPath = (resultPath) => {
-    //console.warn("setting path... mounted: " + this._mounted + " " + this.props.gameService.infoStreamVideo);
-
-    if(this._mounted) {
-      this.setState({videoThumbPath: resultPath});    
-      this.forceUpdate();
-    }
   }
 
   render() {
     let infoStream = this.props.gameService.infoStream;
-    if(!infoStream) infoStream = [];
-    const elements = infoStream.map((element, index)=>
+    
+    const elements = infoStream ? infoStream.map((element, index)=>
       <InfoStreamElement highlight={index >= infoStream.length -1} key={index} title={element.title} content={element.content}/> 
-    );
+    ) : null;
 
     const videoThumb = this.props.gameService.infoStreamVideo ?       
       <TouchableOpacity
-        onPress={()=>{gameService.startVideo(this.props.gameService.infoStreamVideo)}}
+        onPress={()=>{gameService.startVideo(this.props.gameService.infoStreamVideo.video)}}
         style={{height: 177, width: "100%", zIndex: 1}}
       >
-        {this.state.videoThumbPath &&
         <Image
-              source={{uri: this.state.videoThumbPath}}
+              source={{uri: "file:///sdcard/unboxing/files/" + this.props.gameService.infoStreamVideo.thumb}}
               style={{width: 296, height: 177, top: 0, position: "absolute", marginRight: 20, marginBottom: 20}}
-        />}
-        <Image 
-              source={videoThumbButton} 
-              style={{width: 296, height: 177, position: "absolute", top: 0, marginRight: 20, marginBottom: 20}}
         />
       </TouchableOpacity> : null;
-    
+
     return(       
-      <View style={{
-        //backgroundColor: "blue"
-      }}>
+      <View>
         <View style={{
           width: 326,
           flexDirection: "column",
           marginTop: 100,
-          marginBottom: 20 + (this.props.gameService.infoAlert ? 0 : 62),
-          backgroundColor: 'rgba(0, 0, 0, 0.5)'
+          marginBottom: 0 + (this.props.gameService.infoAlert ? 0 : 62),
+          //backgroundColor: "yellow"
         }}>
           {elements}
-          {this.props.gameService.infoAlert && 
+          {this.props.gameService.infoAlert &&
             <ImageBackground 
               imageStyle={{resizeMode: 'stretch'}}
               style={{marginLeft: 10, marginTop: 10, marginBottom: 10, height: 42, width: this.props.gameService.infoAlert.text.length * 15, alignItems: "center", justifyContent: "center"}}

@@ -96,7 +96,7 @@ function renderStep(challenge, place, duration, comma=',') {
 }
 
 
-/*
+
 console.log("{");
 
 for(let i = 0; i < 37; i++) {
@@ -105,16 +105,19 @@ for(let i = 0; i < 37; i++) {
   renderStep("0-viola1", "1", durations[0]);
   let placesList = places[i];
   for(let j = 0; j < placesList.length; j++) {
-    renderStep(j + 1, placesList[j], durations[j]);
+    renderStep(j + 1, placesList[j], durations[j] + 4);
   }
-  renderStep("8", "2", "15", '');
+  renderStep("8", "2", "45", '');
   console.log("],");
   console.log('"startInstrument":"viola1"');
   console.log("}" + (i < 36 ? "," : ""));
 }
 
 console.log("}");
-*/
+
+
+/*
+//admin walk
 
 console.log("{");
 
@@ -130,7 +133,7 @@ for(let i = 0; i < 37; i++) {
 }
 
 console.log("}");
-
+*/
 
 
 

@@ -10,7 +10,7 @@ import SensorModulator from './SensorModulator';
 
 import {gameService, sequenceService} from '../services';
 
-class ChallengeView extends React.Component { 
+class ChallengeView extends React.PureComponent { 
   constructor(props) {
     super(props);
     this.state = {};
@@ -37,14 +37,14 @@ class ChallengeView extends React.Component {
         }
 
         {challengeStatus == "prepare" &&       
-          <View style={{opacity:0.4}}>
-            <SequenceVisualizer />
+          <View style={{opacity:0.25}}>
+            {/*<SequenceVisualizer />*/}
           </View>
         }
         
         {challengeStatus == "play" &&       
           <View>
-            <SequenceVisualizer magnification />
+            {<SequenceVisualizer magnification />}
             <SensorModulator mode={"volume tilt"} item={this.props.sequenceService.currentItem}/>
           </View>
         }

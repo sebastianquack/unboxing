@@ -25,8 +25,7 @@ class SensorModulator extends React.Component {
             minValue={0.1}
             maxValue={1}
             onValueChange={(value)=>{
-              let info = sequenceService.getCurrentItemInfo();
-              if(info.approved || gameService.state.challengeStatus == "tutorial") {
+              if( sequenceService.state.currentItem && sequenceService.state.currentItem.approved || gameService.state.challengeStatus == "tutorial" || gameService.state.tutorialStatus == "tutorial-installation-playing") {
                 soundService.setVolumeFor(this.props.item ? this.props.item.path : "", value, true)
               }  
             }}

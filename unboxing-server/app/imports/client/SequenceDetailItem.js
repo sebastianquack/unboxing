@@ -1,15 +1,19 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
-import { Files, Gestures, itemSchema } from '../collections'
+import { parseFilePathToItem } from '../helper/both/sequence'
+import { itemSchema } from '../collections'
 import { AudioPreview } from './'
 
-class SequenceDetailItem extends React.Component {
+import { trackNames } from '../helper/both/cleanJSON';
+
+class SequenceDetailItem extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.renderAttribute = this.renderAttribute.bind(this)
   }
 
   SequenceDetailItemCss = css`
@@ -41,58 +45,20 @@ class SequenceDetailItem extends React.Component {
   handleAttributeChange = (name, value) => {
     $set = {}
     $set[name] = value
-    Meteor.call('updateSequenceItem', this.props.item._id, $set )
+    Meteor.call('updateSequenceItem', this.props.item._id, $set, ()=>{
+      this.props.validateInstruments();
+    } )
 
     if(name == "path") {
-      console.log(value);
+      
+      const item = parseFilePathToItem(value)
 
-      let example1 = "2_1-16_bass1_00.22.11.01.mp3"
-      let regexp1 = /(\d)(?:_)(.*)(?:_)(.*)(?:_)(\d+)(?:\.)(\d+)(?:\.)(\d+)(?:\.)(\d+)(?:\..{3})/g;
-      // for example: "/directory/2_1-16_bass1_00.22.11.01.mp3"
-      var match1 = regexp1.exec(value);
-
-      let example2 = "2_1-16_bass1_112.1-120.4_@99163.mp3"
-      let regexp2 = /(\d)(?:_)(.*)(?:_)(.*)(?:_)(.*)(?:_)@(.*)(?:\..{3})/g;
-                   // movem _ bars   _ track  _ pos    _@ millis .ext
-      var match2 = regexp2.exec(value);
-
-      let startTime = 0
-      let name = value
-      let track = "undefined"
-
-      if (match1 && match1.length == 8) {
-        let match = match1
-        
-        let subframes = match[7]; // 1/80 of 1/25 of a second -> 0.0125 * 0.04 = 0.5 milliseconds
-        let frames = match[6]; // 1/25 of a second = 40 milliseconds
-        let seconds = match[5]; 
-        let minutes = match[4];
-        track = match[3];
-        let bars = match[2];
-        let movement = match[1];
-  
-        startTime = minutes * 60000 + seconds * 1000 + frames * 40 + subframes * 0.5;
-        name = `${track} ${minutes}.${seconds}.${frames}.${subframes}`; 
-
-      } else if (match2 && match2.length == 6) {
-        let match = match2
-
-        let millis = match[5]
-        let pos = match[4]
-        track = match[3];
-        let bars = match[2];
-        let movement = match[1];
-  
-        startTime = parseInt(millis);
-        name = `${track} ${pos}`; 
-
+      if (item) {
+        // update startTime and track from filename
+        Meteor.call('updateSequenceItem', this.props.item._id, item);
       } else {
         alert(`filename has wrong format - use ${example1} or ${example2}`);
-        return;        
-      }
-
-      // update startTime and track from filename
-      Meteor.call('updateSequenceItem', this.props.item._id, {startTime: startTime, track: track, name: name} );
+      }      
 
     }
   }
@@ -167,7 +133,7 @@ class SequenceDetailItem extends React.Component {
     let special = null
     if (d[0] == "path") {
       special = <div key={`dt_special_${d[0]}`}>
-        <AudioPreview path={d[1]} />
+        <AudioPreview file={this.props.files.find( f => f.path==d[1] )} />
       </div>
     }
 
@@ -206,7 +172,11 @@ class SequenceDetailItem extends React.Component {
           {Object.entries(this.props.item).map(this.renderAttribute)}
         </div>
         <br />
-        <button onClick={()=>Meteor.call('removeSequenceItem',this.props.item._id)}>
+        <button onClick={
+          ()=>{if(confirm("really?")) Meteor.call('removeSequenceItem', this.props.item._id, 
+            ()=>{this.props.validateInstruments()}
+          )}
+        }>
           Delete Item
         </button>   
       </div>
@@ -215,16 +185,9 @@ class SequenceDetailItem extends React.Component {
 }
 
 SequenceDetailItem.propTypes = {
-  item: PropTypes.object
+  item: PropTypes.object,
+  gestures: PropTypes.array,
+  files: PropTypes.array,
 };
 
-export default withTracker(props => {
-  const sub = Meteor.subscribe('files.all' /*, {type: "audio"}*/)
-  const sub2 = Meteor.subscribe('gestures.all')
-
-  return {
-    ready: sub.ready() && sub2.ready(),
-    files: Files.find().fetch(/*{type: "audio"}*/),
-    gestures: Gestures.find().fetch()
-  };
-})(SequenceDetailItem);
+export default SequenceDetailItem;

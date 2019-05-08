@@ -97,7 +97,7 @@ class GestureDetail extends React.Component {
           ,&nbsp;
           <Moment fromNow>{d.date}</Moment>
           &nbsp;&nbsp;
-          <button onClick={()=>Meteor.call('removeGesture',d._id)}>
+          <button onClick={()=>{if(confirm("really?")) Meteor.call('removeGesture',d._id)}}>
             delete
           </button>
           <div>

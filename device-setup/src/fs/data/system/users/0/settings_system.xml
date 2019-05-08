@@ -33,4 +33,5 @@
   <setting id="32" name="volume_music_usb_headset" value="3" package="android" defaultValue="3" defaultSysSet="true" />
   <setting id="35" name="screen_brightness" value="255" package="com.android.systemui" defaultValue="255" defaultSysSet="true" />
   <setting id="19" name="haptic_feedback_enabled" value="1" package="android" defaultValue="1" defaultSysSet="true" />
+  <setting id="261" name="volume_music_headset" value="15" package="android" defaultValue="15" defaultSysSet="true" />  
 </settings>

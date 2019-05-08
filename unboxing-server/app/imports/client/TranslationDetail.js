@@ -108,7 +108,7 @@ class TranslationDetail extends React.Component {
 	    return (
 	    	<div className={this.DetailCss}>
 					{Object.entries(this.props.translation).map(this.renderAttribute)}	            
-			 		<button onClick={()=>Meteor.call('removeTranslation',this.props.translation._id)}>
+			 		<button onClick={()=>{if(confirm("really?")) Meteor.call('removeTranslation',this.props.translation._id)}}>
 	            	Delete Translation
 	        </button>     
 	    	</div>

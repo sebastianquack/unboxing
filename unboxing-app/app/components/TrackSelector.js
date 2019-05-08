@@ -8,11 +8,10 @@ import {withSequenceService} from './ServiceConnector';
 
 import UIText from './UIText'
 
-import loadInstrumentIcons from '../../config/instruments'
-const instruments = loadInstrumentIcons();
+import loadInstruments from '../../config/instruments'
+const instruments = loadInstruments();
 
-const instrumentBackground = require('../../assets/img/instrumentBackground.png')
-const instrumentBackgroundSelected = require('../../assets/img/instrumentBackgroundSelected.png')
+const instrumentBackgroundSelected = require('../../assets/img/Rectangle.png')
 const instrumentBackgroundFigure = require('../../assets/img/trackSelectedMarker.png')
 
 class TrackSelector extends React.Component { 
@@ -24,8 +23,7 @@ class TrackSelector extends React.Component {
   renderTrack = (sequence, track, index)=> {
     //const trackStyle = Object.assign({backgroundColor: track.color}, styles.button);
     //console.warn(track.name, instruments[track.name].image);
-    const selected = this.props.sequenceService.currentTrack ? 
-      ((this.props.sequenceService.currentTrack == track) ? "(selected)" : "") : ""
+    const selected = (this.props.sequenceService.currentTrack == track)
     return (
       <TouchableOpacity
           key={index}
@@ -33,38 +31,52 @@ class TrackSelector extends React.Component {
             gameService.trackSelect(track);
             gameService.handleCloseModal();
           }}
-          style={{width: 150, height: 200, marginRight: 10, justifyContent: 'center', alignItems: 'center'}}
+          style={{width: 142, height: 200, marginRight: 10, justifyContent: 'center', alignItems: 'center'}}
         >
-        <ImageBackground
-          source={selected ? instrumentBackgroundSelected : instrumentBackground }
-          style={{width: 120, height: 120, justifyContent: 'center', alignItems: 'center'}}
-        >
-          { instruments[track.name] && instruments[track.name].image && <Image 
+        
+        { (instruments[track.name] && instruments[track.name].image) && 
+          <Image 
               style={{
-                width: 80,
-                height: 80,
+                width: 142,
+                height: 158,
+                position: "absolute",
+                top: 0,
+                left: 0
               }}
               source={instruments[track.name].image} 
-              resizeMode="contain"
+              resizeMode="cover"
           />}
 
-          { this.props.selectedTracks && this.props.selectedTracks[track.name] && !( this.props.selectedTracks[track.name] == 1 && selected ) && <Image 
+          { selected &&
+          <Image
+              style={{
+                width: 120,
+                height: 120,
+                position: "absolute",
+                top: 5,
+                left: 11
+              }}
+              source={instrumentBackgroundSelected} 
+              resizeMode="contain"
+          /> }
+
+          { (this.props.selectedTracks && this.props.selectedTracks[track.name] && !( this.props.selectedTracks[track.name] == 1 && selected )) &&
+            <Image 
               style={{
                 width: 40,
                 height: 40,
                 position: "absolute",
-                top: 79,
+                top: 84,
                 left: 65
               }}
               source={instrumentBackgroundFigure} 
               resizeMode="contain"
-          />}
-        </ImageBackground>
-
-          
-        
-        <UIText align="center" style={{color: "#F3DFD4"}}>
-          {track.name}
+          /> }
+        <UIText align="center" style={{
+          color: "#F3DFD4",
+          marginTop: 100
+        }}>
+          {instruments[track.name] ? instruments[track.name]["name_" + storageService.state.language] : track.name + " not found"}
         </UIText>    
       </TouchableOpacity>
     )
@@ -73,11 +85,12 @@ class TrackSelector extends React.Component {
   render() {
     if(!this.props.sequence) return <View><Text>sequence not found</Text></View>;
 
-    const tracks = this.props.sequence.tracks.filter(track => gameService.instrumentAllowedInStage(track.name))
-    .map((t, index)=>this.renderTrack(this.props.sequence, t, index));
+    let tracks = this.props.sequence.tracks.filter(track => gameService.instrumentAllowedInStage(track.name));
+    sequenceService.sortTracks(tracks);
+    const trackButtons = tracks.map((t, index)=>this.renderTrack(this.props.sequence, t, index));
     return (
       <View style={{paddingTop: 20, paddingLeft: 64, paddingRight: 64, flexDirection: 'row', flexWrap: 'wrap'}}>
-        {tracks}
+        {trackButtons}
       </View>
     );
   }

@@ -78,7 +78,7 @@ class AutoForm extends React.Component {
     return (
       <li key={item._id} className={this.LiCss}>
         { Object.entries(this.props.schema).map( ([name]) => this.renderAttribute(item._id, [name, item[name]]) ) }
-        <button onClick={()=>Meteor.call(this.props.deleteMethod, item._id)}>
+        <button onClick={()=>{if(confirm("really?")) Meteor.call(this.props.deleteMethod, item._id)}}>
 	        Delete { this.props.name }
 	      </button>            
       </li>
