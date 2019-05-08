@@ -253,6 +253,7 @@ class GameContainer extends React.Component {
                 || this.props.gameService.challengeStatus == "tutorial" 
               }
               backgroundContent = { backgroundContent }
+              backgroundOnTop = { this.props.gameService.challengeStatus == "play" }
               mainContent = { mainContent }
               overlayContent = { overlayContent }
               scrollContent = { scrollContent }
