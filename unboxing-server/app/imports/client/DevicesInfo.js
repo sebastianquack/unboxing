@@ -43,30 +43,6 @@ const adbPresets = [
     parallel: 5,
   },  
   {
-    name: "volume max",
-    command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP'",
-    retries: 5,
-    parallel: 10,
-  },
-  {
-    name: "volume 80%",
-    command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP &&input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_DOWN && input keyevent KEYCODE_VOLUME_DOWN && input keyevent KEYCODE_VOLUME_DOWN && input keyevent KEYCODE_VOLUME_DOWN'",
-    retries: 5,
-    parallel: 10,
-  },  
-  {
-    name: "volume up by 1",
-    command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP' && sleep 1",
-    retries: 5,
-    parallel: 10,
-  },
-  {
-    name: "volume down by 1",
-    command: "shell 'input keyevent KEYCODE_VOLUME_UP && input keyevent KEYCODE_VOLUME_UP' && sleep 1",
-    retries: 5,
-    parallel: 10,
-  },  
-  {
     name: "press home",
     command: "shell input keyevent KEYCODE_HOME",
     retries: 5,
@@ -109,6 +85,12 @@ const adbPresets = [
     retries: 5,
     parallel: 10,
   }, 
+  {
+    name: "remove files folder (!)",
+    command: "shell 'rm -f /sdcard/unboxing/files/*'",
+    retries: 5,
+    parallel: 10,
+  },   
   {
     name: "install production",
     command: `
@@ -175,6 +157,12 @@ class DevicesInfo extends React.Component {
     }))
   }
 
+  getSelectedDeviceIds = () => {
+    return Object.entries(this.state.selected)
+      .filter( ([deviceId, checked]) => checked )
+      .map( ([deviceId, checked]) => deviceId )    
+  }
+
   selectInstallation = () => {
     const installation = Installations.findOne({_id: this.state.selectInstallation})
     const json = JSON.parse(cleanJSON(installation.deviceGroups))
@@ -184,6 +172,18 @@ class DevicesInfo extends React.Component {
       selected[d] = true
     }
     console.log(devices)
+    this.setState({
+      selected
+    })
+  }
+
+  selectGroup = () => {
+    const input = this.state.selectGroup
+    const deviceIds = input.split(/[\s,]+/).map(i => i.trim())
+    const selected = {}
+    for (let deviceId of deviceIds) {
+      selected[deviceId] = true
+    }
     this.setState({
       selected
     })
@@ -399,7 +399,14 @@ class DevicesInfo extends React.Component {
         <button onClick={this.selectInstallation}>select</button>
       </span>
 
-    const selectAll = <button onClick={event => this.setState({selected: this.props.devices.map(d=>d.deviceId)})}>select all</button>
+    const selectGroup = <span>
+    <label>selected group: <input placeholder="1,2,3 4 5 6" value={this.state.selectGroup} onChange={event => this.setState({selectGroup: event.target.value})} /></label>
+    <button onClick={this.selectGroup}>select</button>
+    </span>
+
+    const currentlySelected = <span>{this.getSelectedDeviceIds().join(",")}{' ('+this.getSelectedDeviceIds().length+')'}</span>
+
+    const selectAll = <button onClick={event => this.setState({selected: this.props.devices.reduce((o, key) => ({ ...o, [key.deviceId]: true}), {}) })}>select all</button>
     const selectNone = <button onClick={event => this.setState({selected:[]})}>select none</button>
 
     const headerRows = Object.keys(columnAccessors).map(c => <th key={c}>{c}</th>)
@@ -439,6 +446,10 @@ class DevicesInfo extends React.Component {
           { stopBot }
           <br /><br />
           { selectInstallation }
+          <br />
+          { selectGroup }
+          <br />
+          { currentlySelected }
           < br />
           { selectAll }
           { selectNone }
