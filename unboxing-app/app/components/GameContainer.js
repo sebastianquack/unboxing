@@ -104,6 +104,7 @@ class GameContainer extends React.Component {
             title={storageService.t("main-title")}
             subtitle={storageService.t("main-title-sub")}
           />
+          infoStreamContent = null;
         }
       }
 
@@ -243,11 +244,22 @@ class GameContainer extends React.Component {
       backgroundColor = "fire"
     }
 
+    if(this.props.gameService.gameMode == "installation" 
+      && !this.props.gameService.activeChallenge
+      && this.props.gameService.tutorialStatus == "tutorial-installation-complete"
+      ) {
+      backgroundColor = null;
+    }
+
+
+
+
     return (
       <View>
         <ScreenContainer
           primaryScreen = {<PrimaryScreen
               backgroundColor={backgroundColor}
+              backgroundOnTop= {this.props.gameService.challengeStatus == "play"}
               backgroundFlow = { 
                 this.props.gameService.challengeStatus == "off" 
                 || this.props.gameService.challengeStatus == "tutorial" 
