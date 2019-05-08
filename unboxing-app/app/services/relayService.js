@@ -77,6 +77,8 @@ class RelayService extends Service {
         relayService.emitMessage({
             code: "joinChallenge", 
             challengeId: gameService.state.activeChallenge._id, 
+            placeId: gameService.state.activePlace ? gameService.state.activePlace._id : null,
+            installationId: gameService.state.activeInstallation ? gameService.state.activeInstallation._id : null,
             deviceId: storageService.getDeviceId(),
             track: sequenceService.currentTrack ? sequenceService.currentTrack : null
         });

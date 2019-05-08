@@ -57,7 +57,7 @@ function countParticipants(challengeId) {
 function countSelectedTracks(challengeId) {
   let selectedTracks = {};
   for(let deviceId in deviceMap) {
-    if(deviceMap[deviceId].track) {
+    if(deviceMap[deviceId].track && deviceMap[deviceId].challengeId == challengeId) {
       if(!selectedTracks[deviceMap[deviceId].track]) selectedTracks[deviceMap[deviceId].track] = 0;
       selectedTracks[deviceMap[deviceId].track]++;
     }
@@ -131,7 +131,10 @@ function init(io) {
     socket.on('message', function(msg) {
       console.log('\nreceived message: ' + JSON.stringify(msg));
 
-      let challengeId = msg.challengeId + (msg.installationId ? "@" + msg.installationId : "");
+      let challengeId = msg.challengeId 
+      + (msg.installationId ? "@" + msg.installationId : "")
+      + (msg.placeId ? "@" + msg.placeId : "");
+      
       console.log("using challengeId: " + challengeId);
 
       if(msg.code == "selectTrack") {
@@ -163,7 +166,8 @@ function init(io) {
             if(challengeState[challengeId].sequenceControlStatus == "playing") {
               socket.emit('message', {code: "startSequence", 
                 challengeId: msg.challengeId, 
-                installationId: installationId,
+                installationId: msg.installationId,
+                placeId: msg.placeId,
                 startTime: challengeState[challengeId].startTime});  
             }
           } else {
@@ -193,7 +197,7 @@ function init(io) {
         }
       }
 
-      socket.broadcast.emit('message', msg);  
+      socket.broadcast.emit('message', msg); // message is passed on with original challengeId, placeId, and installationId 
 
     });
 
