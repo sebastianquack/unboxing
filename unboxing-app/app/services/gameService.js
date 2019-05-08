@@ -152,7 +152,11 @@ class GameService extends Service {
     let challenge = storageService.getFinalChallengeFromWalk(walk);
     this.resetGamestate();
     this.setActiveChallenge(challenge);  
-    sequenceService.trackSelectByName(storageService.getWalkInstrument(walk));
+    sequenceService.state.currentSequence.tracks.forEach((track)=>{
+      if(track.name == storageService.getWalkInstrument(walk)) {
+        this.trackSelect(track);
+      }
+    })
     this.setReactive({walkStatus: "final-challenge"});
   }
 
@@ -417,7 +421,13 @@ class GameService extends Service {
       statusBarSubtitle: sequenceService.getLocalizedSequenceAttribute("subtitle")
     })
     
-    relayService.emitMessage({code: "joinChallenge", challengeId: challenge._id, installationId: installationId, deviceId: storageService.getDeviceId()});
+    relayService.emitMessage({
+      code: "joinChallenge", 
+      challengeId: challenge._id, 
+      challengeShorthand: challenge.shorthand,
+      placeId: this.state.activePlace ? this.state.activePlace._id : null, 
+      installationId: installationId, 
+      deviceId: storageService.getDeviceId()});
     this.activateRelayCallbacks();
 	}
 
@@ -538,7 +548,10 @@ class GameService extends Service {
 
     if(msgObj.code == "challengeParticipantUpdate") {
       if(this.state.activeChallenge) {
-        if(msgObj.challengeId == this.state.activeChallenge._id + (this.state.activeInstallation ? "@" + this.state.activeInstallation._id : "")) {
+        if(msgObj.challengeId == this.state.activeChallenge._id 
+          + (this.state.activeInstallation ? "@" + this.state.activeInstallation._id : "")
+          + (this.state.activePlace ? "@" + this.state.activePlace._id : "")
+          ) {
           //console.warn(msgObj);
           this.setReactive({
             numChallengeParticipants: msgObj.numParticipants,
@@ -566,7 +579,10 @@ class GameService extends Service {
     // if this is start sequence message
     if(msgObj.code == "startSequence") {
       if(this.state.activeChallenge) {
-        if(msgObj.challengeId == this.state.activeChallenge._id) {
+        if(msgObj.challengeId == this.state.activeChallenge._id
+           && (this.state.activePlace ? msgObj.placeId == this.state.activePlace._id : true)
+           && (this.state.activeInstallation ? msgObj.installationId == this.state.activeInstallation._id : true)
+          ) {
           this.startSequenceRemotely(msgObj.startTime)  
         }  
       }
@@ -632,6 +648,7 @@ class GameService extends Service {
     relayService.emitMessage({code: "selectTrack", 
       deviceId: storageService.getDeviceId(), 
       challengeId: this.state.activeChallenge._id, 
+      placeId: this.state.activePlace ? this.state.activePlace._id : null,
       installationId: this.state.activeInstallation ? this.state.activeInstallation._id : null,      
       track: track ? track.name : null
     });
@@ -652,6 +669,7 @@ class GameService extends Service {
           code: "startSequence", 
           challengeId: this.state.activeChallenge._id, 
           installationId: this.state.activeInstallation ? this.state.activeInstallation._id : null,
+          placeId: this.state.activePlace ? this.state.activePlace._id : null,
           startTime: startTime
         });  
       }

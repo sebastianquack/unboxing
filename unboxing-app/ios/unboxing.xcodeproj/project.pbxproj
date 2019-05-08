@@ -86,6 +86,9 @@
 		82879E18AC3C41309C216901 /* DINPro-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1FEC32E4D8794FA2927D5685 /* DINPro-MediumItalic.ttf */; };
 		9B90659B9E8F4002BC00D184 /* libRNThumbnail.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0896FE416073433C9C6AFADB /* libRNThumbnail.a */; };
 		D71341F741A04E87B2810DBD /* libRCTImageSequence.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 920F56ECE118482DA29029D1 /* libRCTImageSequence.a */; };
+		E1BDE6B33918431DAE9DDC5D /* libReactNativeVolumeController.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 55A621B785D54256B6769438 /* libReactNativeVolumeController.a */; };
+		3F2A731A95F94D4FBA75B173 /* libRNExitApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 27DE6D8DD246402EAEAC5224 /* libRNExitApp.a */; };
+		FDAC5781AEE54DF5882FF6D9 /* libRCTSystemSetting.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 16B3BE39EE68407AA16E6CB5 /* libRCTSystemSetting.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -449,6 +452,12 @@
 		0896FE416073433C9C6AFADB /* libRNThumbnail.a */ = {isa = PBXFileReference; name = "libRNThumbnail.a"; path = "libRNThumbnail.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		19218F27FBF14C7EB348422F /* RCTImageSequence.xcodeproj */ = {isa = PBXFileReference; name = "RCTImageSequence.xcodeproj"; path = "../node_modules/react-native-image-sequence/ios/RCTImageSequence.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		920F56ECE118482DA29029D1 /* libRCTImageSequence.a */ = {isa = PBXFileReference; name = "libRCTImageSequence.a"; path = "libRCTImageSequence.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		FE04E71363434047836F0BC4 /* ReactNativeVolumeController.xcodeproj */ = {isa = PBXFileReference; name = "ReactNativeVolumeController.xcodeproj"; path = "../node_modules/react-native-volume-controller/ios/ReactNativeVolumeController.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		55A621B785D54256B6769438 /* libReactNativeVolumeController.a */ = {isa = PBXFileReference; name = "libReactNativeVolumeController.a"; path = "libReactNativeVolumeController.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		8E82120381C3472F95800286 /* RNExitApp.xcodeproj */ = {isa = PBXFileReference; name = "RNExitApp.xcodeproj"; path = "../node_modules/react-native-exit-app/ios/RNExitApp.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		27DE6D8DD246402EAEAC5224 /* libRNExitApp.a */ = {isa = PBXFileReference; name = "libRNExitApp.a"; path = "libRNExitApp.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		6574C4A93B8546EF93FABA5A /* RCTSystemSetting.xcodeproj */ = {isa = PBXFileReference; name = "RCTSystemSetting.xcodeproj"; path = "../node_modules/react-native-system-setting/ios/RCTSystemSetting.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		16B3BE39EE68407AA16E6CB5 /* libRCTSystemSetting.a */ = {isa = PBXFileReference; name = "libRCTSystemSetting.a"; path = "libRCTSystemSetting.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -485,6 +494,9 @@
 				52955AC42BEB43119C17F789 /* libRCTVideo.a in Frameworks */,
 				9B90659B9E8F4002BC00D184 /* libRNThumbnail.a in Frameworks */,
 				D71341F741A04E87B2810DBD /* libRCTImageSequence.a in Frameworks */,
+				E1BDE6B33918431DAE9DDC5D /* libReactNativeVolumeController.a in Frameworks */,
+				3F2A731A95F94D4FBA75B173 /* libRNExitApp.a in Frameworks */,
+				FDAC5781AEE54DF5882FF6D9 /* libRCTSystemSetting.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -681,6 +693,9 @@
 				59D46DD717F24C90A1726B77 /* RCTVideo.xcodeproj */,
 				8105AF9C5BD44519BCE679C1 /* RNThumbnail.xcodeproj */,
 				19218F27FBF14C7EB348422F /* RCTImageSequence.xcodeproj */,
+				FE04E71363434047836F0BC4 /* ReactNativeVolumeController.xcodeproj */,
+				8E82120381C3472F95800286 /* RNExitApp.xcodeproj */,
+				6574C4A93B8546EF93FABA5A /* RCTSystemSetting.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1396,6 +1411,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1408,6 +1426,8 @@
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
+					"$(SRCROOT)/../node_modules/react-native-volume-controller/ios/ReactNativeVolumeController",
+					"$(SRCROOT)/../node_modules/react-native-system-setting/ios",
 				);
 			};
 			name = Debug;
@@ -1430,6 +1450,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1442,6 +1465,8 @@
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
+					"$(SRCROOT)/../node_modules/react-native-volume-controller/ios/ReactNativeVolumeController",
+					"$(SRCROOT)/../node_modules/react-native-system-setting/ios",
 				);
 			};
 			name = Release;
@@ -1473,6 +1498,8 @@
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
+					"$(SRCROOT)/../node_modules/react-native-volume-controller/ios/ReactNativeVolumeController",
+					"$(SRCROOT)/../node_modules/react-native-system-setting/ios",
 				);
 			};
 			name = Debug;
@@ -1503,6 +1530,8 @@
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
+					"$(SRCROOT)/../node_modules/react-native-volume-controller/ios/ReactNativeVolumeController",
+					"$(SRCROOT)/../node_modules/react-native-system-setting/ios",
 				);
 			};
 			name = Release;
@@ -1533,6 +1562,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1545,6 +1577,8 @@
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
+					"$(SRCROOT)/../node_modules/react-native-volume-controller/ios/ReactNativeVolumeController",
+					"$(SRCROOT)/../node_modules/react-native-system-setting/ios",
 				);
 			};
 			name = Debug;
@@ -1575,6 +1609,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1587,6 +1624,8 @@
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
+					"$(SRCROOT)/../node_modules/react-native-volume-controller/ios/ReactNativeVolumeController",
+					"$(SRCROOT)/../node_modules/react-native-system-setting/ios",
 				);
 			};
 			name = Release;
@@ -1616,6 +1655,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1628,6 +1670,8 @@
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
+					"$(SRCROOT)/../node_modules/react-native-volume-controller/ios/ReactNativeVolumeController",
+					"$(SRCROOT)/../node_modules/react-native-system-setting/ios",
 				);
 			};
 			name = Debug;
@@ -1657,6 +1701,9 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1669,6 +1716,8 @@
 					"$(SRCROOT)/../node_modules/react-native-video/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-thumbnail/ios",
 					"$(SRCROOT)/../node_modules/react-native-image-sequence/ios/RCTImageSequence",
+					"$(SRCROOT)/../node_modules/react-native-volume-controller/ios/ReactNativeVolumeController",
+					"$(SRCROOT)/../node_modules/react-native-system-setting/ios",
 				);
 			};
 			name = Release;

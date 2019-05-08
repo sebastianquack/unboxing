@@ -19,8 +19,8 @@ function joinChallenge(deviceId, challengeId) {
   deviceMap[deviceId].track = undefined; // reset track of device that just joined
   deviceMap[deviceId].timestamp = Date.now() / 1000;
   
-  console.log(deviceMap);
-  console.log("purging...");
+  //console.log(deviceMap);
+  //console.log("purging...");
 
   let now = Date.now() / 1000;
 
@@ -32,8 +32,8 @@ function joinChallenge(deviceId, challengeId) {
   }
   checkChallengeState(challengeId);
 
-  console.log(deviceMap);
-  console.log(challengeState);
+  //console.log(deviceMap);
+  //console.log(challengeState);
 }
 
 
@@ -57,7 +57,7 @@ function countParticipants(challengeId) {
 function countSelectedTracks(challengeId) {
   let selectedTracks = {};
   for(let deviceId in deviceMap) {
-    if(deviceMap[deviceId].track) {
+    if(deviceMap[deviceId].track && deviceMap[deviceId].challengeId == challengeId) {
       if(!selectedTracks[deviceMap[deviceId].track]) selectedTracks[deviceMap[deviceId].track] = 0;
       selectedTracks[deviceMap[deviceId].track]++;
     }
@@ -77,14 +77,14 @@ function updateDeviceMap(socket, challengeId) {
     selectedTracks: selectedTracks,
     deviceMap: deviceMap
   };
-  console.log("updateDeviceMap", msgObj);
+  //console.log("updateDeviceMap", msgObj);
   socket.emit('message', msgObj);
   socket.broadcast.emit('message', msgObj);
 }
 
 
 function leaveChallenge(socket, deviceId, challengeId) {
-  console.log(deviceId, "leave challenge", challengeId)
+  //console.log(deviceId, "leave challenge", challengeId)
   if(deviceId) {
      delete deviceMap[deviceId];
   }
@@ -92,7 +92,7 @@ function leaveChallenge(socket, deviceId, challengeId) {
      updateDeviceMap(socket, challengeId);
      checkChallengeState(challengeId);
   }
-  console.log("challengeState", challengeState)
+  //console.log("challengeState", challengeState)
 }
 
 
@@ -129,10 +129,14 @@ function init(io) {
     });
     
     socket.on('message', function(msg) {
-      console.log('\nreceived message: ' + JSON.stringify(msg));
+      console.log('\nreceived message');
+      console.log(JSON.stringify(msg));
 
-      let challengeId = msg.challengeId + (msg.installationId ? "@" + msg.installationId : "");
-      console.log("using challengeId: " + challengeId);
+      let challengeId = msg.challengeId 
+      + (msg.installationId ? "@" + msg.installationId : "")
+      + (msg.placeId ? "@" + msg.placeId : "");
+      
+      //console.log("using challengeId: " + challengeId);
 
       if(msg.code == "selectTrack") {
         if(challengeId && msg.deviceId && msg.track) {
@@ -147,7 +151,7 @@ function init(io) {
           deviceMap: deviceMap,
           challengeState: challengeState
         }
-        console.log("sending back with payload", payload);
+        //console.log("sending back with payload", payload);
         socket.emit('message', {code: 'installationInfo', payload: payload});  
       }
 
@@ -160,10 +164,14 @@ function init(io) {
           socket.challengeId = challengeId
 
           if(challengeState[challengeId]) {
+            if(msg.challengeShorthand) {
+              challengeState[challengeId].shorthand = msg.challengeShorthand;
+            }
             if(challengeState[challengeId].sequenceControlStatus == "playing") {
               socket.emit('message', {code: "startSequence", 
                 challengeId: msg.challengeId, 
-                installationId: installationId,
+                installationId: msg.installationId,
+                placeId: msg.placeId,
                 startTime: challengeState[challengeId].startTime});  
             }
           } else {
@@ -172,8 +180,8 @@ function init(io) {
             }
           }
         }
-        console.log("joining challenge")
-        console.log("challengeState", challengeState)
+        //console.log("joining challenge")
+        //console.log("challengeState", challengeState)
       }
 
       if(msg.code == "leaveChallenge") {
@@ -189,11 +197,24 @@ function init(io) {
             challengeState[challengeId].sequenceControlStatus = "playing";
             challengeState[challengeId].startTime = msg.startTime;
           }
-          console.log(JSON.stringify(challengeState));
+          //console.log(JSON.stringify(challengeState));
         }
       }
 
-      socket.broadcast.emit('message', msg);  
+      socket.broadcast.emit('message', msg); // message is passed on with original challengeId, placeId, and installationId 
+
+      console.log("\ndeviceMap");
+      Object.keys(deviceMap).forEach((key)=>{
+        console.log("* " + key + " " + JSON.stringify(deviceMap[key]))
+      });
+      console.log("\nchallengeState");
+      Object.keys(challengeState).forEach((key)=>{
+        console.log("* " + challengeState[key].shorthand + " " + key);
+        console.log("  " + challengeState[key].sequenceControlStatus)
+        console.log("  " + JSON.stringify(countParticipants(key)));
+        console.log("  " + JSON.stringify(countSelectedTracks(key)));
+      });
+      
 
     });
 

@@ -74,13 +74,13 @@ class StorageService extends Service {
 	}
 
 	async loadFromFile() {
+    console.log("loading collections from file");
 		let json = await RNFS.readFile(persistentFile, 'utf8').catch((err)=>{
 			this.showNotification("loadFromFile failed: " + err.message)
 			console.log(err.message, err.code)
 		});
 		if(json) {
 			// log the file contents
-	      console.log("reading collections from file", json);
 	      let stateFromFile = JSON.parse(json);
 				//console.log(stateFromFile);
 				if (!stateFromFile.deviceId) stateFromFile.deviceId = uuidv1()

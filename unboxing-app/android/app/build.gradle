@@ -152,6 +152,8 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-system-setting')
+    compile project(':react-native-exit-app')
     compile project(':react-native-restart-android')
     compile project(':react-native-image-sequence')
     compile project(':react-native-android-wifi')

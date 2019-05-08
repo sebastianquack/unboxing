@@ -5,6 +5,8 @@ import wifi from 'react-native-android-wifi';
 import Service from './Service';
 import { storageService, soundService, relayService, fileService, gameService } from './';
 
+import SystemSetting from 'react-native-system-setting'
+
 import io from 'socket.io-client';
 
 defaultServer = "192.168.8.1"
@@ -230,8 +232,12 @@ class NetworkService extends Service {
     }
     if(override || JSON.stringify(this.lastSentAdminPayload) !== JSON.stringify(payload)) {
       let msgObj = {code: "statusUpdate", payload: payload, deviceId: storageService.getDeviceId()};
-      this.adminSocket.emit('message', msgObj);
-      this.lastSentAdminPayload = payload;
+      SystemSetting.getVolume().then((volume)=>{
+        msgObj.payload.volume = volume;
+        this.adminSocket.emit('message', msgObj);
+        this.lastSentAdminPayload = payload;
+      });
+
     }
   }
 
@@ -288,6 +294,13 @@ class NetworkService extends Service {
                 this.showNotification("challenge not found");
               }
             }
+            break;
+          case "changeVolume":
+            if(msgObj.payload) {
+              // change the volume
+              SystemSetting.setVolume(msgObj.payload.volume);     
+            }
+            break;
         }
       }
     }
