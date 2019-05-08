@@ -208,7 +208,7 @@ class PrimaryScreen extends React.Component {
   }
 
   render() {
-    const backgroundLayer = this.props.backgroundOnTop ? 70 : 25;
+    const shadeLayers = this.props.backgroundOnTop ? [40,50,60,70] : [12,13,11,14]
 
     return <View style={{
       height: "100%",
@@ -217,21 +217,15 @@ class PrimaryScreen extends React.Component {
       // backgroundColor: 'rgba(255,0,0,0.5)',
     }}>
       { this.props.backgroundFlow && this.renderBackgroundFlow(10) }
-      
-
-
       { this.props.backgroundContent && this.renderBackgroundContent(20) }
       { this.props.mainContent && this.renderMainContent(30) }
-      { this.renderShade(40) }
-      { this.renderBottomShade(50) }
-      { this.props.infoStreamContent && this.renderInfoStreamShade(60) }
-      
-      { this.props.backgroundColor && this.renderBackgroundColor(70) } 
- 
+      { this.renderShade(shadeLayers[0]) }
+      { this.renderBottomShade(shadeLayers[1]) }
+      { this.props.infoStreamContent && this.renderInfoStreamShade(shadeLayers[2]) }
+      { this.props.backgroundColor && this.renderBackgroundColor(shadeLayers[3]) }
       { this.props.overlayContent && this.renderOverlayContent(80) }
       { this.props.scrollContent && this.renderScrollContent(90) }
       { this.props.infoStreamContent && this.renderInfoStream(100) }
-
     </View>
   }
 }
@@ -242,7 +236,7 @@ PrimaryScreen.propTypes = {
   mainContent: PropTypes.node,
   overlayContent: PropTypes.node,
   scrollContent: PropTypes.node,
-  backgroundLayer: PropTypes.bool
+  backgroundOnTop: PropTypes.bool
 };
 
 export default PrimaryScreen;

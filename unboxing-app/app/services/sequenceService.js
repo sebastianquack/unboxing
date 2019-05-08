@@ -873,7 +873,7 @@ class SequenceService extends Service {
 					},
 					scheduledItem: null
 				});
-        console.warn(soundService.getSyncTime() + ": onPlayStart", this.state.currentItem);
+        // console.warn(soundService.getSyncTime() + ": onPlayStart", this.state.currentItem);
         
         if(this.state.currentItem.approved) {
           this.turnOnVolumeCurrentItem();
@@ -883,7 +883,7 @@ class SequenceService extends Service {
 			onPlayEnd: () => {
         // make sure we are not deleting a newer item that is now in place
         if(this.state.currentItem && targetTime == this.state.currentItem.targetTime) {
-          console.warn(soundService.getSyncTime() + ": onPlayEnd", this.state.currentItem);
+          // console.warn(soundService.getSyncTime() + ": onPlayEnd", this.state.currentItem);
 					this.setReactive({
 						currentItem: null,
 						playingItem: null,

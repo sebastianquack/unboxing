@@ -61,8 +61,8 @@ class SequenceVisualizer extends React.Component {
     // special compare - let currentTime through if the last render was too long ago, so new elements can be rendered
     if (nextProps.currentTime) {
       // console.warn(nextProps.currentTime, this.lastRenderCurrentTime, nextProps.currentTime - this.lastRenderCurrentTime, (this.state.visibleMillis * refreshWidth) )
-      if ( (nextProps.currentTime - this.lastRenderCurrentTime) >= (refreshWidth * this.state.visibleMillis) ) {
-        //console.warn("currentTime updated to ", nextProps.currentTime)
+      if ( (nextProps.currentTime - this.lastRenderCurrentTime) >= ((refreshWidth-1) * this.state.visibleMillis) ) {
+        // console.warn("currentTime updated to ", nextProps.currentTime)
         return true
       }
     }
@@ -218,7 +218,7 @@ class SequenceVisualizer extends React.Component {
     const opacity = 1 //this.relativeOpacity(i)
     const showActionIndicator = active && this.props.hasActionItem && !this.props.playingItem
 
-    console.warn(this.props.playingItem)
+    // console.warn(this.props.playingItem)
 
     const playingIndicator = <LinearGradient
       start={{x: 1, y: 0}}
@@ -418,7 +418,7 @@ renderActionItem = (item) => {
   }*/
 
   render() {
-    console.log("render")
+    // console.warn("render", this.props.currentTime)
     this.lastRenderCurrentTime = this.props.currentTime // keep track of the currentTime
 
     let tracks = this.props.sequence.tracks    
@@ -543,7 +543,7 @@ export default compose(
 
       // should render?
       shouldRenderRules: {
-        shallowCompare: ["currentTime", "debugMode", "loopCounter", "controlStatus", "isLooping", "playbackStartedAt", "hasActionItem", "trackIndex", "magnification"],
+        shallowCompare: ["debugMode", "loopCounter", "controlStatus", "isLooping", "playbackStartedAt", "hasActionItem", "trackIndex", "magnification"],
         propCompare: {
           _id: ["item", "nextItem", "missedItem", "playingItem", "scheduledItem"],
           approved: ["item", "scheduledItem"],

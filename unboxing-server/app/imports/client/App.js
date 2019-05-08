@@ -1,4 +1,5 @@
 import React, { Component, Switch } from 'react';
+import ConnectionStatus from 'meteor-react-status'
 
 import {DevicesInfo, InstallationsInfo, WalksInfo, EventsInfo, PlacesInfo, ChallengesInfo, NetworkInfo, ServersInfo, FilesInfo, GesturesInfo, SequencesInfo, ImportExport, TranslationsInfo} from './';
  
@@ -124,6 +125,7 @@ export default class App extends Component {
     console.log(this.state);
     return (
       <div className="container" style={{marginBottom: "5em"}}>
+        <ConnectionStatus fullWidth={true} />
         <header>
           <h1>Unboxing Server / {this.state.hostname}</h1>
         </header>
