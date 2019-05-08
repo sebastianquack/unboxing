@@ -12,6 +12,10 @@ const configs = [
     cuesTable: "Übersicht Einsätze_Clips - 3. Satz.csv",
   },
   {
+    name: "3_1-428-pianolang",
+    cuesTable: "Übersicht Einsätze_Clips - 3. Satz-Piano lange Einsätze.csv",
+  },
+  {
     name: "3_1-30",
     cuesTable: "Übersicht Einsätze_Clips - 3. Satz, T. 1-30.csv",
     startSequenceAt: "-1.2"
