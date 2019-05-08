@@ -152,7 +152,11 @@ class GameService extends Service {
     let challenge = storageService.getFinalChallengeFromWalk(walk);
     this.resetGamestate();
     this.setActiveChallenge(challenge);  
-    sequenceService.trackSelectByName(storageService.getWalkInstrument(walk));
+    sequenceService.state.currentSequence.tracks.forEach((track)=>{
+      if(track.name == storageService.getWalkInstrument(walk)) {
+        this.trackSelect(track);
+      }
+    })
     this.setReactive({walkStatus: "final-challenge"});
   }
 
@@ -422,6 +426,7 @@ class GameService extends Service {
     relayService.emitMessage({
       code: "joinChallenge", 
       challengeId: challenge._id, 
+      challengeShorthand: challenge.shorthand,
       placeId: this.state.activePlace ? this.state.activePlace._id : null, 
       installationId: installationId, 
       deviceId: storageService.getDeviceId()});
