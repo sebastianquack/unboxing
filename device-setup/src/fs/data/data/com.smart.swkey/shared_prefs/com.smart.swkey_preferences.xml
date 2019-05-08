@@ -1,0 +1,31 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+    <string name="androidHomeL">0</string>
+    <string name="button_number">4</string>
+    <boolean name="hideClose" value="false" />
+    <string name="panel_ori">0</string>
+    <boolean name="usenoti" value="true" />
+    <long name="last_version_code" value="72" />
+    <boolean name="trigger_type" value="false" />
+    <boolean name="vibration" value="true" />
+    <int name="positionX" value="0" />
+    <string name="button_size">2</string>
+    <boolean name="hoverHide" value="true" />
+    <int name="positionY" value="-894" />
+    <string name="swipe_area">1</string>
+    <string name="button_alpha">120</string>
+    <boolean name="show_anim" value="true" />
+    <string name="trigger_side">0</string>
+    <string name="theme">0</string>
+    <boolean name="keyboard" value="false" />
+    <string name="auto_hide">0</string>
+    <boolean name="outsideHide" value="false" />
+    <boolean name="trigger_lock" value="false" />
+    <boolean name="clickHide" value="false" />
+    <boolean name="panel_pos" value="false" />
+    <int name="gravity" value="3" />
+    <string name="trigger_alpha">40</string>
+    <string name="trigger_action">0</string>
+    <string name="button_space">0</string>
+    <string name="bs_size">1</string>
+</map>
