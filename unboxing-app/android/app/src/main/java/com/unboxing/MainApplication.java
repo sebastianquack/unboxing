@@ -3,6 +3,8 @@ package com.unboxing;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.ninty.system.setting.SystemSettingPackage;
+import com.github.wumke.RNExitApp.RNExitAppPackage;
 import com.rnrestartandroid.RNRestartAndroidPackage;
 import dk.madslee.imageSequence.RCTImageSequencePackage;
 import com.devstepbcn.wifi.AndroidWifiPackage;
@@ -35,6 +37,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new SystemSettingPackage(),
+            new RNExitAppPackage(),
             new RNRestartAndroidPackage(),
             new RCTImageSequencePackage(),
             new AndroidWifiPackage(),

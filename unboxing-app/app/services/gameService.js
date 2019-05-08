@@ -390,8 +390,6 @@ class GameService extends Service {
   // note: useChallengeConnection is set to false for installation mode where connection is specified in installation obj
 	setActiveChallenge = (challenge, useChallengeConnection=true, installationId=null)=> {
 
-    console.warn("setActiveChallenge");
-
     if(!challenge) {
       this.showNotification("challenge not found, aborting...");
       return;

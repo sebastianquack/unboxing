@@ -274,6 +274,16 @@ class DevicesInfo extends React.Component {
     })
   }
 
+  sendVolumeMessage = (event) => {
+    event.preventDefault()
+    this.sendMessage({
+      code: 'changeVolume',
+      payload: {
+        volume: parseFloat(this.state.volume)
+      }
+    })
+  }
+
 
   render() {
 
@@ -290,6 +300,7 @@ class DevicesInfo extends React.Component {
       // 'adbRetries': row => row.adb.retries,
       'adbCommand': row => row.adb.command,
       'adbMessage': row => row.adb.message,
+      'volume': row => row.deviceStatus.volume ? row.deviceStatus.volume.toFixed(2) : "",
     }
 
     const updateEverything = <button onClick={event => this.sendMessage({ code: "updateEverything"})}>updateEverything</button>
@@ -346,6 +357,11 @@ class DevicesInfo extends React.Component {
           {this.props.ready && this.props.walks.map( w => <option key={w._id} value={w._id}>{w.description}</option>)}      
         </select>
         <input type="submit" value="startFinalChallenge" />
+      </form>
+
+  const changeVolume = <form onSubmit={ this.sendVolumeMessage }>
+        <label>volume (0 - 1.0): <input required value={this.state.volume} onChange={event => this.setState({volume: event.target.value})} type="text"></input></label>
+        <input type="submit" value="changeVolume" />
       </form>
 
     const adb = <form onSubmit={ this.runAdb }>
@@ -419,7 +435,9 @@ class DevicesInfo extends React.Component {
           { '     ' }
           { clickOn }
           { clickOff }
-          <br /><br />
+          <br/><br />
+          { changeVolume }
+          <br />
           { startInstallation }
           <br />
           { startTutorial }

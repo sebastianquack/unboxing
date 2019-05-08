@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, Text, View, StyleSheet, TouchableOpacity, Switch, Picker } from 'react-native';
+import { Alert, Text, View, StyleSheet, TouchableOpacity, Switch, Picker, BackHandler } from 'react-native';
 
 import RestartAndroid from 'react-native-restart-android'
 
@@ -8,6 +8,8 @@ import {gameService, storageService, soundService} from '../../services';
 import {withGameService, withStorageService, withSoundService} from '../ServiceConnector';
 
 import DebugToggle from './DebugToggle';
+
+
 
 class GameModeAdmin extends React.Component { 
   constructor(props) {
@@ -145,7 +147,29 @@ class GameModeAdmin extends React.Component {
               {cancelable: true},
             );
           }}><Text>Restart App (without resume)</Text>
-        </TouchableOpacity>            
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={globalStyles.button}
+          onPress={()=>{
+            Alert.alert(
+              'Confirm',
+              'Close App?',
+              [
+                {text: 'Yes', onPress: () => { 
+                  //RNExitApp.exitApp();
+                  BackHandler.exitApp();
+                }},
+                {
+                  text: 'Cancel',
+                  onPress: () => console.log('Cancel Pressed'),
+                  style: 'cancel',
+                },
+              ],
+              {cancelable: true},
+            );
+          }}><Text>Close App</Text>
+
+        </TouchableOpacity>                        
         <DebugToggle/>    
       </View>
     );
