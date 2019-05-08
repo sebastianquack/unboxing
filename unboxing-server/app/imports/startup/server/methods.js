@@ -179,6 +179,8 @@ Meteor.methods({
 
     let ie_collections = {...importExportConfig.collections, ...importExportConfigTranslationsOnly.collections};
 
+    delete ie_collections.files // remove remote files that dont't correspond to actual local files
+
     for (collection in ie_collections) {
       if (json[collection]) {
         const Coll = ie_collections[collection];

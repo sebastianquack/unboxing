@@ -8,15 +8,15 @@ import { receiveFiles } from '../../helper/server/files';
 import {cleanJSON} from '../../helper/both/cleanJSON';
 
 async function getEverything(req, res) {  
-  const challenges = await Challenges.find().fetch();
-  const sequences = await Sequences.find().fetch();
-  const gestures = await Gestures.find().fetch();
-  const files = await Files.find({},{sort: {path: 1}}).fetch();
-  const places = await Places.find().fetch();
-  const walks = await Walks.find().fetch();
-  const translations = await Translations.find().fetch();
-  const servers = await Servers.find().fetch();
-  const installations = await Installations.find().fetch();
+  const challenges = Challenges.find().fetch();
+  const sequences = Sequences.find().fetch();
+  const gestures = Gestures.find().fetch();
+  const files = Files.find().fetch();
+  const places = Places.find().fetch();
+  const walks = Walks.find().fetch();
+  const translations = Translations.find().fetch();
+  const servers = Servers.find().fetch();
+  const installations = Installations.find().fetch();
 
   // clean json
   for(let i = 0; i < walks.length; i++) {
