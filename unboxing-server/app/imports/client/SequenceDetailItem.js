@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import ContentEditable from 'react-contenteditable'
@@ -10,7 +10,7 @@ import { AudioPreview } from './'
 
 import { trackNames } from '../helper/both/cleanJSON';
 
-class SequenceDetailItem extends React.Component {
+class SequenceDetailItem extends React.PureComponent {
   constructor(props) {
     super(props);
   }

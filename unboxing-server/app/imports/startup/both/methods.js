@@ -73,7 +73,7 @@ Meteor.methods({
     for (let item of items) {
       if (!item.duration) {
         const file = Files.findOne({path: item.path})
-        console.log("duration", item, file)
+        // console.log("duration", item, file)
         item.duration = file.duration
       }
       Sequences.update(
