@@ -13,8 +13,11 @@ import { trackNames } from '../helper/both/cleanJSON';
 class SequenceDetailItem extends React.PureComponent {
   constructor(props) {
     super(props);
+    this.state = {
+      active: false
+    }
     this.renderAttribute = this.renderAttribute.bind(this)
-    // this.renderInput = this.renderInput.bind(this)
+    this.renderInput = this.renderInput.bind(this)
   }
 
   SequenceDetailItemCss = css`
@@ -72,12 +75,12 @@ class SequenceDetailItem extends React.PureComponent {
           <input type="checkbox" checked={value} onChange={ e => this.handleAttributeChange(type, e.target.checked)}/>
         )
       case "path": 
-        return (
+        return this.state.active ? (
           <select value={value} onChange={ e => this.handleAttributeChange(type, e.target.value) }>
             {emptyOption}
             {this.props.files.map( f => <option key={f._id} value={f.path}>{f.path}</option>)}      
-          </select>
-        )
+        </select>
+        ) : <span onClick={()=>this.setState({active: true})}>{value}</span>
       case "gesture_id": 
       case "entryGesture_id": 
         return (

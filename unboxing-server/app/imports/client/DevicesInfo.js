@@ -49,6 +49,14 @@ const adbPresets = [
     parallel: 10,
   },
   {
+    name: "press home",
+    command: `
+      shell 'su -c "settings put global screen_brightness 255"'
+    `,
+    retries: 5,
+    parallel: 10,
+  },
+  {
     name: "restart app",
     command: `
       shell 'am force-stop com.unboxing'
