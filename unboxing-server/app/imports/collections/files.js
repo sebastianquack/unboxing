@@ -5,6 +5,10 @@ import fs from 'fs';
 
 const Files = new Mongo.Collection('files');
 
+if (Meteor.isServer){
+  Files.rawCollection().createIndex({ path: 1 })
+}
+
 Files.allow({
   insert: () => true,
   update: () => true,

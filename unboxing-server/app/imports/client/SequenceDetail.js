@@ -1,11 +1,11 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import PropTypes from 'prop-types';
 import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
 import { parseFilePathToItem } from '../helper/both/sequence'
-import {Sequences, Files} from '../collections';
+import {Sequences, Files, Gestures, sequenceSchema} from '../collections';
 import {SequenceDetailItem, InputLine} from './';
 import { inputTransform, inputType } from '../helper/both/input';
 
@@ -15,7 +15,9 @@ const trackTitleWidth = 6
 const trackHeight = 2
 const unit = "rem"
 
-class Sequence extends React.Component {
+let sub1, sub2
+
+class Sequence extends React.PureComponent {
   constructor(props) {
     super(props);
     this.datalists = {
@@ -33,6 +35,11 @@ class Sequence extends React.Component {
 
   componentDidMount() {
     this.validateInstruments();
+  }
+
+  componentWillUnmount() {
+    sub1.stop()
+    sub2.stop()
   }
 
  SequenceDetailCss = css`
@@ -163,6 +170,8 @@ class Sequence extends React.Component {
           item={d} 
           color={color} 
           datalists={this.datalists}
+          gestures={this.props.gestures}
+          files={this.props.files}
           validateInstruments={this.validateInstruments}
           onFocusChange={ (focus) => this.handleItemFocus(d._id, focus) }
           />
@@ -175,7 +184,7 @@ class Sequence extends React.Component {
       <div className="SequenceDetail">
         <pre>
           <div className={this.SequenceDetailCss}>
-            {Object.entries(this.props.sequence).map(this.renderAttribute)}              
+            {Object.keys(sequenceSchema).map(key => [key,this.props.sequence[key]]).map(this.renderAttribute)}
             <label><span>validator: </span><span>{this.state.instrumentsValid}</span></label>
             <br />
             <label><span>import files: </span><input placeholder="/1_16-32_" onInput={this.handleInputImport} value={this.state.inputImport}/>&hellip; <button onClick={this.handleButtonImport}>import</button></label>
@@ -189,17 +198,20 @@ class Sequence extends React.Component {
             </button>
           </div>
         </pre>
-        <div className={tracksCSS}>
-          <ol className="tracks_list">
-          {this.props.sequence.tracks && this.props.sequence.tracks.map(this.liTracks)}
-          </ol>
-          <ol className="tracks_items">
-            {this.props.sequence.items && this.props.sequence.items.map(this.liItems)}
-          </ol>
-        </div>
-        <datalist id={this.datalists.tracks} >
+        { this.props.ready ?
+          <div className={tracksCSS}>
+            <ol className="tracks_list">
+            {this.props.sequence.tracks && this.props.sequence.tracks.map(this.liTracks)}
+            </ol>
+            <ol className="tracks_items">
+              {this.props.sequence.items && this.props.sequence.items.map(this.liItems)}
+            </ol>
+          </div>
+          : <tt style={{color: "darkgreen", fontSize: "200%"}}>loading items...</tt>
+        }
+        {/*<datalist id={this.datalists.tracks} >
           { this.props.sequence.tracks && this.props.sequence.tracks.map( t => <option key={t.name} value={t.name} />) }
-        </datalist>
+        </datalist>*/}
       </div>
     );
   }
@@ -210,15 +222,22 @@ Sequence.propTypes = {
 };
 
 export default withTracker(props => {
-  Meteor.subscribe('sequence', props.sequenceId);
+  sub1 = Meteor.subscribe('sequence', props.sequenceId);
   const sequence = Sequences.findOne({_id: props.sequenceId});
 
-  Meteor.subscribe('files.all.paths');
-  const filePaths = Files.find({}).map(file => file.path);
+  sub2 = Meteor.subscribe('files.all');
+  const files = Files.find().fetch()
+  const filePaths = files.map(file => file.path);
+
+  sub3 = Meteor.subscribe('gestures.all');
+  const gestures = Gestures.find().fetch()
 
   return {
     sequence,
-    filePaths
+    files,
+    filePaths,
+    gestures,
+    ready: sub1.ready() && sub2.ready()
   };
 })(Sequence);
 

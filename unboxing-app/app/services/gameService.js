@@ -41,7 +41,7 @@ class GameService extends Service {
 		this.assistanceThreshold = 2000;
     this.guitarHeroThreshold = {pre: 2000, post: 2000}
 
-    this.checkInButtonDelay = 100;
+    this.checkInButtonDelay = 60*1000;
 
     this.walkTrackerInterval = setInterval(this.walkTracker, 10000);
 
@@ -970,7 +970,7 @@ class GameService extends Service {
           this.checkInTimeout = setTimeout(()=>{
             this.addItemToInfoStream(storageService.t("navigation"), storageService.t("navigation-2"));  
             this.setReactive({allowCheckInButton: true});
-          }, this.checkInButtonDelay);
+          }, this.debugMode ? 500 : this.checkInButtonDelay );
           break;
         case "prepare":
           let stage = this.getActiveChallengeStage();

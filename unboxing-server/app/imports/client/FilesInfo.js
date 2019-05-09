@@ -13,7 +13,7 @@ class FilesInfo extends React.Component {
   }
 
   render() {
-    const listItems = this.props.files.map( e => <li key={e._id}>{e.path}</li>)
+    const listItems = this.props.files.map( e => <li key={e._id}>{e.path} ({e.size})</li>)
 
     return (
       <div className="FilesInfo">
