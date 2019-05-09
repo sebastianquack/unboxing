@@ -85,7 +85,7 @@ class SequenceVisualizer extends React.Component {
     // compare props objects
     for (let attr of Object.keys(rules.propCompare)) {
       for (let prop of rules.propCompare[attr]) {
-        if (typeof this.props[prop] != typeof nextProps[prop]) {
+        if (this.props[prop] != nextProps[prop]) {
           //console.warn("prop changed type: " + prop)
           return true
         }

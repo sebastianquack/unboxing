@@ -5,7 +5,7 @@ import ContentEditable from 'react-contenteditable'
 import { css } from 'emotion'
 
 import { parseFilePathToItem } from '../helper/both/sequence'
-import {Sequences, Files, Gestures} from '../collections';
+import {Sequences, Files, Gestures, sequenceSchema} from '../collections';
 import {SequenceDetailItem, InputLine} from './';
 import { inputTransform, inputType } from '../helper/both/input';
 
@@ -184,7 +184,7 @@ class Sequence extends React.PureComponent {
       <div className="SequenceDetail">
         <pre>
           <div className={this.SequenceDetailCss}>
-            {Object.entries(this.props.sequence).map(this.renderAttribute)}              
+            {Object.keys(sequenceSchema).map(key => [key,this.props.sequence[key]]).map(this.renderAttribute)}
             <label><span>validator: </span><span>{this.state.instrumentsValid}</span></label>
             <br />
             <label><span>import files: </span><input placeholder="/1_16-32_" onInput={this.handleInputImport} value={this.state.inputImport}/>&hellip; <button onClick={this.handleButtonImport}>import</button></label>
@@ -226,7 +226,7 @@ export default withTracker(props => {
   const sequence = Sequences.findOne({_id: props.sequenceId});
 
   sub2 = Meteor.subscribe('files.all');
-  const files = Files.find({}).fetch()
+  const files = Files.find().fetch()
   const filePaths = files.map(file => file.path);
 
   sub3 = Meteor.subscribe('gestures.all');

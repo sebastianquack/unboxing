@@ -25,7 +25,18 @@ const itemSchema = {
   }
 }
 
-export {Sequences, itemSchema};
+const sequenceSchema = {
+  name: "",
+  custom_duration: 0,
+  duration: 0,
+  bpm: 120,
+  title_de: "",
+  title_en: "",
+  subtitle_de: "",
+  subtitle_en: "",
+}
+
+export {Sequences, itemSchema, sequenceSchema};
 
 /* SCHEMA 
  *

@@ -14,6 +14,7 @@ class SequenceDetailItem extends React.PureComponent {
   constructor(props) {
     super(props);
     this.renderAttribute = this.renderAttribute.bind(this)
+    // this.renderInput = this.renderInput.bind(this)
   }
 
   SequenceDetailItemCss = css`
@@ -74,7 +75,7 @@ class SequenceDetailItem extends React.PureComponent {
         return (
           <select value={value} onChange={ e => this.handleAttributeChange(type, e.target.value) }>
             {emptyOption}
-            {this.props.ready && this.props.files.map( f => <option key={f.path} value={f.path}>{f.path}</option>)}      
+            {this.props.files.map( f => <option key={f._id} value={f.path}>{f.path}</option>)}      
           </select>
         )
       case "gesture_id": 
