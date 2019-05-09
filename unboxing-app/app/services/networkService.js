@@ -232,10 +232,10 @@ class NetworkService extends Service {
     }
     if(override || JSON.stringify(this.lastSentAdminPayload) !== JSON.stringify(payload)) {
       let msgObj = {code: "statusUpdate", payload: payload, deviceId: storageService.getDeviceId()};
+      this.lastSentAdminPayload = payload;
       SystemSetting.getVolume().then((volume)=>{
         msgObj.payload.volume = volume;
         this.adminSocket.emit('message', msgObj);
-        this.lastSentAdminPayload = payload;
       });
 
     }

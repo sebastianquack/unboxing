@@ -1,157 +1,185 @@
-const deviceIds = 
-["1",
-"4",
-"5",
-"6",
-"7",
-"8",
-"9",
-"10",
-"11",
-"12",
-"13",
-"14",
-"15",
-"16",
-"17",
-"18",
-"19",
-"20",
-"22",
-"23",
-"24",
-"25",
-"26",
-"27",
-"28",
-"29",
-"30",
-"31",
-"32",
-"33",
-"34",
-"35",
-"36",
-"37",
-"38",
-"39",
-"40"];
+const deviceGroups = 
+{"1": "A", // A
+"4": "A",
+"5": "A",
+"6": "A",
+"7": "A",
 
-const places = [
-[2, 6, 7, 4, 3, 5, 3],
-[2, 6, 7, 4, 8, 9, 6],
-[2, 6, 3, 10, 11, 5, 10],
-[2, 5, 3, 6, 7, 9, 4],
-[2, 5, 3, 6, 7, 9, 8],
-[3, 6, 4, 10, 11, 5, 10],
-[3, 6, 4, 10, 11, 5, 10],
-[3, 5, 2, 6, 4, 9, 6],
-[3, 5, 2, 6, 4, 9, 8],
-[4, 5, 2, 6, 7, 9, 6],
-[4, 6, 2, 10, 11, 5, 10],
-[4, 6, 2, 10, 11, 5, 8],
-[4, 6, 3, 5, 2, 6, 8],
-[4, 6, 3, 5, 2, 6, 8],
-[6, 8, 7, 9, 13, 5, 10],
-[6, 8, 7, 9, 13, 5, 10],
-[6, 8, 7, 9, 2, 5, 4],
-[6, 8, 11, 5, 10, 9, 4],
-[6, 8, 11, 5, 10, 9, 8],
-[10, 9, 8, 2, 3, 5, 6],
-[10, 9, 8, 2, 3, 5, 4],
-[10, 9, 8, 4, 3, 5, 6],
-[10, 9, 8, 4, 2, 5, 3],
-[10, 9, 8, 4, 2, 5, 6],
-[11, 9, 10, 12, 8, 6, 4],
-[11, 9, 10, 12, 8, 6, 3],
-[11, 9, 10, 5, 11, 9, 6],
-[11, 9, 13, 5, 13, 9, 8],
-[11, 5, 13, 12, 8, 6, 3],
-[12, 8, 4, 2, 7, 6, 3],
-[12, 8, 4, 2, 3, 5, 3],
-[12, 8, 4, 2, 3, 6, 3],
-[12, 8, 11, 5, 10, 9, 4],
-[13, 5, 11, 9, 4, 6, 4],
-[13, 5, 11, 12, 8, 6, 4],
-[13, 5, 13, 12, 10, 9, 4],
-[13, 5, 13, 9, 4, 6, 3]];
+"8": "B", // B
+"9": "B",
+"10": "B",
+"11": "B",
+"12": "B",
 
-/*
+"36": "C", // C
+"37": "C",
+"38": "C",
+"39": "C",
+"40": "C",
 
-1_1-16 4 Personen ca. 5 min
-1_16-32 8 Personen ca 6 min
-1_77-87 1 Person ca. 3 min
-1_127 4 Personen ca. 5 min
-1_390 4 Personen ca. 4 min
-2_1 8 Personen ca. 6 min
-2_ 84 4 Personen ca. 6 min
-*/
+"13": "D", // D
+"14": "D",
+"15": "D",
+"16": "D",
+"17": "D",
 
-//challenges: 0-viola1, 1, 2, 3, 4, 5, 6, 7, 8
-const avgPathLength = 3;
-const durations = [5, 6, 3, 5, 4, 6, 6];
+"18": "E", // E
+"19": "E",
+"20": "E",
+"22": "E",
+"23": "E",
+"24": "E",
+
+"25": "F", // F
+"26": "F",
+"27": "F",
+"28": "F",
+"29": "F",
+
+"30": "F", // G
+"31": "F",
+"32": "F",
+"33": "F",
+"34": "F",
+"35": "F",
+};
+
+const startInstruments = 
+{"1": "piano1", // A
+"4": "piano1",
+"5": "violin1.1",
+"6": "bass1.1",
+"7": "viola1.1",
+
+"8": "flute1", // B
+"9": "oboe1",
+"10": "fagott1",
+"11": "violin2.1",
+"12": "horn1",
+
+"36": "violin2.2", // C
+"37": "viola1.1",
+"38": "cello1.3",
+"39": "violin1.4",
+"40": "violin2.3",
+
+"13": "pauke1", // D
+"14": "cello1.1",
+"15": "oboe2",
+"16": "fagott2",
+"17": "trompete1",
+
+"18": "horn2", // E
+"19": "trompete2",
+"20": "violin1.2",
+"22": "violin2.2",
+"23": "violin1.3",
+"24": "viola1.2",
+
+"25": "cello1.2", // F
+"26": "bass1.2",
+"27": "violin1.4",
+"28": "violin2.3",
+"29": "viola1.3",
+
+"30": "violin1.1", // G
+"31": "violin2.4",
+"32": "violin1.2",
+"33": "violin2.1",
+"34": "cello1.2",
+"35": "violin1.3",
+};
+
+const finalNavigations = 
+{"1": "ziel-piano1", // A
+"4": "ziel-piano1",
+"5": "ziel-violin1",
+"6": "ziel-bass1",
+"7": "ziel-viola1",
+
+"8": "ziel-flute1", // B
+"9": "ziel-oboe1",
+"10": "ziel-fagott1",
+"11": "ziel-violin1", // eigentlich 2
+"12": "ziel-horn1",
+
+"36": "ziel-violin1", // C. // eigentlich 2
+"37": "ziel-viola1",
+"38": "ziel-cello1",
+"39": "ziel-violin1",
+"40": "ziel-violin1", // eigentlich 2
+
+"13": "ziel-pauke1", // D
+"14": "ziel-cello1",
+"15": "ziel-oboe1",  // eigentlich 2
+"16": "ziel-fagott1", // eigentlich 2
+"17": "ziel-trompete1",
+
+"18": "ziel-horn1", // E.  // eigentlich 2
+"19": "ziel-trompete1",  // eigentlich 2
+"20": "ziel-violin1",
+"22": "ziel-violin1", // eigentlich 2
+"23": "ziel-violin1",
+"24": "ziel-viola1",
+
+"25": "ziel-cello1", // F
+"26": "ziel-bass1",
+"27": "ziel-violin1",
+"28": "ziel-violin1", // eigentlich 2
+"29": "ziel-viola1",
+
+"30": "ziel-violin1", // G
+"31": "ziel-violin1",   // eigentlich 2
+"32": "ziel-violin1",
+"33": "ziel-violin1",   // eigentlich 2
+"34": "ziel-cello1",
+"35": "ziel-violin1",
+};
+
+const places = {
+"A": [11, 1, 2, 3, 4, 7, 8],
+"B": [12, 1, 3, 4, 5, 7, 9],
+"C": [13, 1, 4, 5, 6, 7, 10],
+"D": [1, 3, 5, 6, 7, 9, 11],
+"E": [2, 3, 6, 7, 8, 9, 12],
+"F": [3, 5, 7, 8, 10, 12, 13],
+"G": [4, 5, 8, 9, 11, 12, 1],
+}
+
+const tutorialChallenge = "practice-all"
+const finalChallenge = "final-all"
+
+//challenges: 1, 2, 3, 4, 5, 6, 7 -- same for everyone
+//const durations = [5, 6, 3, 5, 4, 6, 6];
+const durations = [2.5, 3, 1.5, 2.5, 2, 3, 3];
+const avgPathLength = 0;
 
 function renderStep(challenge, place, duration, comma=',') {
   console.log('{"challenge":"' + challenge + '", "place":"' + place + '", "duration":' + duration + '}' + comma);
 }
 
-
-
 console.log("{");
 
 for(let i = 0; i < 37; i++) {
-  console.log('"' + deviceIds[i] + '":{');
+  let deviceId = Object.keys(deviceGroups)[i]
+  console.log('"' + deviceId + '":{');
+  
+  console.log(`"tutorialChallenge": "${tutorialChallenge}", `);
+  console.log(`"finalChallenge": "${finalChallenge}", `);
+  console.log(`"startInstrument": "${startInstruments[deviceId]}", `);
+
   console.log('"places":[');
-  renderStep("0-viola1", "1", durations[0]);
-  let placesList = places[i];
+  let placesList = places[deviceGroups[deviceId]];
   for(let j = 0; j < placesList.length; j++) {
-    renderStep(j + 1, placesList[j], durations[j] + 4);
+    renderStep(j + 1, placesList[j], durations[j] + avgPathLength);
   }
-  renderStep("8", "2", "45", '');
-  console.log("],");
-  console.log('"startInstrument":"viola1"');
-  console.log("}" + (i < 36 ? "," : ""));
-}
 
-console.log("}");
+  // final navigational challenge one per instrument
+  renderStep(finalNavigations[deviceId], 14, 15, "");
 
-
-/*
-//admin walk
-
-console.log("{");
-
-for(let i = 0; i < 37; i++) {
-  console.log('"' + deviceIds[i] + '":{');
-  console.log('"places":[');
-  renderStep("admin-1", "1", 6);
-  renderStep("admin-2", "2", 6);
-  renderStep("admin-1", "1", 6);
-  renderStep("admin-2", "2", 6, "");
   console.log("]");
   console.log("}" + (i < 36 ? "," : ""));
 }
 
 console.log("}");
-*/
 
-
-
-/* example JSON
-{
-"1":{
-  "places":[
-    {"challenge":"0-viola1", "place":"1", "duration": 1}, 
-    {"challenge":"1",  "place":"2", "duration": 1},
-    {"challenge":"2",  "place":"3", "duration": 1},
-    {"challenge":"3",  "place":"4", "duration": 1},
-    {"challenge":"4",  "place":"5", "duration": 1},
-    {"challenge":"5",  "place":"6", "duration": 1},
-    {"challenge":"6", "place":"7", "duration": 1},
-    {"challenge":"7",  "place":"8", "duration": 1},
-    {"challenge":"8",  "place":"9", "duration": 1}
-   ],
-  "startInstrument":"viola1"
-}
-}
-*/

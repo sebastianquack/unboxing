@@ -687,7 +687,7 @@ class GameService extends Service {
         && startTime < sequenceService.state.playbackStartedAt
       ) {
       //console.warn("startSequenceRemotely: shifting timing")
-      sequenceService.shiftSequenceToNewStartTime(startTime);
+      //sequenceService.shiftSequenceToNewStartTime(startTime);
     }
     // should this request start the sequence?
     // yes, if sequence is ready to play
@@ -1070,9 +1070,15 @@ class GameService extends Service {
 
   activatePeakTutorial = (callback)=> {
     peakService.waitForStart(() => {
-        peakService.stopWaitingForStart()
+        peakService.stopWaitingForStart();
+        peakService.stopWaitingForStop();
         callback();
-    });  
+    });
+    peakService.waitForStop(()=>
+      peakService.stopWaitingForStop();
+      peakService.stopWaitingForStart();
+      callback();
+    });
   }
 
   // video
