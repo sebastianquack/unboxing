@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { withTracker } from 'meteor/react-meteor-data';
 import { css } from 'emotion'
 
-import Challenges from '../collections/challenges';
+import {Challenges, Servers} from '../collections';
 import ChallengeDetail from './ChallengeDetail';
 
 class ChallengesInfo extends React.Component {
@@ -30,10 +30,13 @@ class ChallengesInfo extends React.Component {
   }
 
   li(c) {
+    const server = this.props.servers.find(s => s._id == c.relay_server_id)
+    const server_name = (server ? server.name : "<server does not exist>" )
     return (
       <li key={c._id}>
-        {!this.show(c._id) ? <span>{c.name}</span> : null}
-        {this.renderSwitch(c._id)}        
+        {this.renderSwitch(c._id)}
+        &emsp;
+        {!this.show(c._id) ? <span><b>{c.shorthand}</b> <span style={{paddingLeft: "1ex"}}>{c.name}</span> <small style={{paddingLeft: "1ex"}}>{server_name}</small></span> : null}
         {this.show(c._id) ? <ChallengeDetail challenge={c} /> : null}
       </li>
     );
@@ -53,16 +56,17 @@ class ChallengesInfo extends React.Component {
 
   renderSwitch = (id) => {
     return (
-        <div>
           <input
                 type="button"
+                style={{ verticalAlign: "top"}}
                 value={this.show(id) ? "hide" : "show"}
                 onClick={  value => this.toggle(id) } />
-        </div>
     );
   }
 
   render() {
+    if (!this.props.ready) return <span>loading...</span>
+
     const listItems = this.props.challenges.map(this.li);
 
     return (
@@ -80,11 +84,15 @@ class ChallengesInfo extends React.Component {
 }
 
 export default withTracker(props => {
-  Meteor.subscribe('challenges.all');
-  const challenges = Challenges.find().fetch();
-  console.log(challenges);
+  const sub1 = Meteor.subscribe('challenges.all');
+  const challenges = Challenges.find({}, {sort: {shorthand: 1}}).fetch();
+
+  const sub2 = Meteor.subscribe('servers.all');
+  const servers = Servers.find().fetch();
 
   return {
-    challenges
+    challenges,
+    servers,
+    ready : sub1.ready() && sub2.ready()
   };
 })(ChallengesInfo);

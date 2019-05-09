@@ -34,11 +34,11 @@ const sections = [
     component:SequencesInfo,
     default: false
   },    
-  {
+  /*{
     name: "Gestures",
     component:GesturesInfo,
     default: false
-  },    
+  },    */
   {
     name: "Events",
     component:EventsInfo,
