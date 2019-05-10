@@ -27,7 +27,7 @@ Meteor.publish('challenges.all', function () {
 });*/
 
 function logSub(name) {
-  console.log("subscribing " + name)
+  // console.log("subscribing " + name)
 }
 
 Meteor.publish('files.all', function (query={}) {

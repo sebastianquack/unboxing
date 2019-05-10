@@ -49,7 +49,7 @@ const adbPresets = [
     parallel: 10,
   },
   {
-    name: "press home",
+    name: "screen brightness",
     command: `
       shell 'su -c "settings put global screen_brightness 255"'
     `,
