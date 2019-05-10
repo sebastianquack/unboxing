@@ -89,7 +89,7 @@ class TrackSelector extends React.Component {
     sequenceService.sortTracks(tracks);
     const trackButtons = tracks.map((t, index)=>this.renderTrack(this.props.sequence, t, index));
     return (
-      <View style={{paddingTop: 20, paddingLeft: 64, paddingRight: 64, flexDirection: 'row', flexWrap: 'wrap'}}>
+      <View style={{paddingTop: 50, paddingLeft: 64, paddingRight: 64, flexDirection: 'row', flexWrap: 'wrap'}}>
         {trackButtons}
       </View>
     );
