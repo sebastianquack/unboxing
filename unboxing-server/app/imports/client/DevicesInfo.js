@@ -95,7 +95,7 @@ const adbPresets = [
   }, 
   {
     name: "remove files folder (!)",
-    command: "shell 'rm -f /sdcard/unboxing/files/*'",
+    command: "shell 'rm -rf /sdcard/unboxing/files/*'",
     retries: 5,
     parallel: 10,
   },   
