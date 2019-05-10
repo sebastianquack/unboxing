@@ -974,19 +974,9 @@ class GameService extends Service {
           this.updateTutorial();
           break;
         case "navigate":
-          let navText = storageService.t("navigation-1");
           let description = this.state.activePlace ? this.state.activePlace["description_" + storageService.state.language] : null;
-          if(description) {
-            if(description != "new" && description != "neu") {
-              navText = description;
-            }
-          }
-          this.addItemToInfoStream(storageService.t("navigation"), navText);
-          clearTimeout(this.checkInTimeout);
-          //this.checkInTimeout = setTimeout(()=>{
-            this.addItemToInfoStream(storageService.t("navigation"), storageService.t("navigation-2"));  
-            this.setReactive({allowCheckInButton: true});
-          //}, this.debugMode ? 500 : this.checkInButtonDelay );
+          this.addItemToInfoStream(storageService.t("navigation"), description);
+          this.setReactive({allowCheckInButton: true});
           break;
         case "prepare":
           let stage = this.getActiveChallengeStage();
@@ -1052,7 +1042,6 @@ class GameService extends Service {
     soundService.scheduleSound(path, soundService.getSyncTime(), {
       onPlayStart: ()=>{
         if(playingStatus) this.setReactive({tutorialStatus: playingStatus});
-        console.warn("onPlayStart", playInstructionsHeader, playInstructions);
         this.addItemToInfoStream(playInstructionsHeader, playInstructions);
       },
       onPlayEnd: ()=>{
