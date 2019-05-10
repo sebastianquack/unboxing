@@ -218,27 +218,26 @@ class NetworkService extends Service {
       if(this.state.adminSocketConnected) {
         this.sendAdminStatus();  
       }
-    }, 2000);
+    }, 5000);
   }
 
   sendAdminStatus = (override=false) => {
-    let walk = gameService.state.activeWalk ? {tag: gameService.state.activeWalk.tag, startTime: gameService.state.walkStartTime} : null
-    let payload = {
-      everythingVersion: storageService.state.version,      
-      fileStatus: fileService.state.status,
-      timeSyncStatus: this.state.timeSyncStatus,
-      activeWalk: walk,
-      activeChallenge: gameService.state.activeChallenge ? gameService.state.activeChallenge.shorthand + " " + gameService.state.activeChallenge.name : "none"
-    }
-    if(override || JSON.stringify(this.lastSentAdminPayload) !== JSON.stringify(payload)) {
-      let msgObj = {code: "statusUpdate", payload: payload, deviceId: storageService.getDeviceId()};
-      this.lastSentAdminPayload = payload;
-      SystemSetting.getVolume().then((volume)=>{
-        msgObj.payload.volume = volume;
+    SystemSetting.getVolume().then((volume)=>{
+      let walk = gameService.state.activeWalk ? {tag: gameService.state.activeWalk.tag, startTime: gameService.state.walkStartTime} : null
+      let payload = {
+        everythingVersion: storageService.state.version,      
+        fileStatus: fileService.state.status,
+        timeSyncStatus: this.state.timeSyncStatus,
+        activeWalk: walk,
+        activeChallenge: gameService.state.activeChallenge ? gameService.state.activeChallenge.shorthand + " " + gameService.state.activeChallenge.name : "none",
+        volume: volume
+      }
+      if(override || JSON.stringify(this.lastSentAdminPayload) !== JSON.stringify(payload)) {
+        let msgObj = {code: "statusUpdate", payload: payload, deviceId: storageService.getDeviceId()};
+        this.lastSentAdminPayload = payload;
         this.adminSocket.emit('message', msgObj);
-      });
-
-    }
+      };
+    });
   }
 
   handleAdminMessage = (msgObj) => {
