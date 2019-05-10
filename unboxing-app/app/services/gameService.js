@@ -1074,7 +1074,7 @@ class GameService extends Service {
         peakService.stopWaitingForStop();
         callback();
     });
-    peakService.waitForStop(()=>
+    peakService.waitForStop(()=> {
       peakService.stopWaitingForStop();
       peakService.stopWaitingForStart();
       callback();

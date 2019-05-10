@@ -237,7 +237,9 @@ class NetworkService extends Service {
         this.lastSentAdminPayload = payload;
         this.adminSocket.emit('message', msgObj);
       };
-    });
+    }).catch(error => {
+      console.warn(error)
+    })
   }
 
   handleAdminMessage = (msgObj) => {
