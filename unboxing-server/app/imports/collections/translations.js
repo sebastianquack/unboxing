@@ -2,6 +2,10 @@ import { Mongo } from 'meteor/mongo';
 
 const Translations = new Mongo.Collection('translations');
 
+if (Meteor.isServer){
+  Translations.rawCollection().createIndex({ key: 1 })
+}
+
 Translations.allow({
   insert: () => true,
   update: () => true,
