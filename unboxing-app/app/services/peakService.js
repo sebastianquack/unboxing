@@ -117,14 +117,15 @@ class PeakService extends Service {
 
     // for stop gesture
 		if(this.checkIfFacingDown(data)) {
-			if(!this.isFacingDown) {
+      this.faceDownCounter++;
+      if(this.faceDownCounter > 10) {
 				this.faceDownDetected();
 				console.log("facing down detected");
 			}
 			this.isFacingDown = true;
-			
 		} else {
 			this.isFacingDown = false;
+      this.faceDownCounter = 0;
 		}
 
 		this.setReactive({

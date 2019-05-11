@@ -260,7 +260,7 @@ class SoundSevice extends Service {
 	}*/
 
 	// schedule playback of preloaded soundfile
-	scheduleSound = (soundfile, targetTime, callbacks={}, startSilent=false, unload=false) => {
+	scheduleSound = (soundfile, targetTime, callbacks={}, startSilent=false, unload=false, sequenceStart, soundStartTime) => {
 
     // experiment - reuse playing players
     let indices = this.findSoundIndices(soundfile, "playing");
@@ -293,11 +293,13 @@ class SoundSevice extends Service {
       targetTime: targetTime,
       callbacks: callbacks,
       startSilent: startSilent,
+      sequenceStart: sequenceStart,  // absolute start time of sequence (for later shifting)
+      soundStartTime: soundStartTime, // start time relative to sequence (for later shifting)
       unload: unload
     });
   }
 
-  shiftScheduledSounds = (diff) => {
+  shiftScheduledSounds = (newSequenceStartTime) => {
     //console.warn("shifting sounds...");
 
     // shift intervals and target times
@@ -306,18 +308,21 @@ class SoundSevice extends Service {
       let oldIntervalObj = this.schedulingIntervals[i];
       clearInterval(oldIntervalObj.interval);
 
-      const timeToRunStartingLoop = (oldIntervalObj.targetTime - this.getSyncTime()) + diff;
-      const newTargetTime = oldIntervalObj.targetTime + diff;
+      const newTargetTime = newSequenceStartTime + oldIntervalObj.soundStartTime
+      const timeToRunStartingLoop = newTargetTime - this.getSyncTime();
+      
 
       let newIntervalObj = {
         interval: setTimeout(()=>{
          this.runStartingLoop(oldIntervalObj.index, newTargetTime, oldIntervalObj.callbacks, oldIntervalObj.startSilent, oldIntervalObj.unload);
-        }, timeToRunStartingLoop - 50), // set timeout to a bit less to allow for loop
+        }, timeToRunStartingLoop - 200), // set timeout to a bit less to allow for loop
         index: oldIntervalObj.index,
         targetTime: newTargetTime,
         callbacks: oldIntervalObj.callbacks,
         startSilent: oldIntervalObj.startSilent,
-        unload: oldIntervalObj.unload
+        unload: oldIntervalObj.unload,
+        sequenceStart: newSequenceStartTime,  // absolute start time of sequence (for later shifting)
+        soundStartTime: oldIntervalObj.soundStartTime // start time relative to sequence (for later shifting)
       }
       this.schedulingIntervals[i] = newIntervalObj;
     }

@@ -11,6 +11,9 @@ import buttonChangeImg from '../../assets/img/changeButtonNew.png'
 import buttonWideImg from '../../assets/img/wideButton.png'
 import blankRoundButtonImg from '../../assets/img/blankRoundButton.png'
 
+import muteButtonImg from '../../assets/img/mute_on.png'
+import muteButtonImgOff from '../../assets/img/mute_off.png'
+
 import walkIcon from '../../assets/img/Walk.png'
 import playIcon from '../../assets/img/Play.png'
 import backIcon from '../../assets/img/Back.png'
@@ -22,7 +25,8 @@ const buttons = {
   "wide": buttonWideImg,
   "check-in": blankRoundButtonImg,
   "play": blankRoundButtonImg,
-  "leave": blankRoundButtonImg
+  "leave": blankRoundButtonImg,
+  "mute": blankRoundButtonImg,
 }
 
 
@@ -55,8 +59,16 @@ class Button extends React.Component {
 
       };
 
-    return <TouchableOpacity onPress={this.props.onPress}>
-      <Image source={buttons[type]} />
+    let buttonStyle = {};
+    if(type == "mute") {
+      buttonStyle = {
+        width: 60,
+        height: 60,
+      }
+    }
+
+    return <View style={this.props.style}><TouchableOpacity onPress={this.props.onPress}> 
+      <Image source={buttons[type]} style={buttonStyle}/>
       {type == "check-in" &&
           <Image 
             style={{position: "absolute", top: 47, left: 49}}
@@ -75,11 +87,17 @@ class Button extends React.Component {
             source={walkLeft} 
           />
       }
+      {type == "mute" &&
+          <Image 
+            style={{position: "absolute", top: 15, left: 15, width: 30, height: 30}}
+            source={this.props.muted ? muteButtonImg : muteButtonImgOff} 
+          />
+      }
       <View style={{...textPosition, flexDirection: "row", justifyContent: "center"}}>
         {this.props.back && <Image style={{width: 19, height: 19, marginTop: 5, marginRight: 8}} source={backIcon}/>}
         <UIText caps wide strong align="center" style={textStyle}>{this.props.text}</UIText>
       </View>
-    </TouchableOpacity>
+    </TouchableOpacity></View>
   }
 }
 

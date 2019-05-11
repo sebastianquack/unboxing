@@ -832,7 +832,7 @@ class SequenceService extends Service {
   								approved: (this.sequenceStartingLocally() && this.state.nextItem.startTime == 0) || this.autoPlayItem(this.state.nextItem)
   							}
   						})
-              this.scheduleSoundForNextItem(targetTime);
+              this.scheduleSoundForNextItem(targetTime, this.state.loopStartedAt, this.state.nextItem.startTime);
 
 
             } else {
@@ -851,7 +851,7 @@ class SequenceService extends Service {
 		
 
 	// call sound service to schedule sound for next item, set callback to setup next item after playback
-	scheduleSoundForNextItem = (targetTime) => {
+	scheduleSoundForNextItem = (targetTime, sequenceStart, soundStartTime) => {
 		if (!this.state.nextItem) {
 			console.log("scheduleSoundForNextItem: nothing to schedule")
 			return
@@ -891,7 +891,12 @@ class SequenceService extends Service {
         }
         this.setupNextSequenceItem();
 			},
-		}, this.isGuitarHeroMode() && !this.autoPlayItem(this.state.nextItem));  // startSilent
+		}, 
+      this.isGuitarHeroMode() && !this.autoPlayItem(this.state.nextItem), // startSilent
+      false, // unload
+      sequenceStart, // sequenceStart
+      soundStartTime 
+    );  
 		this.setReactive({
 			scheduledItem: this.state.nextItem,              // nextItem ---> scheduledItem
 			nextItem: null,
@@ -1008,14 +1013,12 @@ class SequenceService extends Service {
 
   // shifts sequence to new start time
   shiftSequenceToNewStartTime = (startTime) => {
-      let diff = startTime - this.state.playbackStartedAt;
-      //console.warn("difference in sequence start times: " + diff);
       this.setReactive({
         playbackStartedAt: startTime
       });
       //console.warn(this.state.scheduledItem);
       if(this.state.scheduledItem) {
-        soundService.shiftScheduledSounds(diff);
+        soundService.shiftScheduledSounds(startTime);
       }
       this.setupNextSequenceItem();
   }
