@@ -84,6 +84,7 @@ class App extends Component {
     this.state = {
       adminMenu: false,
       adminTranslucent: false,
+      adminButtonRight: false,
     };    
 
     this.initSections()
@@ -128,15 +129,48 @@ class App extends Component {
   }
 
   renderAdminButton = ()=>{
+    let style = {...styles.adminButton};
+    if(!this.state.adminMenu) {
+      style.backgroundColor = 'rgba(200,200,200,0)';
+      style.height = 50;
+      style.width = 200;
+    }
+    console.warn(style);
+
     return (
-      <TouchableOpacity 
-        style={styles.adminButton}
+      <View style={style}>
+      <TouchableOpacity
         onPress={()=>{
-          this.setState({adminMenu: !this.state.adminMenu})}
+          if(this.state.adminMenu) {
+            this.setState({adminMenu: false})
+            this.setState({adminButton2: false})
+          }  
+
+          if(!this.state.adminMenu) {
+            if(this.state.adminButton2) {
+              this.setState({adminMenu: true})  
+              this.setState({adminButton2: false})
+            }
+          }
+        }}
+      >
+        <Text>SCHLIESSEN</Text>
+      </TouchableOpacity>
+      </View>
+    )
+  }
+    
+
+  renderAdminButton2 = ()=>{
+    if(this.state.adminMenu) return null;
+    return (
+    <TouchableOpacity 
+        style={{...styles.adminButton2, width: 100, height: 100}}
+        onPress={()=>{
+          this.setState({adminButton2: !this.state.adminButton2})}
         }
       >
-        <Text>toggle admin</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> 
     );
   }
 
@@ -171,6 +205,7 @@ class App extends Component {
               this.renderAdminMenu() 
             }
             {this.renderAdminButton()}
+            {this.renderAdminButton2()}
           </View>
         </ServiceConnector>
       ]
@@ -195,13 +230,22 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(200,200,200,0.5)'
   },  
   adminButton: {
-    opacity: 0.8,
-    padding: 10,
-    backgroundColor:'rgba(200,200,200,0.5)',
+    padding: 10,  
+    backgroundColor:'rgba(200,200,200,0.5)', 
     borderRadius: 5,
     position: 'absolute',
     top:30,
     right:10,
+    zIndex:100,
+  },
+  adminButton2: {
+    opacity: 0.8,
+    padding: 10,
+    backgroundColor:'rgba(200,200,200,0)',
+    borderRadius: 5,
+    position: 'absolute',
+    top:30,
+    right:350,
     zIndex:100,
   }
 });
