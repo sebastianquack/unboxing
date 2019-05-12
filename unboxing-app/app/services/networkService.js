@@ -96,7 +96,6 @@ class NetworkService extends Service {
   }
 
   getImei = ()=> {
-    console.warn("getImei", this.state.imei);
     return this.state.imei;
   }
 
