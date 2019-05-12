@@ -48,7 +48,7 @@ class GameService extends Service {
     // automatically resume the last walk saved
     setTimeout(()=>{
       this.resumeGameFromFile();
-    }, 3000);
+    }, 6000);
 	}
 
   resetGamestate = () => {

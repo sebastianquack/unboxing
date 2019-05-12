@@ -88,7 +88,7 @@ class StorageService extends Service {
         if(!this.state.server) {
           this.setReactive({server: networkService.getDefaultServer()});
         }
-				networkService.setServer(this.state.server, false); // doesn't need save, just load
+				//networkService.setServer(this.state.server, false); // doesn't need save, just load
 		}
 	}
 
@@ -179,7 +179,7 @@ class StorageService extends Service {
 		
 			return activePath;
 		} else {
-      console.warn("path not found for this device");
+      this.showNotification("path not found for this device");
     }
 
 		return null;
