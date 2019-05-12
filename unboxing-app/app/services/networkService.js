@@ -39,7 +39,8 @@ class NetworkService extends Service {
       targetConnection: {},
       adminSocketConnected: false,
       adminSocketInitialized: false,
-      adminServer: defaultServer
+      adminServer: defaultServer,
+      volume: 0
 		});
 
     this.initNetInfo()
@@ -222,7 +223,7 @@ class NetworkService extends Service {
   }
 
   sendAdminStatus = (override=false) => {
-    SystemSetting.getVolume().then((volume)=>{
+    
       let walk = gameService.state.activeWalk ? {tag: gameService.state.activeWalk.tag, startTime: gameService.state.walkStartTime} : null
       let payload = {
         everythingVersion: storageService.state.version,      
@@ -230,14 +231,14 @@ class NetworkService extends Service {
         timeSyncStatus: this.state.timeSyncStatus,
         activeWalk: walk,
         activeChallenge: gameService.state.activeChallenge ? gameService.state.activeChallenge.shorthand + " " + gameService.state.activeChallenge.name : "none",
-        volume: volume
+        volume: this.state.volume
       }
       if(override || JSON.stringify(this.lastSentAdminPayload) !== JSON.stringify(payload)) {
         let msgObj = {code: "statusUpdate", payload: payload, deviceId: storageService.getDeviceId()};
         this.lastSentAdminPayload = payload;
         this.adminSocket.emit('message', msgObj);
       };
-    });
+    
   }
 
   handleAdminMessage = (msgObj) => {
@@ -298,6 +299,9 @@ class NetworkService extends Service {
             if(msgObj.payload) {
               // change the volume
               SystemSetting.setVolume(msgObj.payload.volume);     
+              SystemSetting.getVolume().then((volume)=>{
+                this.setReactive({volume: volume});
+              });
             }
             break;
         }
