@@ -53,7 +53,56 @@ Meteor.methods({
   'updateSequence'(id,$set) {
     Sequences.update({_id: id}, {$set})
   },
-  // sequence item methods are in server/methods due to https://github.com/meteor/meteor/issues/6223
+  'addSequenceItem'(sequence_id) {
+    Sequences.update(
+      {_id: sequence_id},
+      { $push: { items: { $each: [ {
+        _id: Random.id(),
+        name: "new item",
+        startTime: 0,
+        track: "default",
+        path: "",
+        //gesture_id: "",
+        sensorModulation: "off",
+        autoplay: "off",
+        //sensorStart: true,
+      } ], $sort: { startTime: 1 }, $slice: -10000 } } }
+    );
+  },
+  'addSequenceItems'({items, sequence_id}) {
+    for (let item of items) {
+      if (!item.duration) {
+        const file = Files.findOne({path: item.path})
+        // console.log("duration", item, file)
+        item.duration = file.duration
+      }
+      Sequences.update(
+        {_id: sequence_id},
+        { $push: { items: { $each: [ {
+          _id: Random.id(),
+          name: "new item",
+          startTime: 0,
+          track: "default",
+          path: "",
+          //gesture_id: "",
+          sensorModulation: "off",
+          autoplay: "off",
+          //sensorStart: true,
+          ...item,
+        } ], $sort: { startTime: 1 }, $slice: -10000 } } }
+      );
+    }
+  },
+  'sortSequenceItems'(sequence_id) {
+    Sequences.update(
+      {_id: sequence_id},
+      { $push: { items: { 
+        $each: [], 
+        $sort: { startTime: 1 },
+        $slice: -10000
+      } } }
+    )
+  }, 
   'addChallenge'() {
     Challenges.insert({
       name: "new",
