@@ -62,56 +62,6 @@ Meteor.methods({
 
     Meteor.call('sortSequenceItems', sequence_id)
   },
-  'addSequenceItem'(sequence_id) {
-    Sequences.update(
-      {_id: sequence_id},
-      { $push: { items: { $each: [ {
-        _id: Random.id(),
-        name: "new item",
-        startTime: 0,
-        track: "default",
-        path: "",
-        //gesture_id: "",
-        sensorModulation: "off",
-        autoplay: "off",
-        //sensorStart: true,
-      } ], $sort: { startTime: 1 }, $slice: 1000 } } }
-    );
-  },
-  'addSequenceItems'({items, sequence_id}) {
-    for (let item of items) {
-      if (!item.duration) {
-        const file = Files.findOne({path: item.path})
-        // console.log("duration", item, file)
-        item.duration = file.duration
-      }
-      Sequences.update(
-        {_id: sequence_id},
-        { $push: { items: { $each: [ {
-          _id: Random.id(),
-          name: "new item",
-          startTime: 0,
-          track: "default",
-          path: "",
-          //gesture_id: "",
-          sensorModulation: "off",
-          autoplay: "off",
-          //sensorStart: true,
-          ...item,
-        } ], $sort: { startTime: 1 }, $slice: 1000 } } }
-      );
-    }
-  },
-  'sortSequenceItems'(sequence_id) {
-    Sequences.update(
-      {_id: sequence_id},
-      { $push: { items: { 
-        $each: [], 
-        $sort: { startTime: 1 },
-        $slice: 1000
-      } } }
-    )
-  }, 
   /*'setupChallenge'(uuid, value) {
     console.log("setupChallenge");
     let challenges = Challenges.find({}, {sort: { created_at: -1 }, limit: 1}).fetch();
