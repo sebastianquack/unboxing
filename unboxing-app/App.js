@@ -135,7 +135,7 @@ class App extends Component {
       style.height = 50;
       style.width = 200;
     }
-    console.warn(style);
+    //console.warn(style);
 
     return (
       <View style={style}>

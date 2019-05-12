@@ -36,18 +36,18 @@ const deviceGroups =
 "28": "F",
 "29": "F",
 
-"30": "F", // G
-"31": "F",
-"32": "F",
-"33": "F",
-"34": "F",
-"35": "F",
+"30": "G", // G
+"31": "G",
+"32": "G",
+"33": "G",
+"34": "G",
+"35": "G",
 };
 
 const startInstruments = 
 {"1": "piano1", // A
 "4": "piano1",
-"5": "violin1.1",
+"5": "piano1",
 "6": "bass1.1",
 "7": "viola1.1",
 
@@ -61,7 +61,7 @@ const startInstruments =
 "37": "viola1.1",
 "38": "cello1.3",
 "39": "violin1.4",
-"40": "violin2.3",
+"40": "piano1",
 
 "13": "pauke1", // D
 "14": "cello1.1",
@@ -93,7 +93,7 @@ const startInstruments =
 const finalNavigations = 
 {"1": "ziel-piano1", // A
 "4": "ziel-piano1",
-"5": "ziel-violin1",
+"5": "ziel-piano1",
 "6": "ziel-bass1",
 "7": "ziel-viola1",
 
@@ -137,22 +137,44 @@ const finalNavigations =
 };
 
 const places = {
-"A": [11, 1, 2, 3, 4, 7, 8],
-"B": [12, 1, 3, 4, 5, 7, 9],
-"C": [13, 1, 4, 5, 6, 7, 10],
-"D": [1, 3, 5, 6, 7, 9, 11],
-"E": [2, 3, 6, 7, 8, 9, 12],
-"F": [3, 5, 7, 8, 10, 12, 13],
-"G": [4, 5, 8, 9, 11, 12, 1],
+"A": [11, 1, 2, 4, 7, 8],
+"B": [12, 1, 3, 5, 7, 9],
+"C": [13, 1, 4, 6, 7, 10],
+"D": [1, 3, 5, 7, 9, 11],
+"E": [2, 3, 6, 8, 9, 12],
+"F": [3, 5, 7, 10, 12, 13],
+"G": [4, 5, 8, 11, 12, 1],
 }
+
+/*
+// indoor version
+const groupChallenges = {
+"A": ["1b-master", "2b-master", "3b-master", "5b<-1", "6b-1", "7b-1"],
+"B": ["1b-master", "2b-master", "3b-1", "5b-1", "6b-1", "7b-master"],
+"C": ["1b-master", "2b-master", "3b-master", "5b-1", "6b-1", "7b-1"],
+"D": ["1b-master", "2b-1", "3b-1", "5b-1", "6b-master", "7b-master"],
+"E": ["1b-1", "2b-1", "3b-1", "5b-master", "6b-master", "7b-master"],
+"F": ["1b-1", "2b-1", "3b-master", "5b-master", "6b-master", "7b-1"],
+"G": ["1b-1", "2b-master", "3b-master", "5b-master", "6b-1", "7b-1"],
+}
+*/
+
 
 const tutorialChallenge = "practice-all"
 const finalChallenge = "final-all"
 
-//challenges: 1, 2, 3, 4, 5, 6, 7 -- same for everyone
-//const durations = [5, 6, 3, 5, 4, 6, 6];
-const durations = [2.5, 3, 1.5, 2.5, 2, 3, 3];
-const avgPathLength = 0;
+// outdoor version    
+const challenges = [1, 2, 3, 5, 6, 7];
+
+// const indoorChallenges = [1, 2, 3, 5, 6, 7];
+
+// VERSION SUNDAY
+//const durations = [5, 6, 2, 4, 6, 4]; // cut challenge 4
+//const avgPathLength = 2;
+
+// TEST
+const durations = [1, 1, 1, 1, 1, 1]; // cut challenge 4
+const avgPathLength = 1;
 
 function renderStep(challenge, place, duration, comma=',') {
   console.log('{"challenge":"' + challenge + '", "place":"' + place + '", "duration":' + duration + '}' + comma);
@@ -171,7 +193,7 @@ for(let i = 0; i < 37; i++) {
   console.log('"places":[');
   let placesList = places[deviceGroups[deviceId]];
   for(let j = 0; j < placesList.length; j++) {
-    renderStep(j + 1, placesList[j], durations[j] + avgPathLength);
+    renderStep(challenges[j], placesList[j], durations[j] + avgPathLength);
   }
 
   // final navigational challenge one per instrument

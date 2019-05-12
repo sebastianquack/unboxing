@@ -641,7 +641,7 @@ class SequenceService extends Service {
       this.cancelItemsAndSounds()
     }
 
-    this.setReactive({currentTrack: track});
+    this.setReactive({currentTrack: track, missedItem: null});
     this.loadFirstSounds(track.name, ()=>{
       this.setupNextSequenceItem();
       this.updateActionInterface();
