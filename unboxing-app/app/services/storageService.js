@@ -21,8 +21,9 @@ class StorageService extends Service {
 			version: 0,
 			collections: {},
       language: "en",
-		});
-
+    });
+    
+    this.isLoadingPersistent = false
 		this.loadFromFile()		
     /*setTimeout(()=>{
       //this.showNotification("trying to get everything...");
@@ -52,7 +53,7 @@ class StorageService extends Service {
 	}
 	
 	setCustomDeviceId(id) {
-		this.setReactive({customDeviceId: id});
+    this.setReactive({customDeviceId: id});
 		this.writeToFile();
 		this.updateDeviceId();
 	}
@@ -74,26 +75,33 @@ class StorageService extends Service {
 	}
 
 	async loadFromFile() {
+    this.isLoadingPersistent = true
     console.log("loading collections from file");
 		let json = await RNFS.readFile(persistentFile, 'utf8').catch((err)=>{
 			this.showNotification("loadFromFile failed: " + err.message)
-			console.log(err.message, err.code)
-		});
+      console.log(err.message, err.code)
+    });
+    this.isLoadingPersistent = false
 		if(json) {
 			// log the file contents
 	      let stateFromFile = JSON.parse(json);
-				//console.log(stateFromFile);
+				//console.warn("statefromfile", stateFromFile);
 				if (!stateFromFile.deviceId) stateFromFile.deviceId = uuidv1()
 				this.setReactive(stateFromFile);
         if(!this.state.server) {
           this.setReactive({server: networkService.getDefaultServer()});
         }
+        //console.warn("loaded & set state", this.state);
 				//networkService.setServer(this.state.server, false); // doesn't need save, just load
 		}
 	}
 
 	writeToFile() {
-		// write the file
+    // write the file
+    if (this.isLoadingPersistent) {
+      //console.warn("not writing during load")
+      return
+    }
 		let persistentJSON = JSON.stringify(this.state);
 		RNFS.writeFile(persistentFile, persistentJSON, 'utf8')
 		.then((success) => {
