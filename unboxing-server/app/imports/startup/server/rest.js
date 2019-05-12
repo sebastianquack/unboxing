@@ -11,17 +11,19 @@ let getEverythingCache = {
   collections: null,
   hash: "0",
   timestamp: 0,
-  ttl: 5000,
+  ttl: 10000,
 }
 
 async function getEverything(req, res) {  
 
   let collections = null
   let hash = null
+  let fromCache = null
 
   if ( ((getEverythingCache.timestamp + getEverythingCache.ttl) > Date.now()) ) {
     collections = getEverythingCache.collections
     hash = getEverythingCache.hash
+    fromCache = true
   } else {
 
     const challenges = Challenges.find().fetch();
@@ -60,6 +62,7 @@ async function getEverything(req, res) {
     }
 
     hash = objectHash(collections)
+    fromCache = false
   
     getEverythingCache.collections = collections
     getEverythingCache.timestamp = Date.now()
@@ -73,6 +76,7 @@ async function getEverything(req, res) {
   res.status(200).json({ 
     version,
     hash,
+    fromCache,
     collections
   });
 

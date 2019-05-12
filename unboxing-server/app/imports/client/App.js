@@ -127,7 +127,7 @@ export default class App extends Component {
       <div className="container" style={{marginBottom: "5em"}}>
         <ConnectionStatus fullWidth={true} />
         <header>
-          <h1>Unboxing Server / {this.state.hostname}</h1>
+          <h1>Unboxing Server / <span style={{backgroundColor: "#ffff55"}}>{this.state.hostname}</span></h1>
         </header>
 
         { this.renderSections() }

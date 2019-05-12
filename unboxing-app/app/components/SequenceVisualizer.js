@@ -42,6 +42,7 @@ class SequenceVisualizer extends React.Component {
     this.relativeOpacity = this.relativeOpacity.bind(this)
     this.renderHeaderTrack = this.renderHeaderTrack.bind(this)
     this.renderBodyTrack = this.renderBodyTrack.bind(this)
+    this.renderBodyTrackItem = this.renderBodyTrackItem.bind(this)
   }
 
   componentDidMount() {
@@ -50,6 +51,7 @@ class SequenceVisualizer extends React.Component {
 
   componentDidUpdate(prevProps, prevState) {
     if (doAnim) this.manageAnimation(prevProps, prevState)
+    prevProps = null
   }
 
   componentWillUnmount() {
@@ -277,7 +279,7 @@ class SequenceVisualizer extends React.Component {
     )
   }
 
-  renderBodyTrackItem = (item, track) => {
+  renderBodyTrackItem(item, track) {
     const sequenceDuration = this.props.sequence.custom_duration || this.props.sequence.duration
     const leftPercentage = 100 * item.startTime / sequenceDuration
     const widthPercentage = 100 * item.duration / sequenceDuration

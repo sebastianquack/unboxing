@@ -27,7 +27,7 @@ Meteor.publish('challenges.all', function () {
 });*/
 
 function logSub(name) {
-  console.log("subscribing " + name)
+  // console.log("subscribing " + name)
 }
 
 Meteor.publish('files.all', function (query={}) {
@@ -96,6 +96,7 @@ Meteor.publish('sequences.meta', function (data) {
 
 Meteor.publish('translations.all', function (data) {
   let options = {}
+  options.sort = { key: 1 }
   logSub("translations.all")
   return Translations.find({}, options)
 });
@@ -112,7 +113,6 @@ Meteor.publish('installations.all', function (data) {
   logSub("installations.all")
   return Installations.find({}, options)
 });
-
 
 Meteor.publish('devices.all', function (data) {
   let options = {}

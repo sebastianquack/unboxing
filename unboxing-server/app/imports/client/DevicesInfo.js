@@ -49,7 +49,7 @@ const adbPresets = [
     parallel: 10,
   },
   {
-    name: "press home",
+    name: "screen brightness",
     command: `
       shell 'su -c "settings put global screen_brightness 255"'
     `,
@@ -308,7 +308,7 @@ class DevicesInfo extends React.Component {
       // 'adbRetries': row => row.adb.retries,
       'adbCommand': row => row.adb.command,
       'adbMessage': row => row.adb.message,
-      'volume': row => row.deviceStatus.volume ? row.deviceStatus.volume.toFixed(2) : "",
+      'volume': row => row.deviceStatus.volume ? parseFloat(row.deviceStatus.volume).toFixed(2) : "",
     }
 
     const updateEverything = <button onClick={event => this.sendMessage({ code: "updateEverything"})}>updateEverything</button>

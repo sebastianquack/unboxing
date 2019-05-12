@@ -53,30 +53,7 @@ Meteor.methods({
   'updateSequence'(id,$set) {
     Sequences.update({_id: id}, {$set})
   },
-  // other sequence methods are in server/methods due to https://github.com/meteor/meteor/issues/6223
-  'removeSequenceItem'(id) {
-    console.log("remove sequence item", id)
-    Sequences.update(
-      { items: { $elemMatch: { _id: id } } },
-      { $pull: { items: { _id: id } } }
-    )
-  },
-  'updateSequenceItem'(id, $set) {
-    const sequence = Sequences.find(
-      { items: { $elemMatch: { _id: id } } },
-      { items: { $elemMatch: { _id: id } } } // should return only the one item, but returns all
-    ).fetch()[0]
-
-    const sequence_id = sequence._id
-    const item = sequence.items.filter( item => item._id === id )[0]
-
-    Sequences.update(
-      { 'items._id': id }, 
-      { $set: { 'items.$': { ...item, ...$set} } }
-    )
-
-    Meteor.call('sortSequenceItems', sequence_id)
-  },
+  // sequence item methods are in server/methods due to https://github.com/meteor/meteor/issues/6223
   'addChallenge'() {
     Challenges.insert({
       name: "new",
