@@ -160,7 +160,18 @@ const groupChallenges = {
 */
 
 
-const tutorialChallenge = "practice-all"
+//const tutorialChallenge = "practice-all"
+
+const tutorialChallenges = {
+"A": "practice-abc",
+"B": "practice-abc",
+"C": "practice-abc",
+"D": "practice-de",
+"E": "practice-de",
+"F": "practice-fg",
+"G": "practice-fg",
+}
+
 const finalChallenge = "final-all"
 
 // outdoor version    
@@ -169,12 +180,8 @@ const challenges = [1, 2, 3, 5, 6, 7];
 // const indoorChallenges = [1, 2, 3, 5, 6, 7];
 
 // VERSION SUNDAY
-//const durations = [5, 6, 2, 4, 6, 4]; // cut challenge 4
-//const avgPathLength = 2;
-
-// TEST
-const durations = [1, 1, 1, 1, 1, 1]; // cut challenge 4
-const avgPathLength = 1;
+const durations = [5, 6, 2, 4, 6, 4]; // cut challenge 4
+const avgPathLength = 2;
 
 function renderStep(challenge, place, duration, comma=',') {
   console.log('{"challenge":"' + challenge + '", "place":"' + place + '", "duration":' + duration + '}' + comma);
@@ -186,7 +193,7 @@ for(let i = 0; i < 37; i++) {
   let deviceId = Object.keys(deviceGroups)[i]
   console.log('"' + deviceId + '":{');
   
-  console.log(`"tutorialChallenge": "${tutorialChallenge}", `);
+  console.log(`"tutorialChallenge": "${tutorialChallenges[deviceGroups[deviceId]]}", `);
   console.log(`"finalChallenge": "${finalChallenge}", `);
   console.log(`"startInstrument": "${startInstruments[deviceId]}", `);
 

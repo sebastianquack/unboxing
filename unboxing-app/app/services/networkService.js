@@ -96,6 +96,7 @@ class NetworkService extends Service {
   }
 
   getImei = ()=> {
+    console.warn("getImei", this.state.imei);
     return this.state.imei;
   }
 
@@ -108,8 +109,7 @@ class NetworkService extends Service {
     if(save) {
       storageService.setServer(server);  
     }
-    relayService.updateDefaultServer()
-
+    
     if(server != this.state.adminServer) {
       //console.warn("admin server set to " + server);
       this.setReactive({adminServer: server});
@@ -122,14 +122,17 @@ class NetworkService extends Service {
     NetInfo.getConnectionInfo().then((connectionInfo) => {
       self.setReactive({connectionType: connectionInfo.type})
     });
+
     handleConnectivityChange = (connectionInfo) => {
       self.setReactive({connectionType: connectionInfo.type})
       
       if(connectionInfo.type == "cellular") {
         this.initAdminSocket(mobileAdminServerUrl);
+        this.setServer(mobileAdminServerUrl);
       }
       if(connectionInfo.type == "wifi") {
-        this.initAdminSocket(this.state.server); 
+        this.initAdminSocket(defaultServer); 
+        this.setServer(defaultServer);
       }
 
       wifi.getSSID((ssid) => {
