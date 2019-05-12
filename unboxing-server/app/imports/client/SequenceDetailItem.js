@@ -75,7 +75,7 @@ class SequenceDetailItem extends React.PureComponent {
           <input type="checkbox" checked={value} onChange={ e => this.handleAttributeChange(type, e.target.checked)}/>
         )
       case "path": 
-        return this.state.active ? (
+        return (this.state.active || !value) ? (
           <select value={value} onChange={ e => this.handleAttributeChange(type, e.target.value) }>
             {emptyOption}
             {this.props.files.map( f => <option key={f._id} value={f.path}>{f.path}</option>)}      
