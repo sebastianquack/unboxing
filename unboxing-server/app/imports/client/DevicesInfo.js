@@ -46,16 +46,24 @@ const adbPresets = [
     name: "press home",
     command: "shell input keyevent KEYCODE_HOME",
     retries: 5,
-    parallel: 10,
+    parallel: 5,
   },
-  {
+  /*{
     name: "screen brightness",
     command: `
       shell 'su -c "settings put global screen_brightness 255"'
     `,
     retries: 5,
-    parallel: 10,
-  },
+    parallel: 5,
+  },*/
+  {
+    name: "open panel",
+    command: `
+      shell cmd statusbar expand-settings
+    `,
+    retries: 3,
+    parallel: 5,
+  },  
   {
     name: "restart app",
     command: `
@@ -63,7 +71,7 @@ const adbPresets = [
       shell am start -n com.unboxing/com.unboxing.MainActivity
       `,
     retries: 5,
-    parallel: 10,
+    parallel: 5,
   },
   {
     name: "restart app (without resume)",
@@ -73,31 +81,31 @@ const adbPresets = [
       shell am start -n com.unboxing/com.unboxing.MainActivity
       `,
     retries: 5,
-    parallel: 10,
+    parallel: 5,
   },
   {
     name: "stop app",
     command: "shell 'am force-stop com.unboxing'",
     retries: 5,
-    parallel: 10,
+    parallel: 5,
   },     
   {
     name: "start app",
     command: "shell am start -n com.unboxing/com.unboxing.MainActivity",
     retries: 5,
-    parallel: 10,
+    parallel: 5,
   },      
   {
     name: "remove gameState",
     command: "shell 'rm -f /sdcard/unboxing/gameState.json'",
     retries: 5,
-    parallel: 10,
+    parallel: 5,
   }, 
   {
     name: "remove files folder (!)",
     command: "shell 'rm -rf /sdcard/unboxing/files/*'",
     retries: 5,
-    parallel: 10,
+    parallel: 5,
   },   
   {
     name: "install production",
@@ -115,6 +123,27 @@ const adbPresets = [
     `,
     retries: 5,
     parallel: 2,
+  },
+  {
+    name: "install production without uninstall",
+    command: `
+      install "/home/pi/app-release.apk"
+      shell pm grant com.unboxing android.permission.SYSTEM_ALERT_WINDOW
+      shell pm grant com.unboxing android.permission.ACCESS_COARSE_LOCATION
+      shell pm grant com.unboxing android.permission.READ_EXTERNAL_STORAGE
+      shell pm grant com.unboxing android.permission.WRITE_EXTERNAL_STORAGE
+      shell pm grant com.unboxing android.permission.READ_PHONE_STATE
+      shell 'su -c "settings put global captive_portal_mode 0"'
+      shell am start -n com.unboxing/com.unboxing.MainActivity  
+    `,
+    retries: 5,
+    parallel: 2,
+  },  
+  {
+    name: "get battery level",
+    command: "shell 'dumpsys battery | grep level'",
+    retries: 2,
+    parallel: 1,
   },
   {
     name: "disconnect",
@@ -424,8 +453,8 @@ class DevicesInfo extends React.Component {
       </span>
 
     const selectGroup = <span>
-    <label>selected group: <input placeholder="1,2,3 4 5 6" value={this.state.selectGroup} onChange={event => this.setState({selectGroup: event.target.value})} /></label>
-    <button onClick={this.selectGroup}>select</button>
+      <label>select group: <input placeholder="1,2,3 4 5 6" value={this.state.selectGroup} onChange={event => this.setState({selectGroup: event.target.value})} /></label>
+      <button onClick={this.selectGroup}>select</button>
     </span>
 
     const currentlySelected = <span>{this.getSelectedDeviceIds().join(",")}{' ('+this.getSelectedDeviceIds().length+')'}</span>
