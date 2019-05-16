@@ -5,6 +5,56 @@ import { css } from 'emotion'
 import { cleanJSON } from '../helper/both/cleanJSON'
 import { Devices, Walks, Challenges, Installations } from '../collections';
 
+const deviceGroups = 
+  {"1": "A", // A
+  "2": "(AB)",
+  "4": "A",
+  "5": "A",
+  "6": "A",
+  "7": "A",
+
+  "8": "B", // B
+  "9": "B",
+  "10": "B",
+  "11": "B",
+
+  "36": "C", // C
+  "37": "C",
+  "38": "C",
+  "39": "C",
+  "21": "(CD)",
+
+  "13": "D", // D
+  "14": "D",
+  "15": "D",
+  "16": "D",
+  "17": "D",
+
+  "18": "E", // E
+  "19": "E",
+  "20": "E",
+  "22": "E",
+  "23": "E",
+  "41": "(EF)",
+
+  "25": "F", // F
+  "26": "F",
+  "27": "F",
+  "28": "F",
+  "29": "F",
+
+  "30": "G", // G
+  "31": "G",
+  "32": "G",
+  "33": "G",
+  "34": "G",
+
+  "12": "H", // H
+  "24": "H",
+  "35": "H",
+  "40": "H",
+};
+
 const adbPresets = [
   {
     name: "reboot",
@@ -62,7 +112,7 @@ const adbPresets = [
       shell cmd statusbar expand-settings
     `,
     retries: 3,
-    parallel: 5,
+    parallel: 3,
   },  
   {
     name: "restart app",
@@ -70,8 +120,8 @@ const adbPresets = [
       shell 'am force-stop com.unboxing'
       shell am start -n com.unboxing/com.unboxing.MainActivity
       `,
-    retries: 5,
-    parallel: 5,
+    retries: 3,
+    parallel: 3,
   },
   {
     name: "restart app (without resume)",
@@ -80,32 +130,32 @@ const adbPresets = [
       shell 'rm -f /sdcard/unboxing/gameState.json'
       shell am start -n com.unboxing/com.unboxing.MainActivity
       `,
-    retries: 5,
-    parallel: 5,
+    retries: 3,
+    parallel: 3,
   },
   {
     name: "stop app",
     command: "shell 'am force-stop com.unboxing'",
-    retries: 5,
-    parallel: 5,
+    retries: 3,
+    parallel: 3,
   },     
   {
     name: "start app",
     command: "shell am start -n com.unboxing/com.unboxing.MainActivity",
-    retries: 5,
-    parallel: 5,
+    retries: 3,
+    parallel: 3,
   },      
   {
     name: "remove gameState",
     command: "shell 'rm -f /sdcard/unboxing/gameState.json'",
-    retries: 5,
-    parallel: 5,
+    retries: 3,
+    parallel: 3,
   }, 
   {
-    name: "remove files folder (!)",
+    name: "(!) remove files folder (!)",
     command: "shell 'rm -rf /sdcard/unboxing/files/*'",
-    retries: 5,
-    parallel: 5,
+    retries: 3,
+    parallel: 2,
   },   
   {
     name: "install production",
@@ -121,7 +171,7 @@ const adbPresets = [
       shell 'su -c "settings put global captive_portal_mode 0"'
       shell am start -n com.unboxing/com.unboxing.MainActivity  
     `,
-    retries: 5,
+    retries: 3,
     parallel: 2,
   },
   {
@@ -136,7 +186,7 @@ const adbPresets = [
       shell 'su -c "settings put global captive_portal_mode 0"'
       shell am start -n com.unboxing/com.unboxing.MainActivity  
     `,
-    retries: 5,
+    retries: 3,
     parallel: 2,
   },  
   {
@@ -149,7 +199,7 @@ const adbPresets = [
     name: "disconnect",
     command: "disconnect",
     retries: 1,
-    parallel: 5,
+    parallel: 1,
   }
 ]
 
@@ -221,9 +271,18 @@ class DevicesInfo extends React.Component {
     for (let deviceId of deviceIds) {
       selected[deviceId] = true
     }
-    this.setState({
-      selected
-    })
+    this.setState({selected})
+  }
+
+  selectDeviceGroup = (letter) => {
+    const deviceIds = Object.entries(deviceGroups)
+      .filter(([deviceId, key]) => (key == letter) )
+      .map(([deviceId, key]) => deviceId)
+    let selected = {}
+    for (let deviceId of deviceIds) {
+      selected[deviceId] = true
+    }
+    this.setState({selected})    
   }
 
   sendMessage = message => {
@@ -327,6 +386,7 @@ class DevicesInfo extends React.Component {
     const columnAccessors = {
       'select': row => <input type="checkbox" checked={this.state.selected[row.deviceId]} onChange={event => this.select(row.deviceId, event.target.checked)}/>,
       'deviceId': row => row.deviceId,
+      'group': row => (deviceGroups[row.deviceId]),
       'connected': row => row.connected ? "OK" : "-",
       'everything': row => row.deviceStatus.everythingVersion,
       'file': row => (row.deviceStatus.fileStatus ? row.deviceStatus.fileStatus + ( !!row.downloadBot ? " <- "+row.downloadBot : '' ) : null),
@@ -457,12 +517,21 @@ class DevicesInfo extends React.Component {
       <button onClick={this.selectGroup}>select</button>
     </span>
 
+    const selectDeviceGroupButton = (letter) => <button style={{margin: 6}} onClick={() => this.selectDeviceGroup(letter)}>select group {letter}</button>
+
+    const groupLetters = [...new Set(Object.entries(deviceGroups).map(([deviceId, letter]) => letter))].sort()
+    console.log(groupLetters)
+    const selectDeviceGroupsButtons = <div>Select device groups: {groupLetters.map( letter =>
+      <span key={letter}>{selectDeviceGroupButton(letter)} </span>)} 
+    </div>
+    //const selectDeviceGroupsButtons = null
+
     const currentlySelected = <span>{this.getSelectedDeviceIds().join(",")}{' ('+this.getSelectedDeviceIds().length+')'}</span>
 
     const selectAll = <button onClick={event => this.setState({selected: this.props.devices.reduce((o, key) => ({ ...o, [key.deviceId]: true}), {}) })}>select all</button>
     const selectNone = <button onClick={event => this.setState({selected:[]})}>select none</button>
 
-    const headerRows = Object.keys(columnAccessors).map(c => <th key={c}>{c}</th>)
+    const headerRows = Object.keys(columnAccessors).map(c => <th style={{fontSize:"70%"}} key={c}>{c}</th>)
 
     const rows = this.props.devices.map(device => <tr key={device._id} style={{backgroundColor: this.state.selected[device.deviceId] ? '#ffa' : 'transparent'}}>
       { Object.entries(columnAccessors).map(
@@ -503,6 +572,8 @@ class DevicesInfo extends React.Component {
           { selectInstallation }
           <br />
           { selectGroup }
+          <br />
+          { selectDeviceGroupsButtons }
           <br />
           { currentlySelected }
           < br />

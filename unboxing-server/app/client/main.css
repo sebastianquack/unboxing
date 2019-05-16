@@ -23,3 +23,7 @@ h3 {
   font-size:2rem;
   text-decoration: underline;
 }
+
+tr:hover * { 
+  background-color: #fee;
+}

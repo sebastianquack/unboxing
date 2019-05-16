@@ -34,7 +34,7 @@ do
      sleep 1
 
      cd $FS_DIR
-     adb shell 'settings  put  global  data_roaming0  0'
+     #adb shell 'settings  put  global  data_roaming0  0'
      sleep 4
      adb push data/user_de/0/com.android.providers.telephony/databases/telephony.db /data/user_de/0/com.android.providers.telephony/databases/telephony.db
      adb shell chown radio:radio /data/user_de/0/com.android.providers.telephony/databases/telephony.db
@@ -42,7 +42,7 @@ do
      sleep 5
      adb shell content insert --uri content://telephony/carriers/preferapn --bind apn_id:i:3478
      sleep 2
-     #adb shell 'settings  put  global  data_roaming0  1'
+     adb shell 'settings  put  global  data_roaming0  1'
      sleep 2
      adb reboot
      cd $THIS_DIR
