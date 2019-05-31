@@ -23,8 +23,7 @@ export class MultiChannelAudioPlayer extends React.Component {
           key={index}
           src={file}
           ref={(element)=>this.audioPlayerRefs[index]=element}
-          onCanPlayThrough={()=>{
-            console.log("onCanPlay");
+          onCanPlay={()=>{
             this.updateCanPlay(index);
           }}
           onError={e=>console.log(e)}
@@ -103,7 +102,7 @@ export class MultiChannelAudioPlayer extends React.Component {
           checked={this.state.channelsOn[index]}
           onChange={()=>this.handleCheckbox(index)} 
         />
-        <span>{this.state.canPlay[index] ? "canPlayThrough" : "loading"}</span>
+        <span>{this.state.canPlay[index] ? "canPlay" : "loading"}</span>
       </div>
     );
 
