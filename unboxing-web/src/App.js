@@ -1,11 +1,13 @@
 import React from 'react';
 import './App.css';
 
-import {BaseContainer} from './components'
+import {BaseContainer, BaseStateProvider} from './components'
 
 function App() {
   return (
-    <BaseContainer />
+    <BaseStateProvider>
+      <BaseContainer />
+    </BaseStateProvider>
   );
 }
 
