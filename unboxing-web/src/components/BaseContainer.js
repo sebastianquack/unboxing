@@ -1,11 +1,22 @@
 import React from 'react';
 
-function BaseContainer() {
-  return (
-    <div className="BaseContainer">
-      BASE
-    </div>
-  );
-}
+import {
+  MainScreen,
+  StatusBar,
+} from './'
 
-export {BaseContainer};
+export class BaseContainer extends React.Component {
+
+  render() {
+    return(
+      <div>
+        <StatusBar 
+          {...this.props}
+        />
+        <MainScreen 
+          {...this.props}
+        />
+      </div>
+    )
+  }
+}

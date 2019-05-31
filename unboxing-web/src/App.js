@@ -1,14 +1,16 @@
 import React from 'react';
 import './App.css';
 
-import {BaseContainer, DataLoader} from './components'
+import {BaseContainer, BaseStateProvider, DataLoader} from './components'
 
 function App() {
   return (
-    <DataLoader> 
-      <BaseContainer />
-    </DataLoader>
-  );
+    <BaseStateProvider>
+      <DataLoader>
+        <BaseContainer />
+      </DataLoader>
+    </BaseStateProvider>
+  )
 }
 
 export default App;
