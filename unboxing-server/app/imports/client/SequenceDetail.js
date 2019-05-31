@@ -196,6 +196,10 @@ class Sequence extends React.PureComponent {
             <button onClick={()=>{if(confirm("really?")) Meteor.call('removeSequence',this.props.sequence._id)}}>
               Delete Sequence
             </button>
+
+            <button onClick={()=>{if(confirm("really?")) Meteor.call('duplicateSequence',this.props.sequence._id)}}>
+              Duplicate Sequence
+            </button>
           </div>
         </pre>
         { this.props.ready ?
