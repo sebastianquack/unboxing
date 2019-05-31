@@ -92,40 +92,69 @@ async function getEverything(req, res) {
 
 async function getEverythingWeb(req, res) {  
 
-  let collections = null
+  let data = null
   let hash = null
   let fromCache = null
 
   if ( ((getEverythingWebCache.timestamp + getEverythingWebCache.ttl) > Date.now()) ) {
-    collections = getEverythingWebCache.collections
+    data = getEverythingWebCache.data
     hash = getEverythingWebCache.hash
     fromCache = true
   } else {
 
-    const challenges = Challenges.find().fetch();
-    const sequences = Sequences.find().fetch();
+    const website = Websites.findOne();
+
+    if(!website) {
+      console.log("no website defined");
+      res.status(404);
+      return;
+    }
+
+    let menuContent = cleanJSON(website.menuContent);  
+
+    try {
+      menuContent = JSON.parse(menuContent)
+    } 
+    catch(e) {
+      console.log(e)
+      res.status(404);
+      return;
+    }
+            
+    // only send the challenges that are defined in the website
+    let challenges = [];
+    let split = website.challenges.replace("&nbsp;", "").split(" ");   
+    for(let i = 0; i < split.length; i++) {
+      split[i].trim();
+      let challenge = Challenges.findOne({shorthand: split[i]});
+      if(challenge) {
+        challenge.sequence = Sequences.findOne({_id: challenge.sequence_id});
+        let stages = cleanJSON(challenge.stages);  
+        try {
+          stages = JSON.parse(stages)
+        } 
+        catch(e) {
+          console.log(e)
+          res.status(404);
+          return;
+        }
+        challenge.stages = stages;
+        challenges.push(challenge);        
+      }
+    }
+    
     const translations = Translations.find().fetch();
-    const websites = Websites.find().fetch();
-  
-    for(let i = 0; i < challenges.length; i++) {
-      challenges[i].stages = cleanJSON(challenges[i].stages);  
-    }
-
-    for(let i = 0; i < websites.length; i++) {
-      websites[i].menuContent = cleanJSON(websites[i].menuContent);  
-    }
-  
-    collections = {
+    
+    data = {
       challenges,
-      sequences,
       translations,
-      websites
+      menuContent
     }
 
-    hash = objectHash(collections)
+    hash = objectHash(data)
     fromCache = false
   
-    getEverythingWebCache.collections = collections
+    getEverythingWebCache.data = data
     getEverythingWebCache.timestamp = Date.now()
     getEverythingWebCache.hash = hash
   }
@@ -138,7 +167,7 @@ async function getEverythingWeb(req, res) {
     version,
     hash,
     fromCache,
-    collections
+    data
   });
 
 }

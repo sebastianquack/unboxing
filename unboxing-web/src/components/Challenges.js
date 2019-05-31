@@ -8,7 +8,8 @@ export class Challenges extends React.Component {
 
   render () {
     return <div>
-      Challenges
+      Challenges:
+      {JSON.stringify(this.props.data.challenges)}
     </div>
   }
 }
