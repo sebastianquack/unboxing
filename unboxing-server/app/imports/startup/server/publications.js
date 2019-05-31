@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor';
 
-import { Challenges, Installations, Walks, Places, Events, Files, Gestures, Sequences, Translations, Servers, Devices } from '../../collections/';
+import { Challenges, Installations, Walks, Websites, Places, Events, Files, Gestures, Sequences, Translations, Servers, Devices } from '../../collections/';
 
 
 Meteor.publish('events.all', function (data={}) {
@@ -119,3 +119,10 @@ Meteor.publish('devices.all', function (data) {
   logSub("devices.all")
   return Devices.find({}, options)
 });
+
+Meteor.publish('websites.all', function (data) {
+  let options = {}
+  logSub("websites.all")
+  return Websites.find({}, options)
+});
+

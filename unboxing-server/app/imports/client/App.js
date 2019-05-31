@@ -1,9 +1,14 @@
 import React, { Component, Switch } from 'react';
 import ConnectionStatus from 'meteor-react-status'
 
-import {DevicesInfo, InstallationsInfo, WalksInfo, EventsInfo, PlacesInfo, ChallengesInfo, NetworkInfo, ServersInfo, FilesInfo, GesturesInfo, SequencesInfo, ImportExport, TranslationsInfo} from './';
+import {DevicesInfo, WebsitesInfo, InstallationsInfo, WalksInfo, EventsInfo, PlacesInfo, ChallengesInfo, NetworkInfo, ServersInfo, FilesInfo, GesturesInfo, SequencesInfo, ImportExport, TranslationsInfo} from './';
  
 const sections = [
+  {
+    name: "Websites",
+    component:WebsitesInfo,
+    default: false
+  },  
   {
     name: "Devices",
     component:DevicesInfo,

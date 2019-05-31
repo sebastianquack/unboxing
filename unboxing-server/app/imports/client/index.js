@@ -10,6 +10,9 @@ import PlacesInfo from './PlacesInfo';
 import WalkDetail from './WalkDetail';
 import WalksInfo from './WalksInfo';
 
+import WebsiteDetail from './WebsiteDetail';
+import WebsitesInfo from './WebsitesInfo';
+
 import ImportExport from './ImportExport';
 import SequencesInfo from './SequencesInfo';
 import SequenceDetail from './SequenceDetail';
@@ -50,5 +53,7 @@ export {
   TranslationDetail,
   TranslationsInfo,
   InstallationDetail,
-  InstallationsInfo
+  InstallationsInfo,
+  WebsitesInfo,
+  WebsiteDetail,
 }
