@@ -5,8 +5,8 @@ const axios = require('axios');
 export class DataLoader extends React.Component {
     constructor(props) {
       super(props);
-      //this.serverUrl = "http://unboxing.sebquack.perseus.uberspace.de"
-      this.serverUrl = "http://localhost:3000"
+      this.serverUrl = "http://unboxing.sebquack.perseus.uberspace.de"
+      //this.serverUrl = "http://localhost:3000"
       this.apiPath = "/api/getEverythingWeb.json"
       this.state = {
         data: null
