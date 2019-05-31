@@ -23,6 +23,10 @@ if (!fs.existsSync(files_dir)) {
 // create express server
 var app = express()
 
+// allow for all origins
+var cors = require('cors')
+app.use(cors())
+
 // serve static files
 app.use(global.files_uri_path, serveStatic(files_dir, { 'index': false }))
 
