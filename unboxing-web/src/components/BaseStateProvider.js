@@ -12,6 +12,7 @@ export class BaseStateProvider extends React.Component {
       "challenge"
     ]
     this.handleNavigation = this.handleNavigation.bind(this)
+    this.navigateToChallenge = this.navigateToChallenge.bind(this)
   }
 
   handleNavigation(target) {
@@ -23,11 +24,18 @@ export class BaseStateProvider extends React.Component {
     })
   }
 
+  navigateToChallenge(currentChallenge) {
+    this.setState({currentChallenge});
+    this.handleNavigation("challenge");
+  }
+
   render () {
     return React.Children.map(this.props.children, child => {
       return React.cloneElement(child, {
         navigationState: this.state.navigationState,
-        navigateTo: this.handleNavigation
+        currentChallenge: this.state.currentChallenge,
+        navigateTo: this.handleNavigation,
+        navigateToChallenge: this.navigateToChallenge
       });
     });
   }

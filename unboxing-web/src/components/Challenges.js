@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { formatChallengeTitle } from '../helpers';
+
 export class Challenges extends React.Component {
   constructor() {
     super()
@@ -7,9 +9,17 @@ export class Challenges extends React.Component {
   }
 
   render () {
+    const challengeButtons = this.props.data ? this.props.data.challenges.map((challenge)=>
+      <input 
+        key={challenge._id}
+        type="button" 
+        value={formatChallengeTitle(challenge)}
+        onClick={()=>{this.props.navigateToChallenge(challenge)}}
+      />
+    ) : null;
+
     return <div>
-      Challenges:
-      {JSON.stringify(this.props.data.challenges)}
+      {challengeButtons}
     </div>
   }
 }
