@@ -2,7 +2,7 @@ import { Meteor } from 'meteor/meteor';
 import { Random } from 'meteor/random'
 
 import Events from '../../collections/events';
-import { Challenges, Installations, Gestures, Sequences, Places, Walks, Translations, Servers, Files } from '../../collections/';
+import { Websites, Challenges, Installations, Gestures, Sequences, Places, Walks, Translations, Servers, Files } from '../../collections/';
 import { serverDefaults } from '../../collections'
 
 Meteor.methods({
@@ -190,6 +190,39 @@ Meteor.methods({
     }
     
   },
+
+
+'addWebsite'() {
+    Websites.insert({
+      menuContent: `[<br>
+        {<br>
+          "title_en": "",<br>
+          "title_de": "",<br>
+          "content_en": "",<br>
+          "content_de": ""<br>
+        }<br>
+      ]<br>
+      `,
+      challenges: "shorthand1 shorthand2"
+    });
+  },
+  'removeWebsite'(id) {
+    console.log("remove website", id);
+    Websites.remove(id);
+  },
+  'updateWebsite'(id,$set, $unset=null) {
+    if(!$unset) {
+      Websites.update({_id: id}, {$set})  
+    } else {
+      Websites.update({_id: id}, {$unset})  
+    }
+    
+  },
+
+
+
+
+
 
   'addInstallation'() {
     Installations.insert({

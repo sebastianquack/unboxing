@@ -10,6 +10,8 @@ const deviceGroups =
 "10": "B",
 "11": "B",
 
+"2": "A", // demo gerät
+
 "36": "C", // C
 "37": "C",
 "38": "C",
@@ -20,6 +22,8 @@ const deviceGroups =
 "15": "D",
 "16": "D",
 "17": "D",
+
+"21": "C", // demo gerät
 
 "18": "E", // E
 "19": "E",
@@ -33,6 +37,8 @@ const deviceGroups =
 "28": "F",
 "29": "F",
 
+"41": "E", // demo gerät
+
 "30": "G", // G
 "31": "G",
 "32": "G",
@@ -43,12 +49,14 @@ const deviceGroups =
 "24": "H",
 "35": "H",
 "40": "H",
+
+"42": "G", // demo gerät
 };
 
 const startInstruments = 
 {"1": "piano1", // A
 "4": "piano1",
-"5": "violin1.1",
+"5": "piano1",
 "6": "bass1.1",
 "7": "viola1.1",
 
@@ -56,6 +64,8 @@ const startInstruments =
 "9": "oboe1",
 "10": "fagott1",
 "11": "violin2.1",
+
+"2": "piano1", // demo gerät
 
 "36": "violin2.2", // C
 "37": "viola1.1",
@@ -67,6 +77,8 @@ const startInstruments =
 "15": "oboe2",
 "16": "fagott2",
 "17": "trompete1",
+
+"21": "violin1.1", // demo gerät
 
 "18": "horn2", // E
 "19": "trompete2",
@@ -80,6 +92,8 @@ const startInstruments =
 "28": "violin2.3",
 "29": "viola1.3",
 
+"41": "oboe1", // demo gerät
+
 "30": "violin1.1", // G
 "31": "violin2.4",
 "32": "violin1.2",
@@ -90,6 +104,8 @@ const startInstruments =
 "24": "viola1.2",
 "35": "violin1.3",
 "40": "violin1.1",
+
+"42": "fagott1" // demo gerät
 };
 
 const finalNavigations = 
@@ -104,6 +120,8 @@ const finalNavigations =
 "10": "ziel-fagott1",
 "11": "ziel-violin1", // eigentlich 2
 
+"2": "ziel-piano1", // demo gerät
+
 "36": "ziel-violin1", // C. // eigentlich 2
 "37": "ziel-viola1",
 "38": "ziel-cello1",
@@ -115,18 +133,21 @@ const finalNavigations =
 "16": "ziel-fagott1", // eigentlich 2
 "17": "ziel-trompete1",
 
+"21": "ziel-violin1", // demo gerät
+
 "18": "ziel-horn1", // E.  // eigentlich 2
 "19": "ziel-trompete1",  // eigentlich 2
 "20": "ziel-violin1",
 "22": "ziel-violin1", // eigentlich 2
 "23": "ziel-violin1",
 
-
 "25": "ziel-cello1", // F
 "26": "ziel-bass1",
 "27": "ziel-violin1",
 "28": "ziel-violin1", // eigentlich 2
 "29": "ziel-viola1",
+
+"41": "ziel-oboe1", // demo gerät
 
 "30": "ziel-violin1", // G
 "31": "ziel-violin1",   // eigentlich 2
@@ -138,6 +159,8 @@ const finalNavigations =
 "24": "ziel-viola1",
 "35": "ziel-violin1",
 "40": "ziel-violin1", // eigentlich 2
+
+"42": "ziel-fagott1" // demo gerät
 };
 
 const places = {
@@ -169,7 +192,7 @@ const finalChallenge = "final-all"
 const challenges = [1, 2, 3, 5, 6, 7];
 
 // VERSION SUNDAY
-const durations = [5, 6, 2, 4, 6, 4]; // cut challenge 4
+const durations = [6, 6, 3, 5, 5, 4]; // cut challenge 4
 const avgPathLength = 2;
 
 function renderStep(challenge, place, duration, comma=',') {
@@ -178,7 +201,7 @@ function renderStep(challenge, place, duration, comma=',') {
 
 console.log("{");
 
-for(let i = 0; i < 37; i++) {
+for(let i = 0; i < Object.keys(deviceGroups).length; i++) {
   let deviceId = Object.keys(deviceGroups)[i]
   console.log('"' + deviceId + '":{');
   
@@ -196,7 +219,7 @@ for(let i = 0; i < 37; i++) {
   renderStep(finalNavigations[deviceId], 11, 15, "");
 
   console.log("]");
-  console.log("}" + (i < 36 ? "," : ""));
+  console.log("}" + (i < Object.keys(deviceGroups).length - 1 ? "," : ""));
 }
 
 console.log("}");
