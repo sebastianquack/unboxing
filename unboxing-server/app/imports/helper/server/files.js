@@ -38,7 +38,8 @@ function readFiles(callback=false) {
         abs_path: file,
         path: fs_relative_path,
         name: p.base,
-        size
+        size,
+        noSync: (dirRelative.indexOf("/webItems") > -1)
       })
     }
 

@@ -6,6 +6,7 @@ import {importExportConfig, importExportConfigTranslationsOnly} from '../../help
 
 import {
   getEverything,
+  getEverythingWeb,
   getTime,
   addGesture,
   uploadFiles,
@@ -30,6 +31,7 @@ app.use(global.files_uri_path, serveStatic(files_dir, { 'index': false }))
 
 // serve REST api requests
 app.get('/api/getEverything.json', getEverything);
+app.get('/api/getEverythingWeb.json', getEverythingWeb);
 app.get('/api/getTime.json', getTime);
 app.post('/api/addGesture.json', addGesture);
 app.post('/files', uploadFiles)

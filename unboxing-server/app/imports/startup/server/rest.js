@@ -1,6 +1,6 @@
 import { Meteor } from 'meteor/meteor'
 
-import { Challenges, Gestures, Sequences, Files, Walks, Places, Translations, Servers, Installations } from '../../collections/';
+import { Challenges, Websites, Gestures, Sequences, Files, Walks, Places, Translations, Servers, Installations } from '../../collections/';
 import objectHash from 'object-hash'
 import { importExportConfig, importExportConfigTranslationsOnly } from '../../helper/server/importexport';
 import { receiveFiles } from '../../helper/server/files';
@@ -13,6 +13,14 @@ let getEverythingCache = {
   timestamp: 0,
   ttl: 10000,
 }
+
+let getEverythingWebCache = {
+  collections: null,
+  hash: "0",
+  timestamp: 0,
+  ttl: 10000,
+}
+
 
 async function getEverything(req, res) {  
 
@@ -29,7 +37,7 @@ async function getEverything(req, res) {
     const challenges = Challenges.find().fetch();
     const sequences = Sequences.find().fetch();
     const gestures = Gestures.find().fetch();
-    const files = Files.find({},{sort: {path: 1}}).fetch();
+    const files = Files.find({$or: [{noSync: false}, {noSync: {$exists: false}}]},{sort: {path: 1}}).fetch();
     const places = Places.find().fetch();
     const walks = Walks.find().fetch();
     const translations = Translations.find().fetch();
@@ -82,6 +90,60 @@ async function getEverything(req, res) {
 
 }
 
+async function getEverythingWeb(req, res) {  
+
+  let collections = null
+  let hash = null
+  let fromCache = null
+
+  if ( ((getEverythingWebCache.timestamp + getEverythingWebCache.ttl) > Date.now()) ) {
+    collections = getEverythingWebCache.collections
+    hash = getEverythingWebCache.hash
+    fromCache = true
+  } else {
+
+    const challenges = Challenges.find().fetch();
+    const sequences = Sequences.find().fetch();
+    const translations = Translations.find().fetch();
+    const websites = Websites.find().fetch();
+  
+    for(let i = 0; i < challenges.length; i++) {
+      challenges[i].stages = cleanJSON(challenges[i].stages);  
+    }
+
+    for(let i = 0; i < websites.length; i++) {
+      websites[i].menuContent = cleanJSON(websites[i].menuContent);  
+    }
+  
+    collections = {
+      challenges,
+      sequences,
+      translations,
+      websites
+    }
+
+    hash = objectHash(collections)
+    fromCache = false
+  
+    getEverythingWebCache.collections = collections
+    getEverythingWebCache.timestamp = Date.now()
+    getEverythingWebCache.hash = hash
+  }
+
+  const version = hash.substr(0,5)
+
+  Meteor.call('logEvent', 'get everything web', { version, client: req.header('x-forwarded-for') || req.connection.remoteAddress})
+
+  res.status(200).json({ 
+    version,
+    hash,
+    fromCache,
+    collections
+  });
+
+}
+
+
 function getTime(req, res) {
   console.log("getTime");
   const t = Date.now();
@@ -132,6 +194,7 @@ async function getTranslationsJSON(req, res) {
 
 export {
   getEverything,
+  getEverythingWeb,
   getTime,
   addGesture,
   uploadFiles,
