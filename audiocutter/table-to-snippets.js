@@ -8,33 +8,37 @@ const cutStartOffsetMs = -25 // cut a little later or earlier to compensate for 
 
 const configs = [
   {
-    name: "3_1-428",
-    cuesTable: "Übersicht Einsätze_Clips - 3. Satz.csv",
+    name: "3_1-428-full",
+    cuesTable: "Übersicht Einsätze_Clips - 3. Satz full.csv",
   },
-  {
-    name: "3_1-428-pianolang",
-    cuesTable: "Übersicht Einsätze_Clips - 3. Satz-Piano lange Einsätze.csv",
-  },
-  {
-    name: "3_1-30",
-    cuesTable: "Übersicht Einsätze_Clips - 3. Satz, T. 1-30.csv",
-    startSequenceAt: "-1.2"
-  },
-  {
-    name: "3_30-62",
-    cuesTable: "Übersicht Einsätze_Clips - 3. Satz, 30-62.csv",
-    startSequenceAt: "30.1"
-  },
-  {
-    name: "3_240-270",
-    cuesTable: "Übersicht Einsätze_Clips - 3. Satz, T. 240-270.csv",
-    startSequenceAt: "240.1"
-  },
-  {
-    name: "3_354-369",
-    cuesTable: "Übersicht Einsätze_Clips - 3. Satz, T. 354-369.csv",
-    startSequenceAt: "354.1"
-  },  
+  // {
+  //   name: "3_1-428",
+  //   cuesTable: "Übersicht Einsätze_Clips - 3. Satz.csv",
+  // },
+  // {
+  //   name: "3_1-428-pianolang",
+  //   cuesTable: "Übersicht Einsätze_Clips - 3. Satz-Piano lange Einsätze.csv",
+  // },
+  // {
+  //   name: "3_1-30",
+  //   cuesTable: "Übersicht Einsätze_Clips - 3. Satz, T. 1-30.csv",
+  //   startSequenceAt: "-1.2"
+  // },
+  // {
+  //   name: "3_30-62",
+  //   cuesTable: "Übersicht Einsätze_Clips - 3. Satz, 30-62.csv",
+  //   startSequenceAt: "30.1"
+  // },
+  // {
+  //   name: "3_240-270",
+  //   cuesTable: "Übersicht Einsätze_Clips - 3. Satz, T. 240-270.csv",
+  //   startSequenceAt: "240.1"
+  // },
+  // {
+  //   name: "3_354-369",
+  //   cuesTable: "Übersicht Einsätze_Clips - 3. Satz, T. 354-369.csv",
+  //   startSequenceAt: "354.1"
+  // },  
 ]
 
 // const name = "3_1-428"
@@ -62,7 +66,11 @@ const doCuts = async (config) => {
   const outputDir = './snippets/'+outputName
 
   const parseCue = (str) => {
-    const [start, end] = str.split('-')
+    let start_end = str.split('-')
+    if (start_end.length == 3) { // there is a negative value at the beginning!
+      start_end = ["-"+start_end[1], start_end[2]]
+    }
+    const [start, end] = start_end
     const [startBar, startBeat] = start.split('.')
     let [endBar, endBeat] = end.split('.')
     endBeat = endBeat.split(' ')[0] // remove comments
