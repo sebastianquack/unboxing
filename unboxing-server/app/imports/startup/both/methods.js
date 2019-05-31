@@ -53,6 +53,16 @@ Meteor.methods({
   'updateSequence'(id,$set) {
     Sequences.update({_id: id}, {$set})
   },
+  'duplicateSequence'(id) {
+    let sequence = Sequences.findOne({_id: id});
+    if(sequence) {
+      delete sequence._id;
+      Sequences.insert({
+        ...sequence,
+        name: sequence.name + " copy",
+      })
+    }
+  },
   'addSequenceItem'(sequence_id) {
     Sequences.update(
       {_id: sequence_id},
