@@ -55,6 +55,7 @@ const ButtonContainer = styled.div`
   :active {
     opacity: 0.5;
   }
+  user-select: none;
 `
 
 const ButtonImage = styled.img`
@@ -63,6 +64,7 @@ const ButtonImage = styled.img`
   top: 0;
   width: 100%;
   height: 100%;  
+  user-select: none;
 `
 
 const ButtonIcon = styled.img`
@@ -71,4 +73,5 @@ const ButtonIcon = styled.img`
   top: 33%;
   width: 33%;
   height: 33%;  
+  user-select: none;
 `

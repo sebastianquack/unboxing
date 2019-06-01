@@ -1,6 +1,48 @@
 import React from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 
+
+class AudioLoader extends React.Component {
+  constructor(props) {
+    super(props);
+    
+    this.req = new XMLHttpRequest();
+    this.req.open('GET', this.props.path, true);
+    this.req.responseType = 'blob';
+
+    this.req.onload = ()=> {
+       // Onload is triggered even on 404
+       // so we need to check the status code
+       if (this.req.status === 200) {
+          console.log("complete");
+          var audioBlob = this.req.response;
+          var audioSrc = URL.createObjectURL(audioBlob); // IE10+
+          // audio is now downloaded
+          // and we can set it as source on the audio element
+          console.log(audioSrc);
+          this.props.onComplete(audioSrc);
+       }
+    }
+
+    this.req.onprogress = (oEvent)=> {
+      if (oEvent.lengthComputable) {
+        var percentComplete = oEvent.loaded / oEvent.total * 100;
+        this.props.onProgress(percentComplete);
+      } else {
+        // Unable to compute progress information since the total size is unknown
+      }
+    }
+
+    this.req.send();
+  }
+
+  render() {
+    return null;
+  }
+}
+
+
+
 export class MultiChannelAudioPlayer extends React.Component {
 
   constructor(props) {
@@ -8,67 +50,52 @@ export class MultiChannelAudioPlayer extends React.Component {
     this.state = {
       channelsOn: props.activeTracks ? props.activeTracks : props.tracks.map(()=>true),
       controlStatus: props.playbackControlStatus,
-      canPlay: props.tracks.map(()=>false),
-      allCanPlay: false,
       currentTime: 0,
+      avgLoaded: 0,
     }
     this.handlePlay = this.handlePlay.bind(this);
     this.handlePause = this.handlePause.bind(this);
     this.handleRewind = this.handleRewind.bind(this);
-    this.updateCanPlay = this.updateCanPlay.bind(this);
-
+    
     this.audioPlayerRefs = props.tracks.map(()=>null);
     this.players = this.props.tracks.map((track, index)=>
-      <ReactAudioPlayer
-          key={index}
-          src={track.file}
-          ref={(element)=>this.audioPlayerRefs[index]=element}
-          onCanPlay={()=>{
-            //console.log("onCanPlay");
-            this.updateCanPlay(index);
-          }}
-          onError={e=>console.log(e)}
-        />
+    <ReactAudioPlayer
+                key={index}
+                src={""}
+                ref={(element)=>this.audioPlayerRefs[index]=element}
+              />
     );
+    
+    this.loaded = props.tracks.map(()=>0);      
+    this.calculateLoadingStatus = this.calculateLoadingStatus.bind(this);
+    this.loaders = this.props.tracks.map((track, index)=>
+      <AudioLoader
+          key={index}
+          path={track.file}
+          player={this.players[index]}
+          onProgress={(loaded)=>{
+            this.loaded[index] = loaded;
+            this.calculateLoadingStatus();
+          }}
+          onComplete={(src)=>{
+            this.audioPlayerRefs[index].audioEl.src = src;
+          }}
+      />
+    );
+
   } 
 
-  componentDidMount() {
-    this.audioPlayerRefs.forEach(player=>{
-      
-      player.audioEl.onsuspend = ()=> {
-        //console.log("onsuspend");
-      }; 
-      player.audioEl.onstalled = ()=> {
-        //console.log("onstalled");
-      }; 
-      player.audioEl.onwaiting = ()=> {
-        //console.log("onwaiting");
-      };
-      player.audioEl.onplaying = ()=> {
-        //console.log("onplaying");
-      };
-
-    });
-  }
-
-  updateCanPlay(index) {
-    let canPlay = this.state.canPlay;
-    canPlay[index] = true;
-    this.setState({canPlay: canPlay});
-    
-    let allCanPlay = true;
-    for(let i = 0; i < this.state.canPlay.length; i++) {
-      if(!this.state.canPlay[i]) {
-        allCanPlay = false;
-        break;
-      }
-    }
-    this.setState({allCanPlay});
-    if(this.props.playbackControlStatus === "loading" && allCanPlay) {
+  calculateLoadingStatus() {
+    let total = 0;
+    this.loaded.forEach((l)=>total+=Number(l));
+    let avg = (total / this.loaded.length).toFixed(2);
+    this.setState({avgLoaded: avg});
+    this.props.updateLoadingStatus(avg);   
+    if(avg == 100) {
       this.props.updatePlaybackControlStatus("ready");  
     }
   }
-
+  
   componentDidUpdate() {
     if(this.state.controlStatus !== this.props.playbackControlStatus) {
       this.setState({controlStatus: this.props.playbackControlStatus})
@@ -85,7 +112,10 @@ export class MultiChannelAudioPlayer extends React.Component {
 
     if(this.props.activeTracks) {
       for(let i = 0; i < this.props.activeTracks.length; i++) {
-        this.audioPlayerRefs[i].audioEl.volume = this.props.activeTracks[i] ? 1.0 : 0.0;
+        if(this.audioPlayerRefs[i]) {
+          this.audioPlayerRefs[i].audioEl.volume = this.props.activeTracks[i] ? 1.0 : 0.0;
+        }
+        
       }
     }
   }
@@ -101,6 +131,7 @@ export class MultiChannelAudioPlayer extends React.Component {
   }
 
   handlePause() {
+    this.props.updatePlaybackControlStatus("paused");  
     this.audioPlayerRefs.forEach((player, index)=>{
       if(player) {
         player.audioEl.pause(); 
@@ -123,21 +154,14 @@ export class MultiChannelAudioPlayer extends React.Component {
 
   render() {
 
-    const channelInfo = this.props.tracks.map((track, index)=>
-      <div key={index}>
-        <label>{track.file}</label>
-        <span>{this.state.canPlay[index] ? "canPlay" : "loading"}</span>
-      </div>
-    );
-
     return (
       <div>
+        {this.loaders}
         {this.players}
-        {/*!this.state.allCanPlay ? "loading..." : "all can play"*/}
-        {this.props.info && channelInfo}
         {this.props.controls && <button onClick={this.handlePlay}>Play</button>}
         {this.props.controls && <button onClick={this.handlePause}>Pause</button>}
         {this.props.controls && <button onClick={this.handleRewind}>Rewind</button>}
+        {this.props.controls && <span>loaded: {this.state.avgLoaded}%</span>}
       </div>
     );
   }

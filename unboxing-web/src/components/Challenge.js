@@ -21,6 +21,7 @@ export class Challenge extends React.Component {
     this.state = {
       playbackControlStatus: "loading", // ready - playing - paused
       activeTracks: this.tracks.map(()=>true),
+      loadingStatus: 0
     }
   }
 
@@ -31,6 +32,7 @@ export class Challenge extends React.Component {
       <FixedControls>
         <SequenceControls
           playbackControlStatus={this.state.playbackControlStatus}
+          loadingStatus={this.state.loadingStatus}
           updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
         />
       </FixedControls>
@@ -38,6 +40,7 @@ export class Challenge extends React.Component {
       <MultiChannelAudioPlayer 
         playbackControlStatus={this.state.playbackControlStatus}
         updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
+        updateLoadingStatus={(loadingStatus)=>this.setState({loadingStatus})}
         tracks={this.tracks}
         activeTracks={this.state.activeTracks}
       />
