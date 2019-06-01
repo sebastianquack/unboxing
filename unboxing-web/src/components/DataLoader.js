@@ -15,7 +15,6 @@ export class DataLoader extends React.Component {
 
     componentDidMount() {
       let path = this.serverUrl + this.apiPath;
-      console.warn(path);
       axios.get(path)
       .then((response)=> {
         // handle success

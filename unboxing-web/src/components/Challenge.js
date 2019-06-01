@@ -3,25 +3,31 @@ import React from 'react';
 import {
   SequenceControls,
   MultiChannelAudioPlayer,
+  TrackSelector
 } from './'
 
-import { formatChallengeTitle, findFullSoundfiles } from '../helpers';
+import { formatChallengeTitle, assembleTrackList } from '../helpers';
 
 const filesUrl = "http://unboxing.sebquack.perseus.uberspace.de/files"
 
 export class Challenge extends React.Component {
   constructor(props) {
     super(props)
+  
+    this.tracks = assembleTrackList(props.currentChallenge, filesUrl);
+    
     this.state = {
-      playbackControlStatus: "init" // playing - paused
+      playbackControlStatus: "loading", // ready - playing - paused
+      activeTracks: this.tracks.map(()=>true),
     }
-    this.files = findFullSoundfiles(props.currentChallenge, filesUrl);
+    
   }
 
   render () {
     return <div>
       <h1>{formatChallengeTitle(this.props.currentChallenge)}</h1>
       
+      {this.state.playbackControlStatus !== "loading" &&
       <SequenceControls
         playbackControlStatus={this.state.playbackControlStatus}
         handlePlayPause={()=>{
@@ -32,13 +38,25 @@ export class Challenge extends React.Component {
           }
         }}
         handleRewind={()=>{
-          this.setState({playbackControlStatus: "init"})
+          this.setState({playbackControlStatus: "ready"})
         }}
-      />
+      />}
       
       <MultiChannelAudioPlayer 
         playbackControlStatus={this.state.playbackControlStatus}
-        files={this.files}
+        updateControlStatus={(status)=>this.setState({playbackControlStatus: status})}
+        tracks={this.tracks}
+        activeTracks={this.state.activeTracks}
+      />
+
+      <TrackSelector
+        tracks={this.tracks}
+        activeTracks={this.state.activeTracks}
+        handleTrackToggle={(index)=> {
+          let activeTracks = this.state.activeTracks;
+          activeTracks[index] = !activeTracks[index];
+          this.setState({activeTracks: activeTracks});
+        }}
       />
 
     </div>
