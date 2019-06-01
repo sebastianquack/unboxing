@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { loadInstruments } from '../helpers';
-import { UIText, LocaleText } from './'
+import { UIText, LocaleText, HorizontalScrollContainer } from './'
 
 const instruments = loadInstruments();
 
@@ -25,7 +25,7 @@ class InstrumentButton extends React.Component {
           alt={this.props.trackName}
         />
         <label>
-          <UIText styleKey="instrument-select">
+          <UIText style={{textAlign: "center", display: "inline-flex"}} styleKey="instrument-select">
             <LocaleText object={instruments[this.props.trackName]} field="name" />
           </UIText>
         </label>
@@ -56,8 +56,11 @@ export class TrackSelector extends React.Component {
       />
     );
     
-    return <div>
-      {selectors}
-    </div>
+    return(
+        <HorizontalScrollContainer>
+          {selectors}
+        </HorizontalScrollContainer>
+    )
+      
   }
 }
