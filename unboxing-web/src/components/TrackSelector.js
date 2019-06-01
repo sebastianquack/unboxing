@@ -46,15 +46,8 @@ export class TrackSelector extends React.Component {
     this.props.updateActiveTracks(activeTracks);
   }
 
-  render () {
-
-    let tracks = this.props.tracks;
-    tracks.sort((a, b) => { return(
-      instruments[a.trackName.replace("full-", "")].order -
-      instruments[b.trackName.replace("full-", "")].order) 
-    });
-      
-    const selectors = tracks.map((track, index)=>
+  render () {  
+    const selectors = this.props.tracks.map((track, index)=>
       <InstrumentButton
         key={index}
         trackName={track.trackName.replace("full-", "")}
