@@ -1,5 +1,7 @@
 import React from 'react';
 
+import {UIText} from './'
+
 export class StatusBar extends React.Component {
   constructor() {
     super()
@@ -8,7 +10,8 @@ export class StatusBar extends React.Component {
 
   render () {
     return <div>
-      Status Bar
+      <UIText styleKey="statusbar-title"> Status Bar </UIText>
+      <UIText styleKey="statusbar-subtitle"> Status Bar Subtitle</UIText>
       {this.props.navigationState === "challenge" &&
       <input 
         type="button" 
