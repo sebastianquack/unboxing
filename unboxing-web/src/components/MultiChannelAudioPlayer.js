@@ -6,22 +6,22 @@ export class MultiChannelAudioPlayer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      channelsOn: props.files.map(()=>true),
-      canPlay: props.files.map(()=>false),
+      channelsOn: props.activeTracks ? props.activeTracks : props.tracks.map(()=>true),
       controlStatus: props.playbackControlStatus,
+      canPlay: props.tracks.map(()=>false),
+      allCanPlay: false,
       currentTime: 0,
     }
     this.handlePlay = this.handlePlay.bind(this);
     this.handlePause = this.handlePause.bind(this);
     this.handleRewind = this.handleRewind.bind(this);
-    this.handleCheckbox = this.handleCheckbox.bind(this);
     this.updateCanPlay = this.updateCanPlay.bind(this);
 
-    this.audioPlayerRefs = props.files.map(()=>null);
-    this.players = this.props.files.map((file, index)=>
+    this.audioPlayerRefs = props.tracks.map(()=>null);
+    this.players = this.props.tracks.map((track, index)=>
       <ReactAudioPlayer
           key={index}
-          src={file}
+          src={track.file}
           ref={(element)=>this.audioPlayerRefs[index]=element}
           onCanPlay={()=>{
             this.updateCanPlay(index);
@@ -35,6 +35,18 @@ export class MultiChannelAudioPlayer extends React.Component {
     let canPlay = this.state.canPlay;
     canPlay[index] = true;
     this.setState({canPlay: canPlay});
+    
+    let allCanPlay = true;
+    for(let i = 0; i < this.state.canPlay.length; i++) {
+      if(!this.state.canPlay[i]) {
+        allCanPlay = false;
+        break;
+      }
+    }
+    this.setState({allCanPlay});
+    if(this.props.playbackControlStatus === "loading" && allCanPlay) {
+      this.props.updatePlaybackControlStatus("ready");  
+    }
   }
 
   componentDidUpdate() {
@@ -43,7 +55,7 @@ export class MultiChannelAudioPlayer extends React.Component {
       if(this.props.playbackControlStatus === "playing") {
         this.handlePlay();
       }
-      if(this.props.playbackControlStatus === "init") {
+      if(this.props.playbackControlStatus === "ready") {
         this.handleRewind();
       }
       if(this.props.playbackControlStatus === "paused") {
@@ -51,6 +63,11 @@ export class MultiChannelAudioPlayer extends React.Component {
       }
     }
 
+    if(this.props.activeTracks) {
+      for(let i = 0; i < this.props.activeTracks.length; i++) {
+        this.audioPlayerRefs[i].audioEl.volume = this.props.activeTracks[i] ? 1.0 : 0.0;
+      }
+    }
   }
 
   handlePlay() {
@@ -84,24 +101,11 @@ export class MultiChannelAudioPlayer extends React.Component {
     this.setState({currentTime: 0});
   }
 
-  handleCheckbox(index) {
-    let channelsOn = this.state.channelsOn;
-    channelsOn[index] = !channelsOn[index];
-    this.setState({channelsOn: channelsOn});
-    this.audioPlayerRefs[index].audioEl.volume = channelsOn[index] ? 1.0 : 0.0;
-  }
-
   render() {
 
-    const channelSelect = this.props.files.map((file, index)=>
+    const channelInfo = this.props.tracks.map((track, index)=>
       <div key={index}>
-        <label>{file}</label>
-        <input
-          name="isGoing"
-          type="checkbox"
-          checked={this.state.channelsOn[index]}
-          onChange={()=>this.handleCheckbox(index)} 
-        />
+        <label>{track.file}</label>
         <span>{this.state.canPlay[index] ? "canPlay" : "loading"}</span>
       </div>
     );
@@ -109,7 +113,8 @@ export class MultiChannelAudioPlayer extends React.Component {
     return (
       <div>
         {this.players}
-        {channelSelect}
+        {/*!this.state.allCanPlay ? "loading..." : "all can play"*/}
+        {this.props.info && channelInfo}
         {this.props.controls && <button onClick={this.handlePlay}>Play</button>}
         {this.props.controls && <button onClick={this.handlePause}>Pause</button>}
         {this.props.controls && <button onClick={this.handleRewind}>Rewind</button>}
