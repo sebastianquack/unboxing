@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import { loadInstruments } from '../helpers';
 import { UIText, LocaleText, HorizontalScrollContainer } from './'
@@ -57,10 +58,19 @@ export class TrackSelector extends React.Component {
     );
     
     return(
+      <FixedAtBottom>
         <HorizontalScrollContainer>
           {selectors}
         </HorizontalScrollContainer>
+      </FixedAtBottom>
+      
     )
       
   }
 }
+
+const FixedAtBottom = styled.div`
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+`
