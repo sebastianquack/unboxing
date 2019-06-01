@@ -1,12 +1,14 @@
 import React from 'react';
+import styled from 'styled-components';
 
 import {
   SequenceControls,
   MultiChannelAudioPlayer,
-  TrackSelector
+  TrackSelector,
+  Stage,
 } from './'
-
-import { formatChallengeTitle, assembleTrackList } from '../helpers';
+import { breakpoints } from '../config/globalStyles';
+import { assembleTrackList } from '../helpers';
 
 const filesUrl = "http://unboxing.sebquack.perseus.uberspace.de/files"
 
@@ -14,8 +16,8 @@ export class Challenge extends React.Component {
   constructor(props) {
     super(props)
   
-    this.tracks = assembleTrackList(props.currentChallenge, filesUrl);
-    
+    this.tracks = this.props.currentChallenge ? assembleTrackList(this.props.currentChallenge, filesUrl) : [];
+      
     this.state = {
       playbackControlStatus: "loading", // ready - playing - paused
       activeTracks: this.tracks.map(()=>true),
@@ -23,14 +25,16 @@ export class Challenge extends React.Component {
   }
 
   render () {
-    return <div>
-      <h1>{formatChallengeTitle(this.props.currentChallenge)}</h1>
+
+    return <Container>
       
-      <SequenceControls
-        playbackControlStatus={this.state.playbackControlStatus}
-        updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
-      />
-      
+      <FixedControls>
+        <SequenceControls
+          playbackControlStatus={this.state.playbackControlStatus}
+          updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
+        />
+      </FixedControls>
+
       <MultiChannelAudioPlayer 
         playbackControlStatus={this.state.playbackControlStatus}
         updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
@@ -38,12 +42,57 @@ export class Challenge extends React.Component {
         activeTracks={this.state.activeTracks}
       />
 
-      <TrackSelector
-        tracks={this.tracks}
-        activeTracks={this.state.activeTracks}
-        updateActiveTracks={(activeTracks)=>this.setState({activeTracks})}
-      />
+      <FixedAtBottom>
+        <TrackSelector
+          tracks={this.tracks}
+          activeTracks={this.state.activeTracks}
+          updateActiveTracks={(activeTracks)=>this.setState({activeTracks})}
+        />
+      </FixedAtBottom>
 
-    </div>
+      <VisualizerContainer>
+        visu
+      </VisualizerContainer>
+
+      <StageContainer>
+        <Stage />
+      </StageContainer>
+
+    </Container>
   }
 }
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`
+
+const VisualizerContainer = styled.div`
+  /*background-color: rgba(0,255,0,0.5);*/
+  flex: 0.5;
+`
+
+const StageContainer = styled.div`
+  background-color: rgba(0,255,255,0.5);
+  flex: 0.5;
+  margin-bottom: 15vh;
+  margin-left: -5vw;
+  margin-right: -5vw;
+  @media (${breakpoints.large}) {
+    margin-left: 10vw;
+    margin-right: 10vw;    
+  }
+`
+
+const FixedAtBottom = styled.div`
+  position: fixed;
+  bottom: 10px;
+  width: 100%;
+`
+
+const FixedControls = styled.div`
+  position: fixed;
+  bottom: 50%;
+  right: 0;
+`

@@ -15,7 +15,7 @@ class BaseStateProvider extends React.Component {
      "de" 
     ]
     this.state = {
-      navigationState: "welcome",
+      navigationState: /*sessionStorage.getItem('navigationState') ||*/ "welcome",
       language: "en",
     }
 
@@ -37,6 +37,7 @@ class BaseStateProvider extends React.Component {
     this.setState({
       navigationState: target
     })
+    // sessionStorage.setItem('navigationState', target);
   }
 
   navigateToChallenge(currentChallenge) {

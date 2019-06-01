@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
-import breakpoint from 'styled-components-breakpoint';
 
-import {colors} from '../config/globalStyles';
+import {colors, breakpoints} from '../config/globalStyles';
 
 const baseTextStyles = { // base style is mobile style
   "default": `
@@ -83,7 +82,7 @@ const baseTextStyles = { // base style is mobile style
     `
 }
 
-const desktopTextStyles = { // some styles have additional desktop styles (overwrites base styles)
+const largeTextStyles = { // some styles have additional large styles (overwrites base styles)
   "big-title-main": `
       font-size: 64px;
       line-height: 64px;
@@ -133,7 +132,7 @@ export class UIText extends React.Component {
     let {styleKey, color, style, children} = this.props
     
     const baseStyleString = baseTextStyles[styleKey] || baseTextStyles.default
-    const desktopStyleString = desktopTextStyles[styleKey]
+    const largeStyleString = largeTextStyles[styleKey]
 
     style = style || {} // init style
     if ( color) { style.color = color } // add custom color
@@ -142,7 +141,7 @@ export class UIText extends React.Component {
 
     return <Text 
       baseStyle={baseStyleString} 
-      desktopStyle={desktopStyleString} 
+      largeStyle={largeStyleString} 
       style={style}>
         { text }
       </Text>
@@ -159,5 +158,5 @@ const Text = styled.span`
   user-select: none;
   ${ baseTextStyles.default };
   ${ props => props.baseStyle };
-  ${ props => props.desktopStyle && breakpoint('tablet')(props.desktopStyle)}
+  ${ props => props.largeStyle && `@media (${breakpoints.large}) { ${props.largeStyle} }` }
 `

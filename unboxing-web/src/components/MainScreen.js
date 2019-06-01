@@ -28,8 +28,6 @@ export class MainScreen extends React.Component {
         main = <span>no screen called "{this.props.navigationState}"</span>
     }
 
-    return <div>
-      { main }
-    </div>
+    return main
   }
 }

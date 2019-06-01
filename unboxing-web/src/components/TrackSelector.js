@@ -53,9 +53,10 @@ export class TrackSelector extends React.Component {
     );
     
     return(
-        <HorizontalScrollContainer>
-          {selectors}
-        </HorizontalScrollContainer>
+      <HorizontalScrollContainer>
+        {selectors}
+      </HorizontalScrollContainer>
+      
     )
       
   }

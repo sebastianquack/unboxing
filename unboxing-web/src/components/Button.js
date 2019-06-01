@@ -53,7 +53,6 @@ const ButtonContainer = styled.div`
     cursor: pointer;
   }
   :active {
-    top: 1px;
     opacity: 0.5;
   }
 `
