@@ -138,7 +138,7 @@ export class UIText extends React.Component {
     style = style || {} // init style
     if ( color) { style.color = color } // add custom color
 
-    const text = children // TODO get text from translationKey
+    const text = children 
 
     return <Text 
       baseStyle={baseStyleString} 
@@ -151,7 +151,6 @@ export class UIText extends React.Component {
 
 UIText.propTypes = {
   styleKey: PropTypes.oneOf(Object.keys(baseTextStyles)), // one of the above styles
-  translationKey: PropTypes.string,
   color: PropTypes.string, // custom color
   style: PropTypes.object, // provide custom style
 };

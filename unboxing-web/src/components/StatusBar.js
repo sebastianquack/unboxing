@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components'
 
-import {UIText} from './'
+import { UIText, LocaleText, LanguageSelector } from './'
 
 export class StatusBar extends React.Component {
   constructor() {
@@ -14,8 +14,8 @@ export class StatusBar extends React.Component {
     let {title, subtitle, currentChallenge} = this.props
 
     if (currentChallenge) {
-      title = currentChallenge.sequence.title_de
-      subtitle = currentChallenge.sequence.subtitle_de
+      title = <LocaleText object={currentChallenge.sequence} field="title" />
+      subtitle = <LocaleText object={currentChallenge.sequence} field="subtitle" />
     }
 
     return <Container>
@@ -31,7 +31,7 @@ export class StatusBar extends React.Component {
         <UIText styleKey="statusbar-subtitle">{subtitle}</UIText>
       </Center>
       <Right>
-        X
+        <LanguageSelector toggleLanguage= {this.props.toggleLanguage}/>
       </Right>
     </Container>
   }

@@ -2,6 +2,8 @@ import React from 'react';
 
 const axios = require('axios');
 
+export const DataContext = React.createContext()
+
 export class DataLoader extends React.Component {
     constructor(props) {
       super(props);
@@ -35,7 +37,7 @@ export class DataLoader extends React.Component {
       )
       
       return (
-        <div>{childrenWithProps}</div>
+        <DataContext.Provider value={this.state.data}>{childrenWithProps}</DataContext.Provider>
       )
     }
 }
