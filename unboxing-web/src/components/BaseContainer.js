@@ -5,7 +5,7 @@ import {
   MainScreen,
   StatusBar,
 } from './'
-import { colors } from '../config/globalStyles'
+import { colors, breakpoints } from '../config/globalStyles'
 
 export class BaseContainer extends React.Component {
 
@@ -19,11 +19,9 @@ export class BaseContainer extends React.Component {
           />
         </Top>
         <Bottom>
-          <FixedAtBottom>
-            <MainScreen 
-              {...this.props}
-            />
-          </FixedAtBottom>
+          <MainScreen 
+            {...this.props}
+          />
         </Bottom>
       </Container>
     )
@@ -41,22 +39,18 @@ const Container = styled.div`
 
 const Top = styled.div`
   position: relative;
+  z-index: 1;
   width: 100%; 
   box-sizing: border-box;
   padding: 10px;
-  z-index: 1;
+  @media (${breakpoints.large}) {
+    padding: 25px;
+  }  
 `
 
 const Bottom = styled.div`
   flex: 1;
   /*background-color: red;*/
-`
-
-const FixedAtBottom = styled.div`
-  /* position: fixed;
-  padding: 10px;
-  bottom: 0; */
-  /* background-color: green; */
 `
 
 const GlobalStyle = createGlobalStyle`

@@ -4,7 +4,7 @@ const colors = {
 }
 
 const breakpoints = {
-  'large': 'min-width: 600px'
+  'large': 'min-width: 660px'
 }
 
 export { colors, breakpoints };
