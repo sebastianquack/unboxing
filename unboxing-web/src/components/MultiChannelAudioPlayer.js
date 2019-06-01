@@ -24,7 +24,7 @@ export class MultiChannelAudioPlayer extends React.Component {
           src={track.file}
           ref={(element)=>this.audioPlayerRefs[index]=element}
           onCanPlay={()=>{
-            console.log("onCanPlay");
+            //console.log("onCanPlay");
             this.updateCanPlay(index);
           }}
           onError={e=>console.log(e)}
@@ -36,16 +36,16 @@ export class MultiChannelAudioPlayer extends React.Component {
     this.audioPlayerRefs.forEach(player=>{
       
       player.audioEl.onsuspend = ()=> {
-        console.log("onsuspend");
+        //console.log("onsuspend");
       }; 
       player.audioEl.onstalled = ()=> {
-        console.log("onstalled");
+        //console.log("onstalled");
       }; 
       player.audioEl.onwaiting = ()=> {
-        console.log("onwaiting");
+        //console.log("onwaiting");
       };
       player.audioEl.onplaying = ()=> {
-        console.log("onplaying");
+        //console.log("onplaying");
       };
 
     });

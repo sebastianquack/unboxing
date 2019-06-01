@@ -26,7 +26,7 @@ class BaseStateProvider extends React.Component {
 
   toggleLanguage() {
     this.setState({
-      language: ( this.state.language == "en" ? "de" : "en")
+      language: ( this.state.language === "en" ? "de" : "en")
     })
   }
 
