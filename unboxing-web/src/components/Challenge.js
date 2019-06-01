@@ -20,27 +20,16 @@ export class Challenge extends React.Component {
       playbackControlStatus: "loading", // ready - playing - paused
       activeTracks: this.tracks.map(()=>true),
     }
-    
   }
 
   render () {
     return <div>
       <h1>{formatChallengeTitle(this.props.currentChallenge)}</h1>
       
-      {this.state.playbackControlStatus !== "loading" &&
       <SequenceControls
         playbackControlStatus={this.state.playbackControlStatus}
-        handlePlayPause={()=>{
-          if(this.state.playbackControlStatus !== "playing") {
-            this.setState({playbackControlStatus: "playing"})
-          } else {
-            this.setState({playbackControlStatus: "paused"})
-          }
-        }}
-        handleRewind={()=>{
-          this.setState({playbackControlStatus: "ready"})
-        }}
-      />}
+        updateControlStatus={(status)=>this.setState({playbackControlStatus: status})}          
+      />
       
       <MultiChannelAudioPlayer 
         playbackControlStatus={this.state.playbackControlStatus}
