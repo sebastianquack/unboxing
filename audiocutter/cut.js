@@ -7,18 +7,28 @@ async function cut(cues, beats, filePath, outputDir, filePrefix, cutStartOffsetM
   for (let cue of cues) {
     
     const startBeat = beats.find( b => b.bar == cue.start.bar && b.barBeat == cue.start.barBeat)
+    
+    let startMs = 0
     if (!startBeat) {
-      console.warn(`cue ${cue.start.bar}.${cue.start.barBeat} not found`)
-      continue
+      console.warn(`start cue ${cue.start.bar}.${cue.start.barBeat} not found`)
+      if (cue.start.bar < 0) {
+        console.warn(`using beginning of file instead of start cue ${cue.start.bar}.${cue.start.barBeat}`)
+      } else {
+        console.warn(`skipping cue ${cue.start.bar}.${cue.start.barBeat}-${cue.end.bar}.${cue.end.barBeat}`)
+        continue
+      }
+    } else {
+      startMs = startBeat.absTimeMs + cutStartOffsetMs
     }
-    let startMs = startBeat.absTimeMs + cutStartOffsetMs
-    if ( startMs < 0) { // cutStartOffset
-      startMs = 0
+
+    if ( startMs <= 0) { 
+      startMs = cutStartOffsetMs // move cut point to actually 0 by using cutStartOffset, which will be cancelled out later
     }
 
     const endBeat = beats.find( b => b.bar == cue.end.bar && b.barBeat == cue.end.barBeat)
     if (!endBeat) {
-      console.log(`cue ${cue.end.bar}.${cue.end.barBeat} not found`)
+      console.warn(`end cue ${cue.end.bar}.${cue.end.barBeat} not found`)
+      console.warn(`skipping cue ${cue.start.bar}.${cue.start.barBeat}-${cue.end.bar}.${cue.end.barBeat}`)
       continue
     }
     const endMs = endBeat.absTimeMs
