@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Button } from './';
+
 export class SequenceControls extends React.Component {
   constructor() {
     super()
@@ -27,17 +29,17 @@ export class SequenceControls extends React.Component {
       }
       
       {this.props.playbackControlStatus !== "loading" &&
-        <input 
-          type="button" 
-          value={this.props.playbackControlStatus === "playing" ? "pause" : "play"}
+        <Button 
+          type="round" 
+          icon={this.props.playbackControlStatus === "playing" ? "pause" : "play"}
           onClick={()=>{this.handlePlayPause()}}
         />
       }
 
-      {this.props.playbackControlStatus !== "loading" &&
-        <input 
-          type="button" 
-          value="rewind"
+      {this.props.playbackControlStatus !== "loading" && this.props.playbackControlStatus !== "ready" &&
+        <Button 
+          type="round" 
+          icon="rewind"
           onClick={()=>{this.handleRewind()}}
         />
       }

@@ -156,6 +156,7 @@ UIText.propTypes = {
 };
 
 const Text = styled.span`
+  user-select: none;
   ${ baseTextStyles.default };
   ${ props => props.baseStyle };
   ${ props => props.desktopStyle && breakpoint('tablet')(props.desktopStyle)}

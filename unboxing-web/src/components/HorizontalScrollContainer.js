@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components'
 
+import {Button} from './';
 
 export class HorizontalScrollContainer extends React.Component {
   constructor() {
@@ -9,7 +10,7 @@ export class HorizontalScrollContainer extends React.Component {
       offsetX: 0,
       minOffsetX: 0
     }    
-    this.step = 100;
+    this.step = 50;
 
     this.updateDimensions = this.updateDimensions.bind(this);
   }
@@ -34,11 +35,13 @@ export class HorizontalScrollContainer extends React.Component {
       
     return (
       <Container>
-        <button 
-          style={{visibility: this.state.offsetX < 0 ? "visible" : "hidden", marginRight: 10}}
+        <Button
+          type={"left"}
+          style={{margin: 10, opacity: this.state.offsetX < 0 ? 1 : 0.25}}
           onClick={
-          ()=>this.setState({offsetX: this.state.offsetX < 0 ? this.state.offsetX + this.step : 0 }, ()=>console.log(this.state.offsetX))
-        }>{"<"}</button>
+            ()=>this.setState({offsetX: this.state.offsetX < 0 ? this.state.offsetX + this.step : 0 })
+          }
+        />
         <ScrollContainer>
           <ScrollContent 
             ref="scrollContent"
@@ -47,11 +50,13 @@ export class HorizontalScrollContainer extends React.Component {
             {childrenWithProps}
           </ScrollContent>
         </ScrollContainer>
-        <button 
-          style={{visibility: this.state.offsetX > this.state.minOffsetX ? "visible" : "hidden", marginLeft: 10}}
+        <Button 
+          type={"right"}
+          style={{margin: 10, opacity: this.state.offsetX > this.state.minOffsetX ? 1 : 0.25}}
           onClick={
-          ()=>this.setState({offsetX: this.state.offsetX > this.state.minOffsetX ? this.state.offsetX - this.step : this.state.minOffsetX }, ()=>console.log(this.state.offsetX))
-        }>{">"}</button>
+            ()=>this.setState({offsetX: this.state.offsetX > this.state.minOffsetX ? this.state.offsetX - this.step : this.state.minOffsetX })
+          }
+        />
       </Container>
     )
   }
@@ -60,6 +65,7 @@ export class HorizontalScrollContainer extends React.Component {
 const Container = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
   width: 100%;
 `
 

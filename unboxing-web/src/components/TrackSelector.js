@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components'
 
 import { loadInstruments } from '../helpers';
 import { UIText, LocaleText, HorizontalScrollContainer } from './'
@@ -8,20 +9,15 @@ const instruments = loadInstruments();
 class InstrumentButton extends React.Component {
 
   render () { return(
-      <div
+      <InstrumentButtonContainer
         onClick={this.props.onToggle} 
         style={{
           opacity: this.props.active ? 1 : 0.5,
-          display: "inline-flex",
-          flexDirection: "column",
-          margin: 10,
-          alignItems: "center",
-          width: 100
         }}
       >
         <img 
           src={instruments[this.props.trackName].image} 
-          style={{width:50, height: 50}}
+          style={{width:75, height: 75, userSelect: "none"}}
           alt={this.props.trackName}
         />
         <label>
@@ -29,7 +25,7 @@ class InstrumentButton extends React.Component {
             <LocaleText object={instruments[this.props.trackName]} field="name" />
           </UIText>
         </label>
-      </div>
+      </InstrumentButtonContainer>
   )}
 }
 
@@ -64,3 +60,15 @@ export class TrackSelector extends React.Component {
       
   }
 }
+
+const InstrumentButtonContainer = styled.div`
+  display: inline-flex;
+  flex-direction: column;
+  margin: 10px;
+  align-items: center;
+  min-width: 100px;
+  user-select: none;
+  :hover {
+    cursor: pointer;
+  };
+`
