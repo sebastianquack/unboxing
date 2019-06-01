@@ -41,8 +41,9 @@ export class Welcome extends React.Component {
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top: 15vh;
-  margin-left: 15vw;
+  position: fixed;
+  top: 15vh;
+  left: 15vw;
 `
 
 const WithLine = styled.div`
