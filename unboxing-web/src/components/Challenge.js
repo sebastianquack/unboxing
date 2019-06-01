@@ -28,12 +28,12 @@ export class Challenge extends React.Component {
       
       <SequenceControls
         playbackControlStatus={this.state.playbackControlStatus}
-        updateControlStatus={(status)=>this.setState({playbackControlStatus: status})}          
+        updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
       />
       
       <MultiChannelAudioPlayer 
         playbackControlStatus={this.state.playbackControlStatus}
-        updateControlStatus={(status)=>this.setState({playbackControlStatus: status})}
+        updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
         tracks={this.tracks}
         activeTracks={this.state.activeTracks}
       />
@@ -41,11 +41,7 @@ export class Challenge extends React.Component {
       <TrackSelector
         tracks={this.tracks}
         activeTracks={this.state.activeTracks}
-        handleTrackToggle={(index)=> {
-          let activeTracks = this.state.activeTracks;
-          activeTracks[index] = !activeTracks[index];
-          this.setState({activeTracks: activeTracks});
-        }}
+        updateActiveTracks={(activeTracks)=>this.setState({activeTracks})}
       />
 
     </div>

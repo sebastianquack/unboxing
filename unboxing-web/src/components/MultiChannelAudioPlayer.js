@@ -45,7 +45,7 @@ export class MultiChannelAudioPlayer extends React.Component {
     }
     this.setState({allCanPlay});
     if(this.props.playbackControlStatus === "loading" && allCanPlay) {
-      this.props.updateControlStatus("ready");  
+      this.props.updatePlaybackControlStatus("ready");  
     }
   }
 

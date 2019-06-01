@@ -10,14 +10,14 @@ export class SequenceControls extends React.Component {
 
   handlePlayPause() {
     if(this.props.playbackControlStatus !== "playing") {
-      this.props.updateControlStatus("playing")
+      this.props.updatePlaybackControlStatus("playing")
     } else {
-      this.props.updateControlStatus("paused")
+      this.props.updatePlaybackControlStatus("paused")
     }
   }
   
   handleRewind() {
-    this.props.updateControlStatus("ready");
+    this.props.updatePlaybackControlStatus("ready");
   }
 
   render () {
