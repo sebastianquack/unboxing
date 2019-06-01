@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { loadInstruments } from '../helpers';
+import { UIText } from './'
 
 const instruments = loadInstruments();
 
@@ -23,7 +24,11 @@ class InstrumentButton extends React.Component {
           style={{width:50, height: 50}}
           alt={this.props.trackName}
         />
-        <label>{instruments[this.props.trackName].name_de}</label>
+        <label>
+          <UIText styleKey="instrument-select">
+            {instruments[this.props.trackName].name_de}
+          </UIText>
+        </label>
       </div>
   )}
 }
