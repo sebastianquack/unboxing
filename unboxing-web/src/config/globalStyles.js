@@ -3,4 +3,8 @@ const colors = {
   white: "#FFFFFF",
 }
 
-export { colors };
+const breakpoints = {
+  'large': 'min-width: 600px'
+}
+
+export { colors, breakpoints };
