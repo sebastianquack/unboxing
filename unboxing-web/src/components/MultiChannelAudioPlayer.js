@@ -128,15 +128,20 @@ export class MultiChannelAudioPlayer extends React.Component {
   calculateLoadingStatus() {
     let total = 0;
     this.loaded.forEach((l)=>total+=Number(l));
-    let avg = (total / this.loaded.length).toFixed(2);
+    let avg = (total / this.loaded.length).toFixed(1);
     this.setState({avgLoaded: avg});
-    this.props.updateLoadingStatus(avg);   
 
     let allDecoded = true;
     this.decoded.forEach(d=>{
       if(!d) allDecoded = false;
     });
 
+    if(avg < 100) {
+      this.props.updateLoadingStatus("loading... " + avg + "%");     
+    } else {
+      this.props.updateLoadingStatus("preparing...");     
+    }
+    
     if(avg == 100 && allDecoded) {
       this.props.updatePlaybackControlStatus("ready");  
     }

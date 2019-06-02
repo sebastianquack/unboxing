@@ -25,7 +25,7 @@ export class SequenceControls extends React.Component {
   render () {
     return <div>
       {this.props.playbackControlStatus === "loading" &&
-        <span>loading... {this.props.loadingStatus}%</span>
+        <span>{this.props.loadingStatus}</span>
       }
       
       {this.props.playbackControlStatus !== "loading" &&
