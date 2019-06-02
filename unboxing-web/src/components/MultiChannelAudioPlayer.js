@@ -32,6 +32,12 @@ class AudioLoader extends React.Component {
     this.req.send();
   }
 
+  componentWillUnmount() {
+    this.req.onload = null;
+    this.req.onprogress = null;
+  }
+
+
   render() {
     return null;
   }
@@ -71,12 +77,13 @@ export class MultiChannelAudioPlayer extends React.Component {
     this.loaded = props.tracks.map(()=>0);      
     this.decoded = props.tracks.map(()=>false);      
     this.calculateLoadingStatus = this.calculateLoadingStatus.bind(this);
-    
+
     this.loaders = this.props.tracks.map((track, index)=>
       <AudioLoader
           key={index}
           path={track.file}
           onProgress={(loaded)=>{
+            if(this._unmounted) return;
             this.loaded[index] = loaded;
             this.calculateLoadingStatus();
           }}
@@ -86,15 +93,19 @@ export class MultiChannelAudioPlayer extends React.Component {
 
             if(isSafari) {
               this.audioContext.decodeAudioData(arrayBuffer, (audioBuffer)=>{
+                if(this._unmounted) return;
                 console.log("decoded safari");
                 this.audioBuffers[index] = audioBuffer;            
+                this.loaded[index] = 100;
                 this.decoded[index] = true;
                 this.calculateLoadingStatus();
               });  
             } else {
               this.audioContext.decodeAudioData(arrayBuffer).then((audioBuffer)=>{
+                if(this._unmounted) return;
                 console.log("decoded");
                 this.audioBuffers[index] = audioBuffer;            
+                this.loaded[index] = 100;
                 this.decoded[index] = true;
                 this.calculateLoadingStatus();
               });
@@ -104,6 +115,14 @@ export class MultiChannelAudioPlayer extends React.Component {
           }}
       />
     );
+  }
+
+  componentDidMount() {
+    this._unmounted = false;
+  }
+
+  componentWillUnmount() {
+    this._unmounted = true;
   } 
 
   calculateLoadingStatus() {
@@ -117,7 +136,7 @@ export class MultiChannelAudioPlayer extends React.Component {
     this.decoded.forEach(d=>{
       if(!d) allDecoded = false;
     });
-    
+
     if(avg == 100 && allDecoded) {
       this.props.updatePlaybackControlStatus("ready");  
     }
@@ -168,6 +187,10 @@ export class MultiChannelAudioPlayer extends React.Component {
   }
 
   handlePlay() {
+    if(this.audioContext.state === 'suspended') {
+        this.audioContext.resume();
+    }
+
     let startTime = this.audioContext.currentTime;
     this.setState({
       playbackPosition: this.state.playbackPosition,
