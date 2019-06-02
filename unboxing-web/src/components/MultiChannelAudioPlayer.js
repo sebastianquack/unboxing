@@ -69,6 +69,7 @@ export class MultiChannelAudioPlayer extends React.Component {
     });
 
     this.loaded = props.tracks.map(()=>0);      
+    this.decoded = props.tracks.map(()=>false);      
     this.calculateLoadingStatus = this.calculateLoadingStatus.bind(this);
     
     this.loaders = this.props.tracks.map((track, index)=>
@@ -87,11 +88,15 @@ export class MultiChannelAudioPlayer extends React.Component {
               this.audioContext.decodeAudioData(arrayBuffer, (audioBuffer)=>{
                 console.log("decoded safari");
                 this.audioBuffers[index] = audioBuffer;            
+                this.decoded[index] = true;
+                this.calculateLoadingStatus();
               });  
             } else {
               this.audioContext.decodeAudioData(arrayBuffer).then((audioBuffer)=>{
                 console.log("decoded");
                 this.audioBuffers[index] = audioBuffer;            
+                this.decoded[index] = true;
+                this.calculateLoadingStatus();
               });
             }
             
@@ -107,7 +112,13 @@ export class MultiChannelAudioPlayer extends React.Component {
     let avg = (total / this.loaded.length).toFixed(2);
     this.setState({avgLoaded: avg});
     this.props.updateLoadingStatus(avg);   
-    if(avg == 100) {
+
+    let allDecoded = true;
+    this.decoded.forEach(d=>{
+      if(!d) allDecoded = false;
+    });
+    
+    if(avg == 100 && allDecoded) {
       this.props.updatePlaybackControlStatus("ready");  
     }
   }
