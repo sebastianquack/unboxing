@@ -17,6 +17,8 @@ export class Challenge extends React.Component {
     super(props)
   
     this.tracks = this.props.currentChallenge ? assembleTrackList(this.props.currentChallenge, filesUrl) : [];
+
+    console.log(this.tracks);
       
     this.state = {
       playbackControlStatus: "loading", // ready - playing - paused

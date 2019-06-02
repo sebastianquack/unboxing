@@ -85,6 +85,36 @@ export class MultiChannelAudioPlayer extends React.Component {
 
   } 
 
+  componentDidMount() {
+    this.audioPlayerRefs.forEach((player, index)=>{
+
+      player.audioEl.preload = "auto";
+
+      /*player.audioEl.onprogress = ()=> {
+        if(player.audioEl.buffered.length) {
+          var loadedPercentage = (player.audioEl.buffered.end(0) / player.audioEl.duration) * 100;      
+          console.log("player " + index + ": " + loadedPercentage);
+
+          //this.loaded[index] = loadedPercentage;
+          //this.calculateLoadingStatus();
+        }
+      };*/
+      player.audioEl.onsuspend = ()=> {
+        console.log("onsuspend");
+      }; 
+      player.audioEl.onstalled = ()=> {
+        console.log("onstalled");
+      }; 
+      player.audioEl.onwaiting = ()=> {
+        console.log("onwaiting");
+      };
+      player.audioEl.oncanplay = ()=> {
+        console.log("oncanplay");
+      };
+
+    });
+  }
+
   calculateLoadingStatus() {
     let total = 0;
     this.loaded.forEach((l)=>total+=Number(l));
@@ -121,11 +151,28 @@ export class MultiChannelAudioPlayer extends React.Component {
   }
 
   handlePlay() {
-    let now = Date.now();
-    this.audioPlayerRefs.forEach((player)=>{
+    let startLoop = Date.now();
+    console.log("starting to play at " + this.state.currentTime);
+    this.audioPlayerRefs.forEach((player, index)=>{
       if(player) {
-        player.audioEl.currentTime = this.state.currentTime + ((Date.now() - now) / 1000);
-        player.audioEl.play();  
+        let offset = index * 100 + 100;
+        let startTimeAbs = startLoop + offset;
+        player.audioEl.currentTime = this.state.currentTime + (offset / 1000) 
+        player.audioEl.onseeked = ()=>{
+          player.audioEl.onseeked = null;
+          let playIn = startTimeAbs - Date.now();
+          setTimeout(()=>{
+            do {
+            } while(Date.now() < startTimeAbs + 10)
+            let miss = Date.now() - (startTimeAbs + 10);
+            console.log("missed by", miss);
+            if(Math.abs(miss) < 4) {
+              player.audioEl.play();              
+            } else {
+              console.log("aborting playback, miss too large")
+            }
+          }, playIn);
+        }
       }
     });
   }

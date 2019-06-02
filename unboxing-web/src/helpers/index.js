@@ -5,7 +5,7 @@ export function formatChallengeTitle(challenge) {
 
 export function findFullSoundfiles(challenge, filesUrl) {
   return challenge.sequence.items
-    .filter((item)=>item.track.indexOf("full-") > -1)
+    .filter((item)=>item.track.indexOf("full-piano") > -1)
     .map((item)=>filesUrl + item.path)
 }
 
@@ -13,7 +13,19 @@ export function assembleTrackList(challenge, filesUrl) {
 
   // step 1 - find tracks
   let trackNames = challenge.sequence.tracks
-    .filter((item)=>item.name.indexOf("full-") > -1)
+    .filter((item)=>item.name.indexOf("full-") > -1 
+      /*|| item.name.indexOf("full-piano") > -1
+      || item.name.indexOf("full-flute") > -1
+      || item.name.indexOf("full-pauke") > -1
+      || item.name.indexOf("full-oboe") > -1
+      || item.name.indexOf("full-horn") > -1
+      || item.name.indexOf("full-fagott") > -1
+      || item.name.indexOf("full-violin1") > -1
+      || item.name.indexOf("full-violin2") > -1
+      || item.name.indexOf("full-viola") > -1
+      || item.name.indexOf("full-cello") > -1
+      || item.name.indexOf("full-bass") > -1*/
+      )
     .map((item)=>item.name)
 
   // step 2 - identify files
