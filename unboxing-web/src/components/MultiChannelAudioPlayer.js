@@ -80,10 +80,21 @@ export class MultiChannelAudioPlayer extends React.Component {
             this.calculateLoadingStatus();
           }}
           onComplete={async (arrayBuffer)=>{
-            this.audioContext.decodeAudioData(arrayBuffer, (audioBuffer)=>{
-              console.log("decoded");
-              this.audioBuffers[index] = audioBuffer;            
-            });
+
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+            if(isSafari) {
+              this.audioContext.decodeAudioData(arrayBuffer, (audioBuffer)=>{
+                console.log("decoded safari");
+                this.audioBuffers[index] = audioBuffer;            
+              });  
+            } else {
+              this.audioContext.decodeAudioData(arrayBuffer).then((audioBuffer)=>{
+                console.log("decoded");
+                this.audioBuffers[index] = audioBuffer;            
+              });
+            }
+            
             
           }}
       />
