@@ -2,25 +2,22 @@ import React from 'react';
 import ReactAudioPlayer from 'react-audio-player';
 
 
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+
 class AudioLoader extends React.Component {
   constructor(props) {
     super(props);
     
     this.req = new XMLHttpRequest();
     this.req.open('GET', this.props.path, true);
-    this.req.responseType = 'blob';
+    this.req.responseType = 'arraybuffer';
 
     this.req.onload = ()=> {
        // Onload is triggered even on 404
        // so we need to check the status code
        if (this.req.status === 200) {
           console.log("complete");
-          var audioBlob = this.req.response;
-          var audioSrc = URL.createObjectURL(audioBlob); // IE10+
-          // audio is now downloaded
-          // and we can set it as source on the audio element
-          console.log(audioSrc);
-          this.props.onComplete(audioSrc);
+          this.props.onComplete(this.req.response);
        }
     }
 
@@ -32,7 +29,6 @@ class AudioLoader extends React.Component {
         // Unable to compute progress information since the total size is unknown
       }
     }
-
     this.req.send();
   }
 
@@ -41,8 +37,6 @@ class AudioLoader extends React.Component {
   }
 }
 
-
-
 export class MultiChannelAudioPlayer extends React.Component {
 
   constructor(props) {
@@ -50,70 +44,51 @@ export class MultiChannelAudioPlayer extends React.Component {
     this.state = {
       channelsOn: props.activeTracks ? props.activeTracks : props.tracks.map(()=>true),
       controlStatus: props.playbackControlStatus,
-      currentTime: 0,
       avgLoaded: 0,
+      playbackPosition: 0,
+      playbackStartedAt: 0,
     }
     this.handlePlay = this.handlePlay.bind(this);
     this.handlePause = this.handlePause.bind(this);
     this.handleRewind = this.handleRewind.bind(this);
     
-    this.audioPlayerRefs = props.tracks.map(()=>null);
-    this.players = this.props.tracks.map((track, index)=>
-    <ReactAudioPlayer
-                key={index}
-                src={""}
-                ref={(element)=>this.audioPlayerRefs[index]=element}
-              />
-    );
+    this.audioContext = new AudioContext();  
     
+    this.audioBuffers = props.tracks.map(()=>null);      
+    this.samples = props.tracks.map(()=>null);      
+    this.gainNodes = props.tracks.map(()=>
+      {return this.audioContext.createGain();}
+    );          
+
+    this.panners = props.tracks.map((track, index)=>{
+      const pannerOptions = { pan: -1 + (2 / this.props.tracks.length) * index };
+      if (typeof StereoPannerNode !== 'undefined') {
+        return new StereoPannerNode(this.audioContext, pannerOptions);
+      }
+      return null;
+    });
+
     this.loaded = props.tracks.map(()=>0);      
     this.calculateLoadingStatus = this.calculateLoadingStatus.bind(this);
+    
     this.loaders = this.props.tracks.map((track, index)=>
       <AudioLoader
           key={index}
           path={track.file}
-          player={this.players[index]}
           onProgress={(loaded)=>{
             this.loaded[index] = loaded;
             this.calculateLoadingStatus();
           }}
-          onComplete={(src)=>{
-            this.audioPlayerRefs[index].audioEl.src = src;
+          onComplete={async (arrayBuffer)=>{
+            this.audioContext.decodeAudioData(arrayBuffer, (audioBuffer)=>{
+              console.log("decoded");
+              this.audioBuffers[index] = audioBuffer;            
+            });
+            
           }}
       />
     );
-
   } 
-
-  componentDidMount() {
-    this.audioPlayerRefs.forEach((player, index)=>{
-
-      player.audioEl.preload = "auto";
-
-      /*player.audioEl.onprogress = ()=> {
-        if(player.audioEl.buffered.length) {
-          var loadedPercentage = (player.audioEl.buffered.end(0) / player.audioEl.duration) * 100;      
-          console.log("player " + index + ": " + loadedPercentage);
-
-          //this.loaded[index] = loadedPercentage;
-          //this.calculateLoadingStatus();
-        }
-      };*/
-      player.audioEl.onsuspend = ()=> {
-        console.log("onsuspend");
-      }; 
-      player.audioEl.onstalled = ()=> {
-        console.log("onstalled");
-      }; 
-      player.audioEl.onwaiting = ()=> {
-        console.log("onwaiting");
-      };
-      player.audioEl.oncanplay = ()=> {
-        console.log("oncanplay");
-      };
-
-    });
-  }
 
   calculateLoadingStatus() {
     let total = 0;
@@ -142,61 +117,63 @@ export class MultiChannelAudioPlayer extends React.Component {
 
     if(this.props.activeTracks) {
       for(let i = 0; i < this.props.activeTracks.length; i++) {
-        if(this.audioPlayerRefs[i]) {
-          this.audioPlayerRefs[i].audioEl.volume = this.props.activeTracks[i] ? 1.0 : 0.0;
+        if(this.gainNodes[i]) {
+          this.gainNodes[i].gain.value = this.props.activeTracks[i] ? 1.0 : 0.0;
         }
-        
       }
     }
   }
 
+  playSample(index, start, offset=0) {
+    
+    const sampleSource = this.audioContext.createBufferSource();
+    
+    console.log(this.audioBuffers[index]);
+
+    sampleSource.buffer = this.audioBuffers[index];
+
+    if(this.panners[index]) {
+      sampleSource.connect(this.gainNodes[index]).connect(this.panners[index]).connect(this.audioContext.destination)  
+    } else {
+      sampleSource.connect(this.gainNodes[index]).connect(this.audioContext.destination)  
+    }
+
+    sampleSource.start(start, offset);
+
+    console.log(sampleSource);
+    
+    this.samples[index] = sampleSource; // save for later stopping and manipulation
+  }
+
   handlePlay() {
-    let startLoop = Date.now();
-    console.log("starting to play at " + this.state.currentTime);
-    this.audioPlayerRefs.forEach((player, index)=>{
-      if(player) {
-        let offset = index * 100 + 100;
-        let startTimeAbs = startLoop + offset;
-        player.audioEl.currentTime = this.state.currentTime + (offset / 1000) 
-        player.audioEl.onseeked = ()=>{
-          player.audioEl.onseeked = null;
-          let playIn = startTimeAbs - Date.now();
-          setTimeout(()=>{
-            do {
-            } while(Date.now() < startTimeAbs + 10)
-            let miss = Date.now() - (startTimeAbs + 10);
-            console.log("missed by", miss);
-            if(Math.abs(miss) < 4) {
-              player.audioEl.play();              
-            } else {
-              console.log("aborting playback, miss too large")
-            }
-          }, playIn);
-        }
-      }
+    let startTime = this.audioContext.currentTime;
+    this.setState({
+      playbackPosition: this.state.playbackPosition,
+      playbackStartedAt: startTime - this.state.playbackPosition
     });
+    console.log("starting to play at " + startTime);
+    this.audioBuffers.forEach((buffer, index)=>{
+      this.playSample(index, startTime, this.state.playbackPosition); 
+    })
   }
 
   handlePause() {
     this.props.updatePlaybackControlStatus("paused");  
-    this.audioPlayerRefs.forEach((player, index)=>{
-      if(player) {
-        player.audioEl.pause(); 
-        if(index === 0) {
-          this.setState({currentTime: player.audioEl.currentTime});  
-        } 
+    this.samples.forEach((sample)=>{
+      if(sample) {
+        sample.stop();   
       }
-    });
+    })
+    this.setState({playbackPosition: this.audioContext.currentTime - this.state.playbackStartedAt});
   }
 
   handleRewind() {
-    this.audioPlayerRefs.forEach((player)=>{
-      if(player) {
-        player.audioEl.pause();  
-        player.audioEl.currentTime = 0;  
+    this.samples.forEach((sample)=>{
+      if(sample) {
+        sample.stop();   
       }
-    });
-    this.setState({currentTime: 0});
+    })
+    this.setState({playbackPosition: 0});
   }
 
   render() {
@@ -204,7 +181,7 @@ export class MultiChannelAudioPlayer extends React.Component {
     return (
       <div>
         {this.loaders}
-        {this.players}
+        {/*this.players*/}
         {this.props.controls && <button onClick={this.handlePlay}>Play</button>}
         {this.props.controls && <button onClick={this.handlePause}>Pause</button>}
         {this.props.controls && <button onClick={this.handleRewind}>Rewind</button>}

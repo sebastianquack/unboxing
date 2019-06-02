@@ -13,8 +13,8 @@ export function assembleTrackList(challenge, filesUrl) {
 
   // step 1 - find tracks
   let trackNames = challenge.sequence.tracks
-    .filter((item)=>item.name.indexOf("full-") > -1 
-      /*|| item.name.indexOf("full-piano") > -1
+    .filter((item)=>
+      /*item.name.indexOf("full-piano") > -1
       || item.name.indexOf("full-flute") > -1
       || item.name.indexOf("full-pauke") > -1
       || item.name.indexOf("full-oboe") > -1
@@ -25,6 +25,7 @@ export function assembleTrackList(challenge, filesUrl) {
       || item.name.indexOf("full-viola") > -1
       || item.name.indexOf("full-cello") > -1
       || item.name.indexOf("full-bass") > -1*/
+      item.name.indexOf("full-") > -1 
       )
     .map((item)=>item.name)
 
