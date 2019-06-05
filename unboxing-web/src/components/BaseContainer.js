@@ -4,6 +4,7 @@ import styled, { createGlobalStyle } from 'styled-components'
 import {
   MainScreen,
   StatusBar,
+  Background
 } from './'
 import { colors, breakpoints } from '../config/globalStyles'
 
@@ -13,6 +14,10 @@ export class BaseContainer extends React.Component {
     return (
       <Container>
         <GlobalStyle />
+        <Background 
+          color="active"
+          flow={false}
+        />
         <Top>
           <StatusBar 
             {...this.props}
@@ -67,7 +72,7 @@ const GlobalStyle = createGlobalStyle`
   }
 
   body {
-    background-color: #333;
+    background-color: #000;
     color: ${ colors.white };
     font-family: "DINPro", sans-serif;
   }

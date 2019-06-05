@@ -34,6 +34,7 @@ const Container = styled.div`
   background-color: black;
   width: 100%;
   height: 100%;
+  position: relative;
 `
 
 const FiguresContainer = styled.div`

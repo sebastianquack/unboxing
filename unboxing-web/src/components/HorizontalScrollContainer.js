@@ -32,7 +32,6 @@ export class HorizontalScrollContainer extends React.Component {
 
   handleScroll(event) {
     const offsetX = event.target.scrollLeft
-    console.log(offsetX, this.state.maxOffsetX)
     this.setState({offsetX})
   }
 
