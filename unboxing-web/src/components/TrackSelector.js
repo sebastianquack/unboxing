@@ -3,6 +3,7 @@ import styled from 'styled-components'
 
 import { loadInstruments } from '../helpers';
 import { UIText, LocaleText, HorizontalScrollContainer } from './'
+import { breakpoints } from '../config/globalStyles'
 
 const instruments = loadInstruments();
 
@@ -66,7 +67,6 @@ const InstrumentButtonContainer = styled.div`
   flex-direction: column;
   margin: 10px;
   align-items: center;
-  min-width: 100px;
   user-select: none;
   background-image: url("/images/Rectangle 2.3.png");
   background-repeat: no-repeat;
@@ -74,6 +74,10 @@ const InstrumentButtonContainer = styled.div`
   :hover {
     cursor: pointer;
   };
+  min-width: 60px;
+  @media (${breakpoints.large}) {
+    min-width: 100px;
+  }
 `
 
 const Img = styled.img`

@@ -8,11 +8,13 @@ export class HorizontalScrollContainer extends React.Component {
     super()
     this.state = {
       offsetX: 0,
-      minOffsetX: 0
-    }    
-    this.step = 50;
+      maxOffsetX: 0
+    }
+    this.step = 100;
 
     this.updateDimensions = this.updateDimensions.bind(this);
+    this.handleScroll = this.handleScroll.bind(this);
+    this.scrollTo = this.scrollTo.bind(this);
   }
 
   componentDidMount() {
@@ -25,7 +27,17 @@ export class HorizontalScrollContainer extends React.Component {
   }
 
   updateDimensions() {
-    this.setState({minOffsetX: this.refs.scrollContent.offsetWidth - this.refs.scrollContent.scrollWidth});
+    this.setState({maxOffsetX: this.refs.scrollContent.scrollWidth - this.refs.scrollContainer.offsetWidth});
+  }
+
+  handleScroll(event) {
+    const offsetX = event.target.scrollLeft
+    console.log(offsetX, this.state.maxOffsetX)
+    this.setState({offsetX})
+  }
+
+  scrollTo(x) {
+    this.refs.scrollContainer.scrollTo(x,0)
   }
 
   render () {
@@ -37,24 +49,26 @@ export class HorizontalScrollContainer extends React.Component {
       <Container>
         <Button
           type={"left"}
-          style={{margin: 10, opacity: this.state.offsetX < 0 ? 1 : 0.25}}
+          style={{top:"-33px", position: "relative", alignSelf: "center", opacity: this.state.offsetX > 0 ? 1 : 0.25}}
           onClick={
-            ()=>this.setState({offsetX: this.state.offsetX < 0 ? this.state.offsetX + this.step : 0 })
+            ()=>this.scrollTo(this.state.offsetX - this.step)
           }
         />
-        <ScrollContainer>
+        <ScrollContainer 
+            onScroll={this.handleScroll}
+            ref="scrollContainer"
+          >
           <ScrollContent 
             ref="scrollContent"
-            style={{left: this.state.offsetX}}
           >
             {childrenWithProps}
           </ScrollContent>
         </ScrollContainer>
         <Button 
           type={"right"}
-          style={{margin: 10, opacity: this.state.offsetX > this.state.minOffsetX ? 1 : 0.25}}
+          style={{top:"-33px", position: "relative", opacity: this.state.offsetX < this.state.maxOffsetX ? 1 : 0.25}}
           onClick={
-            ()=>this.setState({offsetX: this.state.offsetX > this.state.minOffsetX ? this.state.offsetX - this.step : this.state.minOffsetX })
+            ()=>this.scrollTo(this.state.offsetX + this.step)
           }
         />
       </Container>
@@ -67,18 +81,23 @@ const Container = styled.div`
   flex-direction: row;
   align-items: center;
   width: 100%;
+
+  overflow: hidden; 
+  margin-bottom: -33px; /* hide scrollbar at bottom */
+
 `
 
 const ScrollContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  overflow: hidden;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
 `
 
 const ScrollContent = styled.div`
   display: flex;
   flex-direction: row;
   position: relative;
-  width: 100%;
 `

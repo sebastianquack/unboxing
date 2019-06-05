@@ -28,6 +28,7 @@ export class Button extends React.Component {
       <ButtonContainer
         onClick={this.props.onClick}
         style={{...this.props.style}}
+        className={{...this.props.className}}
         type={this.props.type}
       > 
         <ButtonImage 
@@ -66,7 +67,7 @@ const ButtonImage = styled.img`
   left: 0;
   top: 0;
   width: 100%;
-  height: 100%;  
+  height: auto;  
   user-select: none;
 `
 

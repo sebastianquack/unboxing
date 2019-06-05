@@ -34,6 +34,7 @@ const Container = styled.div`
   width: 100%; 
   box-sizing: border-box;
   flex-direction: column;
+  position: fixed;
   /* background-color: blue; */
 `
 

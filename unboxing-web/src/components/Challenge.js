@@ -104,7 +104,12 @@ const FixedAtBottom = styled.div`
   position: fixed;
   bottom: 10px;
   width: 100%;
+  box-sizing: border-box;
   z-index: 2;
+  padding: 0 10px;
+  @media (${breakpoints.large}) {
+    padding: 0 25px;
+  }
 `
 
 const FixedControls = styled.div`
