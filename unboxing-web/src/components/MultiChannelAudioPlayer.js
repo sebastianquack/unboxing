@@ -67,7 +67,8 @@ export class MultiChannelAudioPlayer extends React.Component {
     );          
 
     this.panners = props.tracks.map((track, index)=>{
-      const pannerOptions = { pan: -1 + (2 / this.props.tracks.length) * index };
+      //const pannerOptions = { pan: -1 + (2 / this.props.tracks.length) * index };
+      const pannerOptions = { pan: 0 };
       if (typeof StereoPannerNode !== 'undefined') {
         return new StereoPannerNode(this.audioContext, pannerOptions);
       }

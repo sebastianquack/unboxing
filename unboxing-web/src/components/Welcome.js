@@ -12,13 +12,14 @@ export class Welcome extends React.Component {
   }
 
   componentDidMount() {
-    setTimeout(()=>{
+    this.closeTimeout = setTimeout(()=>{
       this.close();
     }, 5000);
   }
 
   close() {
     this.props.navigateTo("challenges")
+    clearTimeout(this.closeTimeout);
   }
 
   render () {
