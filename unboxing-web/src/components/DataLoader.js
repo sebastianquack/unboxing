@@ -1,5 +1,7 @@
 import React from 'react';
 
+import {serverUrl, apiPath} from '../config/server.js';
+
 const axios = require('axios');
 
 export const DataContext = React.createContext()
@@ -7,9 +9,9 @@ export const DataContext = React.createContext()
 export class DataLoader extends React.Component {
     constructor(props) {
       super(props);
-      this.serverUrl = "http://unboxing.sebquack.perseus.uberspace.de"
+      this.serverUrl = serverUrl;
       //this.serverUrl = "http://localhost:3000"
-      this.apiPath = "/api/getEverythingWeb.json"
+      this.apiPath = apiPath;
       this.state = {
         data: null,
         currentChallenge: undefined,

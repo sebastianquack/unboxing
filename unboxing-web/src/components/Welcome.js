@@ -8,15 +8,22 @@ export class Welcome extends React.Component {
   constructor() {
     super()
     this.state = {}
-    this.handleButtonPress = this.handleButtonPress.bind(this)
+    this.close = this.close.bind(this);
   }
 
-  handleButtonPress(event) {
+  componentDidMount() {
+    this.closeTimeout = setTimeout(()=>{
+      this.close();
+    }, 5000);
+  }
+
+  close() {
     this.props.navigateTo("challenges")
+    clearTimeout(this.closeTimeout);
   }
 
   render () {
-    return <Container>
+    return <Container onClick={this.close}>
       <WithLine>
         <UIText styleKey="big-title-top">
           Mahler Chamber Orchestra
@@ -31,9 +38,6 @@ export class Welcome extends React.Component {
           Eine visuelle und akkustische Reise durch Mozarts Werk.
         </UIText>   
       </FixedWidth>   
-      <button onClick={this.handleButtonPress}>
-        Let's play
-      </button>
     </Container>
   }
 }
@@ -44,6 +48,9 @@ const Container = styled.div`
   position: fixed;
   top: 15vh;
   left: 15vw;
+  :hover {
+    cursor: pointer;
+  }
 `
 
 const WithLine = styled.div`

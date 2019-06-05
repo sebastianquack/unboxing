@@ -47,8 +47,17 @@ const baseTextStyles = { // base style is mobile style
     `,
   "challenge-select-subtitle": `
     font-weight: bold;
-    font-size: 13.6882px;
+    font-size: 10px;
     line-height: 19px;
+    `,
+  "challenge-info-header": `
+    color: ${colors.turquoise};
+    font-size: 11px;
+    `,
+  "challenge-info-content": `
+    font-size: 15px;
+    line-height: 19px;
+    text-transform: none;
     `,
   "instrument-select": `
     font-weight: 500;

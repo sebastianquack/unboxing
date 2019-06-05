@@ -19,6 +19,7 @@ export class Challenge extends React.Component {
   
     this.tracks = this.props.currentChallenge ? assembleTrackList(this.props.currentChallenge, filesUrl) : [];
 
+    console.log(this.props.currentChallenge);
     console.log(this.tracks);
       
     this.state = {
@@ -34,7 +35,7 @@ export class Challenge extends React.Component {
       
       {this.props.challengeInfoOpen && 
       <FixedTopRight>
-        <ChallengeInfosAndVideos/>
+        <ChallengeInfosAndVideos challenge={this.props.currentChallenge}/>
       </FixedTopRight>
       }
 
@@ -115,7 +116,7 @@ const FixedAtBottom = styled.div`
 const FixedControls = styled.div`
   position: fixed;
   bottom: 50%;
-  right: 0;
+  right: 20px;
 `
 
 const FixedTopRight = styled.div`

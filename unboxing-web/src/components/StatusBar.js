@@ -26,10 +26,21 @@ export class StatusBar extends React.Component {
           onClick={()=>{this.props.navigateTo("challenges")}}
         />
         }
+        {this.props.navigationState !== "challenge" && 
+        <Button
+          type={"menu"}
+          onClick={()=>{console.log("menu")}}
+        />
+        }
       </Left>
       <Center>
-        <UIText styleKey="statusbar-title">{title}</UIText>
-        <UIText styleKey="statusbar-subtitle">{subtitle}</UIText>
+        {this.props.navigationState === "challenge" && <div>
+          <UIText styleKey="statusbar-title">{title}</UIText>
+          <UIText styleKey="statusbar-subtitle">{subtitle}</UIText>
+        </div>}
+        {this.props.navigationState === "challenges" && 
+          <UIText styleKey="statusbar-title">Unboxing Mozart</UIText>
+        }
       </Center>
       <Right>
         <LanguageSelector toggleLanguage= {this.props.toggleLanguage}/>
