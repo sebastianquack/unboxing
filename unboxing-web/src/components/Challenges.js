@@ -14,7 +14,7 @@ export class Challenges extends React.Component {
         key={challenge._id}
         type="button" 
         value={formatChallengeTitle(challenge)}
-        onClick={()=>{this.props.navigateToChallenge(challenge)}}
+        onClick={()=>{this.props.navigateToChallenge(challenge._id)}}
       />
     ) : null;
 

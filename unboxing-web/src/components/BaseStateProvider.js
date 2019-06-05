@@ -15,7 +15,8 @@ class BaseStateProvider extends React.Component {
      "de" 
     ]
     this.state = {
-      navigationState: /*sessionStorage.getItem('navigationState') ||*/ "welcome",
+      navigationState: sessionStorage.getItem('navigationState') || "welcome",
+      currentChallengeId: sessionStorage.getItem('currentChallengeId') || undefined,
       language: "en",
     }
 
@@ -37,12 +38,18 @@ class BaseStateProvider extends React.Component {
     this.setState({
       navigationState: target
     })
-    // sessionStorage.setItem('navigationState', target);
+    if (target !== "challenge") {
+      this.setState({
+        currentChallengeId: undefined
+      })
+    }
+    sessionStorage.setItem('navigationState', target);
   }
 
-  navigateToChallenge(currentChallenge) {
-    this.setState({currentChallenge});
+  navigateToChallenge(currentChallengeId) {
+    this.setState({currentChallengeId});
     this.handleNavigation("challenge");
+    sessionStorage.setItem('currentChallengeId', currentChallengeId);
   }
 
   render () {
@@ -50,7 +57,7 @@ class BaseStateProvider extends React.Component {
     const newKids = React.Children.map(this.props.children, child => {
       return React.cloneElement(child, {
         navigationState: this.state.navigationState,
-        currentChallenge: this.state.currentChallenge,
+        currentChallengeId: this.state.currentChallengeId,
         navigateTo: this.handleNavigation,
         navigateToChallenge: this.navigateToChallenge,
         language: this.state.language,

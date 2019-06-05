@@ -1,4 +1,5 @@
 import React from 'react';
+import 'reset-css';
 import './App.css';
 
 import {BaseContainer, BaseStateProvider, DataLoader} from './components'

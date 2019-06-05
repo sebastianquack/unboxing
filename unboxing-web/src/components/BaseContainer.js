@@ -19,9 +19,9 @@ export class BaseContainer extends React.Component {
           />
         </Top>
         <Bottom>
-          <MainScreen 
+          {this.props.data && <MainScreen 
             {...this.props}
-          />
+          />}
         </Bottom>
       </Container>
     )
