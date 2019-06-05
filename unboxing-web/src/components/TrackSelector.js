@@ -15,9 +15,8 @@ class InstrumentButton extends React.Component {
           opacity: this.props.active ? 1 : 0.5,
         }}
       >
-        <img 
+        <Img 
           src={instruments[this.props.trackName].image} 
-          style={{width:75, height: 75, userSelect: "none"}}
           alt={this.props.trackName}
         />
         <label>
@@ -69,7 +68,19 @@ const InstrumentButtonContainer = styled.div`
   align-items: center;
   min-width: 100px;
   user-select: none;
+  background-image: url("/images/Rectangle 2.3.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
   :hover {
     cursor: pointer;
   };
+`
+
+const Img = styled.img`
+  width: 90%;
+  margin-top: 3%;
+  margin-bottom: 16%;
+  height: auto;
+  user-select: none;
+  border-radius: 50%;
 `
