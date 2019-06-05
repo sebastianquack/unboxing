@@ -35,7 +35,7 @@ export class Challenge extends React.Component {
       
       {this.props.challengeInfoOpen && 
       <FixedTopRight>
-        <ChallengeInfosAndVideos challenge={this.props.currentChallenge}/>
+        <ChallengeInfosAndVideos challenge={this.props.currentChallenge} setVideoModalUrl={this.props.setVideoModalUrl}/>
       </FixedTopRight>
       }
 
