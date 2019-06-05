@@ -52,10 +52,10 @@ const baseTextStyles = { // base style is mobile style
     `,
   "challenge-info-header": `
     color: ${colors.turquoise};
-    font-size: 12px;
+    font-size: 11px;
     `,
   "challenge-info-content": `
-    font-size: 13.6882px;
+    font-size: 15px;
     line-height: 19px;
     text-transform: none;
     `,

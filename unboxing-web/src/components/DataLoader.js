@@ -13,7 +13,8 @@ export class DataLoader extends React.Component {
       //this.serverUrl = "http://localhost:3000"
       this.apiPath = apiPath;
       this.state = {
-        data: null
+        data: null,
+        currentChallenge: undefined,
       }
     }
 
@@ -34,8 +35,14 @@ export class DataLoader extends React.Component {
     }
 
     render() {
+
+      const currentChallenge = this.props.currentChallengeId && this.state.data ? this.state.data.challenges.find( c => c._id === this.props.currentChallengeId ) : undefined
+
       const childrenWithProps = React.Children.map(this.props.children, child=>
-        React.cloneElement(child, {...this.props, data: this.state.data})
+        React.cloneElement(child, {...this.props, 
+          data: this.state.data,
+          currentChallenge
+        })
       )
       
       return (

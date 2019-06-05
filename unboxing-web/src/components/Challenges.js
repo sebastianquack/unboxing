@@ -14,7 +14,7 @@ export class Challenges extends React.Component {
     const challengeButtons = this.props.data ? this.props.data.challenges.map((challenge, index)=>
       <ChallengeButton 
         key={challenge._id}
-        onClick={()=>{this.props.navigateToChallenge(challenge)}}
+        onClick={()=>{this.props.navigateToChallenge(challenge._id)}}
       >
         <ChallengeButtonNumber>
           <UIText styleKey="challenge-select-title" >{index + 1}</UIText>

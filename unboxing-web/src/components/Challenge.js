@@ -19,6 +19,7 @@ export class Challenge extends React.Component {
   
     this.tracks = this.props.currentChallenge ? assembleTrackList(this.props.currentChallenge, filesUrl) : [];
 
+    console.log(this.props.currentChallenge);
     console.log(this.tracks);
       
     this.state = {
@@ -46,19 +47,19 @@ export class Challenge extends React.Component {
         />
       </FixedControls>
 
-      <MultiChannelAudioPlayer 
+      {<MultiChannelAudioPlayer 
         playbackControlStatus={this.state.playbackControlStatus}
         updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
         updateLoadingStatus={(loadingStatus)=>this.setState({loadingStatus})}
         tracks={this.tracks}
         activeTracks={this.state.activeTracks}
-      />
+      />}
 
       <FixedAtBottom>
         <TrackSelector
           tracks={this.tracks}
           activeTracks={this.state.activeTracks}
-          updateActiveTracks={(activeTracks)=>this.setState({activeTracks})}
+          updateActiveTracks={(activeTracks)=>this.setState({activeTracks: [...activeTracks]})} // immutable update for PureComponent
         />
       </FixedAtBottom>
 
@@ -67,7 +68,10 @@ export class Challenge extends React.Component {
       </VisualizerContainer>
 
       <StageContainer>
-        <Stage />
+        <Stage 
+          tracks={this.tracks}
+          activeTracks={this.state.activeTracks} 
+        />
       </StageContainer>
 
     </Container>
@@ -86,7 +90,7 @@ const VisualizerContainer = styled.div`
 `
 
 const StageContainer = styled.div`
-  background-color: rgba(0,255,255,0.5);
+  /*background-color: rgba(0,255,255,0.5);*/
   flex: 0.5;
   margin-bottom: 15vh;
   margin-left: -5vw;
@@ -101,12 +105,13 @@ const FixedAtBottom = styled.div`
   position: fixed;
   bottom: 10px;
   width: 100%;
+  z-index: 2;
 `
 
 const FixedControls = styled.div`
   position: fixed;
   bottom: 50%;
-  right: 0;
+  right: 20px;
 `
 
 const FixedTopRight = styled.div`

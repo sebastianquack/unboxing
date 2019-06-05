@@ -2,6 +2,8 @@ import React from 'react';
 
 const LanguageContext = React.createContext()
 
+const useSession = true
+
 class BaseStateProvider extends React.Component {
   constructor() {
     super()
@@ -15,7 +17,8 @@ class BaseStateProvider extends React.Component {
      "de" 
     ]
     this.state = {
-      navigationState: /*sessionStorage.getItem('navigationState') ||*/ "welcome",
+      navigationState: (useSession && sessionStorage.getItem('navigationState')) || "welcome",
+      currentChallengeId: (useSession && sessionStorage.getItem('currentChallengeId')) || undefined,
       language: "en",
       challengeInfoOpen: true
     }
@@ -43,15 +46,18 @@ class BaseStateProvider extends React.Component {
     this.setState({
       navigationState: target
     })
-    if(target !== "challenge") {
-      this.setState({currentChallenge: null});
+    if (target !== "challenge") {
+      this.setState({
+        currentChallengeId: undefined
+      })
     }
-    // sessionStorage.setItem('navigationState', target);
+    if (useSession) sessionStorage.setItem('navigationState', target);
   }
 
-  navigateToChallenge(currentChallenge) {
-    this.setState({currentChallenge});
+  navigateToChallenge(currentChallengeId) {
+    this.setState({currentChallengeId});
     this.handleNavigation("challenge");
+    if (useSession) sessionStorage.setItem('currentChallengeId', currentChallengeId);
   }
 
   render () {
@@ -59,7 +65,7 @@ class BaseStateProvider extends React.Component {
     const newKids = React.Children.map(this.props.children, child => {
       return React.cloneElement(child, {
         navigationState: this.state.navigationState,
-        currentChallenge: this.state.currentChallenge,
+        currentChallengeId: this.state.currentChallengeId,
         navigateTo: this.handleNavigation,
         navigateToChallenge: this.navigateToChallenge,
         language: this.state.language,

@@ -29,7 +29,7 @@ class InstrumentButton extends React.Component {
   )}
 }
 
-export class TrackSelector extends React.Component {
+export class TrackSelector extends React.PureComponent {
   constructor() {
     super()
     this.state = {}

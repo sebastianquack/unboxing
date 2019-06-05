@@ -11,6 +11,7 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
   }
 
   render() {
+    if(!this.props.challenge) return null;
 
     const header = <LocaleText object={this.props.challenge.stages[0]} field="header"/> 
     const text = <LocaleText object={this.props.challenge.stages[0]} field="text"/>
@@ -47,11 +48,11 @@ const InfoIcon = styled.img`
   position: absolute;
   top: 4px;
   right: 20px;
-  height: 14px;
+  height: 13px;
 `
 
 const InfoContainer = styled.div`
-  margin-right: 40px;
+  margin-right: 36px;
   padding-right: 5px;
   border-right: #00AFA1 1px solid;
   position: relative;
