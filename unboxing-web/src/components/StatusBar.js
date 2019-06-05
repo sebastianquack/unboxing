@@ -33,6 +33,18 @@ export class StatusBar extends React.Component {
       </Center>
       <Right>
         <LanguageSelector toggleLanguage= {this.props.toggleLanguage}/>
+        {this.props.navigationState === "challenge" ?
+          <Button
+            type={this.props.challengeInfoOpen ? "up" : "down"}
+            onClick={this.props.toggleChallengeInfo}
+          />
+          :
+          <Button
+            type={"close"}
+            onClick={()=>{console.log("close")}}
+          />
+        }
+
       </Right>
     </Container>
   }
@@ -44,6 +56,7 @@ const Container = styled.div`
 `
 const Left = styled.div`
   margin: 5px;
+  margin-right: 10px;
 `
 const Center = styled.div`
   display: flex;

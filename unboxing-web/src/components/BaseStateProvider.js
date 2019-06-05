@@ -18,17 +18,23 @@ class BaseStateProvider extends React.Component {
       navigationState: sessionStorage.getItem('navigationState') || "welcome",
       currentChallengeId: sessionStorage.getItem('currentChallengeId') || undefined,
       language: "en",
+      challengeInfoOpen: true
     }
 
     this.handleNavigation = this.handleNavigation.bind(this)
     this.navigateToChallenge = this.navigateToChallenge.bind(this)
     this.toggleLanguage = this.toggleLanguage.bind(this)
+    this.toggleChallengeInfo = this.toggleChallengeInfo.bind(this)
   }
 
   toggleLanguage() {
     this.setState({
       language: ( this.state.language === "en" ? "de" : "en")
     })
+  }
+
+  toggleChallengeInfo() {
+    this.setState({challengeInfoOpen: !this.state.challengeInfoOpen})
   }
 
   handleNavigation(target) {
@@ -62,6 +68,8 @@ class BaseStateProvider extends React.Component {
         navigateToChallenge: this.navigateToChallenge,
         language: this.state.language,
         toggleLanguage: this.toggleLanguage,
+        toggleChallengeInfo: this.toggleChallengeInfo,
+        challengeInfoOpen: this.state.challengeInfoOpen
       });
     });
 

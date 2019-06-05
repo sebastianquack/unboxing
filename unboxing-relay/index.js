@@ -18,7 +18,7 @@ function joinChallenge(deviceId, challengeId) {
   deviceMap[deviceId].challengeId = challengeId;
   deviceMap[deviceId].track = undefined; // reset track of device that just joined
   deviceMap[deviceId].timestamp = Date.now() / 1000;
-  
+   
   //console.log(deviceMap);
   //console.log("purging...");
 

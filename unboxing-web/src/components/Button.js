@@ -5,6 +5,9 @@ const types = {
   "round": "/images/blankRoundButton.png",
   "left": "/images/left_button.png",
   "right": "/images/right_button.png",
+  "down": "/images/More.png",
+  "up": "/images/Less.png",
+  "close": "/images/Close.png",
 }
 
 const icons = {
