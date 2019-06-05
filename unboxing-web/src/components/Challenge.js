@@ -27,7 +27,7 @@ export class Challenge extends React.Component {
       loadingStatus: 0
     }
   }
-
+ 
   render () {
 
     return <Container>
