@@ -6,6 +6,7 @@ import {
   MultiChannelAudioPlayer,
   TrackSelector,
   Stage,
+  ChallengeInfosAndVideos,
 } from './'
 import { breakpoints } from '../config/globalStyles';
 import { assembleTrackList } from '../helpers';
@@ -31,6 +32,12 @@ export class Challenge extends React.Component {
 
     return <Container>
       
+      {this.props.challengeInfoOpen && 
+      <FixedTopRight>
+        <ChallengeInfosAndVideos/>
+      </FixedTopRight>
+      }
+
       <FixedControls>
         <SequenceControls
           playbackControlStatus={this.state.playbackControlStatus}
@@ -99,5 +106,10 @@ const FixedAtBottom = styled.div`
 const FixedControls = styled.div`
   position: fixed;
   bottom: 50%;
+  right: 0;
+`
+
+const FixedTopRight = styled.div`
+  position: fixed; 
   right: 0;
 `
