@@ -75,7 +75,24 @@ class BaseStateProvider extends React.Component {
   }
 }
 
+function withLanguage (WrappedComponent) {
+  return class extends React.Component {
+    render() {
+      return (
+        <LanguageContext.Consumer>
+          {language => 
+            <WrappedComponent
+              language={language} {...this.props}
+            />    
+          }
+        </LanguageContext.Consumer>
+      )
+    }
+  }
+}
+
 export {
   BaseStateProvider,
-  LanguageContext
+  LanguageContext,
+  withLanguage,
 }
