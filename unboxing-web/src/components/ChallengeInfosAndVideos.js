@@ -1,13 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {LocaleText, withLanguage, UIText} from './';
+import {LocaleText, withLanguage, UIText, VideoModal} from './';
 import {serverUrl} from '../config/server.js';
 
 const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
   constructor(props) {
     super(props)
     console.log(props.challenge);
+
+    this.state = {
+      videoUrl: null
+    }
   }
 
   render() {
@@ -18,8 +22,11 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
     const videoThumbs = this.props.challenge.stages.map((stage, index)=>
       <VideoThumb 
         key={index} src={serverUrl + "/files/video/" + stage.video_thumb}
-        onClick={()=>{console.log("load video " + stage["video_" + this.props.language])}}
-      />)
+        onClick={()=>{
+          this.props.setVideoModalUrl(serverUrl + "/files/video/" + stage["video_" + this.props.language]);
+        }}
+      />
+    );
 
     return (
       <Container>

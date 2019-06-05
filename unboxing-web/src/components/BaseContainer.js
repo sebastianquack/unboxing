@@ -4,7 +4,8 @@ import styled, { createGlobalStyle } from 'styled-components'
 import {
   MainScreen,
   StatusBar,
-  Background
+  Background,
+  VideoModal,
 } from './'
 import { colors, breakpoints } from '../config/globalStyles'
 
@@ -13,6 +14,9 @@ export class BaseContainer extends React.Component {
   render() {
     return (
       <Container>
+        {this.props.videoModalUrl && 
+          <VideoModal src={this.props.videoModalUrl} onClose={()=>{this.props.setVideoModalUrl(null)}}/>
+        }
         <GlobalStyle />
         <Background 
           color="active"

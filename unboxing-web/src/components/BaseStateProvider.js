@@ -20,7 +20,8 @@ class BaseStateProvider extends React.Component {
       navigationState: (useSession && sessionStorage.getItem('navigationState')) || "welcome",
       currentChallengeId: (useSession && sessionStorage.getItem('currentChallengeId')) || undefined,
       language: "en",
-      challengeInfoOpen: true
+      challengeInfoOpen: true,
+      videoModalUrl: null
     }
 
     this.handleNavigation = this.handleNavigation.bind(this)
@@ -71,7 +72,12 @@ class BaseStateProvider extends React.Component {
         language: this.state.language,
         toggleLanguage: this.toggleLanguage,
         toggleChallengeInfo: this.toggleChallengeInfo,
-        challengeInfoOpen: this.state.challengeInfoOpen
+        challengeInfoOpen: this.state.challengeInfoOpen,
+        setVideoModalUrl: (url)=>{
+          console.log(url);
+          this.setState({videoModalUrl: url})
+        },
+        videoModalUrl: this.state.videoModalUrl
       });
     });
 
