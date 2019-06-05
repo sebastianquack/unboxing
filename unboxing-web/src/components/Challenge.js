@@ -104,6 +104,7 @@ const FixedAtBottom = styled.div`
   position: fixed;
   bottom: 10px;
   width: 100%;
+  z-index: 2;
 `
 
 const FixedControls = styled.div`

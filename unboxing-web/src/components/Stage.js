@@ -11,15 +11,13 @@ const bottomPadding = '0px';
 const instruments = loadInstruments();
 
 export class Stage extends React.PureComponent {
-  constructor() {
-    super()
-  }
 
   render() {
     const figures = this.props.tracks.map((track, index)=>
       <Figure
         key={index}
         instrument={instruments[track.trackName.replace("full-", "")]}
+        trackName = {track.trackName.replace("full-", "")}
         active={this.props.activeTracks[index]}
       />
     );
@@ -45,7 +43,7 @@ const FiguresContainer = styled.div`
   margin: auto;
   top: ${topPadding};
   height: calc(100% - ${topPadding} - ${bottomPadding});
-  min-height: (50%);
+  min-height: 50%;
   width: calc(100% - ${sidePadding});
   max-width: calc(100vw - ${sidePadding});
 `

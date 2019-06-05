@@ -54,17 +54,22 @@ export function assembleTrackList(challenge, filesUrl) {
   return result;
 }
 
+/* xPos: Position on stage, between -100 and +100
+ * yPos: Position on stage, between 0 and 100
+ * direction: looking to left, right or center
+ */
+
 export function loadInstruments() { return { 
   "flute1": { 
     name_de: "Flöte", 
     name_en: "Flute",
     sequenceGroup: "flute1",
     image: '/images/instruments/Flute.png',   
-    direction: "left",
-    xPos: 0,
-    yPos: 0,
     order: 1,
-    priority: 1
+    priority: 1,
+    direction: "left",
+    xPos: 70,
+    yPos: 60,    
   },
   "oboe1": { 
     name_de: "Oboe 1", 
@@ -152,7 +157,10 @@ export function loadInstruments() { return {
     sequenceGroup: "violin1",
     image: '/images/instruments/Violine.png', 
     order: 12,
-    priority: 1
+    priority: 1,
+    direction: "right",
+    xPos: -100,
+    yPos: 50,
   },
   "violin1.2": { 
     name_de: "Violine 1",
@@ -160,7 +168,10 @@ export function loadInstruments() { return {
     sequenceGroup: "violin1",
     image: '/images/instruments/Violine.png', 
     order: 13,
-    priority: 1
+    priority: 1,
+    direction: "right",
+    xPos: -90,
+    yPos: 50,
   },
   "violin1.3": { 
     name_de: "Violine 1",
@@ -168,7 +179,10 @@ export function loadInstruments() { return {
     sequenceGroup: "violin1",
     image: '/images/instruments/Violine.png', 
     order: 14,
-    priority: 1
+    priority: 1,
+    direction: "right",
+    xPos: -80,
+    yPos: 50,
   },
   "violin1.4": { 
     name_de: "Violine 1",
@@ -176,7 +190,10 @@ export function loadInstruments() { return {
     sequenceGroup: "violin1",
     image: '/images/instruments/Violine.png', 
     order: 15,
-    priority: 1
+    priority: 1,
+    direction: "right",
+    xPos: -70,
+    yPos: 50,
   },
   "violin2.1": { 
     name_de: "Violine 2",

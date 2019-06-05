@@ -2,6 +2,8 @@ import React from 'react';
 
 const LanguageContext = React.createContext()
 
+const useSession = true
+
 class BaseStateProvider extends React.Component {
   constructor() {
     super()
@@ -15,8 +17,8 @@ class BaseStateProvider extends React.Component {
      "de" 
     ]
     this.state = {
-      navigationState: sessionStorage.getItem('navigationState') || "welcome",
-      currentChallengeId: sessionStorage.getItem('currentChallengeId') || undefined,
+      navigationState: (useSession && sessionStorage.getItem('navigationState')) || "welcome",
+      currentChallengeId: (useSession && sessionStorage.getItem('currentChallengeId')) || undefined,
       language: "en",
       challengeInfoOpen: true
     }
@@ -49,13 +51,13 @@ class BaseStateProvider extends React.Component {
         currentChallengeId: undefined
       })
     }
-    sessionStorage.setItem('navigationState', target);
+    if (useSession) sessionStorage.setItem('navigationState', target);
   }
 
   navigateToChallenge(currentChallengeId) {
     this.setState({currentChallengeId});
     this.handleNavigation("challenge");
-    sessionStorage.setItem('currentChallengeId', currentChallengeId);
+    if (useSession) sessionStorage.setItem('currentChallengeId', currentChallengeId);
   }
 
   render () {
