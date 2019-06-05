@@ -8,6 +8,7 @@ const types = {
   "down": "/images/More.png",
   "up": "/images/Less.png",
   "close": "/images/Close.png",
+  "menu": "/images/Menu.png",
 }
 
 const icons = {

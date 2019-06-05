@@ -1,5 +1,7 @@
 import React from 'react';
+import styled from 'styled-components'
 
+import { LocaleText, UIText } from './';
 import { formatChallengeTitle } from '../helpers';
 
 export class Challenges extends React.Component {
@@ -9,13 +11,27 @@ export class Challenges extends React.Component {
   }
 
   render () {
-    const challengeButtons = this.props.data ? this.props.data.challenges.map((challenge)=>
-      <input 
+    const challengeButtons = this.props.data ? this.props.data.challenges.map((challenge, index)=>
+      <ChallengeButton 
         key={challenge._id}
-        type="button" 
-        value={formatChallengeTitle(challenge)}
         onClick={()=>{this.props.navigateToChallenge(challenge)}}
-      />
+      >
+        <ChallengeButtonNumber>
+          <UIText styleKey="challenge-select-title" >{index + 1}</UIText>
+        </ChallengeButtonNumber>  
+        
+        <ChallengeButtonSubtitle>
+          <UIText styleKey="challenge-select-subtitle" >
+            <LocaleText object={challenge.sequence} field="title"/>
+          </UIText>
+        </ChallengeButtonSubtitle>
+        
+        <ChallengeButtonSubtitle>
+          <UIText styleKey="challenge-select-subtitle" >
+            <LocaleText object={challenge.sequence} field="subtitle"/>
+          </UIText>
+        </ChallengeButtonSubtitle>
+      </ChallengeButton>
     ) : null;
 
     return <div>
@@ -23,3 +39,32 @@ export class Challenges extends React.Component {
     </div>
   }
 }
+
+const ChallengeButton = styled.div`
+  :hover {
+    cursor: pointer;
+  }
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 186px;
+  margin: 20px;
+`
+
+const ChallengeButtonNumber = styled.div`
+  background-image: url(/images/PassageButtonBg.png);
+  background-size: contain;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const ChallengeButtonSubtitle = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
+
