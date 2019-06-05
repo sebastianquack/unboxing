@@ -60,6 +60,9 @@ export function loadInstruments() { return {
     name_en: "Flute",
     sequenceGroup: "flute1",
     image: '/images/instruments/Flute.png',   
+    direction: "left",
+    xPos: 0,
+    yPos: 0,
     order: 1,
     priority: 1
   },

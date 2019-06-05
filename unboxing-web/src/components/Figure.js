@@ -17,9 +17,9 @@ export class Figure extends React.PureComponent {
     console.log("render figure")
 
     const instrument = this.props.instrument
-    const direction = instrument.direction || "left"
-    const xPos = instrument.xPos || (Math.random()-0.5)*200 // xPos is between -100 and +100
-    const yPos = instrument.yPos || Math.random()*100 // yPos is between 0 and +100, starting from bottom (where the conductor is)
+    const direction = instrument.direction || "center"
+    const xPos = Number.isInteger(instrument.xPos) ? instrument.xPos: (Math.random()-0.5)*200 // xPos is between -100 and +100
+    const yPos = Number.isInteger(instrument.yPos) ? instrument.yPos: Math.random()*100 // yPos is between 0 and +100, starting from bottom (where the conductor is)
     
     const xPosPercentage = 100 * ((xPos / 200) + 0.5)
     const yPosPercentage = yPos
