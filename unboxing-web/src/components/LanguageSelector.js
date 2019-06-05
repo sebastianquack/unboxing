@@ -8,7 +8,7 @@ export function LanguageSelector(props) {
     {language =>  
       <Switcher
         onClick={props.toggleLanguage}
-        src={language == "de" ? "/images/language_de.png" : "/images/language_en.png"}
+        src={language == "de" ? "/images/Language_de.png" : "/images/Language_en.png"}
       />
    }
   </LanguageContext.Consumer>
