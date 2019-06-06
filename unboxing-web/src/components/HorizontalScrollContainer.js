@@ -45,6 +45,7 @@ export class HorizontalScrollContainer extends React.Component {
     )
       
     return (
+
       <Container>
         <Button
           type={"left"}
@@ -71,6 +72,7 @@ export class HorizontalScrollContainer extends React.Component {
           }
         />
       </Container>
+
     )
   }
 }
@@ -93,6 +95,9 @@ const ScrollContainer = styled.div`
   overflow-x: scroll;
   overflow-y: hidden;
   scroll-behavior: smooth;
+  /*mask: url(#grad-mask);*/
+  mask-mode: luminance;
+  mask-image: linear-gradient(90deg, transparent 0%, white 10%, white 90%, transparent 100%);    
 `
 
 const ScrollContent = styled.div`
