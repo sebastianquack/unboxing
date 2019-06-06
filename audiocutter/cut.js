@@ -1,7 +1,10 @@
 const exec = require('await-exec')
 const Timeout = require('await-timeout');
 
-const ffmpeg_additional_args = ' -filter:a "volume=10dB"'
+const ffmpeg_additional_args = ' -filter:a "volume=10dB" -qscale:a 9'
+
+// amplify: -filter:a "volume=10dB"
+// VBR encoding 45-85kbit/s: -qscale:a 9
 
 async function cut(cues, beats, filePath, outputDir, filePrefix, cutStartOffsetMs=0, cutEndOffsetMs=0, sequenceStartOffsetMs=0) {
   for (let cue of cues) {
