@@ -47,13 +47,13 @@ export class Challenge extends React.Component {
         />
       </FixedControls>
 
-      {/*<MultiChannelAudioPlayer 
+      {<MultiChannelAudioPlayer 
         playbackControlStatus={this.state.playbackControlStatus}
         updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
         updateLoadingStatus={(loadingStatus)=>this.setState({loadingStatus})}
         tracks={this.tracks}
         activeTracks={this.state.activeTracks}
-      />*/}
+      />}
 
       <FixedAtBottom>
         <TrackSelector
