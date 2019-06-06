@@ -47,13 +47,13 @@ export class Challenge extends React.Component {
         />
       </FixedControls>
 
-      {<MultiChannelAudioPlayer 
+      {/*<MultiChannelAudioPlayer 
         playbackControlStatus={this.state.playbackControlStatus}
         updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
         updateLoadingStatus={(loadingStatus)=>this.setState({loadingStatus})}
         tracks={this.tracks}
         activeTracks={this.state.activeTracks}
-      />}
+      />*/}
 
       <FixedAtBottom>
         <TrackSelector
@@ -106,7 +106,7 @@ const FixedAtBottom = styled.div`
   bottom: 0;
   width: 100%;
   box-sizing: border-box;
-  z-index: 2;
+  z-index: 99;
   padding: 0 25px;
   @media (${breakpoints.large}) {
     padding: 0 50px;

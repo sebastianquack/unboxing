@@ -13,12 +13,19 @@ const instruments = loadInstruments();
 export class Stage extends React.PureComponent {
 
   render() {
-    const figures = this.props.tracks.map((track, index)=>
+    const tracksInstruments = this.props.tracks.map((track, index)=> ({
+      key: index,
+      instrument: instruments[track.trackName.replace("full-", "")],
+      trackName: track.trackName.replace("full-", ""),
+      active: this.props.activeTracks[index]
+    }))//.sort( (item1, item2) => item1.instrument.yPos < item2.instrument.yPos )
+
+    const figures = tracksInstruments.map( item =>
       <Figure
-        key={index}
-        instrument={instruments[track.trackName.replace("full-", "")]}
-        trackName = {track.trackName.replace("full-", "")}
-        active={this.props.activeTracks[index]}
+        key={item.index}
+        instrument={item.instrument}
+        trackName = {item.trackName}
+        active={item.active}
       />
     );
     return <Container>

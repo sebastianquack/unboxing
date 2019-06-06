@@ -2,6 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 
+import { breakpoints } from '../config/globalStyles'
+
 const imgPaths = {
   left:   '/images/figurLinks.png',
   right:  '/images/figurRechts.png',
@@ -50,12 +52,16 @@ const Container = styled.span`
   opacity: ${ props => props.active ? 1 : 0 };
   left: ${ props => props.xPosPercentage }%;
   bottom: ${ props => props.yPosPercentage  }%;
-  width: calc(40px + 8vw);
-  max-width: 16vw;
-  height: auto;
+  z-index: ${ props => 100-Math.floor(props.yPosPercentage) };
   transform: translateX(-50%);
   transition: opacity 0.2s;
-  ::after{
+  width: calc(50px + 10vw);
+  max-width: 14vw;
+  @media (${breakpoints.large}) {
+    width: calc(30px + 7vw);
+    max-width: 12vw;
+  }
+  /*::after{
     content: attr(title);
     color: #444;
     position: absolute;
@@ -65,13 +71,13 @@ const Container = styled.span`
     width: 100%;
     font-size: 11px;
     transform: rotateZ(-90deg);
-  }
+  }*/
 `
 
 const Img = styled.img`
   display: block;
-  width: calc(40px + 8vw);
-  max-width: 16vw;
+  width: inherit;
+  max-width: inherit;
   height: auto;
 `
 
