@@ -68,6 +68,7 @@ const InstrumentButtonContainer = styled.div`
   margin: 10px;
   align-items: center;
   user-select: none;
+  white-space: pre;
   background-image: url("/images/Rectangle 2.3.png");
   background-repeat: no-repeat;
   background-size: 100%;

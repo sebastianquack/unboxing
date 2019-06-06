@@ -84,11 +84,13 @@ const Container = styled.div`
   width: 100%;
 
   overflow: hidden; 
-  margin-bottom: -33px; /* hide scrollbar at bottom */
+  margin-bottom: -25px; /* hide scrollbar at bottom */
 
 `
 
 const ScrollContainer = styled.div`
+  /*top: 25px; position: relative; /* hide scrollbar at bottom */
+  padding-bottom: 25px;
   display: flex;
   flex-direction: row;
   width: 100%;

@@ -103,7 +103,7 @@ const StageContainer = styled.div`
 
 const FixedAtBottom = styled.div`
   position: fixed;
-  bottom: 10px;
+  bottom: 0;
   width: 100%;
   box-sizing: border-box;
   z-index: 2;
