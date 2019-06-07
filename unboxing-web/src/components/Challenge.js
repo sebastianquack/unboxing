@@ -7,6 +7,7 @@ import {
   TrackSelector,
   Stage,
   ChallengeInfosAndVideos,
+  ActionStates
 } from './'
 import { breakpoints } from '../config/globalStyles';
 import { assembleTrackList } from '../helpers';
@@ -27,8 +28,19 @@ export class Challenge extends React.Component {
       activeTracks: this.tracks.map(()=>true),
       loadingStatus: 0
     }
+
+    this.updatePlaybackControlStatus = this.updatePlaybackControlStatus.bind(this)
+    this.updateSequenceStartedAt = this.updateSequenceStartedAt.bind(this)
   }
  
+  updatePlaybackControlStatus(playbackControlStatus) {
+    this.setState({playbackControlStatus})
+  }
+
+  updateSequenceStartedAt(sequenceStartedAt) {
+    this.setState({sequenceStartedAt})
+  }
+
   render () {
 
     return <Container>
@@ -43,14 +55,15 @@ export class Challenge extends React.Component {
         <SequenceControls
           playbackControlStatus={this.state.playbackControlStatus}
           loadingStatus={this.state.loadingStatus}
-          updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
+          updatePlaybackControlStatus={this.updatePlaybackControlStatus}
         />
       </FixedControls>
 
       {<MultiChannelAudioPlayer 
         playbackControlStatus={this.state.playbackControlStatus}
-        updatePlaybackControlStatus={(playbackControlStatus)=>this.setState({playbackControlStatus})}
+        updatePlaybackControlStatus={this.updatePlaybackControlStatus}
         updateLoadingStatus={(loadingStatus)=>this.setState({loadingStatus})}
+        updateSequenceStartedAt={this.updateSequenceStartedAt}
         tracks={this.tracks}
         activeTracks={this.state.activeTracks}
       />}
@@ -68,10 +81,15 @@ export class Challenge extends React.Component {
       </VisualizerContainer>
 
       <StageContainer>
-        <Stage 
-          tracks={this.tracks}
-          activeTracks={this.state.activeTracks} 
-        />
+        <ActionStates
+            playbackControlStatus={this.state.playbackControlStatus}
+            sequenceStartedAt={this.state.sequenceStartedAt}
+            tracks={this.tracks}
+          >
+          <Stage 
+            activeTracks={this.state.activeTracks} 
+          />
+        </ActionStates>
       </StageContainer>
 
     </Container>

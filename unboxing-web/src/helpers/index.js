@@ -36,7 +36,8 @@ export function assembleTrackList(challenge, filesUrl) {
       if(challenge.sequence.items[i].track === trackName) {
         result.push({
           trackName: trackName,
-          file: filesUrl + challenge.sequence.items[i].path
+          file: filesUrl + challenge.sequence.items[i].path,
+          events: assembleTrackEvents(challenge.sequence.items.filter( item => item.track === trackName.substr(5)))
         })
         break;
       }
@@ -54,12 +55,35 @@ export function assembleTrackList(challenge, filesUrl) {
   return result;
 }
 
+// transform items to a list of state events: "prepare", "play", "idle"...
+export function assembleTrackEvents(items) {
+  const prepareOffsetMs = -2000
+  let events = []
+  items.forEach( item => { // assuming they are ordered by startTime
+    // the "prepare" state will need more checks to avoid overlaps
+    //if ((item.startTime + prepareOffsetMs) > 0) {
+    //  events.push({
+    //    type: "prepare",
+    //    timeMs: item.startTime + prepareOffsetMs 
+    //  })
+    //}
+    events.push({
+      type: "play",
+      timeMs: item.startTime
+    })
+    events.push({
+      type: "idle",
+      timeMs: item.startTime + item.duration
+    })
+  })
+  return events
+}
+
+export function loadInstruments() { return { 
 /* xPos: Position on stage, between -100 and +100
  * yPos: Position on stage, between 0 and 100
  * direction: looking to left, right or center
  */
-
-export function loadInstruments() { return { 
   "flute1": { 
     name_de: "Flöte", 
     name_en: "Flute",

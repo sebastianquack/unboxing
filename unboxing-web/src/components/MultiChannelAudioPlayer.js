@@ -3,6 +3,7 @@ import ReactAudioPlayer from 'react-audio-player';
 
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
+const audioContextCreatedAt = Date.now()
 
 class AudioLoader extends React.Component {
   constructor(props) {
@@ -196,13 +197,13 @@ export class MultiChannelAudioPlayer extends React.Component {
     if(this.audioContext.state === 'suspended') {
         this.audioContext.resume();
     }
-
     let startTime = this.audioContext.currentTime;
     this.setState({
       playbackPosition: this.state.playbackPosition,
       playbackStartedAt: startTime - this.state.playbackPosition
     });
     console.log("starting to play at " + startTime);
+    this.props.updateSequenceStartedAt(audioContextCreatedAt + (startTime - this.state.playbackPosition)*1000);
     this.audioBuffers.forEach((buffer, index)=>{
       this.playSample(index, startTime, this.state.playbackPosition); 
     })

@@ -16,13 +16,12 @@ export class Figure extends React.PureComponent {
   }
 
   render() {
-    console.log("render figure")
 
     const instrument = this.props.instrument
     const direction = instrument.direction || "center"
     const xPos = Number.isInteger(instrument.xPos) ? instrument.xPos : xPercentageToPos(Math.random()*100) // xPos is between -100 and +100
     const yPos = Number.isInteger(instrument.yPos) ? instrument.yPos : yPercentageToPos(Math.random()*100) // yPos is between 0 and +100, starting from bottom (where the conductor is)
-    
+
     const xPosPercentage = xPosToPercentage(xPos)
     const yPosPercentage = yPosToPercentage(yPos)
     const src = imgPaths[direction]
@@ -30,11 +29,12 @@ export class Figure extends React.PureComponent {
         xPosPercentage={xPosPercentage} 
         yPosPercentage={yPosPercentage}
         active={this.props.active}
-        title={this.props.trackName} 
+        action={this.props.action}
+        title={this.props.trackName + "/" + this.props.action}
       >
         <Img  
           src={src}
-          title={this.props.trackName} 
+          title={this.props.trackName}
         />
       </Container>
   }
@@ -61,7 +61,8 @@ const Container = styled.span`
     width: calc(30px + 7vw);
     max-width: 12vw;
   }
-  /*::after{
+  filter: ${ props => props.action === "idle" ? "grayscale(0.5)" : "none" };
+  ::after{
     content: attr(title);
     color: #444;
     position: absolute;
@@ -71,7 +72,7 @@ const Container = styled.span`
     width: 100%;
     font-size: 11px;
     transform: rotateZ(-90deg);
-  }*/
+  }
 `
 
 const Img = styled.img`
