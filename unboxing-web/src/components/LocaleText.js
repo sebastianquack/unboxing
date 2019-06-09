@@ -10,17 +10,17 @@ export class LocaleText extends React.Component {
   }
 
   render() {
-    let {translationsKey, object, field} = this.props
+    let {stringsKey, object, field} = this.props
     
     return <LanguageContext.Consumer>
       {language => {
     
         let text = `<undefined ${language}>`
 
-        if (translationsKey) {
+        if (stringsKey) {
           return <DataContext.Consumer>
             { data => {
-                return data && data.translations.find( t => t.key === translationsKey)[ "content_" + language]
+                return data && data.content && data.content.strings[stringsKey + "_" + language]
               }
             }
           </DataContext.Consumer>
@@ -38,7 +38,7 @@ export class LocaleText extends React.Component {
 }
 
 LocaleText.propTypes = {
-  translationsKey: PropTypes.string, // get text from translation array data
+  stringsKey: PropTypes.string, // get text from strings
   object: PropTypes.object, // get text from object, e.g. { content_de: ..., content_en: ... }
   field: PropTypes.string, // field of the object, e.g. "content"
 };

@@ -204,14 +204,20 @@ Meteor.methods({
 
 'addWebsite'() {
     Websites.insert({
-      menuContent: `[<br>
+      content: `{<br>
+        "strings": {<br>
+          "main-title_en": "Unboxing Mozart",<br>
+          "main-title_de": "Unboxing Mozart"<br>
+        },<br>
+        "menu": [<br>
         {<br>
           "title_en": "",<br>
           "title_de": "",<br>
           "content_en": "",<br>
           "content_de": ""<br>
         }<br>
-      ]<br>
+        ]<br>
+      }
       `,
       challenges: "shorthand1 shorthand2"
     });

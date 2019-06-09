@@ -21,13 +21,19 @@ class BaseStateProvider extends React.Component {
       currentChallengeId: (useSession && sessionStorage.getItem('currentChallengeId')) || undefined,
       language: "en",
       challengeInfoOpen: true,
-      videoModalUrl: null
+      videoModalUrl: null,
+      menuOpen: false
     }
 
     this.handleNavigation = this.handleNavigation.bind(this)
     this.navigateToChallenge = this.navigateToChallenge.bind(this)
     this.toggleLanguage = this.toggleLanguage.bind(this)
     this.toggleChallengeInfo = this.toggleChallengeInfo.bind(this)
+    this.toggleMenu = this.toggleMenu.bind(this)
+  }
+
+  toggleMenu() {
+    this.setState({menuOpen: !this.state.menuOpen})
   }
 
   toggleLanguage() {
@@ -77,7 +83,9 @@ class BaseStateProvider extends React.Component {
           console.log(url);
           this.setState({videoModalUrl: url})
         },
-        videoModalUrl: this.state.videoModalUrl
+        videoModalUrl: this.state.videoModalUrl,
+        menuOpen: this.state.menuOpen,
+        toggleMenu: this.toggleMenu
       });
     });
 

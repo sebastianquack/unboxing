@@ -50,8 +50,8 @@ class WebsiteDetail extends React.Component {
     $set = {}
     $set[attributeName] = value
     Meteor.call('updateWebsite', this.props.website._id, $set, ()=> {
-      if(attributeName == "menuContent") {
-        this.checkJSON(this.props.website.menuContent);
+      if(attributeName == "content") {
+        this.checkJSON(this.props.website.content);
       }  
       this.checkIntegrity();
     });
@@ -129,7 +129,7 @@ class WebsiteDetail extends React.Component {
             fontWeight: "bold"
           }}
           onChange={ e => this.handleAttributeChange(attributeName, inputTransform(e.target.value)) } 
-          onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
+          //onKeyPress={ e => { if (e.which == 13 ) e.target.blur() } }
           html={value + ""}
           tagName="span"
         />)

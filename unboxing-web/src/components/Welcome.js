@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { UIText } from './'
+import { UIText, LocaleText } from './'
 import { breakpoints, colors } from '../config/globalStyles'
 
 export class Welcome extends React.Component {
@@ -14,7 +14,7 @@ export class Welcome extends React.Component {
   componentDidMount() {
     this.closeTimeout = setTimeout(()=>{
       this.close();
-    }, 5000);
+    }, 10000);
   }
 
   close() {
@@ -26,16 +26,15 @@ export class Welcome extends React.Component {
     return <Container onClick={this.close}>
       <WithLine>
         <UIText styleKey="big-title-top">
-          Mahler Chamber Orchestra
+          <LocaleText stringsKey="main-supertitle"/>
         </UIText>
         <UIText styleKey="big-title-main">
-          Mozart<br />
-          Momentum
+          <LocaleText stringsKey="main-title"/>
         </UIText>
       </WithLine>
       <FixedWidth>
         <UIText styleKey="big-title-subtitle">
-          Eine visuelle und akkustische Reise durch Mozarts Werk.
+          <LocaleText stringsKey="main-subtitle"/>
         </UIText>   
       </FixedWidth>   
     </Container>

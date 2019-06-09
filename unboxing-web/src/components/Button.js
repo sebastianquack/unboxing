@@ -9,6 +9,9 @@ const types = {
   "up": "/images/Less.png",
   "close": "/images/Close.png",
   "menu": "/images/Menu.png",
+  "menu-close": "/images/Close.png",
+  "menu-section-close": "/images/Menu_close.png",
+  "menu-section-open": "/images/Menu_open.png",
 }
 
 const icons = {
@@ -45,15 +48,20 @@ export class Button extends React.Component {
     )
   }
 
+}
 
+function buttonDimension(key) {
+  if(key == "round") return "50px";
+  if(key == "menu-close" || key == "menu-section-close" || key == "menu-section-open") return "48px";
+  return "30px";
 }
 
 
 const ButtonContainer = styled.div`
   display: inline-block;
   position: relative;
-  width: ${props => props.type === "round" ? "50px" : "30px"};
-  height: ${props => props.type === "round" ? "50px" : "30px"};
+  width: ${props => buttonDimension(props.type)};
+  height: ${props => buttonDimension(props.type)};
   :hover {
     cursor: pointer;
   }
