@@ -18,6 +18,8 @@ export class Figure extends React.PureComponent {
   render() {
 
     const instrument = this.props.instrument
+    if(!instrument) return null
+      
     const direction = instrument.direction || "center"
     const xPos = Number.isInteger(instrument.xPos) ? instrument.xPos : xPercentageToPos(Math.random()*100) // xPos is between -100 and +100
     const yPos = Number.isInteger(instrument.yPos) ? instrument.yPos : yPercentageToPos(Math.random()*100) // yPos is between 0 and +100, starting from bottom (where the conductor is)

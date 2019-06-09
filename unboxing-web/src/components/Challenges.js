@@ -50,6 +50,7 @@ const ChallengeButton = styled.div`
   align-items: center;
   width: 186px;
   margin: 20px;
+  float: left;
 `
 
 const ChallengeButtonNumber = styled.div`

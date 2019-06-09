@@ -47,8 +47,10 @@ export function assembleTrackList(challenge, filesUrl) {
   let instruments = loadInstruments();
 
   result.sort((a, b) => { return(
+      (a.trackName && b.trackName && instruments[a.trackName.replace("full-", "")] && instruments[b.trackName.replace("full-", "")]) ?
       instruments[a.trackName.replace("full-", "")].order -
-      instruments[b.trackName.replace("full-", "")].order) 
+      instruments[b.trackName.replace("full-", "")].order 
+      : 0)
   });
     
 
