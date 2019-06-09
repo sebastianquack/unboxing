@@ -10,7 +10,7 @@ export class VideoModal extends React.PureComponent {
     return <Container
       onClick={this.props.onClose}
     >
-      <VideoPlayer controls autoplay>
+      <VideoPlayer controls autoPlay>
         <source src={this.props.src} type="video/mp4"/>
       </VideoPlayer>
       <TopRight>
