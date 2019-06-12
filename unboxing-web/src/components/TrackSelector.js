@@ -17,7 +17,7 @@ class InstrumentButton extends React.Component {
         }}
       >
         <Img 
-          src={instruments[this.props.trackName].image} 
+          src={instruments[this.props.trackName] && instruments[this.props.trackName].image} 
           alt={this.props.trackName}
         />
         <label>

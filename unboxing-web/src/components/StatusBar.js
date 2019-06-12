@@ -29,7 +29,7 @@ export class StatusBar extends React.Component {
         {this.props.navigationState !== "challenge" && 
         <Button
           type={"menu"}
-          onClick={()=>{console.log("menu")}}
+          onClick={this.props.toggleMenu}
         />
         }
       </Left>
@@ -39,7 +39,7 @@ export class StatusBar extends React.Component {
           <UIText styleKey="statusbar-subtitle">{subtitle}</UIText>
         </div>}
         {this.props.navigationState === "challenges" && 
-          <UIText styleKey="statusbar-title">Unboxing Mozart</UIText>
+          <UIText styleKey="statusbar-title"><LocaleText stringsKey="main-title"/></UIText>
         }
       </Center>
       <Right>

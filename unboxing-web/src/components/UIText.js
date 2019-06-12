@@ -77,17 +77,32 @@ const baseTextStyles = { // base style is mobile style
     line-height: 60px;
     text-transform: none;
     `,
+  "menu-description": `
+    font-family: DINPro;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 24px;
+    text-transform: none;
+  `,
   "menu-text": `
     font-weight: 500;
     font-size: 18px;
     line-height: 24px;
     text-transform: none;
     color: ${ colors.turquoise };
+    padding-bottom: 20px;
     `,
   "menu-section": `
     font-weight: bold;
     font-size: 19px;
-    line-height: 26px;
+    line-height: 48px;    
+    `,
+  "menu-section-open": `
+    font-weight: bold;
+    font-size: 19px;
+    line-height: 48px;
+    color: ${ colors.turquoise };
     `
 }
 

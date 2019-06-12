@@ -6,6 +6,7 @@ import {
   StatusBar,
   Background,
   VideoModal,
+  Menu
 } from './'
 import { colors, breakpoints } from '../config/globalStyles'
 
@@ -16,6 +17,9 @@ export class BaseContainer extends React.Component {
       <Container>
         {this.props.videoModalUrl && 
           <VideoModal src={this.props.videoModalUrl} onClose={()=>{this.props.setVideoModalUrl(null)}}/>
+        }
+        {this.props.menuOpen && 
+          <Menu menuData={this.props.data.content.menu} onClose={this.props.toggleMenu}/>
         }
         <GlobalStyle />
         <Background 

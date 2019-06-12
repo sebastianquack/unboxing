@@ -110,10 +110,10 @@ async function getEverythingWeb(req, res) {
       return;
     }
 
-    let menuContent = cleanJSON(website.menuContent);  
+    let content = cleanJSON(website.content);  
 
     try {
-      menuContent = JSON.parse(menuContent)
+      content = JSON.parse(content)
     } 
     catch(e) {
       console.log(e)
@@ -148,7 +148,7 @@ async function getEverythingWeb(req, res) {
     data = {
       challenges,
       translations,
-      menuContent
+      content
     }
 
     hash = objectHash(data)
