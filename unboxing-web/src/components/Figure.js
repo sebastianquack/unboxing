@@ -38,12 +38,14 @@ export class Figure extends React.PureComponent {
         xPosPercentage={xPosPercentage} 
         yPosPercentage={yPosPercentage}
         active={this.props.active}
+        action={this.props.action}
         title={this.props.trackName + "/" + this.props.action}
       >
         <Img  
           src={src}
           title={this.props.trackName}
           action={this.props.action}
+          active={this.props.active}
           bpm={this.props.bpm}
         />
       </Container>
@@ -57,32 +59,42 @@ Figure.propTypes = {
 
 const playAnim = keyframes`
   0% {
-    transform: translateY(0%);
+    transform: translateY(0%) rotateZ(0deg);
   }
-
   25% {
-    transform: translateY(5%);
+    transform: translateY(4%) rotateZ(2deg);
   }
-
   75% {
-    transform: translateY(-5%);
+    transform: translateY(-4%) rotateZ(-2deg);
   }
-
   100% {
-    transform: translateY:(0%);
+    transform: translateY:(0%) rotateZ(0deg);
   }
+`;
 
+const inactivePlayAnim = keyframes`
+  0% {
+    opacity: 0.05;
+  }
+  50% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 0.05;
+  }
 `;
 
 const Container = styled.span`
   display: block;
   position: absolute;
-  opacity: ${ props => props.active ? 1 : 0 };
+  filter: ${ props => props.active ? "none" : "greyscale(0%)" };
+  opacity: ${ props => props.active ? 1 : ( props.action === "play" ? 0.1 : 0 ) };
+  /*animation: ${ props => props.active ? "none" : css`${ inactivePlayAnim } ${ 1 }s linear infinite` };*/
   left: ${ props => props.xPosPercentage }%;
   bottom: ${ props => props.yPosPercentage  }%;
   z-index: ${ props => 100-Math.floor(props.yPosPercentage) };
   transform: translateX(-50%);
-  transition: opacity 0.2s;
+  transition: opacity 0.3s, transform 0.5s;
   width: calc(50px + 10vw);
   max-width: 14vw;
   @media (${breakpoints.large}) {
@@ -107,8 +119,8 @@ const Img = styled.img`
   width: inherit;
   max-width: inherit;
   height: auto;
-  filter:  ${ props => props.action === "idle" ? "grayscale(50%)" : "none" };
-  animation: ${ props => props.action === "idle" ? "none" : css`${ playAnim } ${ 120 / props.bpm }s linear infinite` };
+  /*filter:  ${ props => props.action === "idle" ? "grayscale(50%)" : "none" };*/
+  animation: ${ props => props.action === "idle" || !props.active ? "none" : css`${ playAnim } ${ 120 / props.bpm }s linear infinite` };
   /*transition: translate 0.2s;*/
 `
 

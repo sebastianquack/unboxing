@@ -26,6 +26,7 @@ const ActionStates = ReactAnimationFrame(class extends React.Component {
 
     let changed = false
     let trackStates = this.state.trackStates
+    // find action states at current time
     this.props.tracks.forEach( (track, index) => {
       const currentTrackState = trackStates[index]
       const nextEventIndex = track.events.findIndex( event => event.timeMs >= sequenceTimeMs)
@@ -49,8 +50,10 @@ const ActionStates = ReactAnimationFrame(class extends React.Component {
 
     const tracksWithActionStates = tracks.map( (track, index) => ({
       ...track,
-      action: this.state.trackStates[index]
+      action: this.props.playbackControlStatus === "playing" ? this.state.trackStates[index] : "idle"
     }))
+
+    console.log("render")
     
     return React.Children.map(children, child => {
       return React.cloneElement(child, {
