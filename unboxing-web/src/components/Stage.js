@@ -29,6 +29,7 @@ export class Stage extends React.PureComponent {
         trackName = {item.trackName}
         active={item.active}
         action={item.action}
+        bpm={this.props.bpm}
       />
     );
     return <Container>

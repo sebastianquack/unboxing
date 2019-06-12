@@ -39,6 +39,7 @@ export class Challenge extends React.Component {
 
   updateSequenceStartedAt(sequenceStartedAt) {
     this.setState({sequenceStartedAt})
+    // console.log("sequence started at " + sequenceStartedAt + ", " + (Date.now()-sequenceStartedAt)/1000 + " seconds ago" )
   }
 
   render () {
@@ -76,9 +77,7 @@ export class Challenge extends React.Component {
         />
       </FixedAtBottom>
 
-      <VisualizerContainer>
-        visu
-      </VisualizerContainer>
+      <VisualizerContainer />
 
       <StageContainer>
         <ActionStates
@@ -88,6 +87,7 @@ export class Challenge extends React.Component {
           >
           <Stage 
             activeTracks={this.state.activeTracks} 
+            bpm={this.props.currentChallenge.sequence.bpm}
           />
         </ActionStates>
       </StageContainer>

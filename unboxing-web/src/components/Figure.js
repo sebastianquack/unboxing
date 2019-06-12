@@ -1,13 +1,20 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes, css } from 'styled-components';
 import PropTypes from 'prop-types';
 
 import { breakpoints } from '../config/globalStyles'
 
 const imgPaths = {
-  left:   '/images/figurLinks.png',
-  right:  '/images/figurRechts.png',
-  center: '/images/figurFrontal.png'
+  idle: {
+    left:   '/images/figurLinks.png',
+    right:  '/images/figurRechts.png',
+    center: '/images/figurFrontal.png'
+  },
+  play: {
+    left:   '/images/figurLinks.png',
+    right:  '/images/figurRechts.png',
+    center: '/images/figurFrontal.png'
+  }
 } 
 
 export class Figure extends React.PureComponent {
@@ -26,17 +33,18 @@ export class Figure extends React.PureComponent {
 
     const xPosPercentage = xPosToPercentage(xPos)
     const yPosPercentage = yPosToPercentage(yPos)
-    const src = imgPaths[direction]
+    const src = imgPaths[this.props.action || "idle"][direction]
     return <Container 
         xPosPercentage={xPosPercentage} 
         yPosPercentage={yPosPercentage}
         active={this.props.active}
-        action={this.props.action}
         title={this.props.trackName + "/" + this.props.action}
       >
         <Img  
           src={src}
           title={this.props.trackName}
+          action={this.props.action}
+          bpm={this.props.bpm}
         />
       </Container>
   }
@@ -47,6 +55,24 @@ Figure.propTypes = {
   active: PropTypes.bool
 };
 
+const playAnim = keyframes`
+  0% {
+    transform: translateY(0%);
+  }
+
+  25% {
+    transform: translateY(5%);
+  }
+
+  75% {
+    transform: translateY(-5%);
+  }
+
+  100% {
+    transform: translateY:(0%);
+  }
+
+`;
 
 const Container = styled.span`
   display: block;
@@ -63,7 +89,6 @@ const Container = styled.span`
     width: calc(30px + 7vw);
     max-width: 12vw;
   }
-  filter: ${ props => props.action === "idle" ? "grayscale(0.5)" : "none" };
   ::after{
     content: attr(title);
     color: #444;
@@ -82,6 +107,9 @@ const Img = styled.img`
   width: inherit;
   max-width: inherit;
   height: auto;
+  filter:  ${ props => props.action === "idle" ? "grayscale(50%)" : "none" };
+  animation: ${ props => props.action === "idle" ? "none" : css`${ playAnim } ${ 120 / props.bpm }s linear infinite` };
+  /*transition: translate 0.2s;*/
 `
 
 const xPosToPercentage = function(xPos) {
