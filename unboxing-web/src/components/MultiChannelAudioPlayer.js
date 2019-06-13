@@ -3,7 +3,7 @@ import ReactAudioPlayer from 'react-audio-player';
 
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
-const audioContextCreatedAt = Date.now()
+let audioContextCreatedAt = Date.now()
 
 class AudioLoader extends React.Component {
   constructor(props) {
@@ -47,6 +47,7 @@ class AudioLoader extends React.Component {
 export class MultiChannelAudioPlayer extends React.Component {
 
   constructor(props) {
+    audioContextCreatedAt = Date.now()
     super(props);
     this.state = {
       channelsOn: props.activeTracks ? props.activeTracks : props.tracks.map(()=>true),
@@ -176,7 +177,7 @@ export class MultiChannelAudioPlayer extends React.Component {
     
     const sampleSource = this.audioContext.createBufferSource();
     
-    console.log(this.audioBuffers[index]);
+    // console.log(this.audioBuffers[index]);
 
     sampleSource.buffer = this.audioBuffers[index];
 
@@ -188,7 +189,7 @@ export class MultiChannelAudioPlayer extends React.Component {
 
     sampleSource.start(start, offset);
 
-    console.log(sampleSource);
+    // console.log(sampleSource);
     
     this.samples[index] = sampleSource; // save for later stopping and manipulation
   }
@@ -203,6 +204,7 @@ export class MultiChannelAudioPlayer extends React.Component {
       playbackStartedAt: startTime - this.state.playbackPosition
     });
     console.log("starting to play at " + startTime);
+    // console.log("playbackPosition " + this.state.playbackPosition);
     this.props.updateSequenceStartedAt(audioContextCreatedAt + (startTime - this.state.playbackPosition)*1000);
     this.audioBuffers.forEach((buffer, index)=>{
       this.playSample(index, startTime, this.state.playbackPosition); 
