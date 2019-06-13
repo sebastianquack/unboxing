@@ -15,7 +15,7 @@ export class BaseContainer extends React.Component {
   render() {
     return (
       <Container>
-        {this.props.videoModalUrl && 
+        {this.props.videoModalUrl &&
           <VideoModal src={this.props.videoModalUrl} onClose={()=>{this.props.setVideoModalUrl(null)}}/>
         }
         {this.props.menuOpen && 
