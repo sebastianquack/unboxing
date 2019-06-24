@@ -23,7 +23,7 @@ export class SequenceControls extends React.Component {
   }
 
   render () {
-    return <div>
+    return this.props.showControls ? <div>
       {this.props.playbackControlStatus === "loading" &&
         <span>{this.props.loadingStatus}</span>
       }
@@ -43,6 +43,6 @@ export class SequenceControls extends React.Component {
           onClick={()=>{this.handleRewind()}}
         />
       }
-    </div>
+    </div> : null
   }
 }

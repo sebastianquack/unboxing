@@ -41,8 +41,8 @@ export class Menu extends React.Component {
       </MenuItem>
     )
 
-    console.log(this.props.menuData);
-    return <Container>
+    return <Dark visible={this.props.visible}>
+    <Container onClick={(e)=>{e.stopPropagation()}}>
       <TopRight>
         <Button
               type={"menu-close"}
@@ -56,17 +56,35 @@ export class Menu extends React.Component {
       </MenuBody>
       <Curve />
     </Container>
+    </Dark>
   }
 }
+
+const Dark = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: rgb(0,0,0,0.66);
+  opacity: 1;
+  z-index: 50;
+  visibility: ${props=>props.visible ? "visible" : "hidden"};
+`
 
 const Container = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width: 50vw;
+  width: 100%;
   height: 100vh;
   background-color: #000;
   z-index: 100;
+  opacity: 1;
+
+  @media (${breakpoints.large}) {
+    width: 50%;      
+  }
 `
 
 const Curve = styled.div`
@@ -79,6 +97,7 @@ const Curve = styled.div`
   border-radius: 50%;
   background-color: #000;
   z-index: 105;
+  opacity: 1;
 `
 
 const TopRight = styled.div`
@@ -93,19 +112,24 @@ const TopRight = styled.div`
 `
 
 const MenuBody = styled.div`
-  margin-top: 164px;
-  padding-left: 64px;
-  padding-right: 64px;
+  margin-top: 110px;
   position: relative;
   z-index: 110;
   display: flex;
   flex-direction: column;
   align-items: left;
 
-`
+  padding-left: 30px;
+  padding-right: 30px;
 
+  @media (${breakpoints.large}) {
+    padding-left: 60px;
+    padding-right: 60px;
+  }
+
+`
 const MenuDescription = styled.div`
-  margin-top: 25px;
+  margin-top: 20px;
   margin-bottom: 50px;
 `
 

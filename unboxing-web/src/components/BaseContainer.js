@@ -23,22 +23,22 @@ export class BaseContainer extends React.Component {
 
   render() {
     return (
-      <Container>
+      <Container onClick={()=>{if(this.props.menuOpen) this.props.toggleMenu()}}>
         {this.props.videoModalUrl &&
           <VideoModal src={this.props.videoModalUrl} onClose={()=>{this.props.setVideoModalUrl(null)}}/>
         }
-        {this.props.menuOpen && 
-          <Menu menuData={this.props.data.content.menu} onClose={this.props.toggleMenu}/>
+        
+        {this.props.data &&
+          <Menu visible={this.props.menuOpen} menuData={this.props.data.content.menu} onClose={this.props.toggleMenu}/>
         }
+
         <GlobalStyle />
         <Background 
           color={getBackgroundGradient(this.props.navigationState, this.props.playbackControlStatus)}
           flow={this.props.navigationState != "challenge"}
         />
         <Top>
-          <StatusBar 
-            {...this.props}
-          />
+          <StatusBar {...this.props}/>
         </Top>
         <Bottom>
           {this.props.data && <MainScreen 

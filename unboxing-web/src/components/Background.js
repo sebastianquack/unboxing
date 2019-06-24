@@ -15,7 +15,7 @@ export class Background extends React.Component {
     const {color, flow} = this.props
 
     return <Container >
-      {flow && <BackgroundVideo autoPlay loop="true">
+      {flow && <BackgroundVideo autoPlay loop={true}>
         <source src="/images/Mozartfeld_Loop.mp4" type="video/mp4"/>
       </BackgroundVideo>}
       
@@ -43,6 +43,7 @@ const Container = styled.div`
 const BackgroundVideo = styled.video`
   width: 100%;
   height: 100%;
+  transform: scale(1.1);
   object-fit: cover;
 `
 

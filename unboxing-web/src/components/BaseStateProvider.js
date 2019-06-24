@@ -34,6 +34,7 @@ class BaseStateProvider extends React.Component {
   }
 
   toggleMenu() {
+    console.log("menu")
     this.setState({menuOpen: !this.state.menuOpen})
   }
 
@@ -86,7 +87,7 @@ class BaseStateProvider extends React.Component {
         },
         videoModalUrl: this.state.videoModalUrl,
         menuOpen: this.state.menuOpen,
-        toggleMenu: this.toggleMenum,
+        toggleMenu: this.toggleMenu,
         playbackControlStatus: this.state.playbackControlStatus,
         updatePlaybackControlStatus: (s)=>{this.setState({playbackControlStatus: s})}
       });

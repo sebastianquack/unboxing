@@ -24,7 +24,7 @@ export class Challenge extends React.Component {
     console.log(this.tracks);
       
     this.state = {
-      activeTracks: this.tracks.map(()=>true),
+      activeTracks: this.tracks.map(()=>false),
       loadingStatus: 0
     }
 
@@ -56,6 +56,7 @@ export class Challenge extends React.Component {
 
       <FixedControls>
         <SequenceControls
+          showControls={this.state.activeTracks.filter((t)=>t).length > 0}
           playbackControlStatus={this.props.playbackControlStatus}
           loadingStatus={this.state.loadingStatus}
           updatePlaybackControlStatus={this.updatePlaybackControlStatus}
