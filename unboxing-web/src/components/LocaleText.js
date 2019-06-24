@@ -3,7 +3,11 @@ import PropTypes from 'prop-types';
 
 import { LanguageContext, DataContext } from './'
 
-export class LocaleText extends React.Component { 
+function localeText(object, field, language) {
+  return object[field + "_" + language]
+}
+
+class LocaleText extends React.Component { 
   constructor(props) {
     super(props);
     this.state = {};
@@ -27,7 +31,7 @@ export class LocaleText extends React.Component {
         }
 
         if (object && field) {
-          text = object[field + "_" + language]
+          text = localeText(object, field, language)
         }
 
         return text
@@ -36,6 +40,8 @@ export class LocaleText extends React.Component {
     </LanguageContext.Consumer>
   }
 }
+
+export { LocaleText, localeText }
 
 LocaleText.propTypes = {
   stringsKey: PropTypes.string, // get text from strings

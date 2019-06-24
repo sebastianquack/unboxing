@@ -2,6 +2,7 @@ import React from 'react';
 import styled, { keyframes, css } from 'styled-components';
 import PropTypes from 'prop-types';
 
+import { withLanguage, localeText } from './'
 import { breakpoints } from '../config/globalStyles'
 
 const imgPaths = {
@@ -17,7 +18,7 @@ const imgPaths = {
   }
 } 
 
-export class Figure extends React.PureComponent {
+const Figure =  withLanguage(class extends React.PureComponent {
   constructor() {
     super()
   }
@@ -39,18 +40,25 @@ export class Figure extends React.PureComponent {
         yPosPercentage={yPosPercentage}
         active={this.props.active}
         action={this.props.action}
-        title={this.props.trackName + "/" + this.props.action}
+        title={localeText(instrument,"name", this.props.language)}
       >
         <Img  
           src={src}
-          title={this.props.trackName}
+          title={localeText(instrument,"name", this.props.language)}
           action={this.props.action}
           active={this.props.active}
           bpm={this.props.bpm}
         />
+        <InstrumentImg 
+          src={instrument.image} 
+          alt={localeText(instrument,"name", this.props.language)}
+          direction={direction}
+        />
       </Container>
   }
-}
+})
+
+export { Figure }
 
 Figure.propTypes = {
   instrument: PropTypes.object, //instrument object from config
@@ -94,14 +102,14 @@ const Container = styled.span`
   bottom: ${ props => props.yPosPercentage  }%;
   z-index: ${ props => 100-Math.floor(props.yPosPercentage) };
   transform: translateX(-50%);
-  transition: opacity 0.3s, transform 0.5s;
+  transition: opacity 0.3s 0.1s, transform 0.5s;
   width: calc(50px + 10vw);
   max-width: 14vw;
   @media (${breakpoints.large}) {
     width: calc(30px + 7vw);
     max-width: 12vw;
   }
-  ::after{
+  /*::after{
     content: attr(title);
     color: #444;
     position: absolute;
@@ -111,7 +119,7 @@ const Container = styled.span`
     width: 100%;
     font-size: 11px;
     transform: rotateZ(-90deg);
-  }
+  }*/
 `
 
 const Img = styled.img`
@@ -122,6 +130,15 @@ const Img = styled.img`
   /*filter:  ${ props => props.action === "idle" ? "grayscale(50%)" : "none" };*/
   animation: ${ props => props.action === "idle" || !props.active ? "none" : css`${ playAnim } ${ 120 / props.bpm }s linear infinite` };
   /*transition: translate 0.2s;*/
+`
+
+const InstrumentImg = styled.img`
+  display: block;
+  width: 50%;
+  height: auto;
+  position: absolute;
+  bottom: 22%;
+  ${ props => (props.direction === "left" ? "right" : "left") + ": " + (props.direction === "center" ? "17" : "36" ) + "%"};
 `
 
 const xPosToPercentage = function(xPos) {

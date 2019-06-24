@@ -72,6 +72,7 @@ const InstrumentButtonContainer = styled.div`
   background-image: url("/images/Rectangle 2.3.png");
   background-repeat: no-repeat;
   background-size: 100%;
+  transition: opacity 0.1s;
   :hover {
     cursor: pointer;
   };
