@@ -24,17 +24,19 @@ export class Challenge extends React.Component {
     console.log(this.tracks);
       
     this.state = {
-      playbackControlStatus: "loading", // ready - playing - paused
       activeTracks: this.tracks.map(()=>true),
       loadingStatus: 0
     }
 
     this.updatePlaybackControlStatus = this.updatePlaybackControlStatus.bind(this)
     this.updateSequenceStartedAt = this.updateSequenceStartedAt.bind(this)
+
+    this.updatePlaybackControlStatus("loading");
   }
  
   updatePlaybackControlStatus(playbackControlStatus) {
-    this.setState({playbackControlStatus})
+    //this.setState({playbackControlStatus})
+    this.props.updatePlaybackControlStatus(playbackControlStatus);
   }
 
   updateSequenceStartedAt(sequenceStartedAt) {
@@ -54,14 +56,14 @@ export class Challenge extends React.Component {
 
       <FixedControls>
         <SequenceControls
-          playbackControlStatus={this.state.playbackControlStatus}
+          playbackControlStatus={this.props.playbackControlStatus}
           loadingStatus={this.state.loadingStatus}
           updatePlaybackControlStatus={this.updatePlaybackControlStatus}
         />
       </FixedControls>
 
       {<MultiChannelAudioPlayer 
-        playbackControlStatus={this.state.playbackControlStatus}
+        playbackControlStatus={this.props.playbackControlStatus}
         updatePlaybackControlStatus={this.updatePlaybackControlStatus}
         updateLoadingStatus={(loadingStatus)=>this.setState({loadingStatus})}
         updateSequenceStartedAt={this.updateSequenceStartedAt}
@@ -81,7 +83,7 @@ export class Challenge extends React.Component {
 
       <StageContainer>
         <ActionStates
-            playbackControlStatus={this.state.playbackControlStatus}
+            playbackControlStatus={this.props.playbackControlStatus}
             sequenceStartedAt={this.state.sequenceStartedAt}
             tracks={this.tracks}
           >
@@ -140,4 +142,5 @@ const FixedControls = styled.div`
 const FixedTopRight = styled.div`
   position: fixed; 
   right: 0;
+  width: 100%;
 `

@@ -15,6 +15,11 @@ export class HorizontalScrollContainer extends React.Component {
     this.updateDimensions = this.updateDimensions.bind(this);
     this.handleScroll = this.handleScroll.bind(this);
     this.scrollTo = this.scrollTo.bind(this);
+    this.getMaxOffset = this.getMaxOffset.bind(this);
+  }
+
+  getMaxOffset() {
+    return this.refs.scrollContent.scrollWidth - this.refs.scrollContainer.offsetWidth;
   }
 
   componentDidMount() {
@@ -27,7 +32,7 @@ export class HorizontalScrollContainer extends React.Component {
   }
 
   updateDimensions() {
-    this.setState({maxOffsetX: this.refs.scrollContent.scrollWidth - this.refs.scrollContainer.offsetWidth});
+    this.setState({maxOffsetX: this.getMaxOffset()});
   }
 
   handleScroll(event) {
@@ -41,19 +46,19 @@ export class HorizontalScrollContainer extends React.Component {
 
   render () {
     const childrenWithProps = React.Children.map(this.props.children, child=>
-      React.cloneElement(child, {...this.props, data: this.state.data})
+      React.cloneElement(child, {data: this.state.data})
     )
       
     return (
 
-      <Container>
-        <Button
+      <Container justifyRight={this.props.justifyRight}>
+        {!this.props.noButtons && <Button
           type={"left"}
           style={{top:"-33px", position: "relative", alignSelf: "center", opacity: this.state.offsetX > 0 ? 1 : 0.25}}
           onClick={
             ()=>this.scrollTo(this.state.offsetX - this.step)
           }
-        />
+        />}
         <ScrollContainer 
             onScroll={this.handleScroll}
             ref="scrollContainer"
@@ -64,13 +69,13 @@ export class HorizontalScrollContainer extends React.Component {
             {childrenWithProps}
           </ScrollContent>
         </ScrollContainer>
-        <Button 
+        {!this.props.noButtons && <Button 
           type={"right"}
           style={{top:"-33px", position: "relative", opacity: this.state.offsetX < this.state.maxOffsetX ? 1 : 0.25}}
           onClick={
             ()=>this.scrollTo(this.state.offsetX + this.step)
           }
-        />
+        />}
       </Container>
 
     )
@@ -81,7 +86,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 100%;
+  justify-content: ${props=>props.justifyRight ? "flex-end" : "flex-start"}
+  max-width: 100%;
 
   overflow: hidden; 
   margin-bottom: -25px; /* hide scrollbar at bottom */

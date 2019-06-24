@@ -10,6 +10,15 @@ import {
 } from './'
 import { colors, breakpoints } from '../config/globalStyles'
 
+const getBackgroundGradient = (navigationState, controlStatus) => {
+  if(navigationState == "welcome") return "active";
+  if(navigationState == "challenges") return "none";
+  if(navigationState == "challenge") {
+    if(controlStatus == "playing") return "passive";
+      else return "active";
+  }
+}
+
 export class BaseContainer extends React.Component {
 
   render() {
@@ -23,8 +32,8 @@ export class BaseContainer extends React.Component {
         }
         <GlobalStyle />
         <Background 
-          color="active"
-          flow={false}
+          color={getBackgroundGradient(this.props.navigationState, this.props.playbackControlStatus)}
+          flow={this.props.navigationState != "challenge"}
         />
         <Top>
           <StatusBar 

@@ -34,6 +34,7 @@ class AudioLoader extends React.Component {
   }
 
   componentWillUnmount() {
+
     this.req.onload = null;
     this.req.onprogress = null;
   }
@@ -125,6 +126,7 @@ export class MultiChannelAudioPlayer extends React.Component {
   }
 
   componentWillUnmount() {
+    this.handlePause()
     this._unmounted = true;
   } 
 

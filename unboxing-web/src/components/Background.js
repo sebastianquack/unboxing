@@ -15,6 +15,10 @@ export class Background extends React.Component {
     const {color, flow} = this.props
 
     return <Container >
+      {flow && <BackgroundVideo autoPlay loop="true">
+        <source src="/images/Mozartfeld_Loop.mp4" type="video/mp4"/>
+      </BackgroundVideo>}
+      
       <Gradient color={color} />
     </Container>
   }
@@ -34,6 +38,12 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   z-index: -1;
+`
+
+const BackgroundVideo = styled.video`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 `
 
 const Gradient = styled.div`

@@ -22,7 +22,8 @@ class BaseStateProvider extends React.Component {
       language: "en",
       challengeInfoOpen: true,
       videoModalUrl: null,
-      menuOpen: false
+      menuOpen: false,
+      playbackControlStatus: "loading", // ready - playing - paused
     }
 
     this.handleNavigation = this.handleNavigation.bind(this)
@@ -85,7 +86,9 @@ class BaseStateProvider extends React.Component {
         },
         videoModalUrl: this.state.videoModalUrl,
         menuOpen: this.state.menuOpen,
-        toggleMenu: this.toggleMenu
+        toggleMenu: this.toggleMenum,
+        playbackControlStatus: this.state.playbackControlStatus,
+        updatePlaybackControlStatus: (s)=>{this.setState({playbackControlStatus: s})}
       });
     });
 
