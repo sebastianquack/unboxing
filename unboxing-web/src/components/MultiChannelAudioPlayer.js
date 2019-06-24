@@ -17,7 +17,7 @@ class AudioLoader extends React.Component {
        // Onload is triggered even on 404
        // so we need to check the status code
        if (this.req.status === 200) {
-          console.log("complete");
+          //console.log("complete");
           this.props.onComplete(this.req.response);
        }
     }
@@ -98,7 +98,7 @@ export class MultiChannelAudioPlayer extends React.Component {
             if(isSafari) {
               this.audioContext.decodeAudioData(arrayBuffer, (audioBuffer)=>{
                 if(this._unmounted) return;
-                console.log("decoded safari");
+                //console.log("decoded safari");
                 this.audioBuffers[index] = audioBuffer;            
                 this.loaded[index] = 100;
                 this.decoded[index] = true;
@@ -107,7 +107,7 @@ export class MultiChannelAudioPlayer extends React.Component {
             } else {
               this.audioContext.decodeAudioData(arrayBuffer).then((audioBuffer)=>{
                 if(this._unmounted) return;
-                console.log("decoded");
+                //console.log("decoded");
                 this.audioBuffers[index] = audioBuffer;            
                 this.loaded[index] = 100;
                 this.decoded[index] = true;

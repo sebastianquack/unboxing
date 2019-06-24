@@ -31,6 +31,7 @@ export class Challenge extends React.Component {
     this.updatePlaybackControlStatus = this.updatePlaybackControlStatus.bind(this)
     this.updateSequenceStartedAt = this.updateSequenceStartedAt.bind(this)
     this.populateStage = this.populateStage.bind(this)
+    this.toggleTrack = this.toggleTrack.bind(this)
 
     this.updatePlaybackControlStatus("loading");
   }
@@ -49,6 +50,12 @@ export class Challenge extends React.Component {
     this.setState({
       activeTracks: this.tracks.map(()=>true) 
     })
+  }
+
+  toggleTrack(index) {
+    let activeTracks = this.state.activeTracks;
+    activeTracks[index] = !activeTracks[index];
+    this.setState({activeTracks: activeTracks});
   }
 
   render () {
@@ -99,6 +106,7 @@ export class Challenge extends React.Component {
             activeTracks={this.state.activeTracks} 
             bpm={this.props.currentChallenge.sequence.bpm}
             populateStage={this.populateStage}
+            toggleTrack={this.toggleTrack}
           />
         </ActionStates>
       </StageContainer>
