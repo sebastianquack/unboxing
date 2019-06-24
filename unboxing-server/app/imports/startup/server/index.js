@@ -13,6 +13,8 @@ import './files';
 import './api';
 import './devices'
 
+import '../both/accounts';
+
 // zeroconf
 //import './zeroconf.js';
 

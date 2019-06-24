@@ -1,7 +1,7 @@
 import React, { Component, Switch } from 'react';
 import ConnectionStatus from 'meteor-react-status'
 
-import {DevicesInfo, WebsitesInfo, InstallationsInfo, WalksInfo, EventsInfo, PlacesInfo, ChallengesInfo, NetworkInfo, ServersInfo, FilesInfo, GesturesInfo, SequencesInfo, ImportExport, TranslationsInfo} from './';
+import {AdminWrapper, DevicesInfo, WebsitesInfo, InstallationsInfo, WalksInfo, EventsInfo, PlacesInfo, ChallengesInfo, NetworkInfo, ServersInfo, FilesInfo, GesturesInfo, SequencesInfo, ImportExport, TranslationsInfo} from './';
  
 const sections = [
   {
@@ -129,7 +129,7 @@ export default class App extends Component {
   render() {
     console.log(this.state);
     return (
-      <div className="container" style={{marginBottom: "5em"}}>
+      <AdminWrapper><div className="container" style={{marginBottom: "5em"}}>
         <ConnectionStatus fullWidth={true} />
         <header>
           <h1>Unboxing Server / <span style={{backgroundColor: "#ffff55"}}>{this.state.hostname}</span></h1>
@@ -137,7 +137,7 @@ export default class App extends Component {
 
         { this.renderSections() }
 
-      </div>
+      </div></AdminWrapper>
     );
   }
 }
