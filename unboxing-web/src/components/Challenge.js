@@ -30,6 +30,7 @@ export class Challenge extends React.Component {
 
     this.updatePlaybackControlStatus = this.updatePlaybackControlStatus.bind(this)
     this.updateSequenceStartedAt = this.updateSequenceStartedAt.bind(this)
+    this.populateStage = this.populateStage.bind(this)
 
     this.updatePlaybackControlStatus("loading");
   }
@@ -42,6 +43,12 @@ export class Challenge extends React.Component {
   updateSequenceStartedAt(sequenceStartedAt) {
     this.setState({sequenceStartedAt})
     // console.log("sequence started at " + sequenceStartedAt + ", " + (Date.now()-sequenceStartedAt)/1000 + " seconds ago" )
+  }
+
+  populateStage() {
+    this.setState({
+      activeTracks: this.tracks.map(()=>true) 
+    })
   }
 
   render () {
@@ -91,6 +98,7 @@ export class Challenge extends React.Component {
           <Stage 
             activeTracks={this.state.activeTracks} 
             bpm={this.props.currentChallenge.sequence.bpm}
+            populateStage={this.populateStage}
           />
         </ActionStates>
       </StageContainer>

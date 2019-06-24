@@ -59,6 +59,12 @@ const baseTextStyles = { // base style is mobile style
     line-height: 19px;
     text-transform: none;
     `,
+  "empty-stage": `
+      font-size: 15px;
+      line-height: 19px;
+      text-transform: none;
+      color: #666;
+      `,
   "instrument-select": `
     font-weight: 500;
     font-size: 20px;

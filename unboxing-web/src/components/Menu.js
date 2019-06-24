@@ -112,7 +112,7 @@ const TopRight = styled.div`
 `
 
 const MenuBody = styled.div`
-  margin-top: 110px;
+  margin-top: 50px;
   position: relative;
   z-index: 110;
   display: flex;
@@ -123,14 +123,20 @@ const MenuBody = styled.div`
   padding-right: 30px;
 
   @media (${breakpoints.large}) {
+    margin-top: 110px;
     padding-left: 60px;
     padding-right: 60px;
   }
 
 `
 const MenuDescription = styled.div`
-  margin-top: 20px;
-  margin-bottom: 50px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+
+  @media (${breakpoints.large}) {
+    margin-top: 20px;
+    margin-bottom: 50px;
+  }
 `
 
 const MenuItem = styled.li`

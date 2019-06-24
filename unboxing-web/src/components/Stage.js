@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { loadInstruments } from '../helpers';
-import { Figure } from './'
+import { Figure, UIText, LocaleText } from './'
 
 const sidePadding = '10vw';
 const topPadding = '15%';
@@ -33,6 +33,10 @@ export class Stage extends React.PureComponent {
       />
     );
     return <Container>
+      {this.props.activeTracks.filter((t)=>t).length == 0 && 
+      <EmptyInfo onClick={this.props.populateStage}>
+        <UIText styleKey="empty-stage"><LocaleText stringsKey="empty-stage"/></UIText>
+      </EmptyInfo>}
       <FiguresContainer>
         { figures }
       </FiguresContainer>
@@ -45,6 +49,16 @@ const Container = styled.div`
   background-color: black;
   width: 100%;
   height: 100%;
+  position: relative;
+`
+
+const EmptyInfo = styled.div`
+  margin: auto;
+  width: 50%;
+  text-align: center;
+  padding-top: 10%;
+  :hover {cursor: pointer};
+  z-index: 50;
   position: relative;
 `
 
