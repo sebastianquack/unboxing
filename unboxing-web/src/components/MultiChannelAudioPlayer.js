@@ -192,6 +192,13 @@ export class MultiChannelAudioPlayer extends React.Component {
     sampleSource.start(start, offset);
 
     // console.log(sampleSource);
+
+    if(index == 0) {
+      sampleSource.onended = () => {
+        console.log("ended");
+        this.props.updatePlaybackControlStatus("ready");
+      }
+    }
     
     this.samples[index] = sampleSource; // save for later stopping and manipulation
   }
