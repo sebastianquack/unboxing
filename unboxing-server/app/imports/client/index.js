@@ -1,3 +1,5 @@
+import '../startup/client';
+
 import FilesInfo from './FilesInfo';
 import EventsInfo from './EventsInfo';
 import NetworkInfo from './NetworkInfo';
@@ -30,6 +32,8 @@ import InstallationsInfo from './InstallationsInfo';
 import InputLine from './InputLine';
 import AutoForm from './AutoForm';
 
+import AdminWrapper from './AdminWrapper';
+
 export {
   FilesInfo,
   EventsInfo,
@@ -56,4 +60,5 @@ export {
   InstallationsInfo,
   WebsitesInfo,
   WebsiteDetail,
+  AdminWrapper
 }

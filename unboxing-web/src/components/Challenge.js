@@ -25,12 +25,14 @@ export class Challenge extends React.Component {
     console.log(this.tracks);
       
     this.state = {
-      activeTracks: this.tracks.map(()=>true),
+      activeTracks: this.tracks.map(()=>false),
       loadingStatus: 0
     }
 
     this.updatePlaybackControlStatus = this.updatePlaybackControlStatus.bind(this)
     this.updateSequenceStartedAt = this.updateSequenceStartedAt.bind(this)
+    this.populateStage = this.populateStage.bind(this)
+    this.toggleTrack = this.toggleTrack.bind(this)
 
     this.updatePlaybackControlStatus("loading");
   }
@@ -45,6 +47,18 @@ export class Challenge extends React.Component {
     // console.log("sequence started at " + sequenceStartedAt + ", " + (Date.now()-sequenceStartedAt)/1000 + " seconds ago" )
   }
 
+  populateStage() {
+    this.setState({
+      activeTracks: this.tracks.map(()=>true) 
+    })
+  }
+
+  toggleTrack(index) {
+    let activeTracks = this.state.activeTracks;
+    activeTracks[index] = !activeTracks[index];
+    this.setState({activeTracks: activeTracks});
+  }
+
   render () {
 
     return <Container>
@@ -57,6 +71,7 @@ export class Challenge extends React.Component {
 
       <FixedControls>
         <SequenceControls
+          showControls={this.state.activeTracks.filter((t)=>t).length > 0}
           playbackControlStatus={this.props.playbackControlStatus}
           loadingStatus={this.state.loadingStatus}
           updatePlaybackControlStatus={this.updatePlaybackControlStatus}
@@ -90,16 +105,17 @@ export class Challenge extends React.Component {
             tracks={tracksWithActionStates}
             duration={this.props.currentChallenge.sequence.custom_duration || this.props.currentChallenge.sequence.duration}
             playbackControlStatus={this.props.playbackControlStatus}
-            sequenceStartedAt={this.state.sequenceStartedAt}            
+            sequenceStartedAt={this.state.sequenceStartedAt}
           />
         </VisualizerContainer>,
         <StageContainer key="stage">
-            <Stage 
-              tracks={tracksWithActionStates}
-              activeTracks={this.state.activeTracks} 
-              bpm={this.props.currentChallenge.sequence.bpm}
-            />
-          </StageContainer>
+          <Stage 
+            tracks={tracksWithActionStates}
+            activeTracks={this.state.activeTracks} 
+            bpm={this.props.currentChallenge.sequence.bpm}
+            toggleTrack={this.toggleTrack}
+          />
+        </StageContainer>
         ]}
         />
 

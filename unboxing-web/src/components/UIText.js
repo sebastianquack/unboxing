@@ -59,6 +59,12 @@ const baseTextStyles = { // base style is mobile style
     line-height: 19px;
     text-transform: none;
     `,
+  "empty-stage": `
+      font-size: 15px;
+      line-height: 19px;
+      text-transform: none;
+      color: #666;
+      `,
   "instrument-select": `
     font-weight: 500;
     font-size: 20px;
@@ -73,8 +79,8 @@ const baseTextStyles = { // base style is mobile style
     `,
   "menu-title": `
     font-weight: 500;
-    font-size: 62px;
-    line-height: 60px;
+    font-size: 45px;
+    line-height: 40px;
     text-transform: none;
     `,
   "menu-description": `
@@ -127,6 +133,12 @@ const largeTextStyles = { // some styles have additional large styles (overwrite
       font-size: 19px;
       line-height: 26px;
       `,
+  "menu-title": `
+    font-weight: 500;
+    font-size: 45px;
+    line-height: 40px;
+    text-transform: none;
+    `,
   "challenge-select-headline": `
       font-size: 34px;
       line-height: 36px;

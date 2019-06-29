@@ -28,7 +28,7 @@ export class SequenceControls extends React.Component {
         <span>{this.props.loadingStatus}</span>
       }
       
-      {this.props.playbackControlStatus !== "loading" &&
+      {this.props.playbackControlStatus !== "loading" && (this.props.showControls || this.props.playbackControlStatus === "playing") &&
         <Button 
           type="round" 
           icon={this.props.playbackControlStatus === "playing" ? "pause" : "play"}
@@ -36,7 +36,7 @@ export class SequenceControls extends React.Component {
         />
       }
 
-      {this.props.playbackControlStatus !== "loading" && this.props.playbackControlStatus !== "ready" &&
+      {this.props.playbackControlStatus !== "loading" && (this.props.showControls || this.props.playbackControlStatus === "playing") && this.props.playbackControlStatus !== "ready" &&
         <Button 
           type="round" 
           icon="rewind"

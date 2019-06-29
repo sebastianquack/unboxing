@@ -2,7 +2,8 @@ import React from 'react';
 import styled from 'styled-components';
 
 import { loadInstruments } from '../helpers';
-import { Figure } from './'
+import { Figure, UIText, LocaleText } from './'
+import { xPercentageToPos, yPercentageToPos } from './';
 
 const sidePadding = '10vw';
 const topPadding = '15%';
@@ -11,6 +12,41 @@ const bottomPadding = '0px';
 const instruments = loadInstruments();
 
 export class Stage extends React.PureComponent {
+
+  constructor(props) {
+    super(props);
+
+    this.stageRef = React.createRef();
+    this.stageClick = this.stageClick.bind(this);
+  }
+
+  stageClick(e) {
+    let rect = this.stageRef.current.getBoundingClientRect();
+    let xPos = xPercentageToPos(100 * (e.clientX - rect.x) / rect.width);
+    let yPos = 100 - yPercentageToPos((100 * ((e.clientY) - rect.y) / rect.height) + 20);
+    console.log(xPos, yPos);
+    
+    //find out which track to toggle
+      
+    let nearestKey = null;
+    let lowestDistance = null;
+    Object.keys(instruments).forEach((k)=>{
+      let distance = Math.pow(instruments[k].xPos - xPos, 2) + Math.pow(instruments[k].yPos - yPos, 2)
+      if(!lowestDistance || distance < lowestDistance) {
+        lowestDistance = distance;
+        nearestKey = k;      
+      }
+    });
+
+    if(nearestKey) {
+      console.log(nearestKey, lowestDistance)  
+      this.props.tracks.forEach((item, index)=>{
+        console.log(item.trackName);
+        if(item.trackName == "full-" + nearestKey) this.props.toggleTrack(index);
+      });
+    }
+  
+  } 
 
   render() {
 
@@ -22,7 +58,7 @@ export class Stage extends React.PureComponent {
       action: track.action
     }))
 
-    const figures = tracksInstruments.map( item =>
+    const figures = tracksInstruments.map( (item, index) =>
       <Figure
         key={item.key}
         instrument={item.instrument}
@@ -33,7 +69,11 @@ export class Stage extends React.PureComponent {
       />
     );
     return <Container>
-      <FiguresContainer>
+      {this.props.activeTracks.filter((t)=>t).length == 0 && 
+      <EmptyInfo onClick={this.props.populateStage}>
+        <UIText styleKey="empty-stage"><LocaleText stringsKey="empty-stage"/></UIText>
+      </EmptyInfo>}
+      <FiguresContainer onClick={this.stageClick} ref={this.stageRef}>
         { figures }
       </FiguresContainer>
     </Container>
@@ -45,6 +85,16 @@ const Container = styled.div`
   background-color: black;
   width: 100%;
   height: 100%;
+  position: relative;
+`
+
+const EmptyInfo = styled.div`
+  margin: auto;
+  width: 50%;
+  text-align: center;
+  padding-top: 10%;
+  :hover {cursor: pointer};
+  z-index: 50;
   position: relative;
 `
 

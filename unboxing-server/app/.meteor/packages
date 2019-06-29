@@ -22,3 +22,7 @@ react-meteor-data
 matb33:collection-hooks
 percolate:migrations
 underscore
+accounts-password
+templating
+blaze
+accounts-ui

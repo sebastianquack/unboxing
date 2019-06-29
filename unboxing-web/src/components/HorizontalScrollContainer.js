@@ -100,7 +100,7 @@ const ScrollContainer = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
-  overflow-x: scroll;
+  overflow-x: auto;
   overflow-y: hidden;
   scroll-behavior: smooth;
   /*mask: url(#grad-mask);*/

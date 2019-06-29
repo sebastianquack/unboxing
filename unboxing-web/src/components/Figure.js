@@ -150,10 +150,12 @@ const yPosToPercentage = function(yPos) {
   return yPos
 }
 
-const xPercentageToPos = function(xPerc) {
+export const xPercentageToPos = function(xPerc) {
   return (xPerc * 2) - 100
 }
 
-const yPercentageToPos = function(yPerc) {
+export const yPercentageToPos = function(yPerc) {
   return yPerc
 }
+
+

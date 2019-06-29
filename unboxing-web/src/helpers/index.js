@@ -188,6 +188,16 @@ export function loadInstruments() { return {
     xPos: 60,
     yPos: 80,
   },
+  "kadenz":  { 
+    name_de: "Klavier", 
+    name_en: "Piano",
+    sequenceGroup: "piano1",
+    image: '/images/instruments/Piano.png',  
+    order: 11,
+    priority: 1,
+    xPos: 0,
+    yPos: 25,
+  },
   "piano1":  { 
     name_de: "Klavier", 
     name_en: "Piano",

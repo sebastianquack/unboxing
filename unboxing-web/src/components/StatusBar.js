@@ -52,7 +52,7 @@ export class StatusBar extends React.Component {
           :
           <Button
             type={"close"}
-            onClick={()=>{console.log("close")}}
+            onClick={()=>{if(this.props.data.content.exitUrl) window.location=this.props.data.content.exitUrl}}
           />
         }
 

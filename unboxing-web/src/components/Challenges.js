@@ -3,11 +3,18 @@ import styled from 'styled-components'
 
 import { LocaleText, UIText } from './';
 import { formatChallengeTitle } from '../helpers';
+import { breakpoints } from '../config/globalStyles';
 
 export class Challenges extends React.Component {
-  constructor() {
-    super()
-    this.state = {}
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      offsets: this.props.data.challenges.map(()=>{
+        return {top: Math.random() * 40 - 20, left: Math.random() * 40 - 20}
+      })
+    }
   }
 
   render () {
@@ -15,6 +22,7 @@ export class Challenges extends React.Component {
       <ChallengeButton 
         key={challenge._id}
         onClick={()=>{this.props.navigateToChallenge(challenge._id)}}
+        offset={this.state.offsets[index]}
       >
         <ChallengeButtonNumber>
           <UIText styleKey="challenge-select-title" >{index + 1}</UIText>
@@ -34,23 +42,46 @@ export class Challenges extends React.Component {
       </ChallengeButton>
     ) : null;
 
-    return <div>
+    return <ButtonContainer>
       {challengeButtons}
-    </div>
+    </ButtonContainer>
   }
 }
+
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  padding-top: 8vh;
+  @media (${breakpoints.large}) {
+    padding: 40px;
+    padding-top: 1vh;
+  }
+
+`
 
 const ChallengeButton = styled.div`
   :hover {
     cursor: pointer;
   }
+  min-width: 20%;
+  align-items: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 186px;
-  margin: 20px;
-  float: left;
+
+  margin: 10px;
+  margin-bottom: 20px;
+
+  @media (${breakpoints.large}) {
+    min-width: 20%;
+    margin: 20px;
+    margin-bottom: 4vh;
+  }
+
+  top: ${props=>props.offset.top + "px"};
+  left: ${props=>props.offset.left + "px"};
+  position: relative;
 `
 
 const ChallengeButtonNumber = styled.div`
@@ -58,14 +89,18 @@ const ChallengeButtonNumber = styled.div`
   background-size: contain;
   width: 60px;
   height: 60px;
-  display: flex;
   align-items: center;
   justify-content: center;
+  display: flex;
+  margin-bottom: 5px;
 `
 
 const ChallengeButtonSubtitle = styled.div`
-  display: flex;
   justify-content: center;
+  display: none;
+  @media (${breakpoints.large}) {
+    display: flex;
+  }
 `
 
 

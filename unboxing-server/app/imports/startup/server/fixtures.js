@@ -53,4 +53,18 @@ Meteor.startup(() => {
     Devices.update({_id: server._id}, server, {upsert: true})
   })
 
+  if (Meteor.users.find({ username: 'admin' }).count() == 0) {
+    if(process.env.unboxing_admin_password) {
+      console.log('seeding admin user');
+      Accounts.createUser({
+        username: 'admin',
+        password: process.env.unboxing_admin_password,
+      });  
+    } else {
+      console.log("unboxing_admin_password not set in env")
+    }
+    
+  }
+
+
 });
