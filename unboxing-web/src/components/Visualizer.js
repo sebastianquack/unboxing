@@ -75,6 +75,7 @@ const TracksContainer = styled.ol`
 const Track = styled.li`
   display: flex;
   flex: 1;
+  max-height: 3vh;
 `
 
 const Instrument = styled(UIText)`
