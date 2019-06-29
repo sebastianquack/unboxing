@@ -153,7 +153,7 @@ export class UIText extends React.Component {
   }
 
   render() {
-    let {styleKey, color, style, children} = this.props
+    let {styleKey, color, style, children, className} = this.props
     
     const baseStyleString = baseTextStyles[styleKey] || baseTextStyles.default
     const largeStyleString = largeTextStyles[styleKey]
@@ -166,6 +166,7 @@ export class UIText extends React.Component {
     return <Text 
       baseStyle={baseStyleString} 
       largeStyle={largeStyleString} 
+      className={className}
       style={style}>
         { text }
       </Text>
@@ -176,6 +177,7 @@ UIText.propTypes = {
   styleKey: PropTypes.oneOf(Object.keys(baseTextStyles)), // one of the above styles
   color: PropTypes.string, // custom color
   style: PropTypes.object, // provide custom style
+  className: PropTypes.string
 };
 
 const Text = styled.span`

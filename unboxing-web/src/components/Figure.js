@@ -95,7 +95,7 @@ const inactivePlayAnim = keyframes`
 const Container = styled.span`
   display: block;
   position: absolute;
-  filter: ${ props => props.active ? "none" : "greyscale(0%)" };
+  filter: ${ props => props.active ? "none" : "greyscale(0%), blur(20%)" };
   opacity: ${ props => props.active ? 1 : ( props.action === "play" ? 0.1 : 0 ) };
   /*animation: ${ props => props.active ? "none" : css`${ inactivePlayAnim } ${ 1 }s linear infinite` };*/
   left: ${ props => props.xPosPercentage }%;
@@ -138,6 +138,7 @@ const InstrumentImg = styled.img`
   height: auto;
   position: absolute;
   bottom: 22%;
+  opacity: 0.75;
   ${ props => (props.direction === "left" ? "right" : "left") + ": " + (props.direction === "center" ? "17" : "36" ) + "%"};
 `
 

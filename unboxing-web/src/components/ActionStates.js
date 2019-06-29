@@ -39,7 +39,7 @@ const ActionStates = ReactAnimationFrame(class extends React.Component {
     })
     if (changed) {
       this.setState({trackStates})
-      console.log(trackStates)
+      // console.log(trackStates)
     }
   } 
 
@@ -53,14 +53,7 @@ const ActionStates = ReactAnimationFrame(class extends React.Component {
       action: this.props.playbackControlStatus === "playing" ? this.state.trackStates[index] : "idle"
     }))
 
-    console.log("render")
-    
-    return React.Children.map(children, child => {
-      return React.cloneElement(child, {
-        ...other,
-        tracks: tracksWithActionStates
-      });
-    });
+    return this.props.render(tracksWithActionStates)
   }
 })
 

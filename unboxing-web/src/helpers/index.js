@@ -34,10 +34,12 @@ export function assembleTrackList(challenge, filesUrl) {
   trackNames.forEach((trackName)=>{
     for(let i = 0; i < challenge.sequence.items.length; i++) {
       if(challenge.sequence.items[i].track === trackName) {
+        const items = challenge.sequence.items.filter( item => item.track === trackName.substr(5))
         result.push({
           trackName: trackName,
           file: filesUrl + challenge.sequence.items[i].path,
-          events: assembleTrackEvents(challenge.sequence.items.filter( item => item.track === trackName.substr(5)))
+          events: assembleTrackEvents(items),
+          items
         })
         break;
       }

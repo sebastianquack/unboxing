@@ -7,7 +7,8 @@ import {
   TrackSelector,
   Stage,
   ChallengeInfosAndVideos,
-  ActionStates
+  ActionStates,
+  Visualizer
 } from './'
 import { breakpoints } from '../config/globalStyles';
 import { assembleTrackList } from '../helpers';
@@ -79,20 +80,28 @@ export class Challenge extends React.Component {
         />
       </FixedAtBottom>
 
-      <VisualizerContainer />
-
-      <StageContainer>
-        <ActionStates
+      <ActionStates
+        playbackControlStatus={this.props.playbackControlStatus}
+        sequenceStartedAt={this.state.sequenceStartedAt}
+        tracks={this.tracks}
+        render={ tracksWithActionStates => [
+        <VisualizerContainer key="visu">
+          <Visualizer
+            tracks={tracksWithActionStates}
+            duration={this.props.currentChallenge.sequence.custom_duration || this.props.currentChallenge.sequence.duration}
             playbackControlStatus={this.props.playbackControlStatus}
-            sequenceStartedAt={this.state.sequenceStartedAt}
-            tracks={this.tracks}
-          >
-          <Stage 
-            activeTracks={this.state.activeTracks} 
-            bpm={this.props.currentChallenge.sequence.bpm}
+            sequenceStartedAt={this.state.sequenceStartedAt}            
           />
-        </ActionStates>
-      </StageContainer>
+        </VisualizerContainer>,
+        <StageContainer key="stage">
+            <Stage 
+              tracks={tracksWithActionStates}
+              activeTracks={this.state.activeTracks} 
+              bpm={this.props.currentChallenge.sequence.bpm}
+            />
+          </StageContainer>
+        ]}
+        />
 
     </Container>
   }
@@ -107,6 +116,7 @@ const Container = styled.div`
 const VisualizerContainer = styled.div`
   /*background-color: rgba(0,255,0,0.5);*/
   flex: 0.5;
+  z-index: -1 ;
 `
 
 const StageContainer = styled.div`

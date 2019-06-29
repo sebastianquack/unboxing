@@ -1,5 +1,5 @@
 #!/bin/bash
-@echo off  
+#@echo off  
 set IMAGE=%1  
 set SUFFIX=%2  
 convert %IMAGE%.%SUFFIX% ( +clone -fx p{0,0} ) -compose Difference -composite -modulate 100,0 -alpha off  %IMAGE%_difference.png  
