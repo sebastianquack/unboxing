@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 
 import { LocaleText, UIText } from './';
 import { loadInstruments } from '../helpers';
@@ -10,9 +10,23 @@ const instruments = loadInstruments();
 export class Visualizer extends React.PureComponent {
   constructor() {
     super()
+    this.state={
+      relativePositionInSequence: 0,
+      animate: false,
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.playbackControlStatus === "playing" && this.props.sequenceStartedAt !== prevProps.sequenceStartedAt) {
+      const now = Date.now()
+      const relativePositionInSequence = (now - this.props.sequenceStartedAt) / this.props.duration
+      console.log("relPos", relativePositionInSequence, this.props.sequenceStartedAt, this.props.duration)
+      this.setState({ relativePositionInSequence })
+    }
   }
 
   render() {
+    //console.log(this.state)
     return <Container> 
       <TracksContainer> 
       { this.props.tracks.map( track => (
@@ -36,6 +50,8 @@ export class Visualizer extends React.PureComponent {
       </TracksContainer>
       <Cursor 
         show={this.props.playbackControlStatus==="playing"}
+        relativePosition={this.state.relativePositionInSequence}
+        animationDuration={this.props.duration * (1-this.state.relativePositionInSequence)}
       />
     </Container>
   }
@@ -59,8 +75,6 @@ const TracksContainer = styled.ol`
 const Track = styled.li`
   display: flex;
   flex: 1;
-  padding: 0.5vh 0;
-  box-sizing: border-width;
 `
 
 const Instrument = styled(UIText)`
@@ -74,6 +88,7 @@ const Instrument = styled(UIText)`
 const ItemsTrack = styled.ol`
   flex:1;
   border: solid 0 rgba(255,255,255,0.4);
+  margin: 0.5vh 0;
   position: relative;
   border-top-width: 1px;
   border-bottom-width: 1px;
@@ -82,7 +97,7 @@ const ItemsTrack = styled.ol`
   }*/
 `
 const Item = styled.li`
-  border-radius: 4px;
+  border-radius: 3px;
   position: absolute;
   border: solid white 1px;
   height: 100%;
@@ -96,6 +111,16 @@ const Cursor = styled.div`
   height: 100%;
   background-color: ${ colors.turquoise };
   position: absolute;
-  left: ${ trackHeaderWidth };
+  left: 0;
+  animation: ${props => animationBuilder(props.relativePosition)} ${props => props.animationDuration}ms linear 1;
   top:0;
 `
+
+const animationBuilder = function(relativeStartPosition) {return keyframes`
+  0% {
+    left: calc( ${ trackHeaderWidth } + ${ 100 * relativeStartPosition }% );
+  }
+  100% {
+    left: 100%;
+  }
+`}

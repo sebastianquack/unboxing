@@ -196,7 +196,10 @@ export class MultiChannelAudioPlayer extends React.Component {
     if(index == 0) {
       sampleSource.onended = () => {
         console.log("ended");
-        this.props.updatePlaybackControlStatus("ready");
+        // if stopping because the files ends
+        if (this.props.playbackControlStatus === "playing") {
+          this.props.updatePlaybackControlStatus("ready");
+        }
       }
     }
     

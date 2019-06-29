@@ -44,7 +44,7 @@ export class Challenge extends React.Component {
 
   updateSequenceStartedAt(sequenceStartedAt) {
     this.setState({sequenceStartedAt})
-    // console.log("sequence started at " + sequenceStartedAt + ", " + (Date.now()-sequenceStartedAt)/1000 + " seconds ago" )
+    console.log("sequence started at " + sequenceStartedAt + ", " + (Date.now()-sequenceStartedAt)/1000 + " seconds ago" )
   }
 
   populateStage() {
