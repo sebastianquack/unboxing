@@ -92,10 +92,15 @@ const EmptyInfo = styled.div`
   margin: auto;
   width: 50%;
   text-align: center;
-  padding-top: 10%;
-  :hover {cursor: pointer};
-  z-index: 50;
-  position: relative;
+  margin-left: 25%;
+  margin-right: 25%;
+  top: 50%;
+  transform: translateY(-50%);
+  :hover * {cursor: pointer};
+  :hover * {color: white};
+  * {transition: color 0.2s};
+  z-index: 250;
+  position: absolute;
 `
 
 const FiguresContainer = styled.div`

@@ -7,15 +7,25 @@ import { breakpoints } from '../config/globalStyles'
 
 const imgPaths = {
   idle: {
-    left:   '/images/figurLinks.png',
-    right:  '/images/figurRechts.png',
-    center: '/images/figurFrontal.png'
+    left:    '/images/gifs/idle_right.gif',
+    right:   '/images/gifs/idle_left.gif',
+    center:  '/images/gifs/idle_front.gif',
   },
   play: {
-    left:   '/images/figurLinks.png',
-    right:  '/images/figurRechts.png',
-    center: '/images/figurFrontal.png'
-  }
+    left:    '/images/gifs/play_right.gif',
+    right:   '/images/gifs/play_left.gif',
+    center:  '/images/gifs/play_front.gif',
+  },
+  up: {
+    left:    '/images/gifs/up_right.gif',
+    right:   '/images/gifs/up_left.gif',
+    center:  '/images/gifs/up_front.gif',
+  },
+  down: {
+    left:    '/images/gifs/down_right.gif',
+    right:   '/images/gifs/down_left.gif',
+    center:  '/images/gifs/down_front.gif',
+  }    
 } 
 
 const Figure =  withLanguage(class extends React.PureComponent {
@@ -35,7 +45,8 @@ const Figure =  withLanguage(class extends React.PureComponent {
     const xPosPercentage = xPosToPercentage(xPos)
     const yPosPercentage = yPosToPercentage(yPos)
     const src = imgPaths[this.props.action || "idle"][direction]
-    return <Container 
+    return [<Container 
+        key="1"
         xPosPercentage={xPosPercentage} 
         yPosPercentage={yPosPercentage}
         active={this.props.active}
@@ -54,7 +65,8 @@ const Figure =  withLanguage(class extends React.PureComponent {
           alt={localeText(instrument,"name", this.props.language)}
           direction={direction}
         />
-      </Container>
+      </Container>,<PositionalMarker key="2" xPosPercentage={xPosPercentage} 
+        yPosPercentage={yPosPercentage} />]
   }
 })
 
@@ -128,7 +140,7 @@ const Img = styled.img`
   max-width: inherit;
   height: auto;
   /*filter:  ${ props => props.action === "idle" ? "grayscale(50%)" : "none" };*/
-  animation: ${ props => props.action === "idle" || !props.active ? "none" : css`${ playAnim } ${ 120 / props.bpm }s linear infinite` };
+  /*animation: ${ props => props.action === "idle" || !props.active ? "none" : css`${ playAnim } ${ 120 / props.bpm }s linear infinite` };*/
   /*transition: translate 0.2s;*/
 `
 
@@ -137,9 +149,22 @@ const InstrumentImg = styled.img`
   width: 50%;
   height: auto;
   position: absolute;
-  bottom: 22%;
+  bottom: 20%;
   opacity: 0.75;
-  ${ props => (props.direction === "left" ? "right" : "left") + ": " + (props.direction === "center" ? "17" : "36" ) + "%"};
+  ${ props => (props.direction === "left" ? "right" : "left") + ": " + (props.direction === "center" ? "25" : "50" ) + "%"};
+`
+
+const PositionalMarker = styled.div`
+  display: block;
+  position: absolute;
+  left: ${ props => props.xPosPercentage }%;
+  bottom: ${ props => props.yPosPercentage  }%;
+  z-index: ${ props => 99-Math.floor(props.yPosPercentage) };
+  width: 3%;
+  height: 4%;
+  background-color: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  transform: translateX(-50%) translateY(-100%);
 `
 
 const xPosToPercentage = function(xPos) {
