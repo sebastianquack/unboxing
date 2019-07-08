@@ -119,6 +119,7 @@ const VideoThumbs = styled.div`
 
 const VideoThumb = styled.img`
   width: 150px;
+  height: 93px;
   margin-left: 10px;
   :hover {
     cursor: pointer;
