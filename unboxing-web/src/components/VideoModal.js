@@ -30,7 +30,7 @@ const Container = styled.div`
   width: 100vw;
   height: 100vh;
   background-color: rgb(0,0,0,0.9);
-  z-index: 100;
+  z-index: 500;
   display: flex;
   align-items: center;
   justify-content: center;
