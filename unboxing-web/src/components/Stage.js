@@ -70,13 +70,13 @@ export class Stage extends React.PureComponent {
       />
     );
     return <Container>
-      {this.props.activeTracks.filter((t)=>t).length == 0 && 
+      {this.props.activeTracks.filter((t)=>t).length == 0 ? 
       <EmptyInfo onClick={this.props.populateStage}>
         <UIText styleKey="empty-stage"><LocaleText stringsKey="empty-stage"/></UIText>
-      </EmptyInfo>}
+      </EmptyInfo> :
       <FiguresContainer onClick={this.stageClick} ref={this.stageRef}>
         { figures }
-      </FiguresContainer>
+      </FiguresContainer>}
     </Container>
   }
 }
