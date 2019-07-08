@@ -3,7 +3,7 @@ import styled, { keyframes, css } from 'styled-components';
 import PropTypes from 'prop-types';
 
 import { withLanguage, localeText } from './'
-import { breakpoints } from '../config/globalStyles'
+import { breakpoints, colors } from '../config/globalStyles'
 
 const imgPaths = {
   idle: {
@@ -65,8 +65,14 @@ const Figure =  withLanguage(class extends React.PureComponent {
           alt={localeText(instrument,"name", this.props.language)}
           direction={direction}
         />
-      </Container>,<PositionalMarker key="2" xPosPercentage={xPosPercentage} 
-        yPosPercentage={yPosPercentage} />]
+      </Container>,
+      <PositionalMarker 
+        key="2" 
+        xPosPercentage={xPosPercentage} 
+        yPosPercentage={yPosPercentage}
+        active={this.props.action === "play"}
+        hasFigure={this.props.active}
+      />]
   }
 })
 
@@ -114,7 +120,7 @@ const Container = styled.span`
   bottom: ${ props => props.yPosPercentage  }%;
   z-index: ${ props => 100-Math.floor(props.yPosPercentage) };
   transform: translateX(-50%);
-  transition: opacity 0.3s 0.1s, transform 0.5s;
+  transition: opacity 0.3s, transform 0.5s;
   width: calc(50px + 10vw);
   max-width: 14vw;
   @media (${breakpoints.large}) {
@@ -162,9 +168,11 @@ const PositionalMarker = styled.div`
   z-index: ${ props => 99-Math.floor(props.yPosPercentage) };
   width: 3%;
   height: 4%;
-  background-color: rgba(255,255,255,0.1);
+  background-color: ${ props => props.active ? colors.person : "white" };
+  opacity: ${ props => props.hasFigure ? 0 : (props.active ? 0.9 : 0.2) };
   border-radius: 50%;
   transform: translateX(-50%) translateY(-100%);
+  transition: background-color 0.5s, opacity  0.3s;
 `
 
 const xPosToPercentage = function(xPos) {
