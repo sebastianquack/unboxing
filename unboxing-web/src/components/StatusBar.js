@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components'
 
 import { UIText, LocaleText, LanguageSelector, Button } from './'
+import { breakpoints } from '../config/globalStyles'
 
 export class StatusBar extends React.Component {
   constructor() {
@@ -34,26 +35,26 @@ export class StatusBar extends React.Component {
         }
       </Left>
       <Center>
-        {this.props.navigationState === "challenge" && <div>
-          <UIText styleKey="statusbar-title">{title}</UIText>
-          <UIText styleKey="statusbar-subtitle">{subtitle}</UIText>
-        </div>}
+        {this.props.navigationState === "challenge" && <UIText styleKey="statusbar-title">{title}</UIText>}
+        {this.props.navigationState === "challenge" && <UIText styleKey="statusbar-subtitle">{subtitle}</UIText>} 
+          
+        
         {this.props.navigationState === "challenges" && 
           <UIText styleKey="statusbar-title"><LocaleText stringsKey="main-title"/></UIText>
         }
       </Center>
       <Right>
-        <LanguageSelector toggleLanguage= {this.props.toggleLanguage}/>
+        {this.props.navigationState !== "challenge" && <LanguageSelector toggleLanguage= {this.props.toggleLanguage}/>}
         {this.props.navigationState === "challenge" ?
           <Button
             type={this.props.challengeInfoOpen ? "up" : "down"}
             onClick={this.props.toggleChallengeInfo}
           />
-          :
-          <Button
+          : null
+          /*<Button
             type={"close"}
             onClick={()=>{if(this.props.data.content.exitUrl) window.location=this.props.data.content.exitUrl}}
-          />
+          />*/
         }
 
       </Right>
@@ -73,6 +74,19 @@ const Center = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+
+  *:first-child  {
+    margin-right: 5px;
+  };
+
+
+  @media (${breakpoints.large}) {
+    * {
+      white-space: nowrap;
+    }
+  }
+
+
 `
 const Right = styled.div`
 `

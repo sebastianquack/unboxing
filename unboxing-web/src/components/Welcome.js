@@ -56,6 +56,7 @@ const WithLine = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
+  width: 300px;
   &::after {
     content: "";
     background-color: ${ colors.turquoise };

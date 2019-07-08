@@ -159,7 +159,6 @@ const MenuItem = styled.li`
 const MenuContent = styled.div`
   display: flex;
   flex: 1;
-  overflow-y: scroll;
   flex-direction: column;
   margin-left: 10px;
   border-bottom: ${props => props.last ? "none" : "1px solid #fff;"};
