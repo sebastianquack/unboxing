@@ -56,7 +56,7 @@ const Shadow = styled.div`
   height: 100%;
   left: 0%;  
   top: -50%;
-  background: radial-gradient(black 25%, transparent);
+  background: radial-gradient(black 40%, transparent);
 `
 
 const Container = styled.div`
