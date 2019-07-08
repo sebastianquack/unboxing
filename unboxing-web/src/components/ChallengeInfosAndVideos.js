@@ -32,6 +32,7 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
 
     return (
       <Container>
+        <Shadow/>
         <InfoIcon src="/images/triangle.png"/>
         <InfoContainer>
           <InfoItem><UIText styleKey="challenge-info-header">{header}</UIText></InfoItem>
@@ -49,11 +50,32 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
 
 export { ChallengeInfosAndVideos }
 
-const Container = styled.div`
-  /*background-color: rgba(0,255,255,0.5);*/
-  width: 100%;
+const Shadow = styled.div`
+  position: fixed;
+  width: 200%;
   height: 100%;
+  left: 0%;  
+  top: -50%;
+  background: radial-gradient(black 25%, transparent);
 `
+
+const Container = styled.div`
+  width: 100%;
+  position: absolute;
+  right: 0;
+  padding-bottom: 20px;
+  padding-left: 20px;
+  @media (${breakpoints.large}) {
+    width: 50%;
+  }
+
+
+  /*
+  mask-mode: luminance;
+  mask-image: linear-gradient(to left, white 66%, rgb(1,1,1,0.5), transparent);
+  background-image: linear-gradient(to bottom, black 66%, rgb(0,0,0,0.5), transparent);*/
+`
+
 
 const InfoIcon = styled.img`
   position: absolute;
