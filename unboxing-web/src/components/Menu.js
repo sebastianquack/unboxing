@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import {Button, LocaleText, UIText} from './';
-import { breakpoints } from '../config/globalStyles'
+import { colors, breakpoints } from '../config/globalStyles'
 
 export class Menu extends React.Component {
 
@@ -35,7 +35,7 @@ export class Menu extends React.Component {
         <MenuContent last={index == this.props.menuData.length - 1}>
           <UIText styleKey={this.state.itemsOpen[index] ? "menu-section-open" : "menu-section"}><LocaleText object={item} field="title"/></UIText>
           {this.state.itemsOpen[index] && 
-            <UIText styleKey="menu-text"><LocaleText object={item} field="content"/></UIText>
+            <UIText styleKey="menu-text"><LocaleText markdown object={item} field="content"/></UIText>
           }
         </MenuContent>
       </MenuItem>
@@ -49,11 +49,13 @@ export class Menu extends React.Component {
               onClick={this.props.onClose}
         />
       </TopRight>
+      <ScrollContainer>
       <MenuBody>
         <UIText styleKey="menu-title"><LocaleText stringsKey="main-title"/></UIText>
         <MenuDescription><UIText styleKey="menu-description"><LocaleText stringsKey="menu-text"/></UIText></MenuDescription>
         <ul>{menuItems}</ul>
       </MenuBody>
+      </ScrollContainer>
       <Curve />
     </Container>
     </Dark>
@@ -105,13 +107,21 @@ const TopRight = styled.div`
   top: 0px;
   right: 0px;
   padding: 25px;
-  z-index: 110;
+  z-index: 150;
   @media (${breakpoints.large}) {
     padding: 25px;
   }  
 `
 
+
+const ScrollContainer = styled.div`
+  height: 100vh;
+  overflow-y: auto;
+  direction: rtl;
+`
+
 const MenuBody = styled.div`
+  direction: ltr;
   margin-top: 50px;
   position: relative;
   z-index: 110;
@@ -145,11 +155,17 @@ const MenuItem = styled.li`
   margin-bottom: 7px;
 `
 
+
 const MenuContent = styled.div`
   display: flex;
+  flex: 1;
+  overflow-y: scroll;
   flex-direction: column;
   margin-left: 10px;
   border-bottom: ${props => props.last ? "none" : "1px solid #fff;"};
+  word-break: break-word;
+  a { color: ${ colors.turquoise }; }
+  a:hover { color: #fff; }
 `
 
 
