@@ -38,15 +38,16 @@ export class DataLoader extends React.Component {
 
       const currentChallenge = this.props.currentChallengeId && this.state.data ? this.state.data.challenges.find( c => c._id === this.props.currentChallengeId ) : undefined
 
-      const childrenWithProps = React.Children.map(this.props.children, child=>
-        React.cloneElement(child, {...this.props, 
-          data: this.state.data,
-          currentChallenge
-        })
-      )
+      let {children, render, ...other} = this.props
+
+      const newProps = {
+        data: this.state.data,
+        currentChallenge,
+        ...other
+      }
       
       return (
-        <DataContext.Provider value={this.state.data}>{childrenWithProps}</DataContext.Provider>
+        <DataContext.Provider value={this.state.data}>{render(newProps)}</DataContext.Provider>
       )
     }
 }

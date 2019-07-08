@@ -19,9 +19,12 @@ const getBackgroundGradient = (navigationState, controlStatus) => {
   }
 }
 
-export class BaseContainer extends React.Component {
+export class BaseContainer extends React.PureComponent {
 
   render() {
+
+    console.log("render base")
+
     return (
       <Container onClick={()=>{if(this.props.menuOpen) this.props.toggleMenu()}}>
         {this.props.videoModalUrl &&

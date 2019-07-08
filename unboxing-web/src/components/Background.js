@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 import { breakpoints, colors } from '../config/globalStyles'
 
-export class Background extends React.Component {
+export class Background extends React.PureComponent {
   constructor() {
     super()
     this.state = {}
@@ -38,7 +38,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   z-index: -1;
-  * {transition: all 1s;};
+  * {transition: all 2s;};
 `
 
 const BackgroundVideo = styled.video`

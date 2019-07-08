@@ -33,13 +33,6 @@ export class TrackSelector extends React.PureComponent {
   constructor() {
     super()
     this.state = {}
-    this.handleTrackToggle = this.handleTrackToggle.bind(this);
-  }
-
-  handleTrackToggle(index) {
-    let activeTracks = this.props.activeTracks;
-    activeTracks[index] = !activeTracks[index];
-    this.props.updateActiveTracks(activeTracks);
   }
 
   render () {  
@@ -48,7 +41,7 @@ export class TrackSelector extends React.PureComponent {
         key={index}
         trackName={track.trackName.replace("full-", "")}
         active={this.props.activeTracks[index]}
-        onToggle={()=>this.handleTrackToggle(index)} 
+        onToggle={()=>this.props.toggleTrack(index)} 
       />
     );
     

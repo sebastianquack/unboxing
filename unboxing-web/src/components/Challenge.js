@@ -15,7 +15,7 @@ import { assembleTrackList } from '../helpers';
 
 const filesUrl = "http://unboxing.sebquack.perseus.uberspace.de/files"
 
-export class Challenge extends React.Component {
+export class Challenge extends React.PureComponent {
   constructor(props) {
     super(props)
   
@@ -33,6 +33,7 @@ export class Challenge extends React.Component {
     this.updateSequenceStartedAt = this.updateSequenceStartedAt.bind(this)
     this.populateStage = this.populateStage.bind(this)
     this.toggleTrack = this.toggleTrack.bind(this)
+    this.renderActionStuff = this.renderActionStuff.bind(this)
 
     this.updatePlaybackControlStatus("loading");
   }
@@ -55,10 +56,29 @@ export class Challenge extends React.Component {
   }
 
   toggleTrack(index) {
-    let activeTracks = this.state.activeTracks;
-    activeTracks[index] = !activeTracks[index];
-    this.setState({activeTracks: activeTracks});
+    const activeTracks = this.state.activeTracks.map( (item,i) => i === index ? !item : item );
+    // console.log(index,this.state.activeTracks, activeTracks, Object.is(this.state.activeTracks, activeTracks));
+    this.setState({activeTracks});
   }
+
+  renderActionStuff = tracksWithActionStates => [
+    <VisualizerContainer key="visu">
+      <Visualizer
+        tracks={tracksWithActionStates}
+        duration={this.props.currentChallenge.sequence.custom_duration || this.props.currentChallenge.sequence.duration}
+        playbackControlStatus={this.props.playbackControlStatus}
+        sequenceStartedAt={this.state.sequenceStartedAt}
+      />
+    </VisualizerContainer>,
+    <StageContainer key="stage">
+      <Stage 
+        tracks={tracksWithActionStates}
+        activeTracks={this.state.activeTracks} 
+        bpm={this.props.currentChallenge.sequence.bpm}
+        toggleTrack={this.toggleTrack}
+      />
+    </StageContainer>
+    ]
 
   render () {
 
@@ -92,7 +112,7 @@ export class Challenge extends React.Component {
         <TrackSelector
           tracks={this.tracks}
           activeTracks={this.state.activeTracks}
-          updateActiveTracks={(activeTracks)=>this.setState({activeTracks: [...activeTracks]})} // immutable update for PureComponent
+          toggleTrack={this.toggleTrack}
         />
       </FixedAtBottom>
 
@@ -100,24 +120,8 @@ export class Challenge extends React.Component {
         playbackControlStatus={this.props.playbackControlStatus}
         sequenceStartedAt={this.state.sequenceStartedAt}
         tracks={this.tracks}
-        render={ tracksWithActionStates => [
-        <VisualizerContainer key="visu">
-          <Visualizer
-            tracks={tracksWithActionStates}
-            duration={this.props.currentChallenge.sequence.custom_duration || this.props.currentChallenge.sequence.duration}
-            playbackControlStatus={this.props.playbackControlStatus}
-            sequenceStartedAt={this.state.sequenceStartedAt}
-          />
-        </VisualizerContainer>,
-        <StageContainer key="stage">
-          <Stage 
-            tracks={tracksWithActionStates}
-            activeTracks={this.state.activeTracks} 
-            bpm={this.props.currentChallenge.sequence.bpm}
-            toggleTrack={this.toggleTrack}
-          />
-        </StageContainer>
-        ]}
+        activeTracks={this.state.activeTracks} 
+        render={ this.renderActionStuff }
         />
 
     </Container>

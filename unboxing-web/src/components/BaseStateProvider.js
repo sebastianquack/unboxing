@@ -71,30 +71,31 @@ class BaseStateProvider extends React.Component {
 
   render () {
 
-    const newKids = React.Children.map(this.props.children, child => {
-      return React.cloneElement(child, {
-        navigationState: this.state.navigationState,
-        currentChallengeId: this.state.currentChallengeId,
-        navigateTo: this.handleNavigation,
-        navigateToChallenge: this.navigateToChallenge,
-        language: this.state.language,
-        toggleLanguage: this.toggleLanguage,
-        toggleChallengeInfo: this.toggleChallengeInfo,
-        challengeInfoOpen: this.state.challengeInfoOpen,
-        setVideoModalUrl: (url)=>{
-          console.log(url);
-          this.setState({videoModalUrl: url})
-        },
-        videoModalUrl: this.state.videoModalUrl,
-        menuOpen: this.state.menuOpen,
-        toggleMenu: this.toggleMenu,
-        playbackControlStatus: this.state.playbackControlStatus,
-        updatePlaybackControlStatus: (s)=>{this.setState({playbackControlStatus: s})}
-      });
-    });
+    let {children, render, ...other} = this.props
+
+    const newProps = {
+      navigationState: this.state.navigationState,
+      currentChallengeId: this.state.currentChallengeId,
+      navigateTo: this.handleNavigation,
+      navigateToChallenge: this.navigateToChallenge,
+      language: this.state.language,
+      toggleLanguage: this.toggleLanguage,
+      toggleChallengeInfo: this.toggleChallengeInfo,
+      challengeInfoOpen: this.state.challengeInfoOpen,
+      setVideoModalUrl: (url)=>{
+        console.log(url);
+        this.setState({videoModalUrl: url})
+      },
+      videoModalUrl: this.state.videoModalUrl,
+      menuOpen: this.state.menuOpen,
+      toggleMenu: this.toggleMenu,
+      playbackControlStatus: this.state.playbackControlStatus,
+      updatePlaybackControlStatus: (s)=>{this.setState({playbackControlStatus: s})},
+      ...other
+    }
 
     return <LanguageContext.Provider value={this.state.language}>
-      { newKids }
+      { render(newProps) }
     </LanguageContext.Provider>
   }
 }

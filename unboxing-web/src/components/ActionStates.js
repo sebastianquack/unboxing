@@ -2,19 +2,29 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import ReactAnimationFrame from 'react-animation-frame';
 
-const ActionStates = ReactAnimationFrame(class extends React.Component { 
+const ActionStates = ReactAnimationFrame(class extends React.PureComponent { 
   constructor(props) {
     super(props);
     this.state = {
-      trackStates: []
+      trackStates: [],
+      tracksWithActionStates: props.tracks
     };
     this.onAnimationFrame = this.onAnimationFrame.bind(this)
+    this.trackWithActionStates = this.trackWithActionStates.bind(this)
   }
 
   componentDidMount() {
     this.setState({
       trackStates: this.props.tracks.map( track => "idle" )
     })
+  }
+
+  componentDidUpdate(prevProps) {
+    // console.log(Object.is(this.props.activeTracks, prevProps.activeTracks)) // <-- use this to probe for different objects that look the same
+  }
+
+  componentWillReceiveProps(nextProps) {
+    // console.log("will", Object.is(this.props.activeTracks, nextProps.activeTracks))
   }
 
   onAnimationFrame(time, lastTime) {
@@ -38,20 +48,28 @@ const ActionStates = ReactAnimationFrame(class extends React.Component {
       }        
     })
     if (changed) {
-      this.setState({trackStates})
+      this.setState({
+        trackStates,
+        tracksWithActionStates: this.props.tracks.map(this.trackWithActionStates)
+      })
       // console.log(trackStates)
     }
   } 
 
   // TODO this.props.endAnimation();
 
+  trackWithActionStates(track, index) {
+    return {
+    ...track,
+    action: this.props.playbackControlStatus === "playing" ? this.state.trackStates[index] : "idle"
+  }}
+
   render() {
+    console.log("render action")
+
     let {sequenceStartedAt, tracks, children, ...other} = this.props
 
-    const tracksWithActionStates = tracks.map( (track, index) => ({
-      ...track,
-      action: this.props.playbackControlStatus === "playing" ? this.state.trackStates[index] : "idle"
-    }))
+    const tracksWithActionStates = this.state.tracksWithActionStates
 
     return this.props.render(tracksWithActionStates)
   }

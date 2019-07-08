@@ -17,6 +17,7 @@ export class Visualizer extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
+    // console.log("visu is tracks", this.props.tracks, Object.is(this.props.tracks, prevProps.tracks)) // <-- use this to probe for different objects that look the same
     if (this.props.playbackControlStatus === "playing" && this.props.sequenceStartedAt !== prevProps.sequenceStartedAt) {
       const now = Date.now()
       const relativePositionInSequence = (now - this.props.sequenceStartedAt) / this.props.duration
@@ -26,7 +27,7 @@ export class Visualizer extends React.PureComponent {
   }
 
   render() {
-    //console.log(this.state)
+    console.log("render visu")
     return <Container> 
       <TracksContainer> 
       { this.props.tracks.map( track => (

@@ -4,13 +4,17 @@ import './App.css';
 
 import {BaseContainer, BaseStateProvider, DataLoader} from './components'
 
+function DataContent(props) {
+  return <BaseContainer {...props} />
+}
+
+function BaseContent(props) {
+  return <DataLoader {...props} render={DataContent} />
+}
+
 function App() {
   return (
-    <BaseStateProvider>
-      <DataLoader>
-        <BaseContainer />
-      </DataLoader>
-    </BaseStateProvider>
+    <BaseStateProvider render={BaseContent} />
   )
 }
 
