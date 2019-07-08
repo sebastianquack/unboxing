@@ -9,6 +9,29 @@ const sidePadding = '10vw';
 const topPadding = '15%';
 const bottomPadding = '0px';
 
+const imgPaths = {
+  idle: {
+    left:    '/images/gifs/idle_right.gif',
+    right:   '/images/gifs/idle_left.gif',
+    center:  '/images/gifs/idle_front.gif',
+  },
+  play: {
+    left:    '/images/gifs/play_right.gif',
+    right:   '/images/gifs/play_left.gif',
+    center:  '/images/gifs/play_front.gif',
+  },
+  up: {
+    left:    '/images/gifs/up_right.gif',
+    right:   '/images/gifs/up_left.gif',
+    center:  '/images/gifs/up_front.gif',
+  },
+  down: {
+    left:    '/images/gifs/down_right.gif',
+    right:   '/images/gifs/down_left.gif',
+    center:  '/images/gifs/down_front.gif',
+  }    
+}
+
 const instruments = loadInstruments();
 
 export class Stage extends React.PureComponent {
@@ -48,6 +71,15 @@ export class Stage extends React.PureComponent {
   
   } 
 
+  renderImagePreload() {
+    return <ImagePreloadContainer key="preload">
+      { Object.values(imgPaths.up).map( src => <img key={src} src={src} />) }
+      { Object.values(imgPaths.down).map( src => <img key={src} src={src} />) }
+      { Object.values(imgPaths.play).map( src => <img key={src} src={src} />) }
+      { Object.values(imgPaths.idle).map( src => <img key={src} src={src} />) }
+    </ImagePreloadContainer>
+  }
+
   render() {
     console.log("render stage")
 
@@ -67,9 +99,10 @@ export class Stage extends React.PureComponent {
         active={item.active}
         action={item.action}
         bpm={this.props.bpm}
+        imgPaths={imgPaths}
       />
     );
-    return <Container>
+    return [<Container key="container">
       {this.props.activeTracks.filter((t)=>t).length == 0 ? 
       <EmptyInfo onClick={this.props.populateStage}>
         <UIText styleKey="empty-stage"><LocaleText stringsKey="empty-stage"/></UIText>
@@ -77,7 +110,7 @@ export class Stage extends React.PureComponent {
       <FiguresContainer onClick={this.stageClick} ref={this.stageRef}>
         { figures }
       </FiguresContainer>}
-    </Container>
+    </Container>, this.renderImagePreload() ]
   }
 }
 
@@ -114,4 +147,11 @@ const FiguresContainer = styled.div`
   min-height: 50%;
   width: calc(100% - ${sidePadding});
   max-width: calc(100vw - ${sidePadding});
+`
+
+const ImagePreloadContainer = styled.div`
+  z-index:-10;
+  pointer-events: none;
+  position: absolute;
+  img {position: absolute;}
 `

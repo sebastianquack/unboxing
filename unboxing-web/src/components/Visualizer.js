@@ -154,6 +154,7 @@ const Item = styled.li`
   border-radius: 3px;
   position: absolute;
   border: solid white 1px;
+  opacity: 0.9;
   height: 100%;
   left: ${ props => 100 * props.start/props.sequenceDuration }%;
   width: ${ props => 100 * props.duration/props.sequenceDuration }%;
