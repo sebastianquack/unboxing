@@ -72,11 +72,11 @@ export class Stage extends React.PureComponent {
   } 
 
   renderImagePreload() {
-    return <ImagePreloadContainer>
-      { Object.values(imgPaths.up).map( src => <img src={src} />) }
-      { Object.values(imgPaths.down).map( src => <img src={src} />) }
-      { Object.values(imgPaths.play).map( src => <img src={src} />) }
-      { Object.values(imgPaths.idle).map( src => <img src={src} />) }
+    return <ImagePreloadContainer key="preload">
+      { Object.values(imgPaths.up).map( src => <img key={src} src={src} />) }
+      { Object.values(imgPaths.down).map( src => <img key={src} src={src} />) }
+      { Object.values(imgPaths.play).map( src => <img key={src} src={src} />) }
+      { Object.values(imgPaths.idle).map( src => <img key={src} src={src} />) }
     </ImagePreloadContainer>
   }
 

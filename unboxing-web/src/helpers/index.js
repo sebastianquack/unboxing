@@ -59,7 +59,7 @@ export function assembleTrackList(challenge, filesUrl) {
   return result;
 }
 
-const upAnimDurationMs   = 1259 * 0.85
+const upAnimDurationMs   = 1259 * 0.7
 const downAnimDurationMs = 1190 * 0.7
 
 // transform items to a list of state events: "prepare", "play", "idle"...
