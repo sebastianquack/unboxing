@@ -62,6 +62,7 @@ export class HorizontalScrollContainer extends React.Component {
         <ScrollContainer 
             onScroll={this.handleScroll}
             ref="scrollContainer"
+            single={childrenWithProps.length == 1}
           >
           <ScrollContent 
             ref="scrollContent"
@@ -96,6 +97,9 @@ const Container = styled.div`
 
 const ScrollContainer = styled.div`
   /*top: 25px; position: relative; /* hide scrollbar at bottom */
+  
+  justify-content: ${props=>props.single ? "center" : "auto"};
+
   padding-bottom: 25px;
   display: flex;
   flex-direction: row;

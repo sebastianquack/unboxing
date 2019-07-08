@@ -55,7 +55,7 @@ export class Visualizer extends React.PureComponent {
 
           if(track.items.length == compareToTrack.items.length) {
             for(let i = 0; i < track.items.length; i++) {
-              console.log("comaparing items", track.items[i], compareToTrack.items[i]);
+              //console.log("comaparing items", track.items[i], compareToTrack.items[i]);
               if(!(track.items[i].startTime == compareToTrack.items[i].startTime &&
                 track.items[i].duration == compareToTrack.items[i].duration)) {
                 same = false;
