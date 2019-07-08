@@ -77,6 +77,7 @@ const Top = styled.div`
 const Bottom = styled.div`
   flex: 1;
   /*background-color: red;*/
+  overflow-y: scroll;
 `
 
 const GlobalStyle = createGlobalStyle`

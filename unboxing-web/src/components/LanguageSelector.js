@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components'
 
 import { LanguageContext } from './'
+import { breakpoints } from '../config/globalStyles'
 
 export function LanguageSelector(props) {
   return <LanguageContext.Consumer>
@@ -16,9 +17,15 @@ export function LanguageSelector(props) {
 
 const Switcher = styled.img`
   height: 30px;
-  margin-right: 15px;
+  margin: 5px;
+
   :hover {
       cursor: pointer;
     } 
+
+
+  @media (${breakpoints.large}) {
+    margin: 0px;
+  }  
 `
 

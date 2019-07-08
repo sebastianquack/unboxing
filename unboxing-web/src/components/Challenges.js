@@ -53,7 +53,7 @@ const ButtonContainer = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: space-around;
-  padding-top: 8vh;
+  padding-top: 5vh;
   @media (${breakpoints.large}) {
     padding: 40px;
     padding-top: 1vh;
@@ -71,15 +71,15 @@ const ChallengeButton = styled.div`
   flex-direction: column;
 
   margin: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
 
   @media (${breakpoints.large}) {
     min-width: 20%;
     margin: 20px;
     margin-bottom: 4vh;
+    top: ${props=>props.offset.top + "px"};
   }
 
-  top: ${props=>props.offset.top + "px"};
   left: ${props=>props.offset.left + "px"};
   position: relative;
 `
@@ -97,7 +97,7 @@ const ChallengeButtonNumber = styled.div`
 
 const ChallengeButtonSubtitle = styled.div`
   justify-content: center;
-  display: none;
+  
   @media (${breakpoints.large}) {
     display: flex;
   }
