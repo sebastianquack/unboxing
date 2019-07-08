@@ -80,11 +80,7 @@ const Bottom = styled.div`
 `
 
 const GlobalStyle = createGlobalStyle`
-  @font-face {
-    font-family: "DINPro";
-    src: url('/fonts/DINPro.woff') format('woff'),
-    url('/fonts/DINPro.woff2') format('woff2')
-  }
+  /* font-face is in App.js */
 
   :root, #root, body {
     height: 100%;

@@ -49,6 +49,7 @@ export class Stage extends React.PureComponent {
   } 
 
   render() {
+    console.log("render stage")
 
     const tracksInstruments = this.props.tracks.map((track, index)=> ({
       key: index,

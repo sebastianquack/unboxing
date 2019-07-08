@@ -12,6 +12,8 @@ export class Background extends React.PureComponent {
 
 
   render () {
+    console.log("render background")
+
     const {color, flow} = this.props
 
     return <Container >
@@ -38,7 +40,6 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   z-index: -1;
-  * {transition: all 2s;};
 `
 
 const BackgroundVideo = styled.video`
@@ -49,9 +50,10 @@ const BackgroundVideo = styled.video`
 `
 
 const Gradient = styled.div`
+  transition: all 2s;
   background: ${ props => {
-    if (props.color == "active") return "linear-gradient(180deg, rgba(223, 75, 71, 0) -0.56%, #DF4B47 76.62%, #FFCE51 100.67%)";
-    else if (props.color == "passive") return "linear-gradient(180deg, #000000 -0.56%, #13293C 37.73%, #02AA9E 100.67%)";
+    if (props.color === "active") return "linear-gradient(180deg, rgba(223, 75, 71, 0) -0.56%, #DF4B47 76.62%, #FFCE51 100.67%)";
+    else if (props.color === "passive") return "linear-gradient(180deg, #000000 -0.56%, #13293C 37.73%, #02AA9E 100.67%)";
     else return "none" 
   }};
   height: 55%;
