@@ -1,0 +1,7 @@
+/* font-face here avoids flicker */
+
+@font-face {
+  font-family: "DINPro";
+  src: url('/fonts/DINPro.woff') format('woff'),
+  url('/fonts/DINPro.woff2') format('woff2');
+}
