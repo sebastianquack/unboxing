@@ -101,6 +101,8 @@ export function loadInstruments() { return {
   "oboe1": { 
     name_de: "Oboe 1", 
     name_en: "Oboe 1",
+    combinedName_de: "Oboen",
+    combinedName_en: "Oboes",
     sequenceGroup: "oboe1",
     image: '/images/instruments/Oboe.png',    
     order: 2,
@@ -121,6 +123,8 @@ export function loadInstruments() { return {
   "fagott1": { 
     name_de: "Fagott 1", 
     name_en: "Bassoon 1",
+    combinedName_de: "Fagotte",
+    combinedName_en: "Bassoons",
     sequenceGroup: "fagott1",
     image: '/images/instruments/Fagott.png',  
     order: 4,
@@ -141,6 +145,8 @@ export function loadInstruments() { return {
   "horn1": { 
     name_de: "Horn 1",
     name_en: "Horn 1",
+    combinedName_de: "Hörner",
+    combinedName_en: "Horns",
     sequenceGroup: "horn1",
     image: '/images/instruments/Horn.png',    
     order: 6,
@@ -161,6 +167,8 @@ export function loadInstruments() { return {
   "trompete1": { 
     name_de: "Trompete 1",
     name_en: "Trumpet 1",
+    combinedName_de: "Trompeten",
+    combinedName_en: "Trumpets",
     sequenceGroup: "trompete1",
     image: '/images/instruments/Trompete.png',
     order: 8,
@@ -209,8 +217,8 @@ export function loadInstruments() { return {
     yPos: 25,
   },
   "violin1": { 
-    name_de: "Violine 2",
-    name_en: "Violin 2",
+    name_de: "Violine 1",
+    name_en: "Violin 1",
     sequenceGroup: "violin2",
     image: '/images/instruments/Violine.png', 
     order: 16,
@@ -219,6 +227,8 @@ export function loadInstruments() { return {
   "violin1.1": { 
     name_de: "Violine 1",
     name_en: "Violin 1",
+    combinedName_de: "Violinen",
+    combinedName_en: "Violins",
     sequenceGroup: "violin1",
     image: '/images/instruments/Violine.png', 
     order: 12,

@@ -26,14 +26,66 @@ export class Visualizer extends React.PureComponent {
     }
   }
 
+  combinedTracks(tracks) {
+
+    //define which tracks to compare
+    const compare = {
+      "full-oboe1": "full-oboe2",
+      "full-fagott1": "full-fagott2",
+      "full-horn1": "full-horn2",
+      "full-trompete1": "full-trompete2",
+      "full-violin1.1": "full-violin2.1"
+    };
+
+    tracks.forEach((track=>{
+
+      let combined = false;
+
+      // check if we should compare this
+      if(Object.keys(compare).indexOf(track.trackName) > -1) {
+        let compareToTracks = tracks.filter(t => t.trackName == compare[track.trackName]);
+        let compareToTrack = null;
+        if(compareToTracks.length > 0) {
+          compareToTrack = compareToTracks[0];
+        }
+
+        if(compareToTrack) {
+          console.log("comparing", track.trackName, compareToTrack.trackName);
+          let same = true;
+
+          if(track.items.length == compareToTrack.items.length) {
+            for(let i = 0; i < track.items.length; i++) {
+              console.log("comaparing items", track.items[i], compareToTrack.items[i]);
+              if(!(track.items[i].startTime == compareToTrack.items[i].startTime &&
+                track.items[i].duration == compareToTrack.items[i].duration)) {
+                same = false;
+              }
+            }
+          } else {
+            same = false;
+          }
+        
+          //if same, use only one and rename
+          if(same) {
+            compareToTrack.hide = true;  
+            track.combined = true
+          }
+        }
+      }
+    }))
+
+    return tracks
+  }
+
   render() {
     console.log("render visu")
     return <Container> 
       <TracksContainer> 
-      { this.props.tracks.map( track => (
+      { this.combinedTracks(this.props.tracks).map( track => (
+        track.hide ? null :
         <Track key={track.trackName}>
           <Instrument styleKey="visualizer-instrument">
-            <LocaleText object={instruments[track.trackName.replace("full-", "")]} field="name" />
+            <LocaleText object={instruments[track.trackName.replace("full-", "")]} field={track.combined ? "combinedName" : "name"} />
           </Instrument>
           <ItemsTrack>
             { track.items.map( item =>  
