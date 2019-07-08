@@ -49,7 +49,7 @@ export class Challenge extends React.PureComponent {
   }
 
   populateStage() {
-    alert(1)
+    console.log("populate");
     this.setState({
       activeTracks: this.tracks.map(()=>true) 
     })
@@ -76,6 +76,7 @@ export class Challenge extends React.PureComponent {
         activeTracks={this.state.activeTracks} 
         bpm={this.props.currentChallenge.sequence.bpm}
         toggleTrack={this.toggleTrack}
+        populateStage={this.populateStage}
       />
     </StageContainer>
     ]

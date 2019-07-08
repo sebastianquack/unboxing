@@ -50,7 +50,7 @@ export class Visualizer extends React.PureComponent {
         }
 
         if(compareToTrack) {
-          console.log("comparing", track.trackName, compareToTrack.trackName);
+          //console.log("comparing", track.trackName, compareToTrack.trackName);
           let same = true;
 
           if(track.items.length == compareToTrack.items.length) {
