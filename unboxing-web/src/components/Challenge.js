@@ -48,6 +48,7 @@ export class Challenge extends React.Component {
   }
 
   populateStage() {
+    alert(1)
     this.setState({
       activeTracks: this.tracks.map(()=>true) 
     })
