@@ -57,7 +57,7 @@ export class Visualizer extends React.PureComponent {
   }
 }
 
-const trackHeaderWidth = "100px"
+const trackHeaderWidth = "110px"
 
 const Container = styled.div`
   /*background-color: rgba(255,25,255,0.4);*/
@@ -88,7 +88,7 @@ const Instrument = styled(UIText)`
 
 const ItemsTrack = styled.ol`
   flex:1;
-  border: solid 0 rgba(255,255,255,0.4);
+  border: solid 0 rgba(255,255,255,0.2);
   margin: 0.5vh 0;
   position: relative;
   border-top-width: 1px;

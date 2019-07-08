@@ -149,9 +149,9 @@ const InstrumentImg = styled.img`
   width: 50%;
   height: auto;
   position: absolute;
-  bottom: 22%;
+  bottom: 20%;
   opacity: 0.75;
-  ${ props => (props.direction === "left" ? "right" : "left") + ": " + (props.direction === "center" ? "17" : "36" ) + "%"};
+  ${ props => (props.direction === "left" ? "right" : "left") + ": " + (props.direction === "center" ? "25" : "50" ) + "%"};
 `
 
 const PositionalMarker = styled.div`

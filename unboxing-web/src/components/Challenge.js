@@ -134,6 +134,10 @@ const VisualizerContainer = styled.div`
   /*background-color: rgba(0,255,0,0.5);*/
   flex: 0.5;
   z-index: -1 ;
+  padding: 0 25px;
+  @media (${breakpoints.large}) {
+    padding: 0 50px;
+  }  
 `
 
 const StageContainer = styled.div`
