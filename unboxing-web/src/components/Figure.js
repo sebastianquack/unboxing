@@ -5,29 +5,6 @@ import PropTypes from 'prop-types';
 import { withLanguage, localeText } from './'
 import { breakpoints, colors } from '../config/globalStyles'
 
-const imgPaths = {
-  idle: {
-    left:    '/images/gifs/idle_right.gif',
-    right:   '/images/gifs/idle_left.gif',
-    center:  '/images/gifs/idle_front.gif',
-  },
-  play: {
-    left:    '/images/gifs/play_right.gif',
-    right:   '/images/gifs/play_left.gif',
-    center:  '/images/gifs/play_front.gif',
-  },
-  up: {
-    left:    '/images/gifs/up_right.gif',
-    right:   '/images/gifs/up_left.gif',
-    center:  '/images/gifs/up_front.gif',
-  },
-  down: {
-    left:    '/images/gifs/down_right.gif',
-    right:   '/images/gifs/down_left.gif',
-    center:  '/images/gifs/down_front.gif',
-  }    
-} 
-
 const Figure =  withLanguage(class extends React.PureComponent {
   constructor() {
     super()
@@ -44,7 +21,10 @@ const Figure =  withLanguage(class extends React.PureComponent {
 
     const xPosPercentage = xPosToPercentage(xPos)
     const yPosPercentage = yPosToPercentage(yPos)
-    const src = imgPaths[this.props.action || "idle"][direction]
+    const src = this.props.imgPaths[this.props.action || "idle"][direction]
+
+    if (this.props.active) console.log(src)
+
     return [<Container 
         key="1"
         xPosPercentage={xPosPercentage} 
@@ -70,7 +50,7 @@ const Figure =  withLanguage(class extends React.PureComponent {
         key="2" 
         xPosPercentage={xPosPercentage} 
         yPosPercentage={yPosPercentage}
-        active={this.props.action === "play"}
+        active={ ["play"].indexOf(this.props.action) > -1 }
         hasFigure={this.props.active}
       />]
   }

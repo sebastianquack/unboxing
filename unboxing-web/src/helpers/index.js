@@ -59,6 +59,9 @@ export function assembleTrackList(challenge, filesUrl) {
   return result;
 }
 
+const upAnimDurationMs   = 1259 * 0.85
+const downAnimDurationMs = 1190 * 0.7
+
 // transform items to a list of state events: "prepare", "play", "idle"...
 export function assembleTrackEvents(items) {
   const prepareOffsetMs = -2000
@@ -72,8 +75,16 @@ export function assembleTrackEvents(items) {
     //  })
     //}
     events.push({
+      type: "up",
+      timeMs: item.startTime - (upAnimDurationMs + downAnimDurationMs)
+    })
+    events.push({
+      type: "down",
+      timeMs: item.startTime - ( downAnimDurationMs )
+    })
+    events.push({
       type: "play",
-      timeMs: item.startTime
+      timeMs: item.startTime  // duration of "down" anim
     })
     events.push({
       type: "idle",

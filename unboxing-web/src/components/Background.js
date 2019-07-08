@@ -8,6 +8,7 @@ export class Background extends React.PureComponent {
   constructor() {
     super()
     this.state = {}
+    this.previousColor = null;
   }
 
 
@@ -16,12 +17,15 @@ export class Background extends React.PureComponent {
 
     const {color, flow} = this.props
 
+    this.previousColor = color
+
     return <Container >
       {flow && <BackgroundVideo autoPlay loop={true}>
         <source src="/images/Mozartfeld_Loop.mp4" type="video/mp4"/>
       </BackgroundVideo>}
       
-      <Gradient color={color} />
+      <GradientActive on={color === "active"} />
+      <GradientPassive on={color === "passive"} />
     </Container>
   }
 }
@@ -31,7 +35,8 @@ Background.propTypes = {
   flow: PropTypes.bool
 };
 
-
+const timing_in = "cubic-bezier(0.390, 0.575, 0.565, 1.000)";
+const timing_out = "cubic-bezier(0.345, 0.005, 0.720, 0.585)";
 
 const Container = styled.div`
   position: fixed;
@@ -49,13 +54,20 @@ const BackgroundVideo = styled.video`
   object-fit: cover;
 `
 
-const Gradient = styled.div`
-  transition: all 2s;
-  background: ${ props => {
-    if (props.color === "active") return "linear-gradient(180deg, rgba(223, 75, 71, 0) -0.56%, #DF4B47 76.62%, #FFCE51 100.67%)";
-    else if (props.color === "passive") return "linear-gradient(180deg, #000000 -0.56%, #13293C 37.73%, #02AA9E 100.67%)";
-    else return "none" 
-  }};
+const GradientActive = styled.div`
+  transition: all 0.2s ease-in-out;
+  background: linear-gradient(180deg, rgba(223, 75, 71, 0) -0.56%, #DF4B47 76.62%, #FFCE51 100.67%);
+  opacity: ${ props => props.on ? 1 : 0 };
+  height: 55%;
+  width: 100%;
+  bottom: 0;
+  position: absolute;
+`
+
+const GradientPassive = styled.div`  
+  transition: all 0.2s ease-in-out;
+  background: linear-gradient(180deg, #000000 -0.56%, #13293C 37.73%, #02AA9E 100.67%);
+  opacity: ${ props => props.on ? 1 : 0 };
   height: 55%;
   width: 100%;
   bottom: 0;
