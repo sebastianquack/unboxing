@@ -13,7 +13,7 @@ class InstrumentButton extends React.Component {
       <InstrumentButtonContainer
         onClick={this.props.onToggle} 
         style={{
-          opacity: this.props.active ? 0.5 : 1,
+          opacity: this.props.active ? 1 : 0.5,
         }}
       >
         <Img 
