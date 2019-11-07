@@ -6,15 +6,31 @@ import {
   StatusBar,
   Background,
   VideoModal,
+  Map,
   Menu
 } from './'
 import { colors, breakpoints } from '../config/globalStyles'
 
+const getMapConfig = (navigationState) => {
+  if (navigationState === "welcome") return {
+    scaleFactor: 3,
+    displayIcons: false,
+  }
+  if (navigationState === "challenges") return {
+    scaleFactor: 1,
+    displayIcons: true,
+  }
+  if (navigationState === "challenge") return {
+    scaleFactor: 1.2,
+    displayIcons: false,
+  }
+}
+
 const getBackgroundGradient = (navigationState, controlStatus) => {
-  if(navigationState == "welcome") return "active";
-  if(navigationState == "challenges") return "none";
-  if(navigationState == "challenge") {
-    if(controlStatus == "playing") return "passive";
+  if(navigationState === "welcome") return "active";
+  if(navigationState === "challenges") return "none";
+  if(navigationState === "challenge") {
+    if(controlStatus === "playing") return "passive";
       else return "active";
   }
 }
@@ -38,7 +54,12 @@ export class BaseContainer extends React.PureComponent {
         <GlobalStyle />
         <Background 
           color={getBackgroundGradient(this.props.navigationState, this.props.playbackControlStatus)}
-          flow={this.props.navigationState != "challenge"}
+          flow={this.props.navigationState !== "challenge"}
+        />
+        <Map 
+          scaleFactor={getMapConfig(this.props.navigationState).scaleFactor} 
+          displayIcons={getMapConfig(this.props.navigationState).displayIcons} 
+          {...this.props} 
         />
         <Top>
           <StatusBar {...this.props}/>
