@@ -26,7 +26,7 @@ export class Visualizer extends React.PureComponent {
     }
   }
 
-  combinedTracks(tracks) {
+  combinedTracks(tracks, activeTracks) {
 
     //define which tracks to compare
     const compare = {
@@ -37,18 +37,23 @@ export class Visualizer extends React.PureComponent {
       "full-violin1.1": "full-violin2.1"
     };
 
-    tracks.forEach((track=>{
+    // iterate over all tracks
+    tracks.forEach((track, index)=>{
 
       let combined = false;
+      track.active = activeTracks[index]; // check if this track is active 
 
-      // check if we should compare this
+      // check if we should compare this to another track
       if(Object.keys(compare).indexOf(track.trackName) > -1) {
-        let compareToTracks = tracks.filter(t => t.trackName == compare[track.trackName]);
         let compareToTrack = null;
-        if(compareToTracks.length > 0) {
-          compareToTrack = compareToTracks[0];
-        }
-
+        let compareToTrackIndex = -1;
+        tracks.forEach((t, i) => {
+          if(t.trackName == compare[track.trackName]) {
+            compareToTrack = t;
+            compareToTrackIndex = i;
+          }
+        });
+        
         if(compareToTrack) {
           //console.log("comparing", track.trackName, compareToTrack.trackName);
           let same = true;
@@ -65,14 +70,21 @@ export class Visualizer extends React.PureComponent {
             same = false;
           }
         
-          //if same, use only one and rename
+          //if same, use only one and rename, hide the othe one
           if(same) {
             compareToTrack.hide = true;  
-            track.combined = true
+            track.combined = true;
+
+            // set main track to true if the hidden track is activated
+            if(activeTracks[compareToTrackIndex]) {
+              track.active = true;
+            }
           }
         }
       }
-    }))
+    })
+
+
 
     return tracks
   }
@@ -81,7 +93,7 @@ export class Visualizer extends React.PureComponent {
     console.log("render visu")
     return <Container> 
       <TracksContainer> 
-      { this.combinedTracks(this.props.tracks).map( track => (
+      { this.combinedTracks(this.props.tracks, this.props.activeTracks).map( track => (
         track.hide ? null :
         <Track key={track.trackName}>
           <Instrument styleKey="visualizer-instrument">
@@ -94,6 +106,7 @@ export class Visualizer extends React.PureComponent {
                 start={item.startTime}
                 duration={item.duration}
                 sequenceDuration={this.props.duration}
+                active={track.active}
               />
             )}
           </ItemsTrack>
@@ -154,10 +167,10 @@ const Item = styled.li`
   border-radius: 3px;
   position: absolute;
   border: solid white 1px;
-  opacity: 0.9;
   height: 100%;
   left: ${ props => 100 * props.start/props.sequenceDuration }%;
   width: ${ props => 100 * props.duration/props.sequenceDuration }%;
+  opacity: ${props=>props.active ? 0.9 : 0.5};
 `
 
 const Cursor = styled.div`

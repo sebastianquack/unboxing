@@ -65,6 +65,7 @@ export class Challenge extends React.PureComponent {
     <VisualizerContainer key="visu">
       <Visualizer
         tracks={tracksWithActionStates}
+        activeTracks={this.state.activeTracks} 
         duration={this.props.currentChallenge.sequence.custom_duration || this.props.currentChallenge.sequence.duration}
         playbackControlStatus={this.props.playbackControlStatus}
         sequenceStartedAt={this.state.sequenceStartedAt}
