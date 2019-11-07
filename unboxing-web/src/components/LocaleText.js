@@ -27,7 +27,7 @@ class LocaleText extends React.Component {
         if (stringsKey) {
           return <DataContext.Consumer>
             { data => {
-                return data && data.content && data.content.strings[stringsKey + "_" + language]
+                 return data && data.content && (data.content.strings[stringsKey + "_" + language] ? data.content.strings[stringsKey + "_" + language] : "[" + stringsKey + "]")
               }
             }
           </DataContext.Consumer>
@@ -35,7 +35,7 @@ class LocaleText extends React.Component {
 
         if (object && field) {
           text = localeText(object, field, language)
-        }
+        } 
 
         if(this.props.markdown) {
           return <ReactMarkdown source={text} />

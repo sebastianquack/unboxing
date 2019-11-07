@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { UIText, LocaleText } from './'
+import { UIText, LocaleText, Button } from './'
 import { breakpoints, colors } from '../config/globalStyles'
 
 export class Welcome extends React.Component {
@@ -12,14 +12,10 @@ export class Welcome extends React.Component {
   }
 
   componentDidMount() {
-    this.closeTimeout = setTimeout(()=>{
-      this.close();
-    }, 10000);
   }
 
   close() {
     this.props.navigateTo("challenges")
-    clearTimeout(this.closeTimeout);
   }
 
   render () {
@@ -36,7 +32,8 @@ export class Welcome extends React.Component {
         <UIText styleKey="big-title-subtitle">
           <LocaleText stringsKey="main-subtitle"/>
         </UIText>   
-      </FixedWidth>   
+      </FixedWidth>
+      <Button style={{marginTop: 50}} type="soft-square" onClick={this.close}><LocaleText stringsKey="main-start-button"/></Button>   
     </Container>
   }
 }

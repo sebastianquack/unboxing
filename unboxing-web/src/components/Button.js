@@ -12,6 +12,7 @@ const types = {
   "menu-close": "/images/Close.png",
   "menu-section-close": "/images/Menu_close.png",
   "menu-section-open": "/images/Menu_open.png",
+  "soft-square": "/images/buttonSoftsquare.svg"
 }
 
 const icons = {
@@ -43,6 +44,7 @@ export class Button extends React.Component {
           src={icons[this.props.icon]}
           alt={this.props.icon}
         />}
+        {this.props.type === "soft-square" && <ButtonText>{this.props.children}</ButtonText>}
 
       </ButtonContainer>
     )
@@ -53,9 +55,9 @@ export class Button extends React.Component {
 function buttonDimension(key) {
   if(key == "round") return "50px";
   if(key == "menu-close" || key == "menu-section-close" || key == "menu-section-open") return "48px";
+  if(key == "soft-square") return "100px";
   return "30px";
 }
-
 
 const ButtonContainer = styled.div`
   display: inline-block;
@@ -72,6 +74,15 @@ const ButtonContainer = styled.div`
 `
 
 const ButtonImage = styled.img`
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: auto;  
+  user-select: none;
+`
+
+const ButtonText = styled.div`
   position: absolute;
   left: 0;
   top: 0;
