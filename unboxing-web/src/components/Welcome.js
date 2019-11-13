@@ -38,7 +38,7 @@ export class Welcome extends React.Component {
     return(
     [
       
-      <LeftContainer onClick={this.close}>
+      <LeftContainer key={1} onClick={this.close}>
         <WithLine>
           <UIText styleKey="big-title-top">
             <LocaleText stringsKey="main-supertitle"/>
@@ -59,7 +59,7 @@ export class Welcome extends React.Component {
           <LocaleText stringsKey="main-start-button"/></Button>   
       </LeftContainer>,
       
-      <RightContainer>
+      <RightContainer key={2} >
         <Video autoPlay loop muted>
           <source src="/video/web_intro_1.mp4" type="video/mp4"/>
         </Video>  

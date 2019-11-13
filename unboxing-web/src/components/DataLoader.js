@@ -15,7 +15,10 @@ export class DataLoader extends React.Component {
       this.state = {
         data: null,
         currentChallenge: undefined,
+        currentMapRegionIndex: 0
       }
+
+      this.nextMapRegion = this.nextMapRegion.bind(this)
     }
 
     componentDidMount() {
@@ -34,6 +37,14 @@ export class DataLoader extends React.Component {
       })
     }
 
+    nextMapRegion() {
+     let regions = this.state.data.content.mapData.regions;
+     console.log(regions.length);
+     if(this.state.currentMapRegionIndex < regions.length - 1) {
+        this.setState({currentMapRegionIndex: this.state.currentMapRegionIndex + 1}) 
+     }
+    }
+
     render() {
 
       const currentChallenge = this.props.currentChallengeId && this.state.data ? this.state.data.challenges.find( c => c._id === this.props.currentChallengeId ) : undefined
@@ -42,6 +53,8 @@ export class DataLoader extends React.Component {
 
       const newProps = {
         data: this.state.data,
+        currentMapRegionIndex: this.state.currentMapRegionIndex,
+        nextMapRegion: this.nextMapRegion,
         currentChallenge,
         ...other
       }

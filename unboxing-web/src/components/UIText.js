@@ -49,6 +49,11 @@ const baseTextStyles = { // base style is mobile style
     font-size: 15px;
     line-height: 18px;
     `,
+  "statusbar-breadcrumb": `
+    font-weight: bold;
+    font-size: 15px;
+    line-height: 18px;
+    `,
   "challenge-select-headline": `
     color: ${colors.turquoise};
     font-size: 25px;

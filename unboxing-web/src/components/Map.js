@@ -5,86 +5,90 @@ import { LocaleText, UIText } from './';
 import { formatChallengeTitle } from '../helpers';
 import { breakpoints } from '../config/globalStyles';
 
-const mapData = {
-  filename: "Map.png",
-  regions: [
+/* JSON in website data - format:
+
+"mapData": {
+  "filename": "Map.png",
+  "regions": [{
+      "title_de": "Satz 1",
+      "title_en": "1st movement",
+      "x1": 23,
+      "x2": 52,
+      "y1": 18,
+      "y2": 53,
+      "nextButtonX": 40,
+      "nextButtonY": 30
+    },
     {
-      title_de: "Satz 1",
-      title_en: "1st movement",
-      x1: 23,
-      x2: 52,
-      y1: 18,
-      y2: 53,
-    },     
+      "title_de": "Satz 1",
+      "title_en": "1st movement",
+      "x1": 23,
+      "x2": 52,
+      "y1": 18,
+      "y2": 53
+    },
     {
-      title_de: "Satz 1",
-      title_en: "1st movement",
-      x1: 23,
-      x2: 52,
-      y1: 18,
-      y2: 53,    
-    }, 
-    {
-      title_de: "Satz 2",
-      title_en: "2nd movement",      
-      x1: 53,
-      x2: 90,
-      y1: 68,
-      y2: 95,
+      "title_de": "Satz 2",
+      "title_en": "2nd movement",
+      "x1": 53,
+      "x2": 90,
+      "y1": 68,
+      "y2": 95
     }
   ],
-  challenges: [
-    {
-      challenge_name: "web1",
-      x: 30,
-      y: 20,
-    },{
-      challenge_name: "web2",
-      x: 30,
-      y: 30,
-    },{
-      challenge_name: "web3",
-      x: 30,
-      y: 45,
-    },{
-      challenge_name: "web4",
-      x: 55,
-      y: 45,
-    },{
-      challenge_name: "web5",
-      x: 60,
-      y: 75,
-    },{
-      challenge_name: "web6",
-      x: 70,
-      y: 90,
-    },{
-      challenge_name: "web7",
-      x: 80,
-      y: 80,
-    },{
-      challenge_name: "web8",
-      x: 90,
-      y: 90,
-    },{
-      challenge_name: "web9",
-      x: 90,
-      y: 80,
-    },{
-      challenge_name: "web10",
-      x: 100,
-      y: 100,
-    },{
-      challenge_name: "web11",
-      x: 50,
-      y: 50,
-    },{
-      challenge_name: "web12",
-      x: 40,
-      y: 40,
-    }
-  ],
+  "challenges": [{
+    "challenge_name": "web1",
+    "x": 30,
+    "y": 20
+  }, {
+    "challenge_name": "web2",
+    "x": 30,
+    "y": 30
+  }, {
+    "challenge_name": "web3",
+    "x": 30,
+    "y": 45
+  }, {
+    "challenge_name": "web4",
+    "x": 55,
+    "y": 45
+  }, {
+    "challenge_name": "web5",
+    "x": 60,
+    "y": 75
+  }, {
+    "challenge_name": "web6",
+    "x": 70,
+    "y": 90
+  }, {
+    "challenge_name": "web7",
+    "x": 80,
+    "y": 80
+  }, {
+    "challenge_name": "web8",
+    "x": 90,
+    "y": 90
+  }, {
+    "challenge_name": "web9",
+    "x": 90,
+    "y": 80
+  }, {
+    "challenge_name": "web10",
+    "x": 100,
+    "y": 100
+  }, {
+    "challenge_name": "web11",
+    "x": 50,
+    "y": 50
+  }, {
+    "challenge_name": "web12",
+    "x": 40,
+    "y": 40
+  }]
 }
+
+*/
+
 
 class Map extends React.PureComponent {
 
@@ -92,8 +96,6 @@ class Map extends React.PureComponent {
     super(props);
 
     this.state = {
-      mapData,
-      regionIndex: 1,
       scaleDimension: "width",
       scaleFactor: 1,
       transitionOrder: "scale-first"
@@ -107,7 +109,7 @@ class Map extends React.PureComponent {
     this.setState({
       displayIcons: this.props.displayIcons,
       scaleFactor: this.props.scaleFactor,
-    })    
+    })
   }
 
   componentWillUnmount() {
@@ -116,6 +118,7 @@ class Map extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
+
     console.log(this.props.scaleFactor, prevProps.scaleFactor)
     if (prevProps.displayIcons !== this.props.displayIcons || prevProps.scaleFactor !== this.props.scaleFactor) {
       const buttonsRemoved = prevProps.displayIcons && !this.props.displayIcons
@@ -132,7 +135,7 @@ class Map extends React.PureComponent {
   }
 
   updateDimensions() {
-    const region = this.state.mapData.regions[this.state.regionIndex]
+    const region = this.props.data.content.mapData.regions[this.props.currentMapRegionIndex]
 
     const imageNaturalWidthPx = this.refs.mapImg.naturalWidth
     const imageNaturalHeightPx = this.refs.mapImg.naturalHeight
@@ -160,10 +163,11 @@ class Map extends React.PureComponent {
   }  
 
   render () {
-    const region = this.state.mapData.regions[this.state.regionIndex]
+    if(!this.props.data || !this.props.data.content.mapData) return null;
+    const region = this.props.data.content.mapData.regions[this.props.currentMapRegionIndex]
 
     const challengeButtons = this.props.data ? this.props.data.challenges.map((challenge, index)=> {
-      const mapPositionsPerc = this.state.mapData.challenges.find( c => c.challenge_name === challenge.name ) || {x:0, y:0}
+      const mapPositionsPerc = this.props.data.content.mapData.challenges.find( c => c.challenge_name === challenge.name ) || {x:0, y:0}
       return <ChallengeButton 
         show={ this.state.displayIcons}
         transitionOrder={ this.state.transitionOrder }
@@ -192,6 +196,29 @@ class Map extends React.PureComponent {
       </ChallengeButton>
     }) : null;
 
+    const nextMovementButtons = this.props.data ? this.props.data.content.mapData.regions.map((region, index)=>
+    (this.props.currentMapRegionIndex < (this.props.data.content.mapData.regions.length - 1) ? 
+    <ChallengeButton
+      show={ this.state.displayIcons}
+      key={index}
+      transitionOrder={ this.state.transitionOrder }
+      offset={{
+          left: this.props.data.content.mapData.regions[this.props.currentMapRegionIndex].nextButtonX,
+          top: this.props.data.content.mapData.regions[this.props.currentMapRegionIndex].nextButtonY,
+        }}
+      onClick={this.props.nextMapRegion}
+      >
+      <ChallengeButtonNumber>
+          <img src="images/RightCorner.svg"/>
+      </ChallengeButtonNumber>  
+      <ChallengeButtonSubtitle>
+          <UIText styleKey="challenge-select-subtitle" >
+            <LocaleText stringsKey="next-movement"/>
+          </UIText>
+        </ChallengeButtonSubtitle>
+    </ChallengeButton> : null)
+    ) : null;
+
     const scaleDeltaMax = Math.max(region.x2 - region.x1, region.y2 - region.y1)
 
     console.log(this.state.transitionOrder )
@@ -205,6 +232,7 @@ class Map extends React.PureComponent {
             transform: `translateX(-${region.x1}%) translateY(-${region.y1}%) scale(${ this.state.scaleFactor })`,
             transformOrigin: `${ (region.x2 - region.x1)/2 + region.x1 }% ${ (region.y2 - region.y1)/2 + region.y1 }%`
           }}>
+          { nextMovementButtons }
           { challengeButtons }
           <MapImg
             ref="mapImg"
@@ -212,7 +240,7 @@ class Map extends React.PureComponent {
             scaleDimension={this.state.scaleDimension}
             scaleDelta={this.scaleDimension === "width" ? region.x2 - region.x1 : region.y2 - region.y1}
             scaleDeltaMax={ scaleDeltaMax }
-            src={"/images/" + this.state.mapData.filename}
+            src={"/images/" + this.props.data.content.mapData.filename}
             alt=""
           />        
         </InnerContainer>

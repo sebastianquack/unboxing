@@ -27,11 +27,20 @@ export class StatusBar extends React.Component {
           onClick={()=>{this.props.navigateTo("challenges")}}
         />
         }
-        {this.props.navigationState !== "challenge" && 
+        {this.props.navigationState !== "challenge" && [
         <Button
           type={"menu"}
           onClick={this.props.toggleMenu}
-        />
+          key={1}
+        />,
+        <BreadCrumbButton onClick={()=>{this.props.navigateTo("welcome")}} key={2}>
+          <UIText styleKey="statusbar-breadcrumb">
+            <LocaleText stringsKey="statusbar-start"/>
+          </UIText>  
+        </BreadCrumbButton>
+        ]}
+        {this.props.navigationState === "challenges" && 
+          <UIText styleKey="statusbar-breadcrumb"><LocaleText stringsKey="statusbar-select"/></UIText>  
         }
       </Left>
       <Center>
@@ -39,9 +48,7 @@ export class StatusBar extends React.Component {
         {this.props.navigationState === "challenge" && <UIText styleKey="statusbar-subtitle">{subtitle}</UIText>} 
           
         
-        {this.props.navigationState === "challenges" && 
-          <UIText styleKey="statusbar-title"><LocaleText stringsKey="main-title"/></UIText>
-        }
+        
       </Center>
       <Right>
         {this.props.navigationState !== "challenge" && <LanguageSelector toggleLanguage= {this.props.toggleLanguage}/>}
@@ -70,6 +77,14 @@ const Left = styled.div`
   margin: 5px;
   margin-right: 10px;
 `
+
+const BreadCrumbButton = styled.div`
+  display: inline-block;
+  :hover {
+    cursor: pointer;
+  }
+`
+
 const Center = styled.div`
   display: flex;
   flex-direction: column;
