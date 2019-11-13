@@ -17,7 +17,7 @@ class LocaleText extends React.Component {
   }
 
   render() {
-    let {stringsKey, object, field} = this.props
+    let {stringsKey, object, field, index} = this.props
     
     return <LanguageContext.Consumer>
       {language => {
@@ -27,7 +27,17 @@ class LocaleText extends React.Component {
         if (stringsKey) {
           return <DataContext.Consumer>
             { data => {
-                 return data && data.content && (data.content.strings[stringsKey + "_" + language] ? data.content.strings[stringsKey + "_" + language] : "[" + stringsKey + "]")
+                 if(data && data.content && data.content.strings[stringsKey + "_" + language]) {
+
+                    if(typeof index !== "undefined") {
+                      return data.content.strings[stringsKey + "_" + language].split("/")[index]
+                    }
+                    
+                    return data.content.strings[stringsKey + "_" + language]
+
+                 } else {
+                    return "[" + stringsKey + "]"
+                 }
               }
             }
           </DataContext.Consumer>
@@ -54,5 +64,6 @@ LocaleText.propTypes = {
   stringsKey: PropTypes.string, // get text from strings
   object: PropTypes.object, // get text from object, e.g. { content_de: ..., content_en: ... }
   field: PropTypes.string, // field of the object, e.g. "content"
-  markdown: PropTypes.bool
+  markdown: PropTypes.bool,
+  arrayMode: PropTypes.bool,
 };

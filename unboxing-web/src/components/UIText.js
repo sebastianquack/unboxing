@@ -24,6 +24,20 @@ const baseTextStyles = { // base style is mobile style
     font-size: 18px;
     line-height: 24px;
     `,
+  "big-title-explanation": `
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 24px;
+    text-transform: none;
+    display: block;
+    `,
+  "big-title-side-explanation": `
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 24px;
+    text-transform: none;
+    display: block;
+  `,
   "statusbar-title": `
     font-weight: bold;
     font-size: 19px;
