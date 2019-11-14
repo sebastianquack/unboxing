@@ -213,7 +213,7 @@ class Map extends React.PureComponent {
       </ChallengeButtonNumber>  
       <ChallengeButtonSubtitle>
           <UIText styleKey="challenge-select-subtitle" >
-            <LocaleText stringsKey="next-movement"/>
+            <LocaleText object={this.props.data.content.mapData.regions[this.props.currentMapRegionIndex+1]} field="title"/>
           </UIText>
         </ChallengeButtonSubtitle>
     </ChallengeButton> : null)
@@ -236,7 +236,7 @@ class Map extends React.PureComponent {
       </ChallengeButtonNumber>  
       <ChallengeButtonSubtitle>
           <UIText styleKey="challenge-select-subtitle" >
-            <LocaleText stringsKey="prev-movement"/>
+            <LocaleText object={this.props.data.content.mapData.regions[this.props.currentMapRegionIndex-1]} field="title"/>
           </UIText>
         </ChallengeButtonSubtitle>
     </ChallengeButton> : null)
