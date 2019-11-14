@@ -19,6 +19,8 @@ export class DataLoader extends React.Component {
       }
 
       this.nextMapRegion = this.nextMapRegion.bind(this)
+      this.prevMapRegion = this.prevMapRegion.bind(this)
+      this.setMapRegion = this.setMapRegion.bind(this)
     }
 
     componentDidMount() {
@@ -37,11 +39,21 @@ export class DataLoader extends React.Component {
       })
     }
 
+    setMapRegion(index) {
+      this.setState({currentMapRegionIndex: index});
+    }
+
     nextMapRegion() {
      let regions = this.state.data.content.mapData.regions;
-     console.log(regions.length);
      if(this.state.currentMapRegionIndex < regions.length - 1) {
         this.setState({currentMapRegionIndex: this.state.currentMapRegionIndex + 1}) 
+     }
+    }
+
+    prevMapRegion() {
+     let regions = this.state.data.content.mapData.regions;
+     if(this.state.currentMapRegionIndex > 0) {
+        this.setState({currentMapRegionIndex: this.state.currentMapRegionIndex - 1}) 
      }
     }
 
@@ -55,6 +67,8 @@ export class DataLoader extends React.Component {
         data: this.state.data,
         currentMapRegionIndex: this.state.currentMapRegionIndex,
         nextMapRegion: this.nextMapRegion,
+        prevMapRegion: this.prevMapRegion,
+        setMapRegion: this.setMapRegion,
         currentChallenge,
         ...other
       }

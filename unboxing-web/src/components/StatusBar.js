@@ -14,6 +14,9 @@ export class StatusBar extends React.Component {
 
     let {title, subtitle, currentChallenge} = this.props
 
+    let region = this.props.data ? this.props.data.content.mapData.regions[this.props.currentMapRegionIndex] : null;
+    console.log(region);
+
     if (currentChallenge) {
       title = <LocaleText object={currentChallenge.sequence} field="title" />
       subtitle = <LocaleText object={currentChallenge.sequence} field="subtitle" />
@@ -33,15 +36,16 @@ export class StatusBar extends React.Component {
           onClick={this.props.toggleMenu}
           key={1}
         />,
-        <BreadCrumbButton onClick={()=>{this.props.navigateTo("welcome")}} key={2}>
+        <BreadCrumbButton onClick={()=>{this.props.setMapRegion(0); this.props.navigateTo("welcome")}} key={2}>
           <UIText styleKey="statusbar-breadcrumb">
             <LocaleText stringsKey="statusbar-start"/>
           </UIText>  
         </BreadCrumbButton>
         ]}
-        {this.props.navigationState === "challenges" && 
-          <UIText styleKey="statusbar-breadcrumb"><LocaleText stringsKey="statusbar-select"/></UIText>  
-        }
+        {this.props.navigationState === "challenges" && region && [
+          <UIText styleKey="statusbar-breadcrumb" key={1}><LocaleText stringsKey="statusbar-select"/></UIText>,
+          <UIText styleKey="statusbar-breadcrumb" key={2}><LocaleText object={region} field="title"/></UIText>
+        ]}
       </Left>
       <Center>
         {this.props.navigationState === "challenge" && <UIText styleKey="statusbar-title">{title}</UIText>}

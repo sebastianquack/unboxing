@@ -219,6 +219,29 @@ class Map extends React.PureComponent {
     </ChallengeButton> : null)
     ) : null;
 
+    const prevMovementButtons = this.props.data ? this.props.data.content.mapData.regions.map((region, index)=>
+    (this.props.currentMapRegionIndex > 0 ? 
+    <ChallengeButton
+      show={ this.state.displayIcons}
+      key={index}
+      transitionOrder={ this.state.transitionOrder }
+      offset={{
+          left: this.props.data.content.mapData.regions[this.props.currentMapRegionIndex].prevButtonX,
+          top: this.props.data.content.mapData.regions[this.props.currentMapRegionIndex].prevButtonY,
+        }}
+      onClick={this.props.prevMapRegion}
+      >
+      <ChallengeButtonNumber>
+          <BackImage src="images/RightCorner.svg"/>
+      </ChallengeButtonNumber>  
+      <ChallengeButtonSubtitle>
+          <UIText styleKey="challenge-select-subtitle" >
+            <LocaleText stringsKey="prev-movement"/>
+          </UIText>
+        </ChallengeButtonSubtitle>
+    </ChallengeButton> : null)
+    ) : null;
+
     const scaleDeltaMax = Math.max(region.x2 - region.x1, region.y2 - region.y1)
 
     console.log(this.state.transitionOrder )
@@ -232,6 +255,7 @@ class Map extends React.PureComponent {
             transform: `translateX(-${region.x1}%) translateY(-${region.y1}%) scale(${ this.state.scaleFactor })`,
             transformOrigin: `${ (region.x2 - region.x1)/2 + region.x1 }% ${ (region.y2 - region.y1)/2 + region.y1 }%`
           }}>
+          { prevMovementButtons }
           { nextMovementButtons }
           { challengeButtons }
           <MapImg
@@ -299,6 +323,10 @@ const ChallengeButton = styled.div`
   will-change: opacity;
 
   @media (${breakpoints.large}) {}
+`
+
+const BackImage = styled.img`
+ transform: scaleX(-1);
 `
 
 const ChallengeButtonNumber = styled.div`
