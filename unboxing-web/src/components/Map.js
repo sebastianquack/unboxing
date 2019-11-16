@@ -174,8 +174,8 @@ class Map extends React.PureComponent {
         key={challenge._id}
         onClick={()=>{this.props.navigateToChallenge(challenge._id)}}
         offset={{
-          top: mapPositionsPerc.x,
-          left: mapPositionsPerc.y,
+          top: mapPositionsPerc.y,
+          left: mapPositionsPerc.x,
         }}
       >
         <ChallengeButtonNumber>
