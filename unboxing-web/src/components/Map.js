@@ -259,6 +259,7 @@ class Map extends React.PureComponent {
           { nextMovementButtons }
           { challengeButtons }
           <MapImg
+            visible={this.props.visible}
             ref="mapImg"
             onLoad={this.updateDimensions}
             scaleDimension={this.state.scaleDimension}
@@ -301,6 +302,7 @@ const InnerContainer = styled.div`
 `
 
 const MapImg = styled.img`
+  visibility: ${ props => props.visible ? "visible" : "hidden" }; 
   ${ props => `${props.scaleDimension}: ${10000 / props.scaleDelta}${ props.scaleDimension === "width" ? "vw" : "vh" }`};
 `
 

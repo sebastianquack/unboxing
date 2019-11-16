@@ -57,6 +57,7 @@ export class BaseContainer extends React.PureComponent {
           flow={this.props.navigationState !== "challenge"}
         />
         <Map 
+          visible={this.props.navigationState == "challenges"}
           scaleFactor={getMapConfig(this.props.navigationState).scaleFactor} 
           displayIcons={getMapConfig(this.props.navigationState).displayIcons} 
           {...this.props} 
