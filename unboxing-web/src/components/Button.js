@@ -30,7 +30,7 @@ export class SoftTextButton extends React.Component {
         onClick={this.props.onClick}
       >
         <SoftButtonImage src="/images/buttonSoftsquare.svg"/>
-        <SoftButtonText>{this.props.children}</SoftButtonText>
+        <SoftButtonText style={{width: this.props.textWidth ? this.props.textWidth : "auto"}}>{this.props.children}</SoftButtonText>
       </SoftButtonContainer>
     )
   }
@@ -57,6 +57,7 @@ const SoftButtonImage = styled.img`
 `
 
 const SoftButtonText = styled.span`
+  text-align: center;
   
 `
 

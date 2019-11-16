@@ -21,7 +21,12 @@ export class InfoBox extends React.Component {
             <LocaleText stringsKey={this.props.string2}/>            
           </UIText>
         </InfoBoxContent>
-        <img src="/images/info_icon.png"/>
+        <InfoLine>
+          <img src="/images/info_icon.png"/>
+          <UIText styleKey="bottom-left-info">
+              <LocaleText stringsKey="info"/>            
+          </UIText>
+        </InfoLine>
       </InfoBoxContainer>
     );
   }
@@ -32,10 +37,16 @@ const InfoBoxContainer = styled.div`
   z-index: 10;
   left: 5%;
   bottom: 40px;
+  width: 300px;
 `
 
 const InfoBoxContent = styled.div`
   border-left: 2px solid ${ colors.turquoise };
-  padding-left: 5px;
-  margin-bottom: 10px;
+  padding-left: 10px;
+  margin-bottom: 20px;
+`
+
+const InfoLine = styled.div`
+  display: flex;
+  align-items: center;
 `

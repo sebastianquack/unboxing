@@ -31,6 +31,12 @@ const baseTextStyles = { // base style is mobile style
     text-transform: none;
     display: block;
     `,
+  "big-title-button": `
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 24px;
+    text-transform: uppercase;
+    `,
   "big-title-side-explanation": `
     font-weight: 500;
     font-size: 18px;
@@ -69,17 +75,27 @@ const baseTextStyles = { // base style is mobile style
   "bottom-left-explanation": `
     font-family: DINPro;
     font-style: normal;
-    font-weight: 500;
-    font-size: 15px;
-    line-height: 19px;
+    font-weight: bold;
+    font-size: 18px;
+    line-height: 22px;
     text-transform: none;
     display: block;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
     :last-child { margin-bottom: 0 !important; }
+  `,
+  "bottom-left-info": `
+    font-family: DINPro;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 15px;
+    line-height: 18px;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-left: 10px
   `,  
   "challenge-select-title": `
     font-weight: bold;
-    font-size: 24.4946px;
+    font-size: 19px;
     line-height: 26px;
     `,
   "challenge-select-subtitle": `

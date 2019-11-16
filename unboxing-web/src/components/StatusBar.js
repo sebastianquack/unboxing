@@ -25,6 +25,7 @@ export class StatusBar extends React.Component {
     return <Container>
       <Left>
         <Button
+          style={{marginRight: 5}}
           type={"menu"}
           onClick={this.props.toggleMenu}
           key={1}

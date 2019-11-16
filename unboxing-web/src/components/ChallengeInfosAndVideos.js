@@ -54,8 +54,8 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
             {videoContainers}
         </VideoThumbs>}
 
-        <SoftTextButton style={{marginTop: 50, width: 170, height: 100}} onClick={this.props.close}>
-          <LocaleText stringsKey="passage-play-button"/>
+        <SoftTextButton textWidth={100} style={{marginTop: 50, width: 190, height: 110}} onClick={this.props.close}>
+          <UIText styleKey="big-title-button"><LocaleText stringsKey="passage-play-button"/></UIText>
         </SoftTextButton>   
 
         </ContentContainer>
@@ -121,20 +121,20 @@ const InfoItem = styled.div`
 
 `
 const VideoThumbs = styled.div`
-  margin: 20px; 
+  margin-top: 40px; 
+  margin-bottom: 20px;
   padding-right: 10px; 
   display: flex;
   flex-direction: row;
-  justify-content: flex-start;
 `
 
 const VideoContainer = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: flex-start; 
+  align-items: center;
 `
 
-const VideoCaption = styled.div`
+const VideoCaption = styled.span`
   width: 200px;
   margin: 10px;
 `
@@ -142,7 +142,6 @@ const VideoCaption = styled.div`
 const VideoThumb = styled.img`
   width: 150px;
   height: 93px;
-  margin-left: 10px;
   :hover {
     cursor: pointer;
   }

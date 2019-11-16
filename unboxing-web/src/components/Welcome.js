@@ -21,7 +21,7 @@ export class Welcome extends React.Component {
       this.explanationsInterval = setInterval(()=>{
         this.setState({explanationIndex: this.state.explanationIndex < this.maxExplanations - 1 ? 
           this.state.explanationIndex + 1 : 0})
-      }, 5000);
+      }, 7000);
     }
   }
 
@@ -56,7 +56,7 @@ export class Welcome extends React.Component {
           </UIText>   
         </FixedWidth>
         <SoftTextButton style={{marginTop: 50, width: 150, height: 100}} onClick={this.close}>
-          <LocaleText stringsKey="main-start-button"/>
+          <UIText styleKey="big-title-button"><LocaleText stringsKey="main-start-button"/></UIText>
         </SoftTextButton>   
       </LeftContainer>,
       
@@ -65,7 +65,7 @@ export class Welcome extends React.Component {
           <source src="/video/web_intro_1.mp4" type="video/mp4"/>
         </Video>
         {/*<KeyVisualImg/>*/}
-        <UIText style={{marginTop: 20}} styleKey="big-title-side-explanation">
+        <UIText style={{position: "relative", top: -200, marginLeft: "auto", marginTop: 20, width: 300}} styleKey="big-title-side-explanation">
           <LocaleText stringsKey="side-explanation" index={this.state.explanationIndex}/>            
         </UIText>   
       </RightContainer>
@@ -102,7 +102,7 @@ const KeyVisualImg = styled.div`
 `
 
 const Video = styled.video`
-  height: 80vh;
+  height: 100vh;
   mix-blend-mode: lighten;
 `
 
