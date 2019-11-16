@@ -72,6 +72,7 @@ const Container = styled.div`
   min-height: 93vh;
   bottom: 0;
   position: absolute;
+  z-index: 10;
   box-sizing: border-box;
   right: 0;
   padding: 20px;

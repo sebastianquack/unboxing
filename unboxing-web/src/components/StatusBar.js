@@ -84,7 +84,6 @@ const Left = styled.div`
 
 const BreadCrumbButton = styled.div`
   display: inline-block;
-  margin-left: 5px;
   :hover {
     cursor: pointer;
   }

@@ -116,12 +116,7 @@ export class Challenge extends React.PureComponent {
           activeTracks={this.state.activeTracks}
           toggleTrack={this.toggleTrack}
         />*/}
-        {this.props.challengeInfoOpen && 
-          <ChallengeInfosAndVideos 
-            challenge={this.props.currentChallenge} 
-            setVideoModalUrl={this.props.setVideoModalUrl}
-            close={this.props.toggleChallengeInfo}
-          />}
+        
         {!this.props.challengeInfoOpen && <Button
             style={{marginBottom: 40}}
             type={"up"}
@@ -129,6 +124,13 @@ export class Challenge extends React.PureComponent {
           />}
 
       </FixedAtBottom>
+
+      {this.props.challengeInfoOpen && 
+          <ChallengeInfosAndVideos 
+            challenge={this.props.currentChallenge} 
+            setVideoModalUrl={this.props.setVideoModalUrl}
+            close={this.props.toggleChallengeInfo}
+          />}
 
       {!this.props.challengeInfoOpen && <Building src="/images/building.svg"/>}
 
@@ -179,7 +181,7 @@ const FixedAtBottom = styled.div`
   justify-content: flex-end;
   width: 100%;
   box-sizing: border-box;
-  z-index: 10;
+  z-index: 8;
   padding: 0 25px;
   @media (${breakpoints.large}) {
     padding: 0 50px;
@@ -194,7 +196,7 @@ const FixedControls = styled.div`
   justify-content: center;
   left: 50%;
   margin-left: -100px;
-  z-index: 10;
+  z-index: 9;
 `
 
 const FixedTopRight = styled.div`
