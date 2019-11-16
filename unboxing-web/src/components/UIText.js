@@ -53,6 +53,7 @@ const baseTextStyles = { // base style is mobile style
     font-weight: bold;
     font-size: 19px;
     line-height: 26px;
+    margin-right: 5px;
     `,
   "statusbar-subtitle": `
     font-family: DINPro;
