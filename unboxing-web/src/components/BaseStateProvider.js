@@ -31,6 +31,7 @@ class BaseStateProvider extends React.Component {
     this.toggleLanguage = this.toggleLanguage.bind(this)
     this.toggleChallengeInfo = this.toggleChallengeInfo.bind(this)
     this.toggleMenu = this.toggleMenu.bind(this)
+    this.setChallengeInfo = this.setChallengeInfo.bind(this)
   }
 
   toggleMenu() {
@@ -48,12 +49,17 @@ class BaseStateProvider extends React.Component {
     this.setState({challengeInfoOpen: !this.state.challengeInfoOpen})
   }
 
+  setChallengeInfo(value) {
+    this.setState({challengeInfoOpen: value}) 
+  }
+
   handleNavigation(target) {
     if (this.navigationStates.indexOf(target) === -1 ) {
       console.warn("no route to " + target + " exists"); return;
     }
     this.setState({
-      navigationState: target
+      navigationState: target,
+      challengeInfoOpen: true
     })
     if (target !== "challenge") {
       this.setState({
@@ -81,6 +87,7 @@ class BaseStateProvider extends React.Component {
       language: this.state.language,
       toggleLanguage: this.toggleLanguage,
       toggleChallengeInfo: this.toggleChallengeInfo,
+      setChallengeInfo: this.setChallengeInfo,
       challengeInfoOpen: this.state.challengeInfoOpen,
       setVideoModalUrl: (url)=>{
         console.log(url);

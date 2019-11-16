@@ -344,7 +344,6 @@ const ChallengeButtonNumber = styled.div`
 
 const ChallengeButtonSubtitle = styled.div`
   justify-content: center;
-  display: none;
   @media (${breakpoints.large}) {
     display: flex;
   }

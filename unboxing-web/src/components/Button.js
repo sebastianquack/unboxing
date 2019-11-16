@@ -12,7 +12,6 @@ const types = {
   "menu-close": "/images/Close.png",
   "menu-section-close": "/images/Menu_close.png",
   "menu-section-open": "/images/Menu_open.png",
-  "soft-square": "/images/buttonSoftsquare.svg"
 }
 
 const icons = {
@@ -20,6 +19,47 @@ const icons = {
   "play": "/images/Play.png",
   "rewind": "/images/rewind.png"
 }
+
+
+export class SoftTextButton extends React.Component {
+
+  render () {
+   return (
+      <SoftButtonContainer
+        style={{...this.props.style}}
+        onClick={this.props.onClick}
+      >
+        <SoftButtonImage src="/images/buttonSoftsquare.svg"/>
+        <SoftButtonText>{this.props.children}</SoftButtonText>
+      </SoftButtonContainer>
+    )
+  }
+}
+
+const SoftButtonContainer = styled.div`
+  display: inline-block;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-repeat: no-repeat;
+  :hover {
+    cursor: pointer;
+  }
+`
+
+const SoftButtonImage = styled.img`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+`
+
+const SoftButtonText = styled.span`
+  
+`
+
 
 export class Button extends React.Component {
   constructor() {
@@ -72,7 +112,6 @@ const ButtonContainer = styled.div`
   }
   user-select: none;
 `
-
 const ButtonImage = styled.img`
   position: absolute;
   left: 0;

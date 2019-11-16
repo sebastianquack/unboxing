@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from 'styled-components'
 
-import { LocaleText, UIText } from './';
-import { formatChallengeTitle } from '../helpers';
-import { breakpoints, colors } from '../config/globalStyles';
+import { InfoBox } from './';
 
 export class Challenges extends React.Component {
 
@@ -16,22 +14,7 @@ export class Challenges extends React.Component {
 
   render () {
 
-    return <ChallegesInfoBox>
-      <UIText styleKey="bottom-left-explanation">
-        <LocaleText stringsKey="challenges-explanation-1"/>            
-      </UIText>
-      <UIText styleKey="bottom-left-explanation">
-        <LocaleText stringsKey="challenges-explanation-2"/>            
-      </UIText>      
-    </ChallegesInfoBox>
+    return <InfoBox string1="challenges_info1" string2="challenges_info2"/>
+
   }
 }
-
-const ChallegesInfoBox = styled.div`
-  position: absolute;
-  border-left: 2px solid ${ colors.turquoise };
-  padding-left: 5px;
-  z-index: 100;
-  left: 5%;
-  bottom: 15%;
-`

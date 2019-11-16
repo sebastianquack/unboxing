@@ -42,20 +42,24 @@ const baseTextStyles = { // base style is mobile style
     padding-right: 5px;
   `,
   "statusbar-title": `
+    font-family: DINPro;
+    font-style: normal;
     font-weight: bold;
     font-size: 19px;
     line-height: 26px;
     `,
   "statusbar-subtitle": `
-    color: ${colors.turquoise};
+    font-family: DINPro;
+    font-style: normal;
     font-weight: bold;
-    font-size: 15px;
-    line-height: 18px;
+    font-size: 19px;
+    line-height: 26px;
     `,
   "statusbar-breadcrumb": `
     font-weight: bold;
     font-size: 15px;
     line-height: 18px;
+    margin-left: 5px;
     `,
   "challenge-select-headline": `
     color: ${colors.turquoise};
@@ -66,11 +70,11 @@ const baseTextStyles = { // base style is mobile style
     font-family: DINPro;
     font-style: normal;
     font-weight: 500;
-    font-size: 20px;
-    line-height: 24px;
+    font-size: 15px;
+    line-height: 19px;
     text-transform: none;
     display: block;
-    margin-bottom: 24px;
+    margin-bottom: 15px;
     :last-child { margin-bottom: 0 !important; }
   `,  
   "challenge-select-title": `
@@ -83,15 +87,37 @@ const baseTextStyles = { // base style is mobile style
     font-size: 19px;
     line-height: 26px;
     `,
-  "challenge-info-header": `
+  
+  "challenge-supertitle": `
+    font-family: DINPro;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 19px;
+    line-height: 26px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+  `,
+
+  "challenge-title": `
+    font-family: DINPro;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 64px;
+    line-height: 64px;
+    text-transform: uppercase;
     color: ${colors.turquoise};
-    font-size: 11px;
-    `,
+    display: block;
+  `,
+
   "challenge-info-content": `
     font-size: 15px;
     line-height: 19px;
+    letter-spacing: 0px;
     text-transform: none;
+    display: block;
     `,
+  
   "empty-stage": `
       font-size: 15px;
       line-height: 19px;
@@ -157,14 +183,6 @@ const largeTextStyles = { // some styles have additional large styles (overwrite
   "big-title-subtitle": `
       font-size: 24px;
       line-height: 32px;
-      `,
-  "statusbar-title": `
-      font-size: 34px;
-      line-height: 36px;
-      `,
-  "statusbar-subtitle": `
-      font-size: 19px;
-      line-height: 26px;
       `,
   "menu-title": `
     font-weight: 500;

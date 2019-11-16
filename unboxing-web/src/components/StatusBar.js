@@ -24,50 +24,48 @@ export class StatusBar extends React.Component {
 
     return <Container>
       <Left>
-        {this.props.navigationState === "challenge" && 
-        <Button
-          type={"left"}
-          onClick={()=>{this.props.navigateTo("challenges")}}
-        />
-        }
-        {this.props.navigationState !== "challenge" && [
         <Button
           type={"menu"}
           onClick={this.props.toggleMenu}
           key={1}
-        />,
+        />
+        {this.props.navigationState === "challenge" && 
+        <Button
+          style={{marginLeft: 10}}
+          type={"left"}
+          onClick={()=>{this.props.navigateTo("challenges")}}
+        />
+        }
+        {this.props.navigationState !== "challenge" &&
         <BreadCrumbButton onClick={()=>{this.props.setMapRegion(0); this.props.navigateTo("welcome")}} key={2}>
           <UIText styleKey="statusbar-breadcrumb">
             <LocaleText stringsKey="statusbar-start"/>
           </UIText>  
         </BreadCrumbButton>
-        ]}
+        }
         {this.props.navigationState === "challenges" && region && [
           <UIText styleKey="statusbar-breadcrumb" key={1}><LocaleText stringsKey="statusbar-select"/></UIText>,
           <UIText styleKey="statusbar-breadcrumb" key={2}><LocaleText object={region} field="title"/></UIText>
         ]}
       </Left>
       <Center>
-        {this.props.navigationState === "challenge" && <UIText styleKey="statusbar-title">{title}</UIText>}
-        {this.props.navigationState === "challenge" && <UIText styleKey="statusbar-subtitle">{subtitle}</UIText>} 
           
         
         
       </Center>
       <Right>
         {this.props.navigationState !== "challenge" && <LanguageSelector toggleLanguage= {this.props.toggleLanguage}/>}
-        {this.props.navigationState === "challenge" ?
+        {this.props.navigationState === "challenge" && this.props.challengeInfoOpen &&
           <Button
-            type={this.props.challengeInfoOpen ? "up" : "down"}
+            type={"down"}
             onClick={this.props.toggleChallengeInfo}
           />
-          : null
-          /*<Button
-            type={"close"}
-            onClick={()=>{if(this.props.data.content.exitUrl) window.location=this.props.data.content.exitUrl}}
-          />*/
         }
-
+        {this.props.navigationState === "challenge" && !this.props.challengeInfoOpen && [
+          <UIText styleKey="statusbar-title">{title}</UIText>,
+          <UIText styleKey="statusbar-subtitle">{subtitle}</UIText>
+        ]}
+          
       </Right>
     </Container>
   }
@@ -80,10 +78,13 @@ const Container = styled.div`
 const Left = styled.div`
   margin: 5px;
   margin-right: 10px;
+  display: flex;
+  align-items: center;
 `
 
 const BreadCrumbButton = styled.div`
   display: inline-block;
+  margin-left: 5px;
   :hover {
     cursor: pointer;
   }

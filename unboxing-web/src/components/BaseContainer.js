@@ -87,7 +87,7 @@ const Container = styled.div`
 
 const Top = styled.div`
   position: relative;
-  z-index: 1;
+  z-index: 11;
   width: 100%; 
   box-sizing: border-box;
   padding: 10px;

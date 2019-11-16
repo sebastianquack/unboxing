@@ -8,9 +8,13 @@ import {
   Stage,
   ChallengeInfosAndVideos,
   ActionStates,
-  Visualizer
+  Visualizer,
+  Button,
+  UIText,
+  LocaleText,
+  InfoBox
 } from './'
-import { breakpoints } from '../config/globalStyles';
+import { breakpoints, colors } from '../config/globalStyles';
 import { assembleTrackList } from '../helpers';
 
 const filesUrl = "http://unboxing.sebquack.perseus.uberspace.de/files"
@@ -61,7 +65,7 @@ export class Challenge extends React.PureComponent {
     this.setState({activeTracks});
   }
 
-  renderActionStuff = tracksWithActionStates => [
+  renderActionStuff = tracksWithActionStates  => [
     <VisualizerContainer key="visu">
       <Visualizer
         tracks={tracksWithActionStates}
@@ -86,12 +90,6 @@ export class Challenge extends React.PureComponent {
 
     return <Container>
       
-      {this.props.challengeInfoOpen && 
-      <FixedTopRight>
-        <ChallengeInfosAndVideos challenge={this.props.currentChallenge} setVideoModalUrl={this.props.setVideoModalUrl}/>
-      </FixedTopRight>
-      }
-
       <FixedControls>
         <SequenceControls
           showControls={this.state.activeTracks.filter((t)=>t).length > 0}
@@ -110,20 +108,36 @@ export class Challenge extends React.PureComponent {
         activeTracks={this.state.activeTracks}
       />}
 
-      {/*<FixedAtBottom>
-        <TrackSelector
+      {!this.props.challengeInfoOpen && <InfoBox string1="challenge_info1" string2="challenge_info2"/>}
+
+      <FixedAtBottom>
+        {/*<TrackSelector
           tracks={this.tracks}
           activeTracks={this.state.activeTracks}
           toggleTrack={this.toggleTrack}
-        />
-      </FixedAtBottom>*/}
+        />*/}
+        {this.props.challengeInfoOpen && 
+          <ChallengeInfosAndVideos 
+            challenge={this.props.currentChallenge} 
+            setVideoModalUrl={this.props.setVideoModalUrl}
+            close={this.props.toggleChallengeInfo}
+          />}
+        {!this.props.challengeInfoOpen && <Button
+            style={{marginBottom: 40}}
+            type={"up"}
+            onClick={()=>this.props.setChallengeInfo(true)}
+          />}
+
+      </FixedAtBottom>
+
+      {!this.props.challengeInfoOpen && <Building src="/images/building.svg"/>}
 
       <ActionStates
         playbackControlStatus={this.props.playbackControlStatus}
         sequenceStartedAt={this.state.sequenceStartedAt}
         tracks={this.tracks}
         activeTracks={this.state.activeTracks} 
-        render={ this.renderActionStuff }
+        render={ !this.props.challengeInfoOpen ? this.renderActionStuff : ()=>null }
         />
 
     </Container>
@@ -161,9 +175,11 @@ const StageContainer = styled.div`
 const FixedAtBottom = styled.div`
   position: fixed;
   bottom: 0;
+  display: flex;
+  justify-content: flex-end;
   width: 100%;
   box-sizing: border-box;
-  z-index: 99;
+  z-index: 10;
   padding: 0 25px;
   @media (${breakpoints.large}) {
     padding: 0 50px;
@@ -172,8 +188,13 @@ const FixedAtBottom = styled.div`
 
 const FixedControls = styled.div`
   position: fixed;
-  bottom: 50%;
-  right: 20px;
+  bottom: 40px;
+  width: 200px;
+  display: flex;
+  justify-content: center;
+  left: 50%;
+  margin-left: -100px;
+  z-index: 10;
 `
 
 const FixedTopRight = styled.div`
@@ -181,3 +202,11 @@ const FixedTopRight = styled.div`
   right: 0;
   width: 100%;
 `
+
+const Building = styled.img`
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+`
+

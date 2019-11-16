@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { UIText, LocaleText, Button, DataContext, withLanguage } from './'
+import { UIText, LocaleText, Button, DataContext, withLanguage, SoftTextButton } from './'
 import { breakpoints, colors } from '../config/globalStyles'
 
 export class Welcome extends React.Component {
@@ -55,8 +55,9 @@ export class Welcome extends React.Component {
             <LocaleText stringsKey="main-explanation"/>
           </UIText>   
         </FixedWidth>
-        <Button style={{marginTop: 50}} type="soft-square" onClick={this.close}>
-          <LocaleText stringsKey="main-start-button"/></Button>   
+        <SoftTextButton style={{marginTop: 50, width: 150, height: 100}} onClick={this.close}>
+          <LocaleText stringsKey="main-start-button"/>
+        </SoftTextButton>   
       </LeftContainer>,
       
       <RightContainer key={2} >

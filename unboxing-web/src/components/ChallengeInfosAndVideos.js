@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {LocaleText, withLanguage, UIText, VideoModal, HorizontalScrollContainer} from './';
+import {LocaleText, withLanguage, UIText, VideoModal, HorizontalScrollContainer, SoftTextButton} from './';
 import {serverUrl} from '../config/server.js';
-import { breakpoints } from '../config/globalStyles';
+import { breakpoints, colors } from '../config/globalStyles';
 
 const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
   constructor(props) {
@@ -18,30 +18,48 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
   render() {
     if(!this.props.challenge) return null;
 
-    const header = <LocaleText object={this.props.challenge.stages[0]} field="header"/> 
+    
+    const movement = <LocaleText object={this.props.challenge.sequence} field="title" />
+    const bars = <LocaleText object={this.props.challenge.sequence} field="subtitle" />
+    
+    const subtitle = <LocaleText object={this.props.challenge.stages[0]} field="header"/> 
     const text = <LocaleText object={this.props.challenge.stages[0]} field="text"/>
-    let videoThumbs = this.props.challenge.stages.map((stage, index)=>
-      stage.video_thumb ? <VideoThumb 
-        key={index} src={serverUrl + "/files/video/" + stage.video_thumb}
-        onClick={()=>{
-          this.props.setVideoModalUrl(serverUrl + "/files/video/" + stage["video_" + this.props.language]);
-        }}
-      /> : null
+    let videoContainers = this.props.challenge.stages.map((stage, index)=>
+      stage.video_thumb ? <VideoContainer>
+        <VideoThumb 
+          key={index} src={serverUrl + "/files/video/" + stage.video_thumb}
+          onClick={()=>{
+            this.props.setVideoModalUrl(serverUrl + "/files/video/" + stage["video_" + this.props.language]);
+          }}
+        /> 
+        <VideoCaption><LocaleText object={stage} field="video_caption"/></VideoCaption>
+        </VideoContainer>
+      : null
     );
-    if(videoThumbs.length == 1 && !videoThumbs[0]) videoThumbs = null;
+    if(videoContainers.length == 1 && !videoContainers[0]) videoContainers = null;
 
     return (
       <Container>
-        <InfoIcon src="/images/triangle.png"/>
-        <InfoContainer>
-          <InfoItem><UIText styleKey="challenge-info-header">{header}</UIText></InfoItem>
-          <InfoItem style={{marginTop: "5px"}}><UIText styleKey="challenge-info-content">{text}</UIText></InfoItem>
-        </InfoContainer>
-        {videoThumbs && <VideoThumbs>
-          <HorizontalScrollContainer noButtons justifyRight>
-            {videoThumbs}
-          </HorizontalScrollContainer>
+          <ContentContainer>
+
+          <WithLine>
+            <UIText styleKey="challenge-supertitle">{movement}</UIText>
+            <UIText styleKey="challenge-title">{bars}</UIText>
+          </WithLine>
+          
+          <UIText styleKey="challenge-subtitle">{subtitle}</UIText>
+          <UIText style={{marginTop: 10, marginBottom: 30}} styleKey="challenge-info-content">{text}</UIText>
+        
+        {videoContainers && <VideoThumbs>
+            {videoContainers}
         </VideoThumbs>}
+
+        <SoftTextButton style={{marginTop: 50, width: 170, height: 100}} onClick={this.props.close}>
+          <LocaleText stringsKey="passage-play-button"/>
+        </SoftTextButton>   
+
+        </ContentContainer>
+      
       </Container>
     )
   }
@@ -51,22 +69,23 @@ export { ChallengeInfosAndVideos }
 
 const Container = styled.div`
   width: 100%;
-  background-color: green;
+  min-height: 93vh;
+  bottom: 0;
   position: absolute;
+  box-sizing: border-box;
   right: 0;
-  padding-bottom: 20px;
-  padding-left: 20px;
-  @media (${breakpoints.large}) {
-    width: 50%;
-  }
-
-
-  /*
-  mask-mode: luminance;
-  mask-image: linear-gradient(to left, white 66%, rgb(1,1,1,0.5), transparent);
-  background-image: linear-gradient(to bottom, black 66%, rgb(0,0,0,0.5), transparent);*/
+  padding: 20px;
+  padding-top: 40px;
+  background-image: url("/images/overlaybg.svg");
+  background-size: cover;
 `
 
+const ContentContainer = styled.div`
+  width: 80%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2em;
+`
 
 const InfoIcon = styled.img`
   position: absolute;
@@ -105,7 +124,18 @@ const VideoThumbs = styled.div`
   padding-right: 10px; 
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  justify-content: flex-start;
+`
+
+const VideoContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start; 
+`
+
+const VideoCaption = styled.div`
+  width: 200px;
+  margin: 10px;
 `
 
 const VideoThumb = styled.img`
@@ -115,4 +145,24 @@ const VideoThumb = styled.img`
   :hover {
     cursor: pointer;
   }
+`
+
+const WithLine = styled.div`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  &::after {
+    content: "";
+    background-color: ${ colors.turquoise };
+    height: 95.25%;
+    position: absolute;
+    left: -22px;
+    width: 4px;
+    @media (${breakpoints.large}) {
+      left: -26px;
+    width: 5px;
+    }
+  }
+  margin-bottom: 1em;
+  margin-left: 26px;
 `
