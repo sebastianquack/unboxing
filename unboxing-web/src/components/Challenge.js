@@ -110,13 +110,13 @@ export class Challenge extends React.PureComponent {
         activeTracks={this.state.activeTracks}
       />}
 
-      <FixedAtBottom>
+      {/*<FixedAtBottom>
         <TrackSelector
           tracks={this.tracks}
           activeTracks={this.state.activeTracks}
           toggleTrack={this.toggleTrack}
         />
-      </FixedAtBottom>
+      </FixedAtBottom>*/}
 
       <ActionStates
         playbackControlStatus={this.props.playbackControlStatus}

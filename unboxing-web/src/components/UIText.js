@@ -37,6 +37,9 @@ const baseTextStyles = { // base style is mobile style
     line-height: 24px;
     text-transform: none;
     display: block;
+    text-align: right;
+    border-right: 2px solid ${ colors.turquoise };
+    padding-right: 5px;
   `,
   "statusbar-title": `
     font-weight: bold;
@@ -59,6 +62,17 @@ const baseTextStyles = { // base style is mobile style
     font-size: 25px;
     line-height: 28px;
     `,
+  "bottom-left-explanation": `
+    font-family: DINPro;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 24px;
+    text-transform: none;
+    display: block;
+    margin-bottom: 24px;
+    :last-child { margin-bottom: 0 !important; }
+  `,  
   "challenge-select-title": `
     font-weight: bold;
     font-size: 24.4946px;

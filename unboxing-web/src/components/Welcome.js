@@ -62,7 +62,8 @@ export class Welcome extends React.Component {
       <RightContainer key={2} >
         <Video autoPlay loop muted>
           <source src="/video/web_intro_1.mp4" type="video/mp4"/>
-        </Video>  
+        </Video>
+        {/*<KeyVisualImg/>*/}
         <UIText style={{marginTop: 20}} styleKey="big-title-side-explanation">
           <LocaleText stringsKey="side-explanation" index={this.state.explanationIndex}/>            
         </UIText>   
@@ -86,12 +87,22 @@ const RightContainer = styled.div`
   display: flex;
   flex-direction: column;
   right: 5vw;
-  top: 15vh;
+  top: 0vh;
   z-index: 0;
+  mix-blend-mode: lighten;
+`
+
+const KeyVisualImg = styled.div`
+  width: 100px;
+  height: 100px;
+  mix-blend-mode: lighten;
+  background-image: url("/images/key_Visual_composing.png");
+  background-size: cover;
 `
 
 const Video = styled.video`
-  width: 300px;
+  height: 80vh;
+  mix-blend-mode: lighten;
 `
 
 const WithLine = styled.div`
