@@ -101,8 +101,8 @@ const baseTextStyles = { // base style is mobile style
     `,
   "challenge-select-subtitle": `
     font-weight: bold;
-    font-size: 19px;
-    line-height: 26px;
+    font-size: 15px;
+    line-height: 18px;
     `,
   
   "challenge-supertitle": `

@@ -25,7 +25,9 @@ export class DataLoader extends React.Component {
 
     componentDidMount() {
       let path = this.serverUrl + this.apiPath;
-      axios.get(path)
+      axios.get(path, {
+        timeout: 20000
+      })
       .then((response)=> {
         // handle success
         if(response.data.data) {

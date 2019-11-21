@@ -5,6 +5,8 @@ import { LocaleText, UIText } from './';
 import { formatChallengeTitle } from '../helpers';
 import { breakpoints } from '../config/globalStyles';
 
+const debugShowRegion = false
+
 /* JSON in website data - format:
 
 "mapData": {
@@ -110,6 +112,7 @@ class Map extends React.PureComponent {
       displayIcons: this.props.displayIcons,
       scaleFactor: this.props.scaleFactor,
     })
+    //setInterval(this.updateDimensions, 25)
   }
 
   componentWillUnmount() {
@@ -118,23 +121,24 @@ class Map extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-
-    console.log(this.props.scaleFactor, prevProps.scaleFactor)
     if (prevProps.displayIcons !== this.props.displayIcons || prevProps.scaleFactor !== this.props.scaleFactor) {
       const buttonsRemoved = prevProps.displayIcons && !this.props.displayIcons
       this.setState({
         transitionOrder: ( buttonsRemoved ? "scale-last" : "scale-first" )
       }, () => {
-        console.log("set state")
         this.setState({
           displayIcons: this.props.displayIcons,
           scaleFactor: this.props.scaleFactor,
         })
       })
-    } 
+    }
+    //if (prevProps.currentMapRegionIndex !== this.props.currentMapRegionIndex) {
+    //  this.updateDimensions()
+    //}
   }
 
   updateDimensions() {
+    if(!this.props.data || !this.props.data.content || !this.props.data.content.mapData) return null;
     const region = this.props.data.content.mapData.regions[this.props.currentMapRegionIndex]
 
     const imageNaturalWidthPx = this.refs.mapImg.naturalWidth
@@ -142,34 +146,59 @@ class Map extends React.PureComponent {
     const imageScaledWidthPx = this.refs.mapImg.width
     const imageScaledHeightPx = this.refs.mapImg.height
     const regionNaturalWidthPx = (region.x2 - region.x1)/100 * imageNaturalWidthPx
-    const regionNaturalHeightPx = (region.x2 - region.x1)/100 * imageNaturalHeightPx
+    const regionNaturalHeightPx = (region.y2 - region.y1)/100 * imageNaturalHeightPx
     const regionScaledWidthPx = (region.x2 - region.x1)/100 * imageScaledWidthPx
-    const regionScaledHeightPx = (region.x2 - region.x1)/100 * imageScaledHeightPx
+    const regionScaledHeightPx = (region.y2 - region.y1)/100 * imageScaledHeightPx
     const viewportWidthPx = window.innerWidth
     const viewportHeightPx = window.innerHeight
     const imageAspectRatio = imageNaturalWidthPx / imageNaturalHeightPx
+    const regionAspectRatio = regionNaturalWidthPx / regionNaturalHeightPx
     const viewportAspectRatio = viewportWidthPx / viewportHeightPx
+    const scaleDimension = regionAspectRatio > viewportAspectRatio ? "width" : "height"    
+    const topOffsetPerc = 50 * ((viewportHeightPx - regionScaledHeightPx)/imageScaledHeightPx) // vertial centering
+    const leftOffsetPerc = 0 * 50 * ((viewportWidthPx - regionScaledWidthPx)/imageScaledWidthPx) // horizontal centering
+    const adjustedRegionCoords = {
+      x1: region.x1 - leftOffsetPerc,
+      x2: region.x2 + leftOffsetPerc,
+      y1: region.y1 - topOffsetPerc,
+      y2: region.y2 + topOffsetPerc
+    }
 
-    console.log(imageNaturalWidthPx, imageScaledWidthPx)
+    // console.log("imageNaturalWidthPx", imageNaturalWidthPx)
+    // console.log("imageNaturalHeightPx", imageNaturalHeightPx)
+    // console.log("imageScaledWidthPx",imageScaledWidthPx)
+    // console.log("imageScaledHeightPx", imageScaledHeightPx)
+// 
+    // console.log("regionScaledHeightPx", regionScaledHeightPx)
+    // console.log("imageScaledHeightPx", imageScaledHeightPx)
+    // console.log("viewportHeightPx", viewportHeightPx)
+    // console.log("topOffsetPerc", topOffsetPerc)
+    // console.log("leftOffsetPerc", leftOffsetPerc)
+    // console.log("scaleDimension", scaleDimension)
 
     this.setState({
       imageScaledWidthPx,
-      imageScaledHeightPx
-    })
-
-    this.setState({ 
-      scaleDimension: imageAspectRatio > viewportAspectRatio ? "width" : "height"
+      imageScaledHeightPx,
+      topOffsetPerc,
+      leftOffsetPerc,
+      scaleDimension,
+      adjustedRegionCoords
     })
   }  
 
   render () {
-    if(!this.props.data || !this.props.data.content.mapData) return null;
+    if(!this.props.data || !this.props.data.content || !this.props.data.content.mapData) return null;
     const region = this.props.data.content.mapData.regions[this.props.currentMapRegionIndex]
 
     const challengeButtons = this.props.data ? this.props.data.challenges.map((challenge, index)=> {
       const mapPositionsPerc = this.props.data.content.mapData.challenges.find( c => c.challenge_name === challenge.name ) || {x:0, y:0}
+      const isInsideCurrentRegion = 
+        mapPositionsPerc.x > region.x1 && 
+        mapPositionsPerc.x < region.x2 && 
+        mapPositionsPerc.y > region.y1 && 
+        mapPositionsPerc.y < region.y2
       return <ChallengeButton 
-        show={ this.state.displayIcons}
+        show={ this.state.displayIcons /*&& isInsideCurrentRegion*/}
         transitionOrder={ this.state.transitionOrder }
         key={challenge._id}
         onClick={()=>{this.props.navigateToChallenge(challenge._id)}}
@@ -209,7 +238,9 @@ class Map extends React.PureComponent {
       onClick={this.props.nextMapRegion}
       >
       <ChallengeButtonNumber>
-          <img src="images/RightCorner.svg"/>
+        <UIText styleKey="challenge-select-title" >
+          <img style={{height:"1em", marginTop:"0.2em", marginLeft:"0.1em"}} src="images/RightCorner.svg" alt="next" />
+        </UIText>
       </ChallengeButtonNumber>  
       <ChallengeButtonSubtitle>
           <UIText styleKey="challenge-select-subtitle" >
@@ -232,7 +263,9 @@ class Map extends React.PureComponent {
       onClick={this.props.prevMapRegion}
       >
       <ChallengeButtonNumber>
-          <BackImage src="images/RightCorner.svg"/>
+        <UIText styleKey="challenge-select-title" >
+          <BackImage style={{height:"1em", marginTop:"0.2em", marginLeft:"-0.1em"}} src="images/RightCorner.svg" alt="next" />
+        </UIText>        
       </ChallengeButtonNumber>  
       <ChallengeButtonSubtitle>
           <UIText styleKey="challenge-select-subtitle" >
@@ -249,10 +282,13 @@ class Map extends React.PureComponent {
     return <OuterContainer>
         <InnerContainer
           transitionOrder={this.state.transitionOrder}
+          onTransitionEnd={()=>console.log("transitionEnd")}
           style={{
             width: this.state.imageScaledWidthPx+"px", 
             height: this.state.imageScaledHeightPx+"px",
-            transform: `translateX(-${region.x1}%) translateY(-${region.y1}%) scale(${ this.state.scaleFactor })`,
+            //marginTop: this.state.topOffsetPerc+"%",
+            //marginLeft: this.state.leftOffsetPerc+"%",
+            transform: `translateX(-${region.x1/*-this.state.leftOffsetPerc*/}%) translateY(-${region.y1/*-this.state.topOffsetPerc*/}%) scale(${ this.state.scaleFactor })`,
             transformOrigin: `${ (region.x2 - region.x1)/2 + region.x1 }% ${ (region.y2 - region.y1)/2 + region.y1 }%`
           }}>
           { prevMovementButtons }
@@ -263,11 +299,11 @@ class Map extends React.PureComponent {
             ref="mapImg"
             onLoad={this.updateDimensions}
             scaleDimension={this.state.scaleDimension}
-            scaleDelta={this.scaleDimension === "width" ? region.x2 - region.x1 : region.y2 - region.y1}
-            scaleDeltaMax={ scaleDeltaMax }
+            scaleDelta={this.state.scaleDimension === "width" ? region.x2 - region.x1 : region.y2 - region.y1}
             src={"/images/" + this.props.data.content.mapData.filename}
             alt=""
-          />        
+          />
+          { debugShowRegion && <Region {...region} /> }
         </InnerContainer>
       </OuterContainer>
   }
@@ -285,6 +321,8 @@ const OuterContainer = styled.div`
 
   @media (${breakpoints.large}) {
   }
+
+  * { transition: all 1s !important}
 `
 
 const InnerContainer = styled.div`
@@ -302,8 +340,20 @@ const InnerContainer = styled.div`
 `
 
 const MapImg = styled.img`
+  opacity: 0.8;
   visibility: ${ props => props.visible ? "visible" : "hidden" }; 
   ${ props => `${props.scaleDimension}: ${10000 / props.scaleDelta}${ props.scaleDimension === "width" ? "vw" : "vh" }`};
+`
+
+const Region = styled.div`
+  position: absolute;
+  left: ${ props => props.x1 }%;
+  top: ${ props => props.y1 }%;
+  width: ${ props => props.x2 - props.x1 }%;
+  height: ${ props => props.y2 - props.y1 }%;
+  border: 3px white dotted;
+  pointer-events: none;
+  box-sizing: border-box;
 `
 
 const ChallengeButton = styled.div`
@@ -314,6 +364,7 @@ const ChallengeButton = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  z-index: 1;
 
   position: absolute;
   top: ${props=>props.offset.top + "%"};
@@ -333,9 +384,14 @@ const BackImage = styled.img`
 
 const ChallengeButtonNumber = styled.div`
   background-image: url(/images/PassageButtonBg.png);
+  background-repeat: no-repeat;
   background-size: contain;
-  width: 60px;
-  height: 60px;
+  width: 30px;
+  height: 30px;
+  @media (${breakpoints.large}) {
+    width: 60px;
+    height: 60px;
+  }
   align-items: center;
   justify-content: center;
   display: flex;
