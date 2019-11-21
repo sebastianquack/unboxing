@@ -62,6 +62,7 @@ export class BaseContainer extends React.PureComponent {
           displayIcons={getMapConfig(this.props.navigationState).displayIcons} 
           {...this.props} 
         />
+        { this.props.navigationState !== "welcome" && <Shade/> }
         <Top>
           <StatusBar {...this.props}/>
         </Top>
@@ -94,6 +95,19 @@ const Top = styled.div`
   @media (${breakpoints.large}) {
     padding: 25px;
   }  
+`
+
+const Shade = styled.div`
+  object-fit: cover;
+  width: 100vw;
+  height: 100vh; 
+  position: fixed;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  background-image: linear-gradient(180deg, rgba(0,0,0,0.9) 1rem, rgba(0,0,0,0) 8rem), radial-gradient(at bottom left, rgba(0,0,0,1) 3%, rgba(0,0,0,0) 250px);
+  @media (${breakpoints.large}) {
+    background-image: linear-gradient(180deg, rgba(0,0,0,0.9) 1rem, rgba(0,0,0,0) 8rem), radial-gradient(at bottom left, rgba(0,0,0,1) 3%, rgba(0,0,0,0) 400px);
+  }
 `
 
 const Bottom = styled.div`
