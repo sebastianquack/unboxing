@@ -62,6 +62,7 @@ export class BaseContainer extends React.PureComponent {
           displayIcons={getMapConfig(this.props.navigationState).displayIcons} 
           {...this.props} 
         />
+        {this.props.navigationState === "challenge" && <Background color="blackout" />}
         { this.props.navigationState !== "welcome" && <Shade/> }
         <Top>
           <StatusBar {...this.props}/>
