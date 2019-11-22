@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import {LocaleText, withLanguage, UIText, VideoModal, HorizontalScrollContainer, SoftTextButton} from './';
 import {serverUrl} from '../config/server.js';

@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components'
+import styled from 'styled-components/macro'
 
 import { UIText, LocaleText, LanguageSelector, Button } from './'
 import { breakpoints, colors } from '../config/globalStyles'

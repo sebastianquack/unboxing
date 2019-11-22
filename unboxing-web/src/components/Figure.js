@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { keyframes, css } from 'styled-components';
+import styled, { keyframes, css } from 'styled-components/macro';
 import PropTypes from 'prop-types';
 
 import { withLanguage, localeText } from './'

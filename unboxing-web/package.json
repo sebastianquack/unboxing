@@ -12,7 +12,7 @@
     "react-markdown": "^4.1.0",
     "react-scripts": "3.0.1",
     "reset-css": "^4.0.1",
-    "styled-components": "^4.2.1"
+    "styled-components": "^4.4.1"
   },
   "scripts": {
     "start": "PORT=4000 react-scripts start",
@@ -37,6 +37,7 @@
     ]
   },
   "devDependencies": {
+    "babel-plugin-macros": "^2.7.0",
     "pngquant": "^3.0.0"
   }
 }
