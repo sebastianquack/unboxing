@@ -35,10 +35,10 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
         </VideoContainer>
       : null
     );
-    if(videoContainers.length == 1 && !videoContainers[0]) videoContainers = null;
+    if(videoContainers.length === 1 && !videoContainers[0]) videoContainers = null;
 
     return (
-      <Container hidden={this.props.hidden}>
+      <Container hide={this.props.hide}>
           <ContentContainer>
 
           <WithLine>
@@ -84,7 +84,8 @@ const Container = styled.div`
   overflow: hidden;
   align-self: center;
 
-  transform: translateY(${ props => props.hiddenX ? "94" : "0" }%);
+  transition: transform 1s;
+  transform: translateY(${ props => props.hide ? "94" : "0" }%);
 `
 
 const ContentContainer = styled.div`
@@ -93,8 +94,8 @@ const ContentContainer = styled.div`
   box-sizing: border-box;
   margin-left: 8%;
   margin-right: 8%;
-  height: 80%;
-  margin-top: 5%;
+  height: 82%;
+  margin-top: 4.5%;
   /*background-color:rgba(0,0,255,0.5);*/
   overflow-x: hidden;
   overflow-y: auto;

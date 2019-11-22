@@ -126,7 +126,7 @@ export class Challenge extends React.PureComponent {
       </FixedAtBottom>
 
       <ChallengeInfosAndVideos 
-        hidden={!this.props.challengeInfoOpen}
+        hide={!this.props.challengeInfoOpen}
         challenge={this.props.currentChallenge} 
         setVideoModalUrl={this.props.setVideoModalUrl}
         close={this.props.toggleChallengeInfo}
@@ -150,6 +150,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  z-index:5;
+  position: relative;
 `
 
 const VisualizerContainer = styled.div`
