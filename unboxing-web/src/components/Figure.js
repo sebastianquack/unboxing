@@ -104,7 +104,7 @@ const Container = styled.span`
   transition: opacity 0.3s, transform 0.5s;
   width: calc(50px + 10vw);
   max-width: 14vw;
-  mix-blend-mode: lighten;
+  /*mix-blend-mode: lighten;*/
   @media (${breakpoints.large}) {
     width: calc(30px + 7vw);
     max-width: 12vw;
@@ -142,7 +142,7 @@ const InstrumentImg = styled.img`
   height: auto;
   position: absolute;
   bottom: ${ props => props.active ? "20%" : "0%" };
-  mix-blend-mode: lighten;
+  /*mix-blend-mode: lighten;*/
   ${ props => props.active ? 
     ((props.direction === "left" ? "right" : "left") + ": " + (props.direction === "center" ? "0" : "30" ) + "%")
     :
