@@ -213,15 +213,10 @@ class Map extends React.PureComponent {
         
         <ChallengeButtonSubtitle>
           <UIText styleKey="challenge-select-subtitle" >
-            <LocaleText object={challenge.sequence} field="title"/>
+            <LocaleText object={challenge.stages[0]} field="header"/>
           </UIText>
         </ChallengeButtonSubtitle>
-        
-        <ChallengeButtonSubtitle>
-          <UIText styleKey="challenge-select-subtitle" >
-            <LocaleText object={challenge.sequence} field="subtitle"/>
-          </UIText>
-        </ChallengeButtonSubtitle>
+      
       </ChallengeButton>
     }) : null;
 
@@ -399,7 +394,9 @@ const ChallengeButtonNumber = styled.div`
 `
 
 const ChallengeButtonSubtitle = styled.div`
+  width: 10em;
   justify-content: center;
+  text-align: center;
   @media (${breakpoints.large}) {
     display: flex;
   }

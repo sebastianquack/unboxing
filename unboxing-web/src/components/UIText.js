@@ -133,6 +133,7 @@ const baseTextStyles = { // base style is mobile style
     letter-spacing: 0px;
     text-transform: none;
     display: block;
+    column-count: 2;
     `,
   
   "empty-stage": `

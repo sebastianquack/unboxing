@@ -14,7 +14,10 @@ export class Challenges extends React.Component {
 
   render () {
 
-    return <InfoBox string1="challenges_info1" string2="challenges_info2"/>
+    return <InfoBox 
+      dynamicString="challenges_info1"
+      data={this.props.data}
+    />
 
   }
 }

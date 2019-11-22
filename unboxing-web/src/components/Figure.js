@@ -23,6 +23,20 @@ const Figure =  withLanguage(class extends React.PureComponent {
     const yPosPercentage = yPosToPercentage(yPos)
     const src = this.props.imgPaths[this.props.action || "idle"][direction]
 
+    let instrumentImgs = [];
+    const multiple = 1; //todo here - replace with multiple counter icon! instrument.multiple ? instrument.multiple : 1;
+    for(let i = 0; i < multiple; i++) {
+      instrumentImgs.push(
+        <InstrumentImg 
+          src={instrument.image} 
+          alt={localeText(instrument,"name", this.props.language)}
+          direction={direction}
+          active={this.props.active}
+          multipleIndex={i}
+        />
+      )
+    }
+
     if (this.props.active) console.log(src)
 
     return [<Container 
@@ -40,12 +54,7 @@ const Figure =  withLanguage(class extends React.PureComponent {
           active={this.props.active}
           bpm={this.props.bpm}
         />
-        <InstrumentImg 
-          src={instrument.image} 
-          alt={localeText(instrument,"name", this.props.language)}
-          direction={direction}
-          active={this.props.active}
-        />
+        {instrumentImgs}
       </Container>,
       <PositionalMarker 
         key="2" 
@@ -142,6 +151,8 @@ const InstrumentImg = styled.img`
   height: auto;
   position: absolute;
   bottom: ${ props => props.active ? "20%" : "0%" };
+  transform: translateX(${props => (props.multipleIndex * 10) + "%"});
+
   mix-blend-mode: lighten;
   ${ props => props.active ? 
     ((props.direction === "left" ? "right" : "left") + ": " + (props.direction === "center" ? "0" : "30" ) + "%")

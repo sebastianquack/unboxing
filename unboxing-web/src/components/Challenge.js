@@ -108,7 +108,13 @@ export class Challenge extends React.PureComponent {
         activeTracks={this.state.activeTracks}
       />}
 
-      {!this.props.challengeInfoOpen && <InfoBox string1="challenge_info1" string2="challenge_info2"/>}
+      {!this.props.challengeInfoOpen && 
+        <InfoBox 
+          staticString="challenge_info1" 
+          dynamicString="dynamicInstruct"
+          dynamicObj={this.props.currentChallenge.stages[0]}
+        />
+      }
 
       <FixedAtBottom>
         {/*<TrackSelector
