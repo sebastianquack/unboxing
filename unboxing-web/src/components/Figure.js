@@ -44,6 +44,7 @@ const Figure =  withLanguage(class extends React.PureComponent {
           src={instrument.image} 
           alt={localeText(instrument,"name", this.props.language)}
           direction={direction}
+          active={this.props.active}
         />
       </Container>,
       <PositionalMarker 
@@ -94,7 +95,7 @@ const Container = styled.span`
   display: block;
   position: absolute;
   filter: ${ props => props.active ? "none" : "greyscale(0%), blur(20%)" };
-  opacity: ${ props => props.active ? 1 : ( props.action === "play" ? 0.1 : 0 ) };
+  /* opacity: ${ props => props.active ? 1 : ( props.action === "play" ? 0.1 : 0 ) }; */
   /*animation: ${ props => props.active ? "none" : css`${ inactivePlayAnim } ${ 1 }s linear infinite` };*/
   left: ${ props => props.xPosPercentage }%;
   bottom: ${ props => props.yPosPercentage  }%;
@@ -103,6 +104,7 @@ const Container = styled.span`
   transition: opacity 0.3s, transform 0.5s;
   width: calc(50px + 10vw);
   max-width: 14vw;
+  mix-blend-mode: lighten;
   @media (${breakpoints.large}) {
     width: calc(30px + 7vw);
     max-width: 12vw;
@@ -122,9 +124,13 @@ const Container = styled.span`
 
 const Img = styled.img`
   display: block;
+  opacity: ${ props => props.active ? 1 : ( props.action === "play" ? 0.5 : 0 ) };
   width: inherit;
   max-width: inherit;
   height: auto;
+  transform: translateY(-100%);
+  position: absolute;
+  overflow: hidden; 
   /*filter:  ${ props => props.action === "idle" ? "grayscale(50%)" : "none" };*/
   /*animation: ${ props => props.action === "idle" || !props.active ? "none" : css`${ playAnim } ${ 120 / props.bpm }s linear infinite` };*/
   /*transition: translate 0.2s;*/
@@ -132,12 +138,17 @@ const Img = styled.img`
 
 const InstrumentImg = styled.img`
   display: block;
-  width: 50%;
+  width: 100%;
   height: auto;
   position: absolute;
-  bottom: 20%;
-  opacity: 0.75;
-  ${ props => (props.direction === "left" ? "right" : "left") + ": " + (props.direction === "center" ? "25" : "50" ) + "%"};
+  bottom: ${ props => props.active ? "20%" : "0%" };
+  mix-blend-mode: lighten;
+  ${ props => props.active ? 
+    ((props.direction === "left" ? "right" : "left") + ": " + (props.direction === "center" ? "0" : "30" ) + "%")
+    :
+    ""
+  };
+  
 `
 
 const PositionalMarker = styled.div`
@@ -146,13 +157,12 @@ const PositionalMarker = styled.div`
   left: ${ props => props.xPosPercentage }%;
   bottom: ${ props => props.yPosPercentage  }%;
   z-index: ${ props => 99-Math.floor(props.yPosPercentage) };
-  width: 3%;
-  height: 4%;
-  background-color: ${ props => props.active ? colors.person : "white" };
-  opacity: ${ props => props.hasFigure ? 0 : (props.active ? 0.9 : 0.2) };
+  width: 4%;
+  height: 7%;
+  border: 2px solid ${ colors.turquoise };
   border-radius: 50%;
+  background-color: black;
   transform: translateX(-50%) translateY(-100%);
-  transition: background-color 0.5s, opacity  0.3s;
 `
 
 const xPosToPercentage = function(xPos) {
