@@ -10,16 +10,46 @@ export class InfoBox extends React.Component {
     this.state = {}
   }
 
+  componentDidMount() {
+    let dynamicCount = 0;
+
+    if(this.props.dynamicString) {
+      if(this.props.dynamicObj) {
+        dynamicCount = this.props.dynamicObj[this.props.dynamicString + "_de"].split("/");
+      } else {
+        let dynamicContent = this.props.data.content.strings[this.props.dynamicString + "_de"];
+        dynamicCount = dynamicContent.split("/");
+      }
+      console.log("dynamicCount", dynamicCount);
+
+      this.setState({
+        dynamicIndex: 0,
+        dynamicMax: dynamicCount.length
+      });
+      this.dynamicInterval = setInterval(()=>{
+        this.setState({dynamicIndex: this.state.dynamicIndex < this.state.dynamicMax - 1 ? 
+          this.state.dynamicIndex + 1 : 0})
+      }, 7000);
+    }
+  }
+
   render () {
     return(
       <InfoBoxContainer>
         <InfoBoxContent>
+          {this.props.staticString &&
+            <UIText styleKey="bottom-left-explanation">
+              <LocaleText stringsKey={this.props.staticString}/>            
+            </UIText>
+          }
+          {this.props.dynamicString &&
           <UIText styleKey="bottom-left-explanation">
-            <LocaleText stringsKey={this.props.string1}/>            
+            {this.props.dynamicObj ?
+              <LocaleText field={this.props.dynamicString} object={this.props.dynamicObj} index={this.state.dynamicIndex}/> :
+              <LocaleText stringsKey={this.props.dynamicString} index={this.state.dynamicIndex}/>           
+            }
           </UIText>
-          <UIText styleKey="bottom-left-explanation">
-            <LocaleText stringsKey={this.props.string2}/>            
-          </UIText>
+          }
         </InfoBoxContent>
         <InfoLine>
           <img src="/images/info_icon.png"/>

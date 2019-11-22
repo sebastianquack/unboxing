@@ -241,6 +241,7 @@ export function loadInstruments() { return {
     combinedName_de: "Violinen",
     combinedName_en: "Violins",
     sequenceGroup: "violin1",
+    multiple: 6,
     image: '/images/instruments/Violine.png', 
     order: 12,
     priority: 1,
