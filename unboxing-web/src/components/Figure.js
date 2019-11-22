@@ -179,9 +179,9 @@ const MultipleBadge = styled.div`
   position: absolute;
   left: ${ props => props.xPosPercentage }%;
   bottom: ${ props => props.yPosPercentage  }%;
-  z-index: ${ props => 99-Math.floor(props.yPosPercentage) };
-  width: 0.8rem;
-  height: 0.8rem;
+  z-index: ${ props => 99-Math.floor(props.yPosPercentage) + 1};
+  width: 0.9rem;
+  height: 0.9rem;
   border: 0px solid black;
   border-radius: 50%;
   background-color: ${ colors.turquoise };

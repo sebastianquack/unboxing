@@ -147,6 +147,7 @@ const FiguresContainer = styled.div`
 
 const ImagePreloadContainer = styled.div`
   z-index:-10;
+  opacity: 0;
   pointer-events: none;
   position: absolute;
   img {position: absolute;}
