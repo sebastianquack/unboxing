@@ -11,11 +11,14 @@ export class InfoBox extends React.Component {
   }
 
   componentDidMount() {
-    let dynamicCount = 0;
+    let dynamicCount = [];
 
     if(this.props.dynamicString) {
       if(this.props.dynamicObj) {
-        dynamicCount = this.props.dynamicObj[this.props.dynamicString + "_de"].split("/");
+        let obj = this.props.dynamicObj[this.props.dynamicString + "_de"];
+        if(obj) {
+          dynamicCount = obj.split("/");  
+        }
       } else {
         let dynamicContent = this.props.data.content.strings[this.props.dynamicString + "_de"];
         dynamicCount = dynamicContent.split("/");

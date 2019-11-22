@@ -47,7 +47,8 @@ class LocaleText extends React.Component {
           text = localeText(object, field, language)
 
           if(typeof index !== "undefined") {
-            text = text.split("/")[index]
+            if(text)
+              text = text.split("/")[index]
           }
         } 
 
