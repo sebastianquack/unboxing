@@ -66,7 +66,6 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
 export { ChallengeInfosAndVideos }
 
 const Container = styled.div`
-display: none;
   width: 100%;
   bottom: 0;
   position: fixed;
