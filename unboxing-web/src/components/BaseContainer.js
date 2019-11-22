@@ -1,5 +1,5 @@
 import React from 'react';
-import styled, { createGlobalStyle } from 'styled-components'
+import styled, { createGlobalStyle } from 'styled-components/macro'
 
 import {
   MainScreen,
@@ -21,7 +21,7 @@ const getMapConfig = (navigationState) => {
     displayIcons: true,
   }
   if (navigationState === "challenge") return {
-    scaleFactor: 1.2,
+    scaleFactor: 2,
     displayIcons: false,
   }
 }
@@ -57,11 +57,12 @@ export class BaseContainer extends React.PureComponent {
           flow={this.props.navigationState !== "challenge"}
         />
         <Map 
-          visible={this.props.navigationState == "challenges"}
+          visible={this.props.navigationState !== "welcome"}
           scaleFactor={getMapConfig(this.props.navigationState).scaleFactor} 
           displayIcons={getMapConfig(this.props.navigationState).displayIcons} 
           {...this.props} 
         />
+        {this.props.navigationState === "challenge" && <Background color="blackout" />}
         { this.props.navigationState !== "welcome" && <Shade/> }
         <Top>
           <StatusBar {...this.props}/>

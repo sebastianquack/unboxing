@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 
 import {
   SequenceControls,
@@ -131,14 +131,14 @@ export class Challenge extends React.PureComponent {
 
       </FixedAtBottom>
 
-      {this.props.challengeInfoOpen && 
-          <ChallengeInfosAndVideos 
-            challenge={this.props.currentChallenge} 
-            setVideoModalUrl={this.props.setVideoModalUrl}
-            close={this.props.toggleChallengeInfo}
-          />}
+      <ChallengeInfosAndVideos 
+        hide={!this.props.challengeInfoOpen}
+        challenge={this.props.currentChallenge} 
+        setVideoModalUrl={this.props.setVideoModalUrl}
+        close={this.props.toggleChallengeInfo}
+      />
 
-      {!this.props.challengeInfoOpen && <Building src="/images/building.svg"/>}
+      {/*!this.props.challengeInfoOpen && <Building src="/images/building.svg"/>*/}
 
       <ActionStates
         playbackControlStatus={this.props.playbackControlStatus}
@@ -156,6 +156,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
+  z-index:5;
+  position: relative;
 `
 
 const VisualizerContainer = styled.div`

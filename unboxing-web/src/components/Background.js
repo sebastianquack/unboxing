@@ -1,5 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
+import styled from 'styled-components/macro';
 import PropTypes from 'prop-types';
 
 import { breakpoints, colors } from '../config/globalStyles'
@@ -26,6 +26,7 @@ export class Background extends React.PureComponent {
       
       <GradientActive on={color === "active"} />
       <GradientPassive on={color === "passive"} />
+      <GradientComplementaryBlackout on={color === "blackout"} />
     </Container>
   }
 }
@@ -44,7 +45,7 @@ const Container = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
+  z-index: 0;
 `
 
 const BackgroundVideo = styled.video`
@@ -71,5 +72,14 @@ const GradientPassive = styled.div`
   height: 55%;
   width: 100%;
   bottom: 0;
+  position: absolute;
+`
+
+const GradientComplementaryBlackout = styled.div`
+  background: linear-gradient(180deg,#000 0%, #000e 53%,#0000 100%);
+  opacity: ${ props => props.on ? 1 : 0 };
+  height: 63%;
+  width: 100%;
+  top: 0;
   position: absolute;
 `
