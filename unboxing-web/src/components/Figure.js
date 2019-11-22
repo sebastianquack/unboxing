@@ -23,20 +23,14 @@ const Figure =  withLanguage(class extends React.PureComponent {
     const yPosPercentage = yPosToPercentage(yPos)
     const src = this.props.imgPaths[this.props.action || "idle"][direction]
 
-    let instrumentImgs = [];
-    const multiple = 1; //todo here - replace with multiple counter icon! instrument.multiple ? instrument.multiple : 1;
-    for(let i = 0; i < multiple; i++) {
-      instrumentImgs.push(
-        <InstrumentImg 
-          src={instrument.image} 
-          alt={localeText(instrument,"name", this.props.language)}
-          direction={direction}
-          active={this.props.active}
-          multipleIndex={i}
-        />
-      )
-    }
-
+    const multiple = instrument.multiple ? instrument.multiple : 1;
+    const badge = multiple > 1 ? 
+      <MultipleBadge
+        xPosPercentage={xPosPercentage} 
+        yPosPercentage={yPosPercentage}
+      >{multiple}x</MultipleBadge> 
+    : null;
+    
     if (this.props.active) console.log(src)
 
     return [<Container 
@@ -54,7 +48,12 @@ const Figure =  withLanguage(class extends React.PureComponent {
           active={this.props.active}
           bpm={this.props.bpm}
         />
-        {instrumentImgs}
+        <InstrumentImg 
+          src={instrument.image} 
+          alt={localeText(instrument,"name", this.props.language)}
+          direction={direction}
+          active={this.props.active}
+        />
       </Container>,
       <PositionalMarker 
         key="2" 
@@ -62,7 +61,9 @@ const Figure =  withLanguage(class extends React.PureComponent {
         yPosPercentage={yPosPercentage}
         active={ ["play"].indexOf(this.props.action) > -1 }
         hasFigure={this.props.active}
-      />]
+      />,
+      badge
+      ]
   }
 })
 
@@ -168,12 +169,32 @@ const PositionalMarker = styled.div`
   left: ${ props => props.xPosPercentage }%;
   bottom: ${ props => props.yPosPercentage  }%;
   z-index: ${ props => 99-Math.floor(props.yPosPercentage) };
-  width: 4%;
-  height: 7%;
+  width: 5%;
+  height: 8%;
   border: 2px solid ${ colors.turquoise };
   border-radius: 50%;
   background-color: black;
   transform: translateX(-50%) translateY(-100%);
+`
+
+const MultipleBadge = styled.div`
+  position: absolute;
+  left: ${ props => props.xPosPercentage }%;
+  bottom: ${ props => props.yPosPercentage  }%;
+  z-index: ${ props => 99-Math.floor(props.yPosPercentage) };
+  width: 0.8rem;
+  height: 0.8rem;
+  border: 0px solid black;
+  border-radius: 50%;
+  background-color: ${ colors.turquoise };
+  transform: translateX(-50%) translateY(-100%);
+  color: white;
+  font-size: 0.5rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
 `
 
 const xPosToPercentage = function(xPos) {

@@ -242,7 +242,7 @@ export function loadInstruments() { return {
     combinedName_en: "Violins",
     sequenceGroup: "violin1",
     image: '/images/instruments_opaque/Violine.png', 
-    multiple: 4,
+    multiple: 6,
     order: 12,
     priority: 1,
     direction: "right",
