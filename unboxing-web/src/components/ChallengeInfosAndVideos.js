@@ -17,7 +17,6 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
 
   render() {
     if(!this.props.challenge) return null;
-
     
     const movement = <LocaleText object={this.props.challenge.sequence} field="title" />
     const bars = <LocaleText object={this.props.challenge.sequence} field="subtitle" />
@@ -25,7 +24,7 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
     const subtitle = <LocaleText object={this.props.challenge.stages[0]} field="header"/> 
     const text = <LocaleText object={this.props.challenge.stages[0]} field="text"/>
     let videoContainers = this.props.challenge.stages.map((stage, index)=>
-      stage.video_thumb ? <VideoContainer>
+      stage.video_thumb ? <VideoContainer key={index}>
         <VideoThumb 
           key={index} src={serverUrl + "/files/video/" + stage.video_thumb}
           onClick={()=>{
@@ -39,7 +38,7 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
     if(videoContainers.length == 1 && !videoContainers[0]) videoContainers = null;
 
     return (
-      <Container>
+      <Container hidden={this.props.hidden}>
           <ContentContainer>
 
           <WithLine>
@@ -59,7 +58,6 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
         </SoftTextButton>   
 
         </ContentContainer>
-      
       </Container>
     )
   }
@@ -69,23 +67,37 @@ export { ChallengeInfosAndVideos }
 
 const Container = styled.div`
   width: 100%;
-  min-height: 93vh;
   bottom: 0;
-  position: absolute;
+  position: fixed;
   z-index: 10;
   box-sizing: border-box;
-  right: 0;
-  padding: 20px;
-  padding-top: 40px;
   background-image: url("/images/overlaybg.svg");
-  background-size: cover;
+  background-size: contain;
+  background-repeat: no-repeat;
+  /*background-color:red;*/
+  background-position: center;
+  max-width: 100vw;
+  height: 56.25vw;
+  max-height: 100vh;
+  width: 177.7vh;
+  margin:auto;
+  overflow: hidden;
+  align-self: center;
+
+  transform: translateY(${ props => props.hiddenX ? "94" : "0" }%);
 `
 
 const ContentContainer = styled.div`
-  width: 80%;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 2em;
+  box-sizing: border-box;
+  margin-left: 8%;
+  margin-right: 8%;
+  height: 80%;
+  margin-top: 5%;
+  /*background-color:rgba(0,0,255,0.5);*/
+  overflow-x: hidden;
+  overflow-y: auto;
 `
 
 const InfoIcon = styled.img`

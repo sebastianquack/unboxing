@@ -125,14 +125,14 @@ export class Challenge extends React.PureComponent {
 
       </FixedAtBottom>
 
-      {this.props.challengeInfoOpen && 
-          <ChallengeInfosAndVideos 
-            challenge={this.props.currentChallenge} 
-            setVideoModalUrl={this.props.setVideoModalUrl}
-            close={this.props.toggleChallengeInfo}
-          />}
+      <ChallengeInfosAndVideos 
+        hidden={!this.props.challengeInfoOpen}
+        challenge={this.props.currentChallenge} 
+        setVideoModalUrl={this.props.setVideoModalUrl}
+        close={this.props.toggleChallengeInfo}
+      />
 
-      {!this.props.challengeInfoOpen && <Building src="/images/building.svg"/>}
+      {/*!this.props.challengeInfoOpen && <Building src="/images/building.svg"/>*/}
 
       <ActionStates
         playbackControlStatus={this.props.playbackControlStatus}

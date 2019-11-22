@@ -127,6 +127,17 @@ const baseTextStyles = { // base style is mobile style
     display: block;
   `,
 
+  "challenge-subtitle": `
+    font-family: DINPro;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 19px;
+    line-height: 26px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+  `,  
+
   "challenge-info-content": `
     font-size: 15px;
     line-height: 19px;
