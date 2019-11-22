@@ -2,7 +2,7 @@ import React from 'react';
 
 const LanguageContext = React.createContext()
 
-const useSession = false
+const useSession = true
 
 class BaseStateProvider extends React.Component {
   constructor() {

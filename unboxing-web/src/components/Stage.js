@@ -103,20 +103,16 @@ export class Stage extends React.PureComponent {
       />
     );
     return [<Container key="container">
-      {this.props.activeTracks.filter((t)=>t).length == 0 ? 
-      <EmptyInfo onClick={this.props.populateStage}>
-        <UIText styleKey="empty-stage"><LocaleText stringsKey="empty-stage"/></UIText>
-      </EmptyInfo> :
       <FiguresContainer onClick={this.stageClick} ref={this.stageRef}>
         { figures }
-      </FiguresContainer>}
+      </FiguresContainer>
     </Container>, this.renderImagePreload() ]
   }
 }
 
 const Container = styled.div`
-  /*border-radius: 50%;
-  background-color: black;*/
+  /*border-radius: 50%;*/
+  /*background-color: black;*/
   width: 100%;
   height: 100%;
   position: relative;
