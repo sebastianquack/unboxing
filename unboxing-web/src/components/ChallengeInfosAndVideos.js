@@ -48,14 +48,13 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
           
           <UIText styleKey="challenge-subtitle">{subtitle}</UIText>
           
-        <SoftTextButton textWidth={100} style={{
-          width: 190, height: 110,
-          position: "absolute",
-          right: 70,
-          top: 40 
-        }} onClick={this.props.close}>
-          <UIText styleKey="big-title-button"><LocaleText stringsKey="passage-play-button"/></UIText>
-        </SoftTextButton>   
+        <PlayButtonContainer>
+          <SoftTextButton textWidth={100} style={{
+            width: 190, height: 110,
+          }} onClick={this.props.close}>
+            <UIText styleKey="big-title-button"><LocaleText stringsKey="passage-play-button"/></UIText>
+          </SoftTextButton>
+        </PlayButtonContainer>   
 
 
           <UIText style={{marginTop: 10, marginBottom: 30}} styleKey="challenge-info-content">{text}</UIText>
@@ -72,6 +71,16 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
 });
 
 export { ChallengeInfosAndVideos }
+
+const PlayButtonContainer = styled.div`
+  
+
+  @media (${breakpoints.large}) {
+    position: absolute;
+    right: 70px;
+    top: 40px;  
+  }
+`
 
 const Container = styled.div`
   width: 100%;
