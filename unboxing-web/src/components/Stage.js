@@ -40,36 +40,7 @@ export class Stage extends React.PureComponent {
     super(props);
 
     this.stageRef = React.createRef();
-    this.stageClick = this.stageClick.bind(this);
   }
-
-  stageClick(e) {
-    let rect = this.stageRef.current.getBoundingClientRect();
-    let xPos = xPercentageToPos(100 * (e.clientX - rect.x) / rect.width);
-    let yPos = 100 - yPercentageToPos((100 * ((e.clientY) - rect.y) / rect.height) + 20);
-    console.log(xPos, yPos);
-    
-    //find out which track to toggle
-      
-    let nearestKey = null;
-    let lowestDistance = null;
-    Object.keys(instruments).forEach((k)=>{
-      let distance = Math.pow(instruments[k].xPos - xPos, 2) + Math.pow(instruments[k].yPos - yPos, 2)
-      if(!lowestDistance || distance < lowestDistance) {
-        lowestDistance = distance;
-        nearestKey = k;      
-      }
-    });
-
-    if(nearestKey) {
-      console.log(nearestKey, lowestDistance)  
-      this.props.tracks.forEach((item, index)=>{
-        //console.log(item.trackName);
-        if(item.trackName == "full-" + nearestKey) this.props.toggleTrack(index);
-      });
-    }
-  
-  } 
 
   renderImagePreload() {
     return <ImagePreloadContainer key="preload">
@@ -99,10 +70,11 @@ export class Stage extends React.PureComponent {
         action={item.action}
         bpm={this.props.bpm}
         imgPaths={imgPaths}
+        toggle={()=>this.props.toggleTrack(index)}
       />
     );
     return [<Container key="container">
-      <FiguresContainer onClick={this.stageClick} ref={this.stageRef}>
+      <FiguresContainer ref={this.stageRef}>
         { figures }
       </FiguresContainer>
     </Container>, this.renderImagePreload() ]

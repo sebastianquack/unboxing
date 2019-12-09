@@ -35,13 +35,13 @@ const Figure =  withLanguage(class extends React.PureComponent {
     // if (this.props.active) console.log(src)
 
     return [<Container 
-        key="container"
-        xPosPercentage={xPosPercentage} 
-        yPosPercentage={yPosPercentage}
-        active={this.props.active}
-        action={this.props.action}
-        title={localeText(instrument,"name", this.props.language)}
-      >
+          key="container"
+          xPosPercentage={xPosPercentage} 
+          yPosPercentage={yPosPercentage}
+          active={this.props.active}
+          action={this.props.action}
+          title={localeText(instrument,"name", this.props.language)}
+        >
         <Img  
           src={src}
           title={localeText(instrument,"name", this.props.language)}
@@ -63,6 +63,11 @@ const Figure =  withLanguage(class extends React.PureComponent {
         active={ ["play"].indexOf(this.props.action) > -1 }
         hasFigure={this.props.active}
       />,
+      <ClickTarget 
+        key="clicktarget" 
+        xPosPercentage={xPosPercentage} 
+        yPosPercentage={yPosPercentage}
+        onClick={ this.props.toggle } />,
       <DebugMarker 
         key="debugmarker" 
         xPosPercentage={xPosPercentage} 
@@ -176,6 +181,20 @@ const DebugMarker = styled.div`
   height: 4px;
   transform: translateY(-50%) translateX(-50%);
   z-index:999;
+`
+
+const ClickTarget = styled.div`
+  pointer-events: auto;
+  position: absolute;
+  left: ${ props => props.xPosPercentage }%;
+  bottom: ${ props => props.yPosPercentage  }%;
+  width: 10%;
+  height: 18%;
+  border-radius: 4%;
+  max-width: inherit;
+  transform: translateX(-50%);
+  z-index:9999;
+  /*background-color: #0000ff88;*/
 `
 
 const PositionalMarker = styled.div`
