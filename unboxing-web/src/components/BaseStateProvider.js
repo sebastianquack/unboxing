@@ -35,7 +35,6 @@ class BaseStateProvider extends React.Component {
   }
 
   toggleMenu() {
-    console.log("menu")
     this.setState({menuOpen: !this.state.menuOpen})
   }
 

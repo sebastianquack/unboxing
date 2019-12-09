@@ -1,6 +1,4 @@
 import React from 'react';
-import ReactAudioPlayer from 'react-audio-player';
-
 
 const AudioContext = window.AudioContext || window.webkitAudioContext;
 let audioContextCreatedAt = Date.now()

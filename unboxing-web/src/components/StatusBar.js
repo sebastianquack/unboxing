@@ -63,8 +63,8 @@ export class StatusBar extends React.Component {
           />
         }
         {this.props.navigationState === "challenge" && !this.props.challengeInfoOpen && [
-          <UIText styleKey="statusbar-title">{title}</UIText>,
-          <UIText styleKey="statusbar-subtitle">{subtitle}</UIText>
+          <UIText key="statusbar-title" styleKey="statusbar-title">{title}</UIText>,
+          <UIText key="statusbar-" styleKey="statusbar-subtitle">{subtitle}</UIText>
         ]}
           
       </Right>
