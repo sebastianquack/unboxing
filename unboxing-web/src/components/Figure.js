@@ -143,7 +143,7 @@ const Container = styled.span`
 
 const Img = styled.img`
   display: block;
-  opacity: ${ props => props.active ? 1 : ( props.action === "play" ? 0.5 : 0 ) };
+  opacity: ${ props => props.active ? 1 : ( props.action === "play" ? 0.0 : 0 ) };
   width: inherit;
   max-width: inherit;
   height: auto;
