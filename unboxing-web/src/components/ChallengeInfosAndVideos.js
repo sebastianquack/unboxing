@@ -47,16 +47,24 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
           </WithLine>
           
           <UIText styleKey="challenge-subtitle">{subtitle}</UIText>
+          
+        <SoftTextButton textWidth={100} style={{
+          width: 190, height: 110,
+          position: "absolute",
+          right: 70,
+          top: 40 
+        }} onClick={this.props.close}>
+          <UIText styleKey="big-title-button"><LocaleText stringsKey="passage-play-button"/></UIText>
+        </SoftTextButton>   
+
+
           <UIText style={{marginTop: 10, marginBottom: 30}} styleKey="challenge-info-content">{text}</UIText>
         
         {videoContainers && <VideoThumbs>
             {videoContainers}
         </VideoThumbs>}
 
-        <SoftTextButton textWidth={100} style={{marginTop: 50, width: 190, height: 110}} onClick={this.props.close}>
-          <UIText styleKey="big-title-button"><LocaleText stringsKey="passage-play-button"/></UIText>
-        </SoftTextButton>   
-
+        
         </ContentContainer>
       </Container>
     )
@@ -138,6 +146,7 @@ const VideoThumbs = styled.div`
   margin-bottom: 20px;
   padding-right: 10px; 
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
 `
 
@@ -145,10 +154,11 @@ const VideoContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
+  margin-bottom: 20px;
 `
 
 const VideoCaption = styled.span`
-  width: 200px;
+  width: 150px;
   margin: 10px;
 `
 

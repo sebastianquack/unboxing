@@ -36,6 +36,10 @@ export class InfoBox extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    clearInterval(this.dynamicInterval);
+  }
+
   render () {
     return(
       <InfoBoxContainer>

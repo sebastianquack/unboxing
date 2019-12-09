@@ -70,6 +70,7 @@ export class Challenge extends React.PureComponent {
       <Visualizer
         tracks={tracksWithActionStates}
         activeTracks={this.state.activeTracks} 
+        toggleTrack={this.toggleTrack}
         duration={this.props.currentChallenge.sequence.custom_duration || this.props.currentChallenge.sequence.duration}
         playbackControlStatus={this.props.playbackControlStatus}
         sequenceStartedAt={this.state.sequenceStartedAt}

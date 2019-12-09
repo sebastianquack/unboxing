@@ -37,7 +37,7 @@ export class StatusBar extends React.Component {
           onClick={()=>{this.props.navigateTo("challenges")}}
         />
         }
-        {this.props.navigationState !== "challenge" &&
+        {this.props.data && this.props.navigationState !== "challenge" &&
         <BreadCrumbButton onClick={()=>{this.props.setMapRegion(0); this.props.navigateTo("welcome")}} key={2}>
           <UIText styleKey="statusbar-breadcrumb">
             <LocaleText stringsKey="statusbar-start"/>

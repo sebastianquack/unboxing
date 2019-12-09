@@ -2,7 +2,7 @@ import React from 'react';
 
 const LanguageContext = React.createContext()
 
-const useSession = false
+const useSession = true
 
 class BaseStateProvider extends React.Component {
   constructor() {
@@ -19,7 +19,7 @@ class BaseStateProvider extends React.Component {
     this.state = {
       navigationState: (useSession && sessionStorage.getItem('navigationState')) || "welcome",
       currentChallengeId: (useSession && sessionStorage.getItem('currentChallengeId')) || undefined,
-      language: "en",
+      language: sessionStorage.getItem('locale') ? sessionStorage.getItem('locale') : "en",
       challengeInfoOpen: true,
       videoModalUrl: null,
       menuOpen: false,
@@ -40,9 +40,11 @@ class BaseStateProvider extends React.Component {
   }
 
   toggleLanguage() {
+    let locale = this.state.language === "en" ? "de" : "en";
     this.setState({
-      language: ( this.state.language === "en" ? "de" : "en")
+      language: locale
     })
+    sessionStorage.setItem('locale', locale);
   }
 
   toggleChallengeInfo() {

@@ -144,7 +144,8 @@ const baseTextStyles = { // base style is mobile style
     letter-spacing: 0px;
     text-transform: none;
     display: block;
-    column-count: 2;
+    column-count: 1;
+    width: 90%;
     `,
   
   "empty-stage": `
@@ -164,6 +165,11 @@ const baseTextStyles = { // base style is mobile style
     font-weight: bold;
     font-size: 12.0635px;
     line-height: 17px;
+    :hover {
+      color: white;
+      opacity: 1;
+      cursor: pointer;
+    }
     `,
   "menu-title": `
     font-weight: 500;
@@ -256,6 +262,7 @@ export class UIText extends React.Component {
     const text = children 
 
     return <Text 
+      onClick={this.props.onClick}
       baseStyle={baseStyleString} 
       largeStyle={largeStyleString} 
       className={className}

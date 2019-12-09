@@ -14,6 +14,8 @@ export class Visualizer extends React.PureComponent {
       relativePositionInSequence: 0,
       animate: false,
     }
+
+    this.toggleTrack = this.toggleTrack.bind(this);
   }
 
   componentDidUpdate(prevProps) {
@@ -89,6 +91,14 @@ export class Visualizer extends React.PureComponent {
     return tracks
   }
 
+  toggleTrack(track) {
+    console.log("toggleTrack", track);
+    this.props.tracks.forEach((item, index)=>{
+        //console.log(item);
+        if(item.trackName == track.trackName) this.props.toggleTrack(index);
+    });
+  }
+
   render() {
     console.log("render visu")
     return <Container> 
@@ -96,7 +106,7 @@ export class Visualizer extends React.PureComponent {
       { this.combinedTracks(this.props.tracks, this.props.activeTracks).map( track => (
         track.hide ? null :
         <Track key={track.trackName}>
-          <Instrument styleKey="visualizer-instrument">
+          <Instrument active={track.active} styleKey="visualizer-instrument" onClick={()=>this.toggleTrack(track)}>
             <LocaleText object={instruments[track.trackName.replace("full-", "")]} field={track.combined ? "combinedName" : "name"} />
           </Instrument>
           <ItemsTrack>
@@ -146,7 +156,7 @@ const Track = styled.li`
 
 const Instrument = styled(UIText)`
   display: block;
-  opacity: 0.4;
+  opacity: ${props=>props.active ? 0.9 : 0.5};
   width: ${ trackHeaderWidth }; /* make this lower if you want to overlap with items */
   overflow: visible;
   white-space: nowrap;
