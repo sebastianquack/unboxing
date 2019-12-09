@@ -42,7 +42,7 @@ export class BaseContainer extends React.PureComponent {
     console.log("render base")
 
     return (
-      <Container onClick={()=>{if(this.props.menuOpen) this.props.toggleMenu()}}>
+      [<Container onClick={()=>{if(this.props.menuOpen) this.props.toggleMenu()}}>
         {this.props.videoModalUrl &&
           <VideoModal src={this.props.videoModalUrl} onClose={()=>{this.props.setVideoModalUrl(null)}}/>
         }
@@ -72,10 +72,26 @@ export class BaseContainer extends React.PureComponent {
             {...this.props}
           />}
         </Bottom>
-      </Container>
+      </Container>,
+      <OrientationNotice><p>Please turn your device into landscape orientation.</p><p>If you are viewing on a desktop make sure the browser window is wider than it is high.</p></OrientationNotice>
+      ]
     )
   }
 }
+
+const OrientationNotice = styled.div`
+  padding: 50px;
+  line-height: 1.4em;
+  @media only screen and (orientation:portrait){
+    display:block;
+  }
+  @media only screen and (orientation:landscape){
+    display:none;
+  }
+  p {
+    margin-bottom: 1.4em;
+  }
+`
 
 const Container = styled.div`
   display: flex;
@@ -85,6 +101,11 @@ const Container = styled.div`
   flex-direction: column;
   position: fixed;
   /* background-color: blue; */
+
+  @media only screen and (orientation:portrait){
+    display:none;
+  }
+}
 `
 
 const Top = styled.div`

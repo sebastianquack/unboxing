@@ -109,6 +109,7 @@ export class Challenge extends React.PureComponent {
         activeTracks={this.state.activeTracks}
       />}
 
+      <InfoBoxContainer>
       {!this.props.challengeInfoOpen && 
         <InfoBox 
           staticString="challenge_info1" 
@@ -116,6 +117,7 @@ export class Challenge extends React.PureComponent {
           dynamicObj={this.props.currentChallenge.stages[0]}
         />
       }
+      </InfoBoxContainer>
 
       <FixedAtBottom>
         {/*<TrackSelector
@@ -166,20 +168,30 @@ const VisualizerContainer = styled.div`
   flex: 0.5;
   z-index: -1 ;
   padding: 0 25px;
+  display: none;
   @media (${breakpoints.large}) {
     padding: 0 50px;
+    display: block;
   }  
 `
 
 const StageContainer = styled.div`
   /*background-color: rgba(0,255,255,0.5);*/
-  flex: 0.5;
+  flex: 1.0;
   margin-bottom: 15vh;
   margin-left: -5vw;
   margin-right: -5vw;
+  margin-top: 15vh;
   @media (${breakpoints.large}) {
     margin-left: 10vw;
     margin-right: 10vw;    
+  }
+`
+
+const InfoBoxContainer = styled.div`
+  display: none;
+  @media (${breakpoints.large}) {
+      display: block;
   }
 `
 
