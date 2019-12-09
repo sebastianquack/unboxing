@@ -178,13 +178,13 @@ const VisualizerContainer = styled.div`
 const StageContainer = styled.div`
   /*background-color: rgba(0,255,255,0.5);*/
   flex: 1.0;
-  margin-bottom: 15vh;
+  margin-bottom: 5vh;
   margin-left: -5vw;
   margin-right: -5vw;
-  margin-top: 15vh;
+  margin-top: 5vh;
   @media ${breakpoints.large} {
-    margin-left: 10vw;
-    margin-right: 10vw;    
+    margin-left: 0vw;
+    margin-right: 0vw;    
   }
 `
 

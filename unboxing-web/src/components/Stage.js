@@ -111,7 +111,7 @@ export class Stage extends React.PureComponent {
 
 const Container = styled.div`
   /*border-radius: 50%;*/
-  /*background-color: black;*/
+  /*background-color: #00ff0077;*/
   width: 100%;
   height: 100%;
   position: relative;
@@ -134,7 +134,7 @@ const EmptyInfo = styled.div`
 
 const FiguresContainer = styled.div`
   position: relative;
-  /*background-color: red;*/
+  /*background-color: #0000ff77;*/
   box-sizing: border-box;
   margin: auto;
   top: ${topPadding};
