@@ -102,7 +102,7 @@ const Container = styled.div`
   align-self: center;
 
   transition: transform 1s;
-  transform: translateY(${ props => props.hide ? "94" : "0" }%);
+  transform: translateY(${ props => props.hide ? "94%" : "calc(-50vh + 50% + 0.5rem)" });
 `
 
 const ContentContainer = styled.div`
