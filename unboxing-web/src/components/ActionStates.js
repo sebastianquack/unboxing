@@ -65,7 +65,7 @@ const ActionStates = ReactAnimationFrame(class extends React.PureComponent {
   }}
 
   render() {
-    console.log("render action")
+    //console.log("render action")
 
     let {sequenceStartedAt, tracks, children, ...other} = this.props
 

@@ -91,7 +91,7 @@ class BaseStateProvider extends React.Component {
       setChallengeInfo: this.setChallengeInfo,
       challengeInfoOpen: this.state.challengeInfoOpen,
       setVideoModalUrl: (url)=>{
-        console.log(url);
+        // console.log(url);
         this.setState({videoModalUrl: url})
       },
       videoModalUrl: this.state.videoModalUrl,

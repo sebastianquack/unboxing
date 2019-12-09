@@ -31,7 +31,7 @@ export class DataLoader extends React.Component {
       .then((response)=> {
         // handle success
         if(response.data.data) {
-          console.log(response.data.data);
+          // console.log(response.data.data);
           this.setState({data: response.data.data});
         }
       })

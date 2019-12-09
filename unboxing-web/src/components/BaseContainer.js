@@ -39,7 +39,7 @@ export class BaseContainer extends React.PureComponent {
 
   render() {
 
-    console.log("render base")
+    // console.log("render base")
 
     return (
       [<Container key="container" onClick={()=>{if(this.props.menuOpen) this.props.toggleMenu()}}>

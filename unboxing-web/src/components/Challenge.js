@@ -25,8 +25,8 @@ export class Challenge extends React.PureComponent {
   
     this.tracks = this.props.currentChallenge ? assembleTrackList(this.props.currentChallenge, filesUrl) : [];
 
-    console.log(this.props.currentChallenge);
-    console.log(this.tracks);
+    // console.log(this.props.currentChallenge);
+    // console.log(this.tracks);
       
     this.state = {
       activeTracks: this.tracks.map(()=>false),
@@ -53,7 +53,7 @@ export class Challenge extends React.PureComponent {
   }
 
   populateStage() {
-    console.log("populate");
+    // console.log("populate");
     this.setState({
       activeTracks: this.tracks.map(()=>true) 
     })

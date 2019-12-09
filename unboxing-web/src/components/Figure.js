@@ -26,6 +26,7 @@ const Figure =  withLanguage(class extends React.PureComponent {
     const multiple = instrument.multiple ? instrument.multiple : 1;
     const badge = multiple > 1 ? 
       <MultipleBadge
+        key="badge"
         xPosPercentage={xPosPercentage} 
         yPosPercentage={yPosPercentage}
       >{multiple}x</MultipleBadge> 

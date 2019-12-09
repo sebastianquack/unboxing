@@ -81,7 +81,7 @@ export class Stage extends React.PureComponent {
   }
 
   render() {
-    console.log("render stage")
+    // console.log("render stage")
 
     const tracksInstruments = this.props.tracks.map((track, index)=> ({
       key: index,
@@ -90,7 +90,6 @@ export class Stage extends React.PureComponent {
       active: this.props.activeTracks[index],
       action: track.action
     }))
-
     const figures = tracksInstruments.map( (item, index) =>
       <Figure
         key={item.key}

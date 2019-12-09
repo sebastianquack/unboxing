@@ -8,7 +8,7 @@ import { breakpoints, colors } from '../config/globalStyles';
 const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
   constructor(props) {
     super(props)
-    console.log(props.challenge);
+    // console.log(props.challenge);
 
     this.state = {
       videoUrl: null

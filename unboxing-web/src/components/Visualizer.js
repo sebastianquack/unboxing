@@ -23,7 +23,7 @@ export class Visualizer extends React.PureComponent {
     if (this.props.playbackControlStatus === "playing" && this.props.sequenceStartedAt !== prevProps.sequenceStartedAt) {
       const now = Date.now()
       const relativePositionInSequence = (now - this.props.sequenceStartedAt) / this.props.duration
-      console.log("relPos", relativePositionInSequence, this.props.sequenceStartedAt, this.props.duration)
+      // console.log("relPos", relativePositionInSequence, this.props.sequenceStartedAt, this.props.duration)
       this.setState({ relativePositionInSequence })
     }
   }
@@ -42,7 +42,7 @@ export class Visualizer extends React.PureComponent {
     // iterate over all tracks
     tracks.forEach((track, index)=>{
 
-      let combined = false;
+      // let combined = false;
       track.active = activeTracks[index]; // check if this track is active 
 
       // check if we should compare this to another track
@@ -92,7 +92,7 @@ export class Visualizer extends React.PureComponent {
   }
 
   toggleTrack(track) {
-    console.log("toggleTrack", track);
+    // console.log("toggleTrack", track);
     this.props.tracks.forEach((item, index)=>{
         //console.log(item);
         if(item.trackName == track.trackName) this.props.toggleTrack(index);
@@ -100,7 +100,7 @@ export class Visualizer extends React.PureComponent {
   }
 
   render() {
-    console.log("render visu")
+    // console.log("render visu")
     return <Container> 
       <TracksContainer> 
       { this.combinedTracks(this.props.tracks, this.props.activeTracks).map( track => (
