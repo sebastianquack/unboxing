@@ -71,7 +71,7 @@ const InstrumentButtonContainer = styled.div`
   };
   min-width: 60px;
   max-width: 100px;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     min-width: 100px;
   }
 `

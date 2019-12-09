@@ -84,7 +84,7 @@ const Container = styled.div`
   z-index: 100;
   opacity: 1;
 
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     width: 50%;      
   }
 `
@@ -108,7 +108,7 @@ const TopRight = styled.div`
   right: 0px;
   padding: 25px;
   z-index: 150;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     padding: 25px;
   }  
 `
@@ -132,7 +132,7 @@ const MenuBody = styled.div`
   padding-left: 30px;
   padding-right: 30px;
 
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     margin-top: 110px;
     padding-left: 60px;
     padding-right: 60px;
@@ -143,7 +143,7 @@ const MenuDescription = styled.div`
   margin-top: 10px;
   margin-bottom: 20px;
 
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     margin-top: 20px;
     margin-bottom: 50px;
   }

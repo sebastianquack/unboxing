@@ -314,7 +314,7 @@ const OuterContainer = styled.div`
   height: 100vh;
   z-index: 0;
 
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
   }
 
   * { transition: all 1s !important}
@@ -330,7 +330,7 @@ const InnerContainer = styled.div`
   transition: transform ${ props => props.transitionOrder === "scale-last" ? "1s 0.3s" : "1s"};
   will-change: transform;
 
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
   }
 `
 
@@ -370,7 +370,7 @@ const ChallengeButton = styled.div`
   transition: opacity ${ props => props.transitionOrder === "scale-first" ? "1s 0.8s" : "0.4s"};
   will-change: opacity;
 
-  @media (${breakpoints.large}) {}
+  @media ${breakpoints.large} {}
 `
 
 const BackImage = styled.img`
@@ -383,7 +383,7 @@ const ChallengeButtonNumber = styled.div`
   background-size: contain;
   width: 30px;
   height: 30px;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     width: 60px;
     height: 60px;
   }
@@ -397,7 +397,7 @@ const ChallengeButtonSubtitle = styled.div`
   width: 10em;
   justify-content: center;
   text-align: center;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     display: flex;
   }
 `

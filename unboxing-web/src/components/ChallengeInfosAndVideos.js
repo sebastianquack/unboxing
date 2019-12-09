@@ -79,7 +79,7 @@ const PlayButtonContainer = styled.div`
   margin-right: auto;
   width: 190px;
 
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     position: absolute;
     right: 80px;
     top: 40px;  
@@ -127,7 +127,7 @@ const InfoIcon = styled.img`
   top: 4px;
   height: 13px;
   right: 10px;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     right: 25px;
   }
 `
@@ -142,14 +142,14 @@ const InfoContainer = styled.div`
   margin-right: 25px;
   padding-right: 5px;
   padding-left: 10px;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     margin-right: 45px;
   }
 `
 
 const InfoItem = styled.div`
   text-align: right;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     max-width: 66%;  
   }
 
@@ -194,7 +194,7 @@ const WithLine = styled.div`
     position: absolute;
     left: -22px;
     width: 4px;
-    @media (${breakpoints.large}) {
+    @media ${breakpoints.large} {
       left: -26px;
     width: 5px;
     }

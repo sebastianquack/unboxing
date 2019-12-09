@@ -114,7 +114,7 @@ const Top = styled.div`
   width: 100%; 
   box-sizing: border-box;
   padding: 10px;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     padding: 25px;
   }  
 `
@@ -127,7 +127,7 @@ const Shade = styled.div`
   mix-blend-mode: multiply;
   pointer-events: none;
   background-image: linear-gradient(180deg, rgba(0,0,0,0.9) 1rem, rgba(0,0,0,0) 8rem), radial-gradient(at bottom left, rgba(0,0,0,1) 3%, rgba(0,0,0,0) 250px);
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     background-image: linear-gradient(180deg, rgba(0,0,0,0.9) 1rem, rgba(0,0,0,0) 8rem), radial-gradient(at bottom left, rgba(0,0,0,1) 3%, rgba(0,0,0,0) 400px);
   }
 `

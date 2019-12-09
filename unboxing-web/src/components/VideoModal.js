@@ -46,7 +46,7 @@ const TopRight = styled.div`
   top: 0px;
   right: 0px;
   padding: 10px;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     padding: 25px;
   }  
 `

@@ -83,21 +83,21 @@ const LeftContainer = styled.div`
   top: 20vh;
   left: 15vw;
   z-index: 1;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     top: 15vh;
   }
 `
 
 const PlayButtonContainer = styled.div`
   margin-top: 0px;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     margin-top: 50px; 
   }
 `
 
 const RightContainer = styled.div`
   display: none;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     display: flex;
     position: absolute;  
     flex-direction: column;
@@ -126,7 +126,7 @@ const WithLine = styled.div`
   flex-direction: column;
   position: relative;
   width: 100%;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     width: 400px;
   }
   &::after {
@@ -136,7 +136,7 @@ const WithLine = styled.div`
     position: absolute;
     left: -22px;
     width: 2px;
-    @media (${breakpoints.large}) {
+    @media ${breakpoints.large} {
       left: -26px;
       width: 5px;
       width: 4px;
@@ -156,7 +156,7 @@ const WithLine = styled.div`
 
 const FixedWidth = styled.div`
   width: 100%;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     width: 400px;
   }
 

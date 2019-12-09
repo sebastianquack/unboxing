@@ -100,7 +100,7 @@ const Center = styled.div`
   };
 
 
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     * {
       white-space: nowrap;
     }

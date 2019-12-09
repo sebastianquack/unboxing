@@ -25,7 +25,7 @@ export class Challenges extends React.Component {
 
 const InfoBoxContainer = styled.div`
   display: none;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
       display: block;
   }
 `

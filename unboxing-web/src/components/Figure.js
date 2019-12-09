@@ -115,7 +115,7 @@ const Container = styled.span`
   width: calc(50px + 10vw);
   max-width: 14vw;
   /*mix-blend-mode: lighten;*/
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     width: calc(30px + 7vw);
     max-width: 12vw;
   }

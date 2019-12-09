@@ -169,7 +169,7 @@ const VisualizerContainer = styled.div`
   z-index: -1 ;
   padding: 0 25px;
   display: none;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     padding: 0 50px;
     display: block;
   }  
@@ -182,7 +182,7 @@ const StageContainer = styled.div`
   margin-left: -5vw;
   margin-right: -5vw;
   margin-top: 15vh;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     margin-left: 10vw;
     margin-right: 10vw;    
   }
@@ -190,7 +190,7 @@ const StageContainer = styled.div`
 
 const InfoBoxContainer = styled.div`
   display: none;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
       display: block;
   }
 `
@@ -204,7 +204,7 @@ const FixedAtBottom = styled.div`
   box-sizing: border-box;
   z-index: 8;
   padding: 0 25px;
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     padding: 0 50px;
   }
 `

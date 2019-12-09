@@ -315,5 +315,5 @@ const Text = styled.span`
   user-select: none;
   ${ baseTextStyles.default };
   ${ props => props.baseStyle };
-  ${ props => props.largeStyle && `@media (${breakpoints.large}) { ${props.largeStyle} }` }
+  ${ props => props.largeStyle && `@media ${breakpoints.large} { ${props.largeStyle} }` }
 `

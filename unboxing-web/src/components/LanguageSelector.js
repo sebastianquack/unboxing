@@ -24,7 +24,7 @@ const Switcher = styled.img`
     } 
 
 
-  @media (${breakpoints.large}) {
+  @media ${breakpoints.large} {
     margin: 0px;
   }  
 `
