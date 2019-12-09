@@ -11,8 +11,8 @@ const baseTextStyles = { // base style is mobile style
     `,
   "big-title-main": `
     color: ${colors.turquoise};
-    font-size: 48px;
-    line-height: 48px;
+    font-size: 18px;
+    line-height: 24px;
     `,
   "big-title-top": `
     font-weight: bold;
@@ -21,13 +21,14 @@ const baseTextStyles = { // base style is mobile style
     `,
   "big-title-subtitle": `
     font-weight: 500;
-    font-size: 18px;
-    line-height: 24px;
+    font-size: 16px;
+    line-height: 20px;
+    text-transform: none;
     `,
   "big-title-explanation": `
     font-weight: 500;
-    font-size: 18px;
-    line-height: 24px;
+    font-size: 16px;
+    line-height: 20px;
     text-transform: none;
     display: block;
     `,
@@ -120,8 +121,8 @@ const baseTextStyles = { // base style is mobile style
     font-family: DINPro;
     font-style: normal;
     font-weight: 500;
-    font-size: 64px;
-    line-height: 64px;
+    font-size: 19px;
+    line-height: 26px;
     text-transform: uppercase;
     color: ${colors.turquoise};
     display: block;
@@ -134,7 +135,7 @@ const baseTextStyles = { // base style is mobile style
     font-size: 19px;
     line-height: 26px;
     letter-spacing: 2px;
-    text-transform: uppercase;
+    text-transform: none;
     display: block;
   `,  
 
@@ -219,6 +220,14 @@ const largeTextStyles = { // some styles have additional large styles (overwrite
       font-size: 24px;
       line-height: 32px;
       `,
+  "big-title-explanation": `
+    font-weight: 500;
+    font-size: 19px;
+    line-height: 26px;
+    text-transform: none;
+    display: block;
+    margin-top: 20px;
+    `,
   "menu-title": `
     font-weight: 500;
     font-size: 45px;
@@ -237,6 +246,29 @@ const largeTextStyles = { // some styles have additional large styles (overwrite
       font-size: 19px;
       line-height: 26px;
       `,
+
+  "challenge-title": `
+    font-family: DINPro;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 64px;
+    line-height: 64px;
+    text-transform: uppercase;
+    color: ${colors.turquoise};
+    display: block;
+  `,
+
+  "challenge-subtitle": `
+    font-family: DINPro;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 19px;
+    line-height: 26px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display: block;
+  `,  
+
   "instrument-select": `
       font-size: 20px;
       line-height: 24px;

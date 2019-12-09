@@ -51,13 +51,15 @@ export class Welcome extends React.Component {
           <UIText styleKey="big-title-subtitle">
             <LocaleText stringsKey="main-subtitle"/>
           </UIText>   
-          <UIText style={{marginTop: 20}} styleKey="big-title-explanation">
+          <UIText styleKey="big-title-explanation">
             <LocaleText stringsKey="main-explanation"/>
           </UIText>   
         </FixedWidth>
-        <SoftTextButton style={{marginTop: 50, width: 150, height: 100}} onClick={this.close}>
-          <UIText styleKey="big-title-button"><LocaleText stringsKey="main-start-button"/></UIText>
-        </SoftTextButton>   
+        <PlayButtonContainer>
+          <SoftTextButton style={{width: 150, height: 100}} onClick={this.close}>
+            <UIText styleKey="big-title-button"><LocaleText stringsKey="main-start-button"/></UIText>
+          </SoftTextButton>   
+        </PlayButtonContainer>
       </LeftContainer>,
       
       <RightContainer key={2} >
@@ -78,19 +80,32 @@ const LeftContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: fixed;
-  top: 15vh;
+  top: 20vh;
   left: 15vw;
   z-index: 1;
+  @media (${breakpoints.large}) {
+    top: 15vh;
+  }
+`
+
+const PlayButtonContainer = styled.div`
+  margin-top: 0px;
+  @media (${breakpoints.large}) {
+    margin-top: 50px; 
+  }
 `
 
 const RightContainer = styled.div`
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  right: 5vw;
-  top: 0vh;
-  z-index: 0;
-  mix-blend-mode: lighten;
+  display: none;
+  @media (${breakpoints.large}) {
+    display: flex;
+    position: absolute;  
+    flex-direction: column;
+    right: 5vw;
+    top: 0vh;
+    z-index: 0;
+    mix-blend-mode: lighten;
+  }
 `
 
 const KeyVisualImg = styled.div`
@@ -110,17 +125,21 @@ const WithLine = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
-  width: 300px;
+  width: 100%;
+  @media (${breakpoints.large}) {
+    width: 400px;
+  }
   &::after {
     content: "";
     background-color: ${ colors.turquoise };
     height: 95.25%;
     position: absolute;
     left: -22px;
-    width: 4px;
+    width: 2px;
     @media (${breakpoints.large}) {
       left: -26px;
-    width: 5px;
+      width: 5px;
+      width: 4px;
     }
   }
   *:first-child {
@@ -136,8 +155,9 @@ const WithLine = styled.div`
 `
 
 const FixedWidth = styled.div`
-  width: 300px;
+  width: 100%;
   @media (${breakpoints.large}) {
     width: 400px;
   }
+
 `
