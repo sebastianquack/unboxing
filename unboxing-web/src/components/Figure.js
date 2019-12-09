@@ -32,10 +32,10 @@ const Figure =  withLanguage(class extends React.PureComponent {
       >{multiple}x</MultipleBadge> 
     : null;
     
-    if (this.props.active) console.log(src)
+    // if (this.props.active) console.log(src)
 
     return [<Container 
-        key="1"
+        key="container"
         xPosPercentage={xPosPercentage} 
         yPosPercentage={yPosPercentage}
         active={this.props.active}
@@ -57,12 +57,17 @@ const Figure =  withLanguage(class extends React.PureComponent {
         />
       </Container>,
       <PositionalMarker 
-        key="2" 
+        key="marker" 
         xPosPercentage={xPosPercentage} 
         yPosPercentage={yPosPercentage}
         active={ ["play"].indexOf(this.props.action) > -1 }
         hasFigure={this.props.active}
       />,
+      <DebugMarker 
+        key="debugmarker" 
+        xPosPercentage={xPosPercentage} 
+        yPosPercentage={yPosPercentage}
+      />,      
       badge
       ]
   }
@@ -113,13 +118,11 @@ const Container = styled.span`
   z-index: ${ props => 100-Math.floor(props.yPosPercentage) };
   transform: translateX(-50%);
   transition: opacity 0.3s, transform 0.5s;
-  width: calc(50px + 10vw);
-  max-width: 14vw;
+  /*background-color: #0000ff77;*/
+  height: 20%;
   /*mix-blend-mode: lighten;*/
-  @media ${breakpoints.large} {
-    width: calc(30px + 7vw);
-    max-width: 12vw;
-  }
+  width: calc(30px + 7vw);
+  max-width: 12vw;
   /*::after{
     content: attr(title);
     color: #444;
@@ -139,9 +142,10 @@ const Img = styled.img`
   width: inherit;
   max-width: inherit;
   height: auto;
-  transform: translateY(-100%);
+  transform: translateY(0%);
   position: absolute;
   overflow: hidden; 
+  bottom:0;
   /*filter:  ${ props => props.action === "idle" ? "grayscale(50%)" : "none" };*/
   /*animation: ${ props => props.action === "idle" || !props.active ? "none" : css`${ playAnim } ${ 120 / props.bpm }s linear infinite` };*/
   /*transition: translate 0.2s;*/
@@ -162,6 +166,18 @@ const InstrumentImg = styled.img`
   
 `
 
+const DebugMarker = styled.div`
+  display: none; /* disabled */
+  position: absolute;
+  left: ${ props => props.xPosPercentage }%;
+  bottom: ${ props => props.yPosPercentage  }%;
+  background-color: #ffff;
+  width: 4px;
+  height: 4px;
+  transform: translateY(-50%) translateX(-50%);
+  z-index:999;
+`
+
 const PositionalMarker = styled.div`
   display: block;
   position: absolute;
@@ -173,7 +189,7 @@ const PositionalMarker = styled.div`
   border: 2px solid ${ colors.turquoise };
   border-radius: 50%;
   background-color: black;
-  transform: translateX(-50%) translateY(-100%);
+  transform: translateX(-50%);
 `
 
 const MultipleBadge = styled.div`
@@ -186,7 +202,7 @@ const MultipleBadge = styled.div`
   border: 0px solid black;
   border-radius: 50%;
   background-color: ${ colors.turquoise };
-  transform: translateX(-50%) translateY(-100%);
+  transform: translateX(-50%) translateY(calc(50% - 2px));
   color: white;
   font-size: 0.5rem;
   font-weight: bold;

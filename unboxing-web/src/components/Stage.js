@@ -64,7 +64,7 @@ export class Stage extends React.PureComponent {
     if(nearestKey) {
       console.log(nearestKey, lowestDistance)  
       this.props.tracks.forEach((item, index)=>{
-        console.log(item.trackName);
+        //console.log(item.trackName);
         if(item.trackName == "full-" + nearestKey) this.props.toggleTrack(index);
       });
     }
