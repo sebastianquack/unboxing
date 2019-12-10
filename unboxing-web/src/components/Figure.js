@@ -217,14 +217,14 @@ const MultipleBadge = styled.div`
   left: ${ props => props.xPosPercentage }%;
   bottom: ${ props => props.yPosPercentage  }%;
   z-index: ${ props => 99-Math.floor(props.yPosPercentage) + 1};
-  width: 0.9rem;
-  height: 0.9rem;
+  width: 1.2rem;
+  height: 1.2rem;
   border: 0px solid black;
   border-radius: 50%;
   background-color: ${ colors.turquoise };
   transform: translateX(-50%) translateY(calc(50% - 2px));
   color: white;
-  font-size: 0.5rem;
+  font-size: 0.7rem;
   font-weight: bold;
   display: flex;
   justify-content: center;
