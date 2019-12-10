@@ -139,6 +139,7 @@ const Container = styled.span`
     font-size: 11px;
     transform: rotateZ(-90deg);
   }*/
+  user-select: none;
 `
 
 const Img = styled.img`
