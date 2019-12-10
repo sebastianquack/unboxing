@@ -5,7 +5,7 @@ const colors = {
 }
 
 const breakpoints = {
-  'large': '(min-width: 660px) and (min-height: 400px)'
+  'large': '(min-width: 700px) and (min-height: 400px)'
 }
 
 export { colors, breakpoints };
