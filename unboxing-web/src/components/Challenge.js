@@ -37,6 +37,7 @@ export class Challenge extends React.PureComponent {
     this.updateSequenceStartedAt = this.updateSequenceStartedAt.bind(this)
     this.populateStage = this.populateStage.bind(this)
     this.toggleTrack = this.toggleTrack.bind(this)
+    this.toggleTracks = this.toggleTracks.bind(this)
     this.renderActionStuff = this.renderActionStuff.bind(this)
 
     this.updatePlaybackControlStatus("loading");
@@ -65,12 +66,18 @@ export class Challenge extends React.PureComponent {
     this.setState({activeTracks});
   }
 
+  toggleTracks(indices, targetState) {
+    const activeTracks = this.state.activeTracks.map( (item,i) => indices.indexOf(i) > -1 ? (typeof targetState == "undefined" ? !item : targetState) : item );
+    this.setState({activeTracks});
+  }
+
   renderActionStuff = tracksWithActionStates  => [
     <VisualizerContainer key="visu">
       <Visualizer
         tracks={tracksWithActionStates}
         activeTracks={this.state.activeTracks} 
         toggleTrack={this.toggleTrack}
+        toggleTracks={this.toggleTracks}
         duration={this.props.currentChallenge.sequence.custom_duration || this.props.currentChallenge.sequence.duration}
         playbackControlStatus={this.props.playbackControlStatus}
         sequenceStartedAt={this.state.sequenceStartedAt}

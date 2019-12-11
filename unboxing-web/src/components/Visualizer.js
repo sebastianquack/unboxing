@@ -16,6 +16,16 @@ export class Visualizer extends React.PureComponent {
     }
 
     this.toggleTrack = this.toggleTrack.bind(this);
+
+    //define which tracks to compare for combination
+    this.compare = {
+      "full-oboe1": "full-oboe2",
+      "full-fagott1": "full-fagott2",
+      "full-horn1": "full-horn2",
+      "full-trompete1": "full-trompete2",
+      "full-violin1.1": "full-violin2.1"
+    };
+
   }
 
   componentDidUpdate(prevProps) {
@@ -30,15 +40,6 @@ export class Visualizer extends React.PureComponent {
 
   combinedTracks(tracks, activeTracks) {
 
-    //define which tracks to compare
-    const compare = {
-      "full-oboe1": "full-oboe2",
-      "full-fagott1": "full-fagott2",
-      "full-horn1": "full-horn2",
-      "full-trompete1": "full-trompete2",
-      "full-violin1.1": "full-violin2.1"
-    };
-
     // iterate over all tracks
     tracks.forEach((track, index)=>{
 
@@ -46,11 +47,11 @@ export class Visualizer extends React.PureComponent {
       track.active = activeTracks[index]; // check if this track is active 
 
       // check if we should compare this to another track
-      if(Object.keys(compare).indexOf(track.trackName) > -1) {
+      if(Object.keys(this.compare).indexOf(track.trackName) > -1) {
         let compareToTrack = null;
         let compareToTrackIndex = -1;
         tracks.forEach((t, i) => {
-          if(t.trackName == compare[track.trackName]) {
+          if(t.trackName == this.compare[track.trackName]) {
             compareToTrack = t;
             compareToTrackIndex = i;
           }
@@ -92,11 +93,24 @@ export class Visualizer extends React.PureComponent {
   }
 
   toggleTrack(track) {
+
+    let combined = this.compare[track.trackName]; // save combined track name
+    console.log("combined", combined);
+
+    let tracks = [];
+
     // console.log("toggleTrack", track);
     this.props.tracks.forEach((item, index)=>{
         //console.log(item);
-        if(item.trackName == track.trackName) this.props.toggleTrack(index);
+        if(item.trackName == track.trackName) {
+          tracks.push(index);
+        }
+        if(item.trackName == combined) {
+          tracks.push(index);
+        }
     });
+
+    this.props.toggleTracks(tracks, !track.active);
   }
 
   render() {
