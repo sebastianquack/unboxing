@@ -13,15 +13,15 @@ import { colors, breakpoints } from '../config/globalStyles'
 
 const getMapConfig = (navigationState) => {
   if (navigationState === "welcome") return {
-    scaleFactor: 2,
+    scaleFactor: 3, // zoom level actually
     displayIcons: false,
   }
   if (navigationState === "challenges") return {
-    scaleFactor: 1,
+    scaleFactor: 5, // zoom level actually
     displayIcons: true,
   }
   if (navigationState === "challenge") return {
-    scaleFactor: 1,
+    scaleFactor: 5.5, // zoom level actually
     displayIcons: false,
   }
 }
@@ -151,4 +151,5 @@ const GlobalStyle = createGlobalStyle`
     color: ${ colors.white };
     font-family: "DINPro", sans-serif;
   }
+
 `

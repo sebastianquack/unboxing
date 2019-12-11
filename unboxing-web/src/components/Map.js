@@ -6,7 +6,7 @@ import { Map as LeafletMap, ImageOverlay, Marker, Rectangle } from 'react-leafle
 
 import 'leaflet/dist/leaflet.css';
 
-import { LocaleText, MapButtonMarker } from './';
+import { LocaleText, localeText, MapButtonMarker, LanguageContext } from './';
 import { breakpoints } from '../config/globalStyles';
 
 const debugShowRegions = false
@@ -101,11 +101,12 @@ class Map extends React.PureComponent {
   regionToMapBounds = ({x1, x2, y1, y2}, zoomFactor=1) => {
     const mapData = this.props.data.content.mapData
     if (zoomFactor) {
-      x1 += ((((x2-x1) * zoomFactor) - (x2-x1)) /2 )
-      x2 -= ((((x2-x1) * zoomFactor) - (x2-x1)) /2 )
-      y1 += ((((y2-y1) * zoomFactor) - (y2-y1)) /2 )
-      y2 -= ((((y2-y1) * zoomFactor) - (y2-y1)) /2 )
+      x1 -= Math.round(((((x2-x1) * zoomFactor) - (x2-x1)) /2 ))
+      x2 += Math.round(((((x2-x1) * zoomFactor) - (x2-x1)) /2 ))
+      y1 -= Math.round(((((y2-y1) * zoomFactor) - (y2-y1)) /2 ))
+      y2 += Math.round(((((y2-y1) * zoomFactor) - (y2-y1)) /2 ))
     }
+    // console.log(zoomFactor, x1, x2, y1, y2)
     const bounds = [
       this.offsetToMapCoords({left:x1, top:y1}), 
       this.offsetToMapCoords({left:x2, top:y2})
@@ -119,9 +120,7 @@ class Map extends React.PureComponent {
     const mapData = this.props.data.content.mapData
     const region = mapData.regions[this.props.currentMapRegionIndex]
 
-    console.log(this.state.scaleFactor)
-
-    const challengeButtons = this.props.data ? this.props.data.challenges.map((challenge, index)=> {
+    const challengeButtons = this.props.data.challenges.map((challenge, index)=> {
       const mapPositionsPerc = mapData.challenges.find( c => c.challenge_name === challenge.name ) || {x:0, y:0}
       const isInsideCurrentRegion = 
         mapPositionsPerc.x > region.x1 && 
@@ -140,10 +139,9 @@ class Map extends React.PureComponent {
           left: mapPositionsPerc.x,
         })}
         title={index + 1}
-        subtitle={<LocaleText object={challenge.stages[0]} field="header"/>}
+        subtitle={localeText(challenge.stages[0],"header", this.props.language)}
       />
-    }) : null;
-
+    })
 
     console.log(this.state.transitionOrder )
 
@@ -165,71 +163,70 @@ class Map extends React.PureComponent {
       />}
 
     return <Container> 
+        <LeafletMap
+          style={{
+            width: "100%",
+            backgroundColor: "transparent",
+            height: "100%",
+          }}
+          crs={L.CRS.Simple}
+          animate={true}
+          duration={1.5}
+          minZoom={-2}
+          zoom={this.state.scaleFactor}
+          useFlyTo={true}
+          bounds={this.regionToMapBounds(region)}
+          doubleClickZoom={true}
+          dragging={true}
+          scrollWheelZoom={false}
+          tap={false}
+          touchZoom={true}
+          boxZoom={false}
+          >
 
-          <LeafletMap
-            style={{
-              width: "100%",
-              backgroundColor: "transparent",
-              height: "100%",
-            }}
-            crs={L.CRS.Simple}
-            animate={true}
-            duration={1.5}
-            minZoom={-2}
-            useFlyTo={true}
-            bounds={this.regionToMapBounds(region, this.state.scaleFactor)}
-            doubleClickZoom={false}
-            dragging={false}
-            scrollWheelZoom={false}
-            tap={false}
-            touchZoom={false}
-            boxZoom={false}
-            >
+          <ImageOverlay
+            url={"/images/" + mapData.filename}
+            bounds={bounds}
+          />
 
-            <ImageOverlay
-              url={"/images/" + mapData.filename}
-              bounds={bounds}
+          { challengeButtons }
+
+          { region.nextButtonX &&
+            <MapButtonMarker
+              show={ this.state.displayIcons }
+              transitionOrder={ this.state.transitionOrder }
+              position={this.offsetToMapCoords({
+                  left: mapData.regions[this.props.currentMapRegionIndex].nextButtonX,
+                  top: mapData.regions[this.props.currentMapRegionIndex].nextButtonY,
+                })}
+              onClick={this.props.nextMapRegion}
+              title={<img style={{height:"1em", marginTop:"0.2em", marginLeft:"0.1em"}} src="images/RightCorner.svg" alt="next" />}
+              subtitle={ localeText(mapData.regions[this.props.currentMapRegionIndex+1],"title", this.props.language) }
+            /> 
+          }
+
+          { region.prevButtonX &&
+            <MapButtonMarker
+              show={ this.state.displayIcons}
+              transitionOrder={ this.state.transitionOrder }
+              position={this.offsetToMapCoords({
+                  left: mapData.regions[this.props.currentMapRegionIndex].prevButtonX,
+                  top: mapData.regions[this.props.currentMapRegionIndex].prevButtonY,
+                })}
+              onClick={this.props.prevMapRegion}
+              title={<BackImage style={{height:"1em", marginTop:"0.2em", marginLeft:"-0.1em"}} src="images/RightCorner.svg" alt="previous" />}
+              subtitle={localeText(mapData.regions[this.props.currentMapRegionIndex-1],"title", this.props.language)}
             />
+          }
 
-            { challengeButtons }
-
-            { region.nextButtonX &&
-              <MapButtonMarker
-                show={ this.state.displayIcons }
-                transitionOrder={ this.state.transitionOrder }
-                position={this.offsetToMapCoords({
-                    left: mapData.regions[this.props.currentMapRegionIndex].nextButtonX,
-                    top: mapData.regions[this.props.currentMapRegionIndex].nextButtonY,
-                  })}
-                onClick={this.props.nextMapRegion}
-                title={<img style={{height:"1em", marginTop:"0.2em", marginLeft:"0.1em"}} src="images/RightCorner.svg" alt="next" />}
-                subtitle={ <LocaleText object={mapData.regions[this.props.currentMapRegionIndex+1]} field="title"/>}
-              /> 
-            }
-
-            { region.prevButtonX &&
-              <MapButtonMarker
-                show={ this.state.displayIcons}
-                transitionOrder={ this.state.transitionOrder }
-                position={this.offsetToMapCoords({
-                    left: mapData.regions[this.props.currentMapRegionIndex].prevButtonX,
-                    top: mapData.regions[this.props.currentMapRegionIndex].prevButtonY,
-                  })}
-                onClick={this.props.prevMapRegion}
-                title={<BackImage style={{height:"1em", marginTop:"0.2em", marginLeft:"-0.1em"}} src="images/RightCorner.svg" alt="previous" />}
-                subtitle={<LocaleText object={mapData.regions[this.props.currentMapRegionIndex-1]} field="title"/>}
-              />
-            }
-
-            { debugShowRegions && mapData.regions.map( (region, index) => 
-              <DebugRegionMarker key={index} region={region} />) 
-            }
-             
-            {/* <DebugMarker left="100" top="100" /> */}
+          { debugShowRegions && mapData.regions.map( (region, index) => 
+            <DebugRegionMarker key={index} region={region} />) 
+          }
             
-          </LeafletMap> 
-
-      </Container>
+          {/* <DebugMarker left="100" top="100" /> */}
+          
+        </LeafletMap> 
+    </Container>
   }
 }
 
@@ -253,6 +250,10 @@ const Container = styled.div`
   .leaflet-marker-icon {
     background: transparent;
     border: none;
+  }
+
+  .leaflet-container {
+    font-family: DINPro !important;
   }
 
 `

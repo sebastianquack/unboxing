@@ -56,24 +56,20 @@ const ChallengeButton = styled.div`
 
   opacity: ${ props => props.show ? props.disabled ? 0.3 : 1 : 0};
 
-  /*transform: translateX(-50%) translateY(-25%);*/
+  transform: translateX(-50%) translateY(-10px);
   transition: opacity ${ props => props.transitionOrder === "scale-first" ? "1s 0.8s" : "0.4s"};
   will-change: opacity;
 
-  width: 30px;
-  height: 30px;
-  @media ${breakpoints.large} {
-    width: 60px;
-    height: 60px;
-  }
+  /*background: #f006;*/
+
+  height: 50vh; /* need sufficuent height because of leaflet container */
 
   @media ${breakpoints.large} {}
 `
 
-
-
 const ChallengeButtonNumber = styled.div`
   background-image: url(/images/PassageButtonBg.png);
+  /*background-color: #ff06;*/
   background-repeat: no-repeat;
   background-size: contain;
   width: 30px;
@@ -89,7 +85,7 @@ const ChallengeButtonNumber = styled.div`
 `
 
 const ChallengeButtonSubtitle = styled.div`
-  width: 10em;
+  width: 15em;
   justify-content: center;
   text-align: center;
   @media ${breakpoints.large} {

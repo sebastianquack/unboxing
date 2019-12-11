@@ -55,7 +55,7 @@ class LocaleText extends React.Component {
         if(this.props.markdown) {
           return <ReactMarkdown source={text} />
         } else {
-          return text  
+          return text
         }
       
       }}
