@@ -13,7 +13,7 @@ import { colors, breakpoints } from '../config/globalStyles'
 
 const getMapConfig = (navigationState) => {
   if (navigationState === "welcome") return {
-    scaleFactor: 3,
+    scaleFactor: 2,
     displayIcons: false,
   }
   if (navigationState === "challenges") return {
@@ -21,7 +21,7 @@ const getMapConfig = (navigationState) => {
     displayIcons: true,
   }
   if (navigationState === "challenge") return {
-    scaleFactor: 2,
+    scaleFactor: 1,
     displayIcons: false,
   }
 }
