@@ -10,8 +10,17 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
     super(props)
     // console.log(props.challenge);
 
+    let showWalkVideos = false;
+    if(URLSearchParams) {
+      let urlParams = new URLSearchParams(window.location.search);
+      if(urlParams.has("w")) {
+        showWalkVideos = true;
+      }
+    }
+
     this.state = {
-      videoUrl: null
+      videoUrl: null,
+      showWalkVideos: showWalkVideos
     }
   }
 
@@ -24,7 +33,7 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
     const subtitle = <LocaleText object={this.props.challenge.stages[0]} field="header"/> 
     const text = <LocaleText object={this.props.challenge.stages[0]} field="text"/>
     let videoContainers = this.props.challenge.stages.map((stage, index)=>
-      stage.video_thumb ? <VideoContainer key={index}>
+      (stage.video_thumb && (!stage.walk_video || this.state.showWalkVideos)) ? <VideoContainer key={index}>
         <VideoThumb 
           key={index} src={serverUrl + "/files/video/" + stage.video_thumb}
           onClick={()=>{
