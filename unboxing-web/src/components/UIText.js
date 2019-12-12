@@ -34,8 +34,8 @@ const baseTextStyles = { // base style is mobile style
     `,
   "big-title-button": `
     font-weight: 500;
-    font-size: 18px;
-    line-height: 24px;
+    font-size: 16px;
+    line-height: 22px;
     text-transform: uppercase;
     `,
   "big-title-side-explanation": `
@@ -228,6 +228,12 @@ const largeTextStyles = { // some styles have additional large styles (overwrite
     display: block;
     margin-top: 20px;
     `,
+  "big-title-button": `
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 24px;
+    text-transform: uppercase;
+    `,  
   "menu-title": `
     font-weight: 500;
     font-size: 45px;
