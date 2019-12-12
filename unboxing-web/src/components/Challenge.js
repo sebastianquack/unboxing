@@ -222,9 +222,14 @@ const FixedControls = styled.div`
   width: 200px;
   display: flex;
   justify-content: center;
-  left: 50%;
-  margin-left: -100px;
   z-index: 9;
+
+  left: 0%;
+
+  @media ${breakpoints.large} {
+    left: 50%;
+    margin-left: -100px;
+  }
 `
 
 const FixedTopRight = styled.div`
