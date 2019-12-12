@@ -11,7 +11,7 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
     // console.log(props.challenge);
 
     let showWalkVideos = false;
-    if(URLSearchParams) {
+    if(typeof URLSearchParams !== "undefined") {
       let urlParams = new URLSearchParams(window.location.search);
       if(urlParams.has("w")) {
         showWalkVideos = true;
