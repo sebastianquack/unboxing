@@ -115,7 +115,7 @@ const Top = styled.div`
   box-sizing: border-box;
   padding: 10px;
   @media ${breakpoints.large} {
-    padding: 25px 25px 0px 25px;
+    padding: 25px 25px 25px 25px;
   }  
 `
 

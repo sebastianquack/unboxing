@@ -54,10 +54,12 @@ export class StatusBar extends React.Component {
           <UIText styleKey="statusbar-breadcrumb" key={2}><LocaleText object={region} field="title"/></UIText>
         ]}
       </Left>
-      <Center>
-          
-        
-        
+      <Center
+        onClick={()=>{
+          if(this.props.navigationState === "challenge" && this.props.challengeInfoOpen)
+            this.props.toggleChallengeInfo()
+          }}
+      >
       </Center>
       <Right>
         {this.props.navigationState !== "challenge" && <LanguageSelector toggleLanguage= {this.props.toggleLanguage}/>}

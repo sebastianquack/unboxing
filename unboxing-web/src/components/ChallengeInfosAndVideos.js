@@ -77,9 +77,7 @@ export { ChallengeInfosAndVideos }
 
 const PlayButtonContainer = styled.div`
   
-  position: absolute;
-  right: 8%;
-  top: 8%;
+  float: right;
   width: 120px;
   height: 50px;
   z-index: 10;
