@@ -77,9 +77,12 @@ export { ChallengeInfosAndVideos }
 
 const PlayButtonContainer = styled.div`
   
-  float: right;
+  position: absolute;
+  right: 8%;
+  top: 8%;
   width: 120px;
   height: 50px;
+  z-index: 10;
   div span span {
     font-size: 14px;
     line-height: 18px;
@@ -87,11 +90,12 @@ const PlayButtonContainer = styled.div`
 
   @media ${breakpoints.medium} {
     position: absolute;
+    top: auto;
     bottom: 50px;
     left: 50%;
     transform: translate(-50%, 0);
-    width: 160px;
-    height: 80px;
+    width: 190px;
+    height: 100px;
     div span span {
       font-size: 20px;
       line-height: 24px;
