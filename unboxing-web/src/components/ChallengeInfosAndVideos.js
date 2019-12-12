@@ -5,6 +5,8 @@ import {LocaleText, withLanguage, UIText, VideoModal, HorizontalScrollContainer,
 import {serverUrl} from '../config/server.js';
 import { breakpoints, colors } from '../config/globalStyles';
 
+import 'url-search-params-polyfill';
+
 const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
   constructor(props) {
     super(props)
