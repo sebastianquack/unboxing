@@ -94,7 +94,7 @@ export class Button extends React.Component {
 }
 
 function buttonDimension(key) {
-  if(key == "round") return "50px";
+  if(key == "round") return "60px";
   if(key == "menu-close" || key == "menu-section-close" || key == "menu-section-open") return "48px";
   if(key == "soft-square") return "100px";
   return "30px";

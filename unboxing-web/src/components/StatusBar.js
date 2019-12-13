@@ -69,10 +69,11 @@ export class StatusBar extends React.Component {
             onClick={this.props.toggleChallengeInfo}
           />
         }
-        {this.props.navigationState === "challenge" && !this.props.challengeInfoOpen && [
-          <UIText key="statusbar-title" styleKey="statusbar-title">{title}</UIText>,
-          <UIText key="statusbar-" styleKey="statusbar-subtitle">{subtitle}</UIText>
-        ]}
+        {this.props.navigationState === "challenge" && !this.props.challengeInfoOpen &&
+          <UIText key="statusbar-title" styleKey="statusbar-title">
+            <LocaleText object={currentChallenge.stages[0]} field="header"/>
+          </UIText>
+        }
           
       </Right>
     </Container>
