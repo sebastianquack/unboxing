@@ -119,7 +119,8 @@ export class Challenge extends React.PureComponent {
       <InfoBoxContainer>
       {!this.props.challengeInfoOpen && 
         <InfoBox 
-          staticString="challenge_info1" 
+          staticString={this.props.currentChallenge.stages[0].dynamicInstructOnly ?
+          null : "challenge_info1"}
           dynamicString="dynamicInstruct"
           dynamicObj={this.props.currentChallenge.stages[0]}
         />
