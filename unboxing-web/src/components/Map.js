@@ -168,6 +168,7 @@ class Map extends React.PureComponent {
             width: "100%",
             backgroundColor: "transparent",
             height: "100%",
+            visibility: this.props.visible ? "visible" : "hidden"
           }}
           crs={L.CRS.Simple}
           animate={true}

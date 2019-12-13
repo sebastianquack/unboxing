@@ -5,13 +5,24 @@ import {LocaleText, withLanguage, UIText, VideoModal, HorizontalScrollContainer,
 import {serverUrl} from '../config/server.js';
 import { breakpoints, colors } from '../config/globalStyles';
 
+import 'url-search-params-polyfill';
+
 const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
   constructor(props) {
     super(props)
     // console.log(props.challenge);
 
+    let showWalkVideos = false;
+    if(typeof URLSearchParams !== "undefined") {
+      let urlParams = new URLSearchParams(window.location.search);
+      if(urlParams.has("w")) {
+        showWalkVideos = true;
+      }
+    }
+
     this.state = {
-      videoUrl: null
+      videoUrl: null,
+      showWalkVideos: showWalkVideos
     }
   }
 
@@ -24,7 +35,7 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
     const subtitle = <LocaleText object={this.props.challenge.stages[0]} field="header"/> 
     const text = <LocaleText object={this.props.challenge.stages[0]} field="text"/>
     let videoContainers = this.props.challenge.stages.map((stage, index)=>
-      stage.video_thumb ? <VideoContainer key={index}>
+      (stage.video_thumb && (!stage.walk_video || this.state.showWalkVideos)) ? <VideoContainer key={index}>
         <VideoThumb 
           key={index} src={serverUrl + "/files/video/" + stage.video_thumb}
           onClick={()=>{
@@ -41,6 +52,14 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
       <Container hide={this.props.hide}>
           <ContentContainer>
 
+          <PlayButtonContainer>
+            <SoftTextButton textWidth={100} style={{
+              width: "100%", height: "100%",
+            }} onClick={this.props.close}>
+              <UIText styleKey="big-title-button"><LocaleText stringsKey="passage-play-button"/></UIText>
+            </SoftTextButton>
+          </PlayButtonContainer>   
+
           <WithLine>
             <UIText styleKey="challenge-supertitle">{movement}</UIText>
             <UIText styleKey="challenge-title">{bars}</UIText>
@@ -56,13 +75,7 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
             {videoContainers}
         </VideoThumbs>}
 
-          <PlayButtonContainer>
-            <SoftTextButton textWidth={100} style={{
-              width: 190, height: 110,
-            }} onClick={this.props.close}>
-              <UIText styleKey="big-title-button"><LocaleText stringsKey="passage-play-button"/></UIText>
-            </SoftTextButton>
-          </PlayButtonContainer>   
+          
 
         
         </ContentContainer>
@@ -75,14 +88,27 @@ export { ChallengeInfosAndVideos }
 
 const PlayButtonContainer = styled.div`
   
-  margin-left: auto;
-  margin-right: auto;
-  width: 190px;
+  float: right;
+  width: 120px;
+  height: 50px;
+  z-index: 10;
+  div span span {
+    font-size: 14px;
+    line-height: 18px;
+  }
 
-  @media ${breakpoints.large} {
+  @media ${breakpoints.medium} {
     position: absolute;
-    right: 80px;
-    top: 40px;  
+    top: auto;
+    bottom: 50px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    width: 190px;
+    height: 100px;
+    div span span {
+      font-size: 20px;
+      line-height: 24px;
+    }
   }
 `
 

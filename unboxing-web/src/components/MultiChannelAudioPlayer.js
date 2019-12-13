@@ -184,7 +184,10 @@ export class MultiChannelAudioPlayer extends React.Component {
     if(this.panners[index]) {
       sampleSource.connect(this.gainNodes[index]).connect(this.panners[index]).connect(this.audioContext.destination)  
     } else {
-      sampleSource.connect(this.gainNodes[index]).connect(this.audioContext.destination)  
+      //sampleSource.connect(this.gainNodes[index]).connect(this.audioContext.destination)  
+    
+      sampleSource.connect(this.gainNodes[index]);
+      this.gainNodes[index].connect(this.audioContext.destination);
     }
 
     sampleSource.start(start, offset);

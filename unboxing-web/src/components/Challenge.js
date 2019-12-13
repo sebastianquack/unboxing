@@ -119,7 +119,8 @@ export class Challenge extends React.PureComponent {
       <InfoBoxContainer>
       {!this.props.challengeInfoOpen && 
         <InfoBox 
-          staticString="challenge_info1" 
+          staticString={this.props.currentChallenge.stages[0].dynamicInstructOnly ?
+          null : "challenge_info1"}
           dynamicString="dynamicInstruct"
           dynamicObj={this.props.currentChallenge.stages[0]}
         />
@@ -222,9 +223,14 @@ const FixedControls = styled.div`
   width: 200px;
   display: flex;
   justify-content: center;
-  left: 50%;
-  margin-left: -100px;
   z-index: 9;
+
+  left: 0%;
+
+  @media ${breakpoints.large} {
+    left: 50%;
+    margin-left: -100px;
+  }
 `
 
 const FixedTopRight = styled.div`

@@ -5,6 +5,7 @@ const colors = {
 }
 
 const breakpoints = {
+  'medium': '(min-height: 600px)',
   'large': '(min-width: 700px) and (min-height: 400px)'
 }
 

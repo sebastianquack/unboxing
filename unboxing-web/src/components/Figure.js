@@ -67,6 +67,7 @@ const Figure =  withLanguage(class extends React.PureComponent {
         key="clicktarget" 
         xPosPercentage={xPosPercentage} 
         yPosPercentage={yPosPercentage}
+        title={localeText(instrument,"name", this.props.language)}
         onClick={ this.props.toggle } />,
       <DebugMarker 
         key="debugmarker" 
