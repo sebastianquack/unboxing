@@ -75,9 +75,6 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
             {videoContainers}
         </VideoThumbs>}
 
-          
-
-        
         </ContentContainer>
       </Container>
     )
@@ -222,7 +219,7 @@ const WithLine = styled.div`
     width: 4px;
     @media ${breakpoints.large} {
       left: -26px;
-    width: 5px;
+      width: 5px;
     }
   }
   margin-bottom: 1em;

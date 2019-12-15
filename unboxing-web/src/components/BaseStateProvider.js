@@ -66,7 +66,7 @@ class BaseStateProvider extends React.Component {
         setTimeout(
           () => this.setState({
             challengeInfoOpen: true
-          }), 1200
+          }), 1500
         )
       }    
     })
