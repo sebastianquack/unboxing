@@ -30,6 +30,7 @@ export class Challenge extends React.PureComponent {
       
     this.state = {
       activeTracks: this.tracks.map(()=>false),
+      minimalView: true,
       loadingStatus: 0
     }
 
@@ -117,7 +118,7 @@ export class Challenge extends React.PureComponent {
       />}
 
       <InfoBoxContainer>
-      {!this.props.challengeInfoOpen && 
+      {!this.state.minimalView && 
         <InfoBox 
           staticString={this.props.currentChallenge.stages[0].dynamicInstructOnly ?
           null : "challenge_info1"}
@@ -146,7 +147,7 @@ export class Challenge extends React.PureComponent {
         hide={!this.props.challengeInfoOpen}
         challenge={this.props.currentChallenge} 
         setVideoModalUrl={this.props.setVideoModalUrl}
-        close={this.props.toggleChallengeInfo}
+        close={() => {this.props.toggleChallengeInfo(); this.setState({minimalView: false})}}
       />
 
       {/*!this.props.challengeInfoOpen && <Building src="/images/building.svg"/>*/}
@@ -156,7 +157,7 @@ export class Challenge extends React.PureComponent {
         sequenceStartedAt={this.state.sequenceStartedAt}
         tracks={this.tracks}
         activeTracks={this.state.activeTracks} 
-        render={ !this.props.challengeInfoOpen ? this.renderActionStuff : ()=>null }
+        render={ this.renderActionStuff }
         />
 
     </Container>

@@ -66,7 +66,7 @@ class BaseStateProvider extends React.Component {
         setTimeout(
           () => this.setState({
             challengeInfoOpen: true
-          }), 1500
+          }), 1200
         )
       }    
     })
@@ -82,7 +82,7 @@ class BaseStateProvider extends React.Component {
     this.setState({currentChallengeId});
     setTimeout(()=>{
       this.handleNavigation("challenge");
-    },500)
+    },300)
     if (useSession) sessionStorage.setItem('currentChallengeId', currentChallengeId);
   }
 

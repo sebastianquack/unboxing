@@ -116,7 +116,7 @@ const Container = styled.div`
   width: 100%;
   bottom: 0;
   position: fixed;
-  z-index: 10;
+  z-index: 100;
   box-sizing: border-box;
   background-image: url("/images/overlaybg.svg");
   background-size: contain;
