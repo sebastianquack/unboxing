@@ -20,7 +20,7 @@ class BaseStateProvider extends React.Component {
       navigationState: (useSession && sessionStorage.getItem('navigationState')) || "welcome",
       currentChallengeId: (useSession && sessionStorage.getItem('currentChallengeId')) || undefined,
       language: sessionStorage.getItem('locale') ? sessionStorage.getItem('locale') : "en",
-      challengeInfoOpen: true,
+      challengeInfoOpen: false,
       videoModalUrl: null,
       menuOpen: false,
       playbackControlStatus: "loading", // ready - playing - paused
@@ -60,7 +60,15 @@ class BaseStateProvider extends React.Component {
     }
     this.setState({
       navigationState: target,
-      challengeInfoOpen: true
+      challengeInfoOpen: false
+    }, () =>{
+      if (target === "challenge") {
+        setTimeout(
+          () => this.setState({
+            challengeInfoOpen: true
+          }), 1500
+        )
+      }    
     })
     if (target !== "challenge") {
       this.setState({
@@ -72,7 +80,9 @@ class BaseStateProvider extends React.Component {
 
   navigateToChallenge(currentChallengeId) {
     this.setState({currentChallengeId});
-    this.handleNavigation("challenge");
+    setTimeout(()=>{
+      this.handleNavigation("challenge");
+    },500)
     if (useSession) sessionStorage.setItem('currentChallengeId', currentChallengeId);
   }
 

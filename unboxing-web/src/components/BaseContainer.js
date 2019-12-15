@@ -11,18 +11,19 @@ import {
 } from './'
 import { colors, breakpoints } from '../config/globalStyles'
 
-const getMapConfig = (navigationState) => {
-  if (navigationState === "welcome") return {
+const getMapConfig = (props) => {
+  if (props.navigationState === "welcome") return {
     scaleFactor: 3, // zoom level actually
     displayIcons: false,
   }
-  if (navigationState === "challenges") return {
+  console.log(props)
+  if (props.navigationState === "challenge" || props.currentChallengeId !== undefined) return {
+    scaleFactor: 6, // zoom level actually
+    displayIcons: false,
+  }  
+  if (props.navigationState === "challenges") return {
     scaleFactor: 5, // zoom level actually
     displayIcons: true,
-  }
-  if (navigationState === "challenge") return {
-    scaleFactor: 5.5, // zoom level actually
-    displayIcons: false,
   }
 }
 
@@ -58,8 +59,8 @@ export class BaseContainer extends React.PureComponent {
         />
         <Map 
           visible={this.props.navigationState !== "welcome"}
-          scaleFactor={getMapConfig(this.props.navigationState).scaleFactor} 
-          displayIcons={getMapConfig(this.props.navigationState).displayIcons} 
+          scaleFactor={getMapConfig(this.props).scaleFactor} 
+          displayIcons={getMapConfig(this.props).displayIcons} 
           {...this.props} 
         />
         {this.props.navigationState === "challenge" && <Background color="blackout" />}
@@ -135,7 +136,7 @@ const Shade = styled.div`
 const Bottom = styled.div`
   flex: 1;
   /*background-color: red;*/
-  overflow-y: scroll;
+  /*overflow-y: scroll;*/
 `
 
 const GlobalStyle = createGlobalStyle`
