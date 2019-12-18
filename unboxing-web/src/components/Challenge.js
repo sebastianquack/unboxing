@@ -30,6 +30,7 @@ export class Challenge extends React.PureComponent {
       
     this.state = {
       activeTracks: this.tracks.map(()=>false),
+      minimalView: true,
       loadingStatus: 0
     }
 
@@ -72,7 +73,7 @@ export class Challenge extends React.PureComponent {
   }
 
   renderActionStuff = tracksWithActionStates  => [
-    <VisualizerContainer key="visu">
+    <VisualizerContainer key="visu" dim={this.props.challengeInfoOpen}>
       <Visualizer
         tracks={tracksWithActionStates}
         activeTracks={this.state.activeTracks} 
@@ -83,7 +84,7 @@ export class Challenge extends React.PureComponent {
         sequenceStartedAt={this.state.sequenceStartedAt}
       />
     </VisualizerContainer>,
-    <StageContainer key="stage">
+    <StageContainer key="stage" dim={this.props.challengeInfoOpen}>
       <Stage 
         tracks={tracksWithActionStates}
         activeTracks={this.state.activeTracks} 
@@ -116,15 +117,13 @@ export class Challenge extends React.PureComponent {
         activeTracks={this.state.activeTracks}
       />}
 
-      <InfoBoxContainer>
-      {!this.props.challengeInfoOpen && 
+      <InfoBoxContainer show={!this.state.minimalView && !this.props.challengeInfoOpen}>
         <InfoBox 
           staticString={this.props.currentChallenge.stages[0].dynamicInstructOnly ?
           null : "challenge_info1"}
           dynamicString="dynamicInstruct"
           dynamicObj={this.props.currentChallenge.stages[0]}
         />
-      }
       </InfoBoxContainer>
 
       <FixedAtBottom>
@@ -146,17 +145,16 @@ export class Challenge extends React.PureComponent {
         hide={!this.props.challengeInfoOpen}
         challenge={this.props.currentChallenge} 
         setVideoModalUrl={this.props.setVideoModalUrl}
-        close={this.props.toggleChallengeInfo}
+        close={() => {this.props.toggleChallengeInfo(); this.setState({minimalView: false})}}
       />
-
-      {/*!this.props.challengeInfoOpen && <Building src="/images/building.svg"/>*/}
 
       <ActionStates
         playbackControlStatus={this.props.playbackControlStatus}
         sequenceStartedAt={this.state.sequenceStartedAt}
         tracks={this.tracks}
         activeTracks={this.state.activeTracks} 
-        render={ !this.props.challengeInfoOpen ? this.renderActionStuff : ()=>null }
+        render={ this.renderActionStuff }
+        dim={this.props.challengeInfoOpen}
         />
 
     </Container>
@@ -180,7 +178,10 @@ const VisualizerContainer = styled.div`
   @media ${breakpoints.large} {
     padding: 0 50px;
     display: block;
-  }  
+  }
+  opacity: ${ props => props.dim ? "0.5" : "1" };
+  ${ props => props.dim ? "filter: blur(1px);" : "" };
+  transition: opacity 0.5s 0.3s, filter 0s 0.3s;
 `
 
 const StageContainer = styled.div`
@@ -194,10 +195,15 @@ const StageContainer = styled.div`
     margin-left: 0vw;
     margin-right: 0vw;    
   }
+  opacity: ${ props => props.dim ? 0.5 : 1 };
+  ${ props => props.dim ? "filter: blur(1px);" : "" };
+  transition: opacity 0.5s 0.3s, filter 0s 0.3s;
 `
 
 const InfoBoxContainer = styled.div`
   display: none;
+  opacity: ${ ({show}) => show ? 1: 0};  
+  transition: opacity 0.5s 1s;
   @media ${breakpoints.large} {
       display: block;
   }

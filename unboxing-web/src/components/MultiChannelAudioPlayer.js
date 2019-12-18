@@ -124,7 +124,7 @@ export class MultiChannelAudioPlayer extends React.Component {
   }
 
   componentWillUnmount() {
-    this.handlePause()
+    if (this.state.controlStatus === "playing") this.handlePause()
     this._unmounted = true;
   } 
 

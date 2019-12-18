@@ -31,7 +31,8 @@
     "production": [
       ">0.2%",
       "not dead",
-      "not op_mini all"
+      "not op_mini all",
+      "firefox 45"
     ],
     "development": [
       "last 1 chrome version",
