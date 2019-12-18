@@ -60,6 +60,9 @@ export class Welcome extends React.Component {
             <UIText styleKey="big-title-button"><LocaleText stringsKey="main-start-button"/></UIText>
           </SoftTextButton>   
         </PlayButtonContainer>
+        <UIText styleKey="compatibility-notice">
+          <LocaleText stringsKey="compatibility-notice"/>
+        </UIText>   
       </LeftContainer>,
       
       <RightContainer key={2} >

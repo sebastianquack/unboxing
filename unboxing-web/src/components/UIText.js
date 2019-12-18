@@ -38,6 +38,12 @@ const baseTextStyles = { // base style is mobile style
     line-height: 22px;
     text-transform: uppercase;
     `,
+  "compatibility-notice": `
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 24px;
+    text-transform: none;
+  `,  
   "big-title-side-explanation": `
     font-weight: 500;
     font-size: 18px;
