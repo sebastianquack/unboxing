@@ -50,7 +50,7 @@ export class BaseContainer extends React.PureComponent {
         }
         
         {this.props.data &&
-          <Menu visible={this.props.menuOpen} menuData={this.props.data.content.menu} onClose={this.props.toggleMenu}/>
+          <Menu vh={this.props.vh} visible={this.props.menuOpen} menuData={this.props.data.content.menu} onClose={this.props.toggleMenu}/>
         }
 
         <GlobalStyle vh={this.props.vh}/>

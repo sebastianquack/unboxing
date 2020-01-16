@@ -131,6 +131,7 @@ const MenuBody = styled.div`
 
   padding-left: 30px;
   padding-right: 30px;
+  padding-bottom: 55px;
 
   @media ${breakpoints.large} {
     margin-top: 110px;

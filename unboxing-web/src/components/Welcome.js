@@ -44,7 +44,9 @@ export class Welcome extends React.Component {
             <LocaleText stringsKey="main-supertitle"/>
           </UIText>
           <UIText styleKey="big-title-main">
-            <LocaleText stringsKey="main-title"/>
+            <LocaleText stringsKey="main-title"/> 
+            { !(this.props.vw > dimensions.large.minWidthPx) ? " – " : "" }
+            { !(this.props.vw > dimensions.large.minWidthPx) && <LocaleText stringsKey="main-subtitle"/> }
           </UIText>
         </WithLine>
         <FixedWidth>
