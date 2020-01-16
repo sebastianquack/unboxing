@@ -38,6 +38,29 @@ const getBackgroundGradient = (navigationState, controlStatus) => {
 }
 
 export class BaseContainer extends React.PureComponent {
+  constructor() {
+    super()
+    this.state = {
+      vh: 0
+    }
+    this.updateDimensions = this.updateDimensions.bind(this)
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.updateDimensions);
+    //window.addEventListener("orientationchange", this.updateDimensions);
+    this.updateDimensions()
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
+    //window.removeEventListener("orientationchange", this.updateDimensions);
+  }  
+
+  updateDimensions() {
+    const vh = window.innerHeight;
+    this.setState({ vh })
+  }
 
   render() {
 
@@ -53,7 +76,7 @@ export class BaseContainer extends React.PureComponent {
           <Menu visible={this.props.menuOpen} menuData={this.props.data.content.menu} onClose={this.props.toggleMenu}/>
         }
 
-        <GlobalStyle />
+        <GlobalStyle vh={this.state.vh}/>
         <Background 
           color={getBackgroundGradient(this.props.navigationState, this.props.playbackControlStatus)}
           flow={this.props.navigationState !== "challenge"}
@@ -107,7 +130,6 @@ const Container = styled.div`
   @media only screen and (orientation:portrait){
     display:none;
   }
-}
 `
 
 const Top = styled.div`
@@ -146,12 +168,17 @@ const GlobalStyle = createGlobalStyle`
   :root, #root, body {
     height: 100%;
     overflow: hidden;
+    background-color: #000;
   }
 
   body {
-    background-color: #000;
     color: ${ colors.white };
     font-family: "DINPro", sans-serif;
+
+    height: ${ props => props.vh }px;
+    /*position: fixed;*/
+    /*bottom:0;*/
+    overflow: hidden;    
   }
 
 `
