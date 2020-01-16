@@ -74,6 +74,7 @@ export class BaseContainer extends React.PureComponent {
             {...this.props}
           />}
         </Bottom>
+        <PreloadImage src="/images/overlaybg.svg"/>
       </Container>,
       <OrientationNotice key="orientation"><p>Please turn your device into landscape orientation.</p><p>If you are viewing on a desktop make sure the browser window is wider than it is high.</p></OrientationNotice>
       ]
@@ -115,9 +116,9 @@ const Top = styled.div`
   z-index: 11;
   width: 100%; 
   box-sizing: border-box;
-  padding: 10px;
+  padding: 10px 10px 0px 10px;
   @media ${breakpoints.large} {
-    padding: 25px 25px 25px 25px;
+    padding: 25px 25px 0px 25px;
   }  
 `
 
@@ -138,6 +139,12 @@ const Bottom = styled.div`
   flex: 1;
   /*background-color: red;*/
   /*overflow-y: scroll;*/
+`
+
+const PreloadImage = styled.img`
+  position: absolute;
+  z-index: -1;
+  visibility: hidden;
 `
 
 const GlobalStyle = createGlobalStyle`
