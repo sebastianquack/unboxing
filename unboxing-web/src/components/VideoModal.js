@@ -10,7 +10,7 @@ export class VideoModal extends React.PureComponent {
     return <Container
       onClick={this.props.onClose}
     >
-      <VideoPlayer controls autoPlay>
+      <VideoPlayer vh={this.props.vh} controls autoPlay>
         <source src={this.props.src} type="video/mp4"/>
       </VideoPlayer>
       <TopRight>
@@ -28,7 +28,6 @@ const Container = styled.div`
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vh;
   background-color: rgb(0,0,0,0.9);
   z-index: 500;
   display: flex;
@@ -39,6 +38,7 @@ const Container = styled.div`
 
 const VideoPlayer = styled.video`
   width: 100%;
+  height: ${props=>props.vh}px;
 `
 
 const TopRight = styled.div`

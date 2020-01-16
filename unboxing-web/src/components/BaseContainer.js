@@ -46,7 +46,7 @@ export class BaseContainer extends React.PureComponent {
     return (
       [<Container key="container" onClick={()=>{if(this.props.menuOpen) this.props.toggleMenu()}}>
         {this.props.videoModalUrl &&
-          <VideoModal src={this.props.videoModalUrl} onClose={()=>{this.props.setVideoModalUrl(null)}}/>
+          <VideoModal vh={this.props.vh} src={this.props.videoModalUrl} onClose={()=>{this.props.setVideoModalUrl(null)}}/>
         }
         
         {this.props.data &&
