@@ -13,18 +13,19 @@ import { colors, breakpoints } from '../config/globalStyles'
 
 const getMapConfig = (props) => {
   if (props.navigationState === "welcome") return {
-    scaleFactor: 3, // zoom level actually
+    scaleFactor: 2.0, // zoom level actually
     displayIcons: false,
   }
-  console.log(props)
-  if (props.navigationState === "challenge" || props.currentChallengeId !== undefined) return {
-    scaleFactor: 6, // zoom level actually
-    displayIcons: false,
-  }  
+  //console.log(props)
   if (props.navigationState === "challenges") return {
-    scaleFactor: 5, // zoom level actually
+    scaleFactor: 0.75, // zoom level actually
     displayIcons: true,
   }
+  if (props.navigationState === "challenge" || props.currentChallengeId !== undefined) return {
+    scaleFactor: 0.5, // zoom level actually
+    displayIcons: false,
+  }  
+  
 }
 
 const getBackgroundGradient = (navigationState, controlStatus) => {

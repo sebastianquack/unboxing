@@ -15,7 +15,7 @@ export class Welcome extends React.Component {
   componentDidMount = () => {
     let explanations = this.props.data.content.strings["side-explanation_de"];
     if(explanations) {
-      console.log("max descriptions", explanations.split("/").length);
+      //console.log("max descriptions", explanations.split("/").length);
       this.maxExplanations = explanations.split("/").length;
       this.setState({explanationIndex: 0});
       this.explanationsInterval = setInterval(()=>{

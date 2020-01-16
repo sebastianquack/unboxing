@@ -23,7 +23,7 @@ export class InfoBox extends React.Component {
         let dynamicContent = this.props.data.content.strings[this.props.dynamicString + "_de"];
         dynamicCount = dynamicContent.split("/");
       }
-      console.log("dynamicCount", dynamicCount);
+      //console.log("dynamicCount", dynamicCount);
 
       this.setState({
         dynamicIndex: 0,

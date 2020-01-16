@@ -31,8 +31,13 @@ export class Challenge extends React.PureComponent {
     this.state = {
       activeTracks: this.tracks.map(()=>false),
       minimalView: true,
-      loadingStatus: 0
+      loadingStatus: 0,
+      readyToLoadAudioPlayer: false,
     }
+
+    setTimeout(()=>{
+      this.setState({readyToLoadAudioPlayer: true});
+    }, 3000);
 
     this.updatePlaybackControlStatus = this.updatePlaybackControlStatus.bind(this)
     this.updateSequenceStartedAt = this.updateSequenceStartedAt.bind(this)
@@ -99,16 +104,16 @@ export class Challenge extends React.PureComponent {
 
     return <Container>
       
-      <FixedControls>
+      {this.state.readyToLoadAudioPlayer && !this.props.challengeInfoOpen && <FixedControls>
         <SequenceControls
           showControls={this.state.activeTracks.filter((t)=>t).length > 0}
           playbackControlStatus={this.props.playbackControlStatus}
           loadingStatus={this.state.loadingStatus}
           updatePlaybackControlStatus={this.updatePlaybackControlStatus}
         />
-      </FixedControls>
+      </FixedControls>}
 
-      {<MultiChannelAudioPlayer 
+      {this.state.readyToLoadAudioPlayer && <MultiChannelAudioPlayer 
         playbackControlStatus={this.props.playbackControlStatus}
         updatePlaybackControlStatus={this.updatePlaybackControlStatus}
         updateLoadingStatus={(loadingStatus)=>this.setState({loadingStatus})}

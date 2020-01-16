@@ -64,17 +64,28 @@ class Map extends React.PureComponent {
   }
 
   componentDidMount() {
-    window.addEventListener("resize", this.updateDimensions);
-    window.addEventListener("orientationchange", this.updateDimensions);
+    // from pre leaflet version?
+    //window.addEventListener("resize", this.updateDimensions);
+    //window.addEventListener("orientationchange", this.updateDimensions);
+
     this.setState({
       displayIcons: this.props.displayIcons,
       scaleFactor: this.props.scaleFactor,
     })
+
+    //alert("dimensions " + window.innerWidth + " " + window.innerHeight)
+  }
+
+  isSmallScreen() {
+    //return true;
+
+    return window.innerWidth < 1000;
   }
 
   componentWillUnmount() {
-    window.removeEventListener("resize", this.updateDimensions);
-    window.removeEventListener("orientationchange", this.updateDimensions);
+    // from pre leaflet version?
+    //window.removeEventListener("resize", this.updateDimensions);
+    //window.removeEventListener("orientationchange", this.updateDimensions);
   }
 
   componentDidUpdate(prevProps) {
@@ -128,7 +139,7 @@ class Map extends React.PureComponent {
         mapPositionsPerc.y > region.y1 && 
         mapPositionsPerc.y < region.y2
 
-      return <MapButtonMarker 
+      return isInsideCurrentRegion ? <MapButtonMarker 
         show={ this.state.displayIcons}
         disabled={ !isInsideCurrentRegion }
         transitionOrder={ this.state.transitionOrder }
@@ -140,10 +151,13 @@ class Map extends React.PureComponent {
         })}
         title={index + 1}
         subtitle={localeText(challenge.stages[0],"header", this.props.language)}
-      />
+      /> : null
     })
 
-    console.log(this.state.transitionOrder )
+    //console.log(this.state.transitionOrder)
+
+    console.log("scaleFactor", this.state.scaleFactor);
+    console.log("bounds", this.regionToMapBounds(region));
 
     var bounds = this.regionToMapBounds({x1:0, y1: 0, x2: 100, y2: 100})
 
@@ -158,7 +172,7 @@ class Map extends React.PureComponent {
     const DebugRegionMarker = region => {
       if (region.region) region = region.region // quick fix
       return <Rectangle 
-        bounds={this.regionToMapBounds(region)}
+        bounds={this.regionToMapBounds(region, this.state.scaleFactor)}
         attribution={region.title_en}
       />}
 
@@ -171,17 +185,17 @@ class Map extends React.PureComponent {
             visibility: this.props.visible ? "visible" : "hidden"
           }}
           crs={L.CRS.Simple}
-          animate={true}
-          duration={1.5}
+          animate={true} // deactive animations for small screens
+          duration={1.0}
           minZoom={-2}
-          zoom={this.state.scaleFactor}
-          useFlyTo={true}
-          bounds={this.regionToMapBounds(region)}
-          doubleClickZoom={true}
-          dragging={true}
+          //zoom={this.state.scaleFactor}
+          useFlyTo={false} // deactivate flyTo effect for small screens
+          bounds={this.regionToMapBounds(region, this.state.scaleFactor)}
+          doubleClickZoom={false}
+          dragging={false}
           scrollWheelZoom={false}
           tap={false}
-          touchZoom={true}
+          touchZoom={false}
           boxZoom={false}
           >
 

@@ -15,7 +15,7 @@ export class StatusBar extends React.Component {
     let {title, subtitle, currentChallenge} = this.props
 
     let region = this.props.data ? this.props.data.content.mapData.regions[this.props.currentMapRegionIndex] : null;
-    console.log(region);
+    //console.log(region);
 
     if (currentChallenge) {
       title = <LocaleText object={currentChallenge.sequence} field="title" />
