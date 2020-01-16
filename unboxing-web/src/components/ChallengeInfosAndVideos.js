@@ -70,7 +70,8 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
           
         
 
-          <UIText style={{marginTop: 10, marginBottom: 30}} styleKey="challenge-info-content">{text}</UIText>
+          <UIText style={{marginTop: 10, marginBottom: 10}} styleKey="challenge-info-content">{text}</UIText>
+          <ScrollIndicator src="/images/scroll.png"/>
         
         {videoContainers && <VideoThumbs>
             {videoContainers}
@@ -225,4 +226,14 @@ const WithLine = styled.div`
   }
   margin-bottom: 1em;
   margin-left: 26px;
+`
+
+const ScrollIndicator = styled.img`
+  width: 15px;
+  left: 50%;
+  position: relative;
+  transform: translateX(-50%);
+  @media ${breakpoints.large} {
+    display: none;
+  }
 `

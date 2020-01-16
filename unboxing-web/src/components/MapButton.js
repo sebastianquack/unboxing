@@ -49,6 +49,10 @@ const ChallengeButton = styled.div`
     cursor: pointer;
   }
 
+  :active {
+    opacity: 0.3;
+  }
+
   align-items: center;
   display: flex;
   flex-direction: column;
