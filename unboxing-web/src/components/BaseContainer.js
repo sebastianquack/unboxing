@@ -38,29 +38,6 @@ const getBackgroundGradient = (navigationState, controlStatus) => {
 }
 
 export class BaseContainer extends React.PureComponent {
-  constructor() {
-    super()
-    this.state = {
-      vh: 0
-    }
-    this.updateDimensions = this.updateDimensions.bind(this)
-  }
-
-  componentDidMount() {
-    window.addEventListener("resize", this.updateDimensions);
-    //window.addEventListener("orientationchange", this.updateDimensions);
-    this.updateDimensions()
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateDimensions);
-    //window.removeEventListener("orientationchange", this.updateDimensions);
-  }  
-
-  updateDimensions() {
-    const vh = window.innerHeight;
-    this.setState({ vh })
-  }
 
   render() {
 
@@ -76,10 +53,11 @@ export class BaseContainer extends React.PureComponent {
           <Menu visible={this.props.menuOpen} menuData={this.props.data.content.menu} onClose={this.props.toggleMenu}/>
         }
 
-        <GlobalStyle vh={this.state.vh}/>
+        <GlobalStyle vh={this.props.vh}/>
         <Background 
           color={getBackgroundGradient(this.props.navigationState, this.props.playbackControlStatus)}
           flow={this.props.navigationState !== "challenge"}
+          vw={this.props.vw}
         />
         <Map 
           visible={this.props.navigationState !== "welcome"}

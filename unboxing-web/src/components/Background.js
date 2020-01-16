@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components/macro';
 import PropTypes from 'prop-types';
 
-import { breakpoints, colors } from '../config/globalStyles'
+import { dimensions } from '../config/globalStyles'
 
 export class Background extends React.PureComponent {
   constructor() {
@@ -18,7 +18,7 @@ export class Background extends React.PureComponent {
     this.previousColor = color
 
     return <Container >
-      {flow && <BackgroundVideo autoPlay loop={true}>
+      {flow && this.props.vw > dimensions.large.minWidthPx && <BackgroundVideo autoPlay loop={true}>
         <source src="/images/Mozartfeld_Loop.mp4" type="video/mp4"/>
       </BackgroundVideo>}
       

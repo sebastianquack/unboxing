@@ -4,9 +4,19 @@ const colors = {
   person: "#DD514D"
 }
 
-const breakpoints = {
-  'medium': '(min-height: 600px)',
-  'large': '(min-width: 700px) and (min-height: 400px)'
+const dimensions = {
+  medium: {
+    minHeightPx: 600,
+  },
+  large: {
+    minHeightPx: 400,
+    minWidthPx: 700,
+  }
 }
 
-export { colors, breakpoints };
+const breakpoints = {
+  'medium': `(min-height: ${ dimensions.medium.minHeightPx }px)`,
+  'large': `(min-width: ${ dimensions.large.minWidthPx }px) and (min-height: ${ dimensions.large.minHeightPx }px)`
+}
+
+export { colors, breakpoints, dimensions };

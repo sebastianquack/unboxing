@@ -24,6 +24,8 @@ class BaseStateProvider extends React.Component {
       videoModalUrl: null,
       menuOpen: false,
       playbackControlStatus: "loading", // ready - playing - paused
+      vh:0,
+      vw:0,
     }
 
     this.handleNavigation = this.handleNavigation.bind(this)
@@ -32,6 +34,24 @@ class BaseStateProvider extends React.Component {
     this.toggleChallengeInfo = this.toggleChallengeInfo.bind(this)
     this.toggleMenu = this.toggleMenu.bind(this)
     this.setChallengeInfo = this.setChallengeInfo.bind(this)
+    this.updateDimensions = this.updateDimensions.bind(this)
+  }
+
+  componentDidMount() {
+    window.addEventListener("resize", this.updateDimensions);
+    //window.addEventListener("orientationchange", this.updateDimensions);
+    this.updateDimensions()
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateDimensions);
+    //window.removeEventListener("orientationchange", this.updateDimensions);
+  }  
+
+  updateDimensions() {
+    const vh = window.innerHeight;
+    const vw = window.innerWidth;
+    this.setState({ vh, vw })
   }
 
   toggleMenu() {
@@ -100,6 +120,8 @@ class BaseStateProvider extends React.Component {
       toggleChallengeInfo: this.toggleChallengeInfo,
       setChallengeInfo: this.setChallengeInfo,
       challengeInfoOpen: this.state.challengeInfoOpen,
+      vh: this.state.vh,
+      vw: this.state.vw,
       setVideoModalUrl: (url)=>{
         // console.log(url);
         this.setState({videoModalUrl: url})

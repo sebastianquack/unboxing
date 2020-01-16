@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components/macro';
 
 import { UIText, LocaleText, Button, DataContext, withLanguage, SoftTextButton } from './'
-import { breakpoints, colors } from '../config/globalStyles'
+import { breakpoints, colors, dimensions } from '../config/globalStyles'
 
 export class Welcome extends React.Component {
   constructor() {
@@ -34,6 +34,8 @@ export class Welcome extends React.Component {
   }
 
   render () {
+
+    console.log(this.props.vw)
     
     return(
     [
@@ -66,9 +68,11 @@ export class Welcome extends React.Component {
       </LeftContainer>,
       
       <RightContainer key={2} >
-        <Video autoPlay loop muted>
-          <source src="/video/web_intro_1.mp4" type="video/mp4"/>
-        </Video>
+        { this.props.vw > dimensions.large.minWidthPx &&
+          <Video autoPlay loop muted>
+            <source src="/video/web_intro_1.mp4" type="video/mp4"/>
+          </Video>
+        }
         {/*<KeyVisualImg/>*/}
         <UIText style={{position: "relative", top: -200, marginLeft: "auto", marginTop: 20, width: 300}} styleKey="big-title-side-explanation">
           <LocaleText stringsKey="side-explanation" index={this.state.explanationIndex}/>            
