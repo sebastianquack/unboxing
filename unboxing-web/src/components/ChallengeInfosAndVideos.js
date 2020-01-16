@@ -27,6 +27,7 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
   }
 
   render() {
+
     if(!this.props.challenge) return null;
     
     const movement = <LocaleText object={this.props.challenge.sequence} field="title" />
@@ -49,7 +50,7 @@ const ChallengeInfosAndVideos = withLanguage(class extends React.Component {
     if(videoContainers.length === 1 && !videoContainers[0]) videoContainers = null;
 
     return (
-      <Container hide={this.props.hide}>
+      <Container hide={this.props.hide} vh={this.props.vh}>
           <ContentContainer>
 
           <PlayButtonContainer>
@@ -122,14 +123,14 @@ const Container = styled.div`
   background-position: center;
   max-width: 100vw;
   height: 56.25vw;
-  max-height: 100vh;
-  width: 177.7vh;
+  max-height: ${ ({vh}) => vh }px;
+  width: ${ ({vh}) => vh * 1.77 }px;
   margin:auto;
   overflow: hidden;
   align-self: center;
 
   transition: transform 1s;
-  transform: translateY(${ props => props.hide ? "94%" : "calc(-50vh + 50% + 0.5rem)" });
+  transform: translateY(${ props => props.hide ? "94%" : "calc(-"+ 0.5 * props.vh +"px + 50% + 0.5rem)" });
 `
 
 const ContentContainer = styled.div`

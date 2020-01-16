@@ -34,8 +34,6 @@ export class Welcome extends React.Component {
   }
 
   render () {
-
-    console.log(this.props.vw)
     
     return(
     [

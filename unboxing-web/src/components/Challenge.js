@@ -151,6 +151,7 @@ export class Challenge extends React.PureComponent {
         challenge={this.props.currentChallenge} 
         setVideoModalUrl={this.props.setVideoModalUrl}
         close={() => {this.props.toggleChallengeInfo(); this.setState({minimalView: false})}}
+        vh={this.props.vh}
       />
 
       <ActionStates
