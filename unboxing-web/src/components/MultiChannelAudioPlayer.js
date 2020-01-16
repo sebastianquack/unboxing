@@ -228,7 +228,12 @@ export class MultiChannelAudioPlayer extends React.Component {
     this.props.updatePlaybackControlStatus("paused");  
     this.samples.forEach((sample)=>{
       if(sample) {
-        sample.stop();   
+        try {
+          sample.stop();   
+        } 
+        catch(e) {
+          console.log(e);
+        }
       }
     })
     this.setState({playbackPosition: this.audioContext.currentTime - this.state.playbackStartedAt});
@@ -237,7 +242,12 @@ export class MultiChannelAudioPlayer extends React.Component {
   handleRewind() {
     this.samples.forEach((sample)=>{
       if(sample) {
-        sample.stop();   
+        try {
+          sample.stop();   
+        }
+        catch(e) {
+          console.log(e);
+        }
       }
     })
     this.setState({playbackPosition: 0});
