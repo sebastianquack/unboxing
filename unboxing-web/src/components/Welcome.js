@@ -90,7 +90,7 @@ const LeftContainer = styled.div`
   top: 20vh;
   left: 15vw;
   z-index: 1;
-  padding-right: 5px;
+  padding-right: 10px;
   @media ${breakpoints.large} {
     top: 15vh;
   }
