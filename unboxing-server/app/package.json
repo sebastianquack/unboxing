@@ -15,7 +15,7 @@
     "create-react-class": "^15.6.3",
     "dateformat": "^3.0.3",
     "emotion": "^9.2.6",
-    "express": "^4.16.2",
+    "express": "^4.17.3",
     "get-mp3-duration": "^1.0.0",
     "he": "^1.2.0",
     "meteor-node-stubs": "^0.3.2",
